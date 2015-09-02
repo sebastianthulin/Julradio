@@ -1,0 +1,51 @@
+#on-air
+  height 170px
+  margin 0 auto
+  padding 10px
+  background rgba(255, 0, 0, 0.3)
+  .avatar
+    width 150px
+    height 150px
+    border-radius 5px
+    float left
+    margin-right 16px
+    background transparent url('/images/berkleyill.jpg') repeat scroll 0px -10px / 150px auto
+  
+  .lol
+    float left
+    position relative
+    width 500px
+    height 100%
+    
+  section
+    position absolute
+    height 40px
+    width 100%
+    &::after
+      content ''
+      position absolute
+      width 1px
+      top 4px
+      bottom 4px
+      left 31px
+      background rgba(255, 255, 255, 0.22)
+    &.fst
+      top 0
+    &.snd
+      top 0
+      bottom 0
+      margin auto 0
+    &.trd
+      bottom 0
+    .icon
+      height 20px
+      margin 10px 0px
+    .meta
+      position absolute
+      bottom 20px
+      left 42px
+      color rgba(255, 255, 255, 0.5)
+    .meta-2
+      top 20px
+      position absolute
+      left 42px

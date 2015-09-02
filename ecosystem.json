@@ -1,0 +1,9 @@
+{
+  "name": "julradio",
+  "script": "server.js",
+  "watch": true,
+  "ignore_watch": ["node_modules", "client", "public", "gulpfile.js"],
+  "watch_options": {
+    "followSymlinks": false
+  }
+}
