@@ -4,14 +4,22 @@ function random(min, max) {
   return Math.round(min + Math.random() * (max - min))
 }
 
+function getHeight() {
+  return Math.max(window.innerHeight, document.body.scrollHeight)
+}
+
+function getWidth() {
+  return Math.max(window.innerWidth, document.body.scrollWidth)
+}
+
 class Flake {
   constructor(opts) {
     this.minSize = opts.minSize || 1
     this.maxSize = opts.maxSize || 2
     this.minSpeed = opts.minSpeed || 1
     this.maxSpeed = opts.maxSpeed || 5
-    this.x = random(0, window.innerWidth)
-    this.y = random(0, window.innerHeight)
+    this.x = random(0, getWidth())
+    this.y = random(0, getHeight())
     this.size = random((this.minSize * 100), (this.maxSize * 100)) / 100
     this.speed = random(this.minSpeed, this.maxSpeed)
     this.stepSize = random(1, 10) / 100
@@ -19,8 +27,8 @@ class Flake {
   }
 
   reset() {
-    this.y = 0
-    this.x = random(0, window.innerWidth)
+    this.y = random(0, this.maxSpeed)
+    this.x = random(0, getWidth())
     this.size = random((this.minSize * 100), (this.maxSize * 100)) / 100
     this.speed = random(this.minSpeed, this.maxSpeed)
     this.stepSize = random(1, 10) / 100
@@ -30,8 +38,7 @@ class Flake {
     this.step += this.stepSize
     this.x += Math.cos(this.step)
     this.y += this.speed
-
-    if (this.y > window.innerHeight - this.size) {
+    if (this.y > getHeight() - this.size) {
       this.reset()
     }
   }
@@ -48,15 +55,15 @@ class Snowfall extends React.Component {
   componentDidMount() {
     this.canvas = this.refs.canvas.getDOMNode()
     this.ctx = this.canvas.getContext('2d')
-    this.canvas.width = window.innerWidth
-    this.canvas.height = window.innerHeight
+    this.canvas.width = getWidth()
+    this.canvas.height = getHeight()
     this.tick()
     window.addEventListener('resize', this.resize.bind(this))
   }
 
   resize() {
-    this.canvas.width = window.innerWidth
-    this.canvas.height = window.innerHeight
+    this.canvas.width = getWidth()
+    this.canvas.height = getHeight()
   }
 
   tick() {
@@ -73,7 +80,7 @@ class Snowfall extends React.Component {
   }
 
   render() {
-    return <canvas id="snowfall" ref="canvas" />
+    return <canvas className="snowfall" ref="canvas" />
   }
 }
 

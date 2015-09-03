@@ -15,18 +15,18 @@ var Front = require('./components/views/Front')
 class App extends React.Component {
   render() {
     return (
-      <div id="app">
+      <div className="container">
         <Header />
         <OnAir />
         <Menu />
         <Router.RouteHandler />
-        <Snowfall
+        {/* <Snowfall
           count={300}
           minSize={1}
           maxSize={2}
           minSpeed={1}
           maxSpeed={5}
-        />
+        /> */}
       </div>
     )
   }

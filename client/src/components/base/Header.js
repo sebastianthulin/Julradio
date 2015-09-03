@@ -5,7 +5,7 @@ class Header extends React.Component {
     return (
       <div id="header">
         <div className="logo">
-          Julradio
+          <span className="julradio">Julradio</span>
           <span className="slogan">Nätets Bästa Julmusik</span>
         </div>
         <div className="listen">
