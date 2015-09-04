@@ -19,7 +19,6 @@ class App extends React.Component {
       <div id="app">
         <Header />
         <OnAir />
-        <Menu />
         <Router.RouteHandler />
         <Snowfall
           count={300}
