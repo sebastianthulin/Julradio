@@ -28,6 +28,13 @@ class Front extends React.Component {
           {this.state.articles.map(article => <Article key={article.id} article={article} />)}
         </div>
         <div className="one-third column">
+          <div className="wish">
+            <span className="hashtagJulradio">Önska en låt</span>
+            <input type="text" placeholder="Namn"/>
+            <input type="text" placeholder="Låt"/>
+            <textarea type="text" placeholder="Text"></textarea>
+            <input type="submit" value="Skicka önskning"/>
+          </div>
           <span className="hashtagJulradio">#julradio</span>
           <TwitterWidget />
         </div>
