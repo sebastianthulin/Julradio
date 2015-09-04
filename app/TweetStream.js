@@ -12,7 +12,16 @@ var tw = require('node-tweet-stream')({
 
 tw.track('javascript')
 
-tw.on('tweet', function(tweet) {
+tw.on('tweet', function(data) {
+  var tweet = {
+    id: data.id,
+    text: data.text,
+    username: data.user.screen_name,
+    userimage: data.user.profile_image_url
+  }
+
+  console.log(tweet)
+
   io.emit('tweet', tweet)
   tweets.unshift(tweet)
   if (tweets.length === 51) {

@@ -28,6 +28,7 @@ class Front extends React.Component {
           {this.state.articles.map(article => <Article key={article.id} article={article} />)}
         </div>
         <div className="one-third column">
+          <span className="hashtagJulradio">#julradio</span>
           <TwitterWidget />
         </div>
       </div>

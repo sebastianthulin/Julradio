@@ -15,8 +15,13 @@ body
   width 100%
 
 .content
-  padding 40px 60px
+  padding 40px 30px
   background rgba(0, 0, 0, 0.2)
+
+  // Larger than tablet
+  @media (min-width: 1000px) {
+    padding 40px 60px
+  }
 
 .snowfall
   position absolute
