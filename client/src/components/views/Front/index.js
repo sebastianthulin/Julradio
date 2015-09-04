@@ -49,6 +49,9 @@ class Front extends React.Component {
             <input type="submit" value="Skicka önskning"/>
           </div>
           {tweets.length > 0 && <span className="hashtagJulradio">#julradio</span>}
+          <div className="newTweet">
+            <input type="text" placeholder="Tweeta en önskning med #julradio"/>
+          </div>
           <TwitterFeed tweets={tweets} />
         </div>
       </div>
