@@ -28,7 +28,7 @@ class Front extends React.Component {
           {this.state.articles.map(article => <Article key={article.id} article={article} />)}
         </div>
         <div className="one-third column">
-          <TwitterWidget id="539517421674315776" path="https://twitter.com/sarafrostwhisp" />
+          <TwitterWidget />
         </div>
       </div>
     )

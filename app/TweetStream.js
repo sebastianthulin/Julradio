@@ -15,7 +15,9 @@ tw.track('javascript')
 tw.on('tweet', function(tweet) {
   io.emit('tweet', tweet)
   tweets.unshift(tweet)
-  tweets.splice(50)
+  if (tweets.length === 51) {
+    tweets.splice(50)
+  }
 })
 
 module.exports = function(socket) {
