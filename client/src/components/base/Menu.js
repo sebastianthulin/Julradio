@@ -1,4 +1,5 @@
 var React = require('react')
+var { Link } = require('react-router')
 
 class Menu extends React.Component {
   render() {
@@ -6,22 +7,22 @@ class Menu extends React.Component {
       <div id="menu">
         <ul>
           <li>
-            <a href="/">Nyheter</a>
+            <Link to="/">Nyheter</Link>
           </li>
           <li>
-            <a href="/">Önska</a>
+            <Link to="/wish">Önska</Link>
           </li>
           <li>
-            <a href="/">Community</a>
+            <Link to="/">Community</Link>
           </li>
           <li>
-            <a href="/">Klotterplank</a>
+            <Link to="/">Klotterplank</Link>
           </li>
           <li>
-            <a href="/">Chatt</a>
+            <Link to="/">Chatt</Link>
           </li>
           <li>
-            <a href="/">Kontakt</a>
+            <Link to="/">Kontakt</Link>
           </li>
         </ul>
       </div>

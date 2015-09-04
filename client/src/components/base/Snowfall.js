@@ -1,16 +1,7 @@
-var React = require('react')
-
-function random(min, max) {
-  return Math.round(min + Math.random() * (max - min))
-}
-
-function getHeight() {
-  return Math.max(window.innerHeight, document.body.scrollHeight)
-}
-
-function getWidth() {
-  return Math.max(window.innerWidth, document.body.scrollWidth)
-}
+const React = require('react')
+const random = (min, max) => Math.round(min + Math.random() * (max - min))
+const getHeight = () => Math.max(window.innerHeight, document.body.scrollHeight)
+const getWidth = () => Math.max(window.innerWidth, document.body.scrollWidth)
 
 class Flake {
   constructor(opts) {
@@ -61,9 +52,16 @@ class Snowfall extends React.Component {
     window.addEventListener('resize', this.resize.bind(this))
   }
 
+  componentWillReceiveProps() {
+    this.resize()
+  }
+
   resize() {
-    this.canvas.width = getWidth()
-    this.canvas.height = getHeight()
+    var { canvas } = this
+    canvas.style.display = 'none'
+    canvas.width = getWidth()
+    canvas.height = getHeight()
+    canvas.style.display = 'block'
   }
 
   tick() {
@@ -80,7 +78,9 @@ class Snowfall extends React.Component {
   }
 
   render() {
-    return <canvas className="snowfall" ref="canvas" />
+    return (
+      <canvas className="snowfall" ref="canvas" />
+    )
   }
 }
 

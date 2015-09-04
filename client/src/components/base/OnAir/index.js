@@ -1,4 +1,5 @@
 var React = require('react')
+var Controls = require('./Controls')
 
 class OnAir extends React.Component {
   render() {
@@ -22,6 +23,7 @@ class OnAir extends React.Component {
             <span className="meta-2">Bruce Springsteen - Santa Claus Is Coming To Town</span>
           </section>
         </div>
+        <Controls />
       </div>
     )
   }

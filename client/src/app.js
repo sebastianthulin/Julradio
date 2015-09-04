@@ -11,22 +11,23 @@ var Snowfall = require('./components/base/Snowfall')
 
 // Views
 var Front = require('./components/views/Front')
+var Wish = require('./components/views/Wish')
 
 class App extends React.Component {
   render() {
     return (
-      <div className="container">
+      <div id="app">
         <Header />
         <OnAir />
         <Menu />
         <Router.RouteHandler />
-        {/* <Snowfall
+        <Snowfall
           count={300}
           minSize={1}
           maxSize={2}
           minSpeed={1}
           maxSpeed={5}
-        /> */}
+        />
       </div>
     )
   }
@@ -34,6 +35,7 @@ class App extends React.Component {
 
 const routes = (
   <Route handler={App}>
+    <Route path="/wish" handler={Wish} />
     <DefaultRoute handler={Front} />
   </Route>
 )

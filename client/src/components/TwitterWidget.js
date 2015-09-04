@@ -1,21 +1,33 @@
 var React = require('react')
+var TweetStore = require('../stores/TweetStore')
+
+class Tweet extends React.Component {
+  render() {
+    var { tweet } = this.props
+    return (
+      <div>{tweet.text}</div>
+    )
+  }
+}
 
 class TwitterWidget extends React.Component {
-  componentDidMount() {
-    var link = React.findDOMNode(this)
-    var js = document.createElement('script')
-    js.id = 'twitter-wjs'
-    js.src = '//platform.twitter.com/widgets.js'
-    link.parentNode.appendChild(js)
+  componentWillMount() {
+    this.unsubscribe = TweetStore.subscribe(this.handleTweets.bind(this))
+  }
+
+  handleTweets(tweets) {
+    this.setState({tweets})
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe()
   }
 
   render() {
     return (
-      <a
-        className="twitter-timeline"
-        href={this.props.path}
-        data-widget-id={this.props.id}
-      />
+      <div>
+        {this.state.tweets.map(tweet => <Tweet key={tweet.id} tweet={tweet} />)}
+      </div>
     )
   }
 }
