@@ -4,8 +4,13 @@ var TweetStore = require('../stores/TweetStore')
 class Tweet extends React.Component {
   render() {
     var { tweet } = this.props
+    console.log(tweet);
     return (
-      <div>{tweet.text}</div>
+      <div className="tweetBox">
+        <img className="profileImg" src={tweet.user.profile_image_url} />
+        <span className="user">{tweet.user.screen_name}</span>
+        <span className="text">{tweet.text}</span>
+      </div>
     )
   }
 }
@@ -26,6 +31,7 @@ class TwitterWidget extends React.Component {
   render() {
     return (
       <div>
+        <span className="hashtagJulradio">#julradio</span>
         {this.state.tweets.map(tweet => <Tweet key={tweet.id} tweet={tweet} />)}
       </div>
     )
