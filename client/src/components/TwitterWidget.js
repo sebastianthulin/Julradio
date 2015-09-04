@@ -8,7 +8,7 @@ class Tweet extends React.Component {
     return (
       <div className="tweetBox">
         <img className="profileImg" src={tweet.user.profile_image_url} />
-        <span className="user">{tweet.user.screen_name}</span>
+        <a target="_blank" href={'http://twitter.com/' + tweet.user.screen_name}><span className="user">{tweet.user.screen_name}</span></a>
         <span className="text">{tweet.text}</span>
       </div>
     )
