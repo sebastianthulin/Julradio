@@ -1,9 +1,11 @@
 var React = require('react')
+var TweetStore = require('../../../stores/TweetStore')
 var Article = require('./Article')
-var TwitterWidget = require('../../TwitterWidget')
+var TwitterFeed = require('../../reusable/TwitterFeed')
 
 class Front extends React.Component {
   componentWillMount() {
+    this.unsubscribe = TweetStore.subscribe(this.handleTweets.bind(this))
     this.setState({
       articles: [{
         id: Math.random().toString(36),
@@ -20,12 +22,23 @@ class Front extends React.Component {
       }]
     })
   }
+
+  componentWillUnmount() {
+    this.unsubscribe()
+  }
+
+  handleTweets(tweets) {
+    console.log(tweets)
+    this.setState({tweets})
+  }
+
   render() {
+    var { articles, tweets } = this.state
     return (
       <div id="front" className="row content">
         <div className="two-thirds column">
           <h1>Blogg</h1>
-          {this.state.articles.map(article => <Article key={article.id} article={article} />)}
+          {articles.map(article => <Article key={article.id} article={article} />)}
         </div>
         <div className="one-third column">
           <div className="wish">
@@ -35,8 +48,8 @@ class Front extends React.Component {
             <textarea type="text" placeholder="Text"></textarea>
             <input type="submit" value="Skicka önskning"/>
           </div>
-          <span className="hashtagJulradio">#julradio</span>
-          <TwitterWidget />
+          {tweets.length > 0 && <span className="hashtagJulradio">#julradio</span>}
+          <TwitterFeed tweets={tweets} />
         </div>
       </div>
     )

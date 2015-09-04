@@ -79,7 +79,7 @@ class Snowfall extends React.Component {
 
   render() {
     return (
-      <canvas className="snowfall" ref="canvas" />
+      <canvas id="snowfall" ref="canvas" />
     )
   }
 }

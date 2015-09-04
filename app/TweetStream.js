@@ -20,8 +20,6 @@ tw.on('tweet', function(data) {
     userimage: data.user.profile_image_url
   }
 
-  console.log(tweet)
-
   io.emit('tweet', tweet)
   tweets.unshift(tweet)
   if (tweets.length === 51) {
