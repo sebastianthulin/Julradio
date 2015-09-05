@@ -8,6 +8,8 @@ body
   // line-height 1.4
   color #FFF
   background #280000 url('/images/dark-red-christmas-background.jpg') fixed 100%
+  &.no-scroll
+    overflow hidden
 
 #app
   margin 0 auto
@@ -29,43 +31,3 @@ body
   top 0
   left 0
   z-index -1
-  
-.wish
-  display inherit
-  padding 20px 20px 10px 20px
-  background rgba(255,0,0,0.2)
-  border-radius 5px
-  margin-bottom 20px
-  
-  input
-    width 100%
-    border 0px
-    margin 0px 0px 10px 0px
-    background rgba(255,255,255,0.15)
-    &:focus
-      border 0px
-      
-  input[type=submit]
-    color white
-    margin-top -20px
-    
-  textarea
-    width 100%
-    resize none
-    height 100px
-    background rgba(255,255,255,0.15)
-    border 0px
-    margin-bottom 8px
-
-.newTweet
-  padding 10px
-  background rgba(255,0,0,0.3)
-  margin-bottom 10px
-  border-radius 5px
-  
-  input
-    width 100%
-    margin 0px
-    border 0px
-    &:focus
-      border 0px

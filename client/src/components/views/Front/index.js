@@ -1,4 +1,5 @@
 var React = require('react')
+var Modal = require('../../../services/Modal')
 var TweetStore = require('../../../stores/TweetStore')
 var Article = require('./Article')
 var TwitterFeed = require('../../reusable/TwitterFeed')
@@ -28,7 +29,6 @@ class Front extends React.Component {
   }
 
   handleTweets(tweets) {
-    console.log(tweets)
     this.setState({tweets})
   }
 
@@ -41,16 +41,9 @@ class Front extends React.Component {
           {articles.map(article => <Article key={article.id} article={article} />)}
         </div>
         <div className="one-third column">
-          <div className="wish">
-            <span className="hashtagJulradio">Önska en låt</span>
-            <input type="text" placeholder="Namn"/>
-            <input type="text" placeholder="Låt"/>
-            <textarea type="text" placeholder="Text"></textarea>
-            <input type="submit" value="Skicka önskning"/>
-          </div>
           {tweets.length > 0 && <span className="hashtagJulradio">#julradio</span>}
           <div className="newTweet">
-            <input type="text" placeholder="Tweeta en önskning med #julradio"/>
+            <input type="text" placeholder="Tweeta en önskning med #julradio" onClick={Modal.open.bind(null, 'RequestSong')} />
           </div>
           <TwitterFeed tweets={tweets} />
         </div>

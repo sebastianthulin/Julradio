@@ -7,6 +7,7 @@ var { Route, DefaultRoute } = Router
 var Header = require('./components/base/Header')
 var OnAir = require('./components/base/OnAir')
 var Menu = require('./components/base/Menu')
+var ModalContainer = require('./components/base/ModalContainer')
 var Snowfall = require('./components/base/Snowfall')
 
 // Views
@@ -20,6 +21,7 @@ class App extends React.Component {
         <Header />
         <OnAir />
         <Router.RouteHandler />
+        <ModalContainer />
         <Snowfall
           count={300}
           minSize={1}
