@@ -13,6 +13,7 @@ app.use(express.static('./public'))
 app.use(require('./app/routes'))
 
 io.on('connection', require('./app/TweetStream'))
+io.on('connection', require('./app/RadioStream'))
 
 server.listen(8080, function() {
   console.log('server started')

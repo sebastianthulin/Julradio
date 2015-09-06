@@ -6,7 +6,6 @@ var { Route, DefaultRoute } = Router
 // Site base components
 var Header = require('./components/base/Header')
 var OnAir = require('./components/base/OnAir')
-var Menu = require('./components/base/Menu')
 var ModalContainer = require('./components/base/ModalContainer')
 var Snowfall = require('./components/base/Snowfall')
 

@@ -3,10 +3,10 @@ var Radio = require('../../../services/Radio')
 
 class Controls extends React.Component {
   componentWillMount() {
-    Radio.subscribe(this.handleRadio.bind(this))
+    Radio.subscribe('playing', this.handlePlaying.bind(this))
   }
 
-  handleRadio(playing) {
+  handlePlaying(playing) {
     this.setState({playing})
   }
 

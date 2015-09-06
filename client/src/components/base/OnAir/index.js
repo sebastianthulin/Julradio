@@ -1,8 +1,18 @@
 var React = require('react')
+var Radio = require('../../../services/Radio')
 var Controls = require('./Controls')
 
 class OnAir extends React.Component {
+  componentWillMount() {
+    Radio.subscribe('metadata', this.handleMetadata.bind(this))
+  }
+
+  handleMetadata(metadata) {
+    this.setState({metadata})
+  }
+
   render() {
+    var { metadata } = this.state
     return (
       <div id="on-air">
         <div className="avatar" />
@@ -10,17 +20,17 @@ class OnAir extends React.Component {
           <section className="fst">
             <img className="icon" src="/images/user.png" />
             <span className="meta">Host</span>
-            <span className="meta-2">Oliver</span>
+            <span className="meta-2">Oliver Johansson</span>
           </section>
           <section className="snd">
             <img className="icon" src="/images/play.png" />
-            <span className="meta">Currently Playing</span>
-            <span className="meta-2">The Darkness - Christmas Time (Don't Let The Bells End)</span>
+            <span className="meta">Nu spelas</span>
+            <span className="meta-2">{metadata.current}</span>
           </section>
           <section className="trd">
             <img className="icon" src="/images/clock.png" />
-            <span className="meta">Previously</span>
-            <span className="meta-2">Bruce Springsteen - Santa Claus Is Coming To Town</span>
+            <span className="meta">Tidigare</span>
+            <span className="meta-2">{metadata.previous}</span>
           </section>
         </div>
         <Controls />

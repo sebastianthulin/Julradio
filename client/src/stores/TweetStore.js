@@ -11,7 +11,7 @@ socket.on('tweets', function(data) {
 socket.on('tweet', function(tweet) {
   tweets.unshift(tweet)
   if (tweets.length === 51) {
-    tweets.splice(50)
+    tweets.splice(50, 1)
   }
   TweetStore.emit('tweets', tweets)
 })

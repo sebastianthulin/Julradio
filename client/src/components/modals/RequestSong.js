@@ -9,7 +9,7 @@ class RequestSong extends React.Component {
         </header>
         <main>
           <div className="left-column">
-            <h4>Önska en låt med #julradio</h4>
+            <h4>Tweeta en önskning med #julradio</h4>
             <button>önska via twitter</button>
           </div>
           <div className="divider" />

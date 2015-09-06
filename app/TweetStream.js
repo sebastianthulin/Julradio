@@ -23,7 +23,7 @@ tw.on('tweet', function(data) {
   io.emit('tweet', tweet)
   tweets.unshift(tweet)
   if (tweets.length === 51) {
-    tweets.splice(50)
+    tweets.splice(50, 1)
   }
 })
 
