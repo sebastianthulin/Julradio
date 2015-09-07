@@ -9,11 +9,10 @@ class RequestSong extends React.Component {
         </header>
         <main>
           <h4>Önska en låt</h4>
-          <h4>Önska en låt</h4>
           <input type="text" placeholder="Ditt Namn"/>
           <input type="text" placeholder="Låt"/>
           <textarea type="text" placeholder="Text" />
-          <button>önska via twitter</button>
+          <button>Önska via twitter</button>
           <button>Skicka önskning</button>
         </main>
       </div>
