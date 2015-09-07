@@ -12,11 +12,10 @@ class ModalContainer extends React.Component {
   }
 
   handleModal(name) {
-    this.setState({
-      Modal: modals[name]
-    })
+    var Modal = modals[name]
+    this.setState({Modal})
     document.removeEventListener('click', this.boundHandleClick)
-    if (name) {
+    if (Modal) {
       this.boundHandleClick = this.handleClick.bind(this)
       document.addEventListener('click', this.boundHandleClick)
     }

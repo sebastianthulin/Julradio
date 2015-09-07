@@ -1,10 +1,11 @@
 var React = require('react')
-var Radio = require('../../../services/Radio')
+var { Link } = require('react-router')
+var RadioStore = require('../../../stores/RadioStore')
 var Controls = require('./Controls')
 
 class OnAir extends React.Component {
   componentWillMount() {
-    Radio.subscribe('metadata', this.handleMetadata.bind(this))
+    RadioStore.subscribe('metadata', this.handleMetadata.bind(this))
   }
 
   handleMetadata(metadata) {
@@ -29,7 +30,7 @@ class OnAir extends React.Component {
           </section>
           <section className="trd">
             <img className="icon" src="/images/clock.png" />
-            <span className="meta">Tidigare</span>
+            <Link to="/historik" className="meta">Tidigare</Link>
             <span className="meta-2">{metadata.previous}</span>
           </section>
         </div>

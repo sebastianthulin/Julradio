@@ -9,17 +9,14 @@ class Flake {
     this.maxSize = opts.maxSize || 2
     this.minSpeed = opts.minSpeed || 1
     this.maxSpeed = opts.maxSpeed || 5
-    this.x = random(0, getWidth())
+    this.reset()
     this.y = random(0, getHeight())
-    this.size = random((this.minSize * 100), (this.maxSize * 100)) / 100
-    this.speed = random(this.minSpeed, this.maxSpeed)
-    this.stepSize = random(1, 10) / 100
     this.step = 0
   }
 
   reset() {
-    this.y = random(0, this.maxSpeed)
     this.x = random(0, getWidth())
+    this.y = random(0, this.maxSpeed)
     this.size = random((this.minSize * 100), (this.maxSize * 100)) / 100
     this.speed = random(this.minSpeed, this.maxSpeed)
     this.stepSize = random(1, 10) / 100

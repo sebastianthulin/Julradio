@@ -1,9 +1,9 @@
 var React = require('react')
-var Radio = require('../../../services/Radio')
+var RadioStore = require('../../../stores/RadioStore')
 
 class Controls extends React.Component {
   componentWillMount() {
-    Radio.subscribe('playing', this.handlePlaying.bind(this))
+    RadioStore.subscribe('playing', this.handlePlaying.bind(this))
   }
 
   handlePlaying(playing) {
@@ -14,7 +14,7 @@ class Controls extends React.Component {
     var { playing } = this.state
     return (
       <div className="playBox">
-        <button style={{color: '#FFF'}} onClick={Radio.toggle}>{playing ? 'Pausa' : 'Starta Radio'}</button>
+        <button style={{color: '#FFF'}} onClick={RadioStore.toggle}>{playing ? 'Pausa' : 'Starta Radio'}</button>
       </div>
     )
   }
