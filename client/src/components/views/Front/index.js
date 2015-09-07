@@ -33,8 +33,8 @@ class Front extends React.Component {
         </div>
         <div className="one-third column">
           {tweets.length > 0 && <span className="hashtagJulradio">#julradio</span>}
-          <div className="newTweet">
-            <input type="text" placeholder="Skriv en önskning..." onClick={Modal.open.bind(null, 'RequestSong')} />
+          <div className="compose" onClick={Modal.open.bind(null, 'RequestSong')}>
+            Skriv en önskning...
           </div>
           <TwitterFeed tweets={tweets} />
         </div>
