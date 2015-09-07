@@ -8,18 +8,13 @@ class RequestSong extends React.Component {
           Önska en låt
         </header>
         <main>
-          <div className="left-column">
-            <h4>Tweeta en önskning med #julradio</h4>
-            <button>önska via twitter</button>
-          </div>
-          <div className="divider" />
-          <div className="right-column">
-            <h4>Önska en låt</h4>
-            <input type="text" placeholder="Namn"/>
-            <input type="text" placeholder="Låt"/>
-            <textarea type="text" placeholder="Text" />
-            <button>Skicka önskning</button>
-          </div>
+          <h4>Önska en låt</h4>
+          <h4>Önska en låt</h4>
+          <input type="text" placeholder="Ditt Namn"/>
+          <input type="text" placeholder="Låt"/>
+          <textarea type="text" placeholder="Text" />
+          <button>önska via twitter</button>
+          <button>Skicka önskning</button>
         </main>
       </div>
     )
