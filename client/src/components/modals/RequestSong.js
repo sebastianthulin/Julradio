@@ -20,12 +20,11 @@ class RequestSong extends React.Component {
           Önska en låt
         </header>
         <main>
-          <h4>Önska en låt</h4>
           <input type="text" placeholder="Ditt Namn"/>
           <input type="text" onChange={this.updateHref.bind(this)} ref="songName" placeholder="Låt"/>
           <textarea type="text" onChange={this.updateHref.bind(this)} ref="text" placeholder="Text" />
           <button>Skicka önskning</button>
-          <a target="_blank" href={this.state.url}>Önska via twitter</a>
+          <button><a target="_blank" href={this.state.url}>Önska via twitter</a></button>
         </main>
       </div>
     )
