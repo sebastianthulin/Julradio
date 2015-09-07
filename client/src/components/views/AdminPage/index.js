@@ -29,13 +29,23 @@ class AdminPage extends React.Component {
             <a className="tab">Kommentarer (6)</a>
           </div>
         </div>
-        <div className="nine columns">
+        <div className="four columns">
           <h3>Admin - Nyheter</h3>
-          {articles.map(article => (
-            <div>
-              {article.title}
-            </div>
-          ))}
+          <div className="list">
+            {articles.map(article => (
+              <div>
+                {article.title}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="five columns article">
+          <h4><input type="text" defaultValue="Title of the article" /><br /></h4>
+          <textarea>HELLO THIS IS THE TEXT IN THE ARTICLE THAT U CHOSE TO EDIT AND STUFF! WHAT U SAY ABOUT THAT NOW </textarea>
+          <div>
+            <button>Uppdatera</button>
+            <button style={{float: 'right', marginRight: 0}}>Ta Bort</button>
+          </div>
         </div>
       </div>
     )
