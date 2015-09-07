@@ -13,6 +13,7 @@ var Snowfall = require('./components/base/Snowfall')
 var Front = require('./components/views/Front')
 var History = require('./components/views/History')
 var Wish = require('./components/views/Wish')
+var AdminPage = require('./components/views/AdminPage')
 
 class App extends React.Component {
   render() {
@@ -38,6 +39,7 @@ const routes = (
   <Route handler={App}>
     <Route path="/historik" handler={History} />
     <Route path="/wish" handler={Wish} />
+    <Route path="/admin" handler={AdminPage} />
     <DefaultRoute handler={Front} />
   </Route>
 )

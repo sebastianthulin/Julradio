@@ -2,7 +2,7 @@
 
 var express = require('express')
 var router = express.Router()
-var io = require('../server').io
+var io = require('../../server').io
 
 router.post('/reloadclients', function(req, res) {
   io.emit('reload')

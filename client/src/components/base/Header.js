@@ -9,6 +9,7 @@ class Header extends React.Component {
           <span className="julradio">Julradio</span>
           <span className="slogan">Nätets Bästa Julmusik</span>
         </Link>
+        <Link to="/admin">Admin page</Link>
       </div>
     )
   }
