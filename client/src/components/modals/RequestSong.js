@@ -1,18 +1,13 @@
 var React = require('react')
 
 class RequestSong extends React.Component {
-  componentDidMount() {
-    this.updateHref()
+  setHref(ev) {
+    var songName = this.refs.songName.getDOMNode().value
+    var text = this.refs.text.getDOMNode().value
+    var query = encodeURIComponent('Jag vill höra "' + songName + '" ' + text + ' #julradio')
+    ev.currentTarget.href = 'https://twitter.com/intent/tweet?text=' + query
   }
-  componentWillMount() {
-    this.state = {}
-  }
-  updateHref() {
-    var resultString = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent('Jag vill höra "' + this.refs.songName.getDOMNode().value + '" ' + this.refs.text.getDOMNode().value + ' #julradio');
-    this.setState({
-      url: resultString
-    })
-  }
+
   render() {
     return (
       <div className="modal">
@@ -21,10 +16,12 @@ class RequestSong extends React.Component {
         </header>
         <main>
           <input type="text" placeholder="Ditt Namn"/>
-          <input type="text" onChange={this.updateHref.bind(this)} ref="songName" placeholder="Låt"/>
-          <textarea type="text" onChange={this.updateHref.bind(this)} ref="text" placeholder="Text" />
-          <button>Skicka önskning</button>
-          <button><a target="_blank" href={this.state.url}>Önska via twitter</a></button>
+          <input type="text" ref="songName" placeholder="Låt"/>
+          <textarea type="text" ref="text" placeholder="Text" />
+          <div className="submit">
+            <button style={{marginRight: 10}}>Skicka önskning</button>
+            <a target="_blank" onClick={this.setHref.bind(this)}><button>Önska via twitter</button></a>
+          </div>
         </main>
       </div>
     )
