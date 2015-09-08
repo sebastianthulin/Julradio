@@ -10,6 +10,10 @@ class Header extends React.Component {
           <span className="slogan">Nätets Bästa Julmusik</span>
         </Link>
         <Link to="/admin/articles">Admin page</Link>
+        <div className="user">
+          <Link to="/signup">Logga in</Link>
+          <Link to="/signup">Registrera dig</Link>
+        </div>
       </div>
     )
   }
