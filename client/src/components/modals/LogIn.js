@@ -8,12 +8,10 @@ class LogIn extends React.Component {
           Logga in
         </header>
         <main>
-          <input type="text" placeholder="Ditt Namn"/>
-          <input type="text" ref="songName" placeholder="Låt"/>
-          <textarea type="text" ref="text" placeholder="Text" />
+          <input type="text" placeholder="Användarnamn"/>
+          <input type="password" ref="songName" placeholder="Password"/>
           <div className="submit">
-            <button style={{marginRight: 10}}>Skicka önskning</button>
-            <a target="_blank"><button>Önska via twitter</button></a>
+            <button>Logga in</button>
           </div>
         </main>
       </div>
