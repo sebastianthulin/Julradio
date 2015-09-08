@@ -13,9 +13,10 @@ class Controls extends React.Component {
   render() {
     var { playing } = this.state
     return (
-      <div className="playBox">
-        <button style={{color: '#FFF'}} onClick={RadioStore.toggle}>{playing ? 'Pausa' : 'Starta Radio'}</button>
-      </div>
+      <button className="play-container" onClick={RadioStore.toggle}>
+        {playing ? <i className="fa fa-pause" /> : <i className="fa fa-play" />}
+        <span>{playing ? 'Pausa' : 'Starta Radio'}</span>
+      </button>
     )
   }
 }

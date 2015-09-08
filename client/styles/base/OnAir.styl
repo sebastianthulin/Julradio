@@ -1,11 +1,53 @@
-.playBox
+.play-container
   position absolute
   right 30px
   top 30px
-  button
-    border 2px solid white
-    font-weight 500
-    line-height 36px
+  width 120px
+  height 90px
+  border none
+  background none
+  cursor pointer
+  transition width .2s
+  padding 0
+  &:hover:after
+    width 90px
+    height 90px
+  &:hover:active:after
+    width 80px
+    height 80px
+    background rgba(255, 255, 255, 0.06)
+  &:after
+    content ''
+    position absolute
+    height 0
+    width 0
+    left 0
+    right 0
+    top 0
+    bottom 0
+    margin auto
+    z-index -1
+    border-radius 50%
+    background rgba(255, 255, 255, 0.16)
+    transition width .2s, height .2s, background .2s
+  i
+    position absolute
+    height 40px
+    top 0px
+    bottom 0px
+    left 0px
+    right 0px
+    margin auto
+    font-size 32px
+    color #FFF
+  span
+    position absolute
+    left 0px
+    top 76px
+    width 100%
+    font-size 15px
+    color #FFF
+
 
 #on-air
   margin 0 auto
