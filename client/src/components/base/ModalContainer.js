@@ -2,6 +2,8 @@ var React = require('react')
 var Modal = require('../../services/Modal')
 
 var modals = {
+  LogIn: require('../modals/LogIn'),
+  SignUp: require('../modals/SignUp'),
   RequestSong: require('../modals/RequestSong')
 }
 

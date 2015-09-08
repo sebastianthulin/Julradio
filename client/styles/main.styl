@@ -3,13 +3,13 @@
 
 body
   margin 0
-  font-family 'Proxima Nova Light'
-  // font-size 17px
-  // line-height 1.4
   color #FFF
-  background #280000 url("/images/dark-red-christmas-background.jpg") repeat fixed 100% center / 100% auto
+  background #280000 url("/images/dark-red-christmas-background.jpg") fixed 100%
   &.no-scroll
     overflow hidden
+    
+body, input, textarea, button, select
+  font-family 'Proxima Nova Light'
 
 #app
   margin 0 auto
@@ -19,9 +19,7 @@ body
 .content
   padding 30px
   background rgba(0, 0, 0, 0.2)
-
-  // Larger than tablet
-  @media (min-width: 1000px)
+  +desktop()
     padding 40px 60px
 
 #snowfall

@@ -1,5 +1,6 @@
 var React = require('react')
 var { Link } = require('react-router')
+var Modal = require('../../services/Modal')
 
 class Header extends React.Component {
   render() {
@@ -11,8 +12,8 @@ class Header extends React.Component {
         </Link>
         <Link to="/admin/articles">Admin page</Link>
         <div className="user">
-          <Link to="/signup">Logga in</Link>
-          <Link to="/signup">Registrera dig</Link>
+          <button onClick={Modal.open.bind(null, 'LogIn')}>Logga in</button>
+          <button onClick={Modal.open.bind(null, 'SignUp')}>Registrera dig</button>
         </div>
       </div>
     )

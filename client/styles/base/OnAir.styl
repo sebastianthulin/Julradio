@@ -21,22 +21,24 @@
     width 150px
     height 150px
     border-radius 5px
-    float left
+    float none
     background transparent url('/images/berkleyill.jpg') repeat scroll 0px -10px / 150px auto
-    /* Larger than mobile */
-    @media (max-width: 800px)
-      float none
-      margin 0 auto
+    margin 0 auto
+    +tablet()
+      float left
+      margin 0
   .lol
-    margin-left 16px
     float left
+    width 100%
+    margin-left 0
+    padding-top 30px
     position relative
-    width calc(100% - 200px)
     height 100%
     line-height 1
-    @media (max-width: 800px)
-      padding-top 30px
-      width 100%
+    +tablet()
+      width calc(100% - 200px)
+      margin-left 16px
+      padding-top 0
   section
     width 100%
     position relative
