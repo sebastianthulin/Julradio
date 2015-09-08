@@ -20,18 +20,18 @@ class OnAir extends React.Component {
         <div className="lol">
           <section className="fst">
             <img className="icon" src="/images/user.png" />
-            <span className="meta">Host</span>
-            <span className="meta-2">Oliver Johansson</span>
+            <span className="meta frst">Host</span>
+            <span className="meta">Oliver Johansson</span>
           </section>
           <section className="snd">
             <img className="icon" src="/images/play.png" />
-            <span className="meta">Nu spelas</span>
-            <span className="meta-2">{metadata.current}</span>
+            <span className="meta frst">Nu spelas</span>
+            <span className="meta">{metadata.current}</span>
           </section>
           <section className="trd">
             <img className="icon" src="/images/clock.png" />
-            <Link to="/historik" className="meta">Tidigare</Link>
-            <span className="meta-2">{metadata.previous}</span>
+            <Link to="/historik" className="meta frst">Tidigare</Link>
+            <span className="meta">{metadata.previous}</span>
           </section>
         </div>
         <Controls />

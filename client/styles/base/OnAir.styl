@@ -1,15 +1,18 @@
 .playBox
-  float right
-  
+  position absolute
+  right 30px
+  top 30px
   button
     border 2px solid white
     font-weight 500
     line-height 36px
 
 #on-air
-  height 210px
   margin 0 auto
   padding 30px
+  display table
+  width 100%
+  position relative
   background rgba(255, 0, 0, 0.3)
   @media (min-width: 1280px)
     border-radius 3px 3px 0 0
@@ -19,20 +22,28 @@
     height 150px
     border-radius 5px
     float left
-    margin-right 16px
     background transparent url('/images/berkleyill.jpg') repeat scroll 0px -10px / 150px auto
-  
+    /* Larger than mobile */
+    @media (max-width: 800px)
+      float none
+      margin 0 auto
   .lol
+    margin-left 16px
     float left
     position relative
-    width 410px
+    width calc(100% - 200px)
     height 100%
     line-height 1
-    
+    @media (max-width: 800px)
+      float none
+      margin 0px auto
+      padding-top 30px
   section
-    position absolute
-    height 40px
     width 100%
+    position relative
+    margin-bottom 20px
+    &:last-child
+      margin-bottom 0px
     &::after
       content ''
       position absolute
@@ -41,23 +52,14 @@
       bottom 4px
       left 31px
       background rgba(255, 255, 255, 0.22)
-    &.fst
-      top 0
-    &.snd
-      top 0
-      bottom 0
-      margin auto 0
-    &.trd
-      bottom 0
     .icon
       height 20px
-      margin 10px 0px
+      margin-right 24px
+      margin-top 10px
+      float left
     .meta
-      position absolute
-      top 3px
-      left 42px
-      color rgba(255, 255, 255, 0.5)
-    .meta-2
-      bottom 3px
-      position absolute
-      left 42px
+      display block
+      color #FFF
+      margin-bottom 5px
+      &.frst
+        color rgba(255, 255, 255, 0.5)

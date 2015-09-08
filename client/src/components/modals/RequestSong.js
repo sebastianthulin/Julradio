@@ -3,8 +3,10 @@ var React = require('react')
 class RequestSong extends React.Component {
   setHref(ev) {
     var songName = this.refs.songName.getDOMNode().value
+    if (!songName)
+      return;
     var text = this.refs.text.getDOMNode().value
-    var query = encodeURIComponent('Jag vill höra "' + songName + '" ' + text + ' #julradio')
+    var query = encodeURIComponent('Jag vill höra "' + songName + '". ' + text + ' #julradio')
     ev.currentTarget.href = 'https://twitter.com/intent/tweet?text=' + query
   }
 
