@@ -5,7 +5,7 @@ var ManageArticle = require('./ManageArticle')
 
 class ManageArticles extends React.Component {
   componentWillMount() {
-    NewsStore.get(this.handleArticles.bind(this))
+    NewsStore.subscribe(this.handleArticles.bind(this))
   }
 
   componentDidMount() {

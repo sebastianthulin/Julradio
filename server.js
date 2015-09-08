@@ -12,6 +12,7 @@ mongoose.connect('mongodb://localhost/Julradio')
 app.set('view engine', 'ejs')
 app.set('views', './client/views')
 app.use(express.static('./public'))
+app.use(require('body-parser').json())
 app.use('/api', require('./app/routes/api'))
 app.use(require('./app/routes'))
 

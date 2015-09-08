@@ -10,8 +10,8 @@ NewsStore.add = function(opts) {
     story[i] = opts[i]
 }
 
-NewsStore.update = function(id, opts) {
-  
+NewsStore.update = function(article) {
+  request.post('/api/article/' + article._id, article, () => NewsStore.get())
 }
 
 NewsStore.delete = function(id) {
@@ -19,11 +19,25 @@ NewsStore.delete = function(id) {
 }
 
 NewsStore.get = function(callback) {
-  callback(articles)
+  callback && callback(articles)
   request.get('/api/articles', function(err, res) {
     articles = res.body
-    callback(articles)
+    callback && callback(articles)
+    NewsStore.emit('articles', articles)
   })
+}
+
+NewsStore.subscribe = function(handler) {
+  handler(articles)
+  NewsStore.on('articles', handler)
+  NewsStore.get()
+  return function unsubscribe() {
+    NewsStore.removeListener('articles', handler)
+  }
+}
+
+NewsStore.whatever = function(id) {
+  request.del('/api/article/' + id).end()
 }
 
 module.exports = NewsStore
