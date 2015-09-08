@@ -8,7 +8,7 @@ class Navigation extends React.Component {
         <div className="group">
           <h4>Hantering</h4>
           <Link to="/admin/articles">Nyheter</Link>
-          <a>Konton</a>
+          <Link to="/admin/accounts">Konton</Link>
           <a>Tävlingar</a>
           <a>Poll</a>
         </div>

@@ -21,6 +21,10 @@ stream.on('metadata', function(data) {
   }
 })
 
+stream.on('error', function(err) {
+  console.log(err)
+})
+
 module.exports = function(socket) {
   socket.emit('metadata', metadata)
   socket.on('get history', function(fn) {

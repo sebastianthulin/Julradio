@@ -1,24 +1,33 @@
 var React = require('react')
 var { Link } = require('react-router')
 var NewsStore = require('../../../stores/NewsStore')
-var Navigation = require('./Navigation')
+var ManageArticle = require('./ManageArticle')
 
 class ManageArticles extends React.Component {
   componentWillMount() {
-    console.log(this.props.param)
     NewsStore.get(this.handleArticles.bind(this))
   }
 
-  componentWillReceiveProps() {
-    console.log(this.props.param)
+  componentDidMount() {
+    this.setArticle(this.props.param)
+  }
+
+  componentWillReceiveProps(props) {
+    this.setArticle(props.param)
   }
 
   handleArticles(articles) {
     this.setState({articles})
   }
 
+  setArticle(articleId) {
+    this.setState({selected: articleId})
+  }
+
   render() {
-    var { articles } = this.state
+    var { articles, selected } = this.state
+    var selectedArticle = articles.filter(article => article._id === selected)[0]
+
     return (
       <div>
         <div className="three columns">
@@ -27,14 +36,7 @@ class ManageArticles extends React.Component {
             {articles.map(article => <Link key={article._id} to={'/admin/articles/' + article._id}>{article.title}</Link>)}
           </div>
         </div>
-        <div className="six columns article">
-          <input type="text" defaultValue="Title of the article" />
-          <textarea defaultValue="HELLO THIS IS THE TEXT IN THE ARTICLE THAT U CHOSE TO EDIT AND STUFF! WHAT U SAY ABOUT THAT NOW"></textarea>
-          <div>
-            <button>Uppdatera</button>
-            <button style={{float: 'right', marginRight: 0}}>Ta Bort</button>
-          </div>
-        </div>
+        {selectedArticle && <ManageArticle key={selectedArticle._id} article={selectedArticle} />}
       </div>
     )
   }

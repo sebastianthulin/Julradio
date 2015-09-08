@@ -27,6 +27,10 @@ tw.on('tweet', function(data) {
   }
 })
 
+tw.on('error', function(err) {
+  console.log(err)
+})
+
 module.exports = function(socket) {
   socket.emit('tweets', tweets)
 }
