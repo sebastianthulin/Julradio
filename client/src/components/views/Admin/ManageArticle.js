@@ -3,15 +3,18 @@ var NewsStore = require('../../../stores/NewsStore')
 
 class ManageArticle extends React.Component {
   componentWillMount() {
-    NewsStore.whatever(this.props.article._id)
+    this.id = this.props.article._id
   }
 
   save() {
-    NewsStore.update({
-      _id: this.props.article._id,
+    NewsStore.update(this.id, {
       title: this.refs.title.getDOMNode().value,
       text: this.refs.text.getDOMNode().value
     })
+  }
+
+  delete() {
+    NewsStore.delete(this.id)
   }
 
   render() {
@@ -22,7 +25,7 @@ class ManageArticle extends React.Component {
         <textarea ref="text" defaultValue={article.text} />
         <div>
           <button onClick={this.save.bind(this)}>Uppdatera</button>
-          <button style={{float: 'right', marginRight: 0}}>Ta Bort</button>
+          <button style={{float: 'right', marginRight: 0}} onClick={this.delete.bind(this)}>Ta Bort</button>
         </div>
       </div>
     )

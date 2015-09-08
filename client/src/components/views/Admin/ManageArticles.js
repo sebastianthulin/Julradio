@@ -5,38 +5,53 @@ var ManageArticle = require('./ManageArticle')
 
 class ManageArticles extends React.Component {
   componentWillMount() {
-    NewsStore.subscribe(this.handleArticles.bind(this))
+    this.unsubscribe = NewsStore.subscribe(this.handleArticles.bind(this))
   }
 
   componentDidMount() {
-    this.setArticle(this.props.param)
+    this.selectedId = this.props.param
+    this.setArticle()
   }
 
   componentWillReceiveProps(props) {
-    this.setArticle(props.param)
+    this.selectedId = props.param
+    this.setArticle()
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe()
   }
 
   handleArticles(articles) {
+    this.articles = articles
     this.setState({articles})
+    this.setArticle()
   }
 
-  setArticle(articleId) {
-    this.setState({selected: articleId})
+  setArticle() {
+    var selected = this.articles.filter(article => article._id === this.selectedId)[0]
+    this.setState({selected})
+  }
+
+  create() {
+    NewsStore.create(article => {
+      this.setState({selected: article})
+    })
   }
 
   render() {
     var { articles, selected } = this.state
-    var selectedArticle = articles.filter(article => article._id === selected)[0]
 
     return (
       <div>
         <div className="three columns">
           <h3>Admin - Nyheter</h3>
+          <button onClick={this.create.bind(this)}>Skapa ny</button>
           <div className="list">
             {articles.map(article => <Link key={article._id} to={'/admin/articles/' + article._id}>{article.title}</Link>)}
           </div>
         </div>
-        {selectedArticle && <ManageArticle key={selectedArticle._id} article={selectedArticle} />}
+        {selected && <ManageArticle key={selected._id} article={selected} />}
       </div>
     )
   }

@@ -4,18 +4,18 @@ var socket = require('../services/socket')
 var NewsStore = new EventEmitter
 var articles = []
 
-NewsStore.add = function(opts) {
-  var story = {}
-  for(var i in opts)
-    story[i] = opts[i]
+NewsStore.create = function(callback) {
+  request.get('/api/article/create', function(err, res) {
+    callback(res.body)
+  })
 }
 
-NewsStore.update = function(article) {
-  request.post('/api/article/' + article._id, article, () => NewsStore.get())
+NewsStore.update = function(id, opts) {
+  request.post('/api/article/' + id, opts, () => NewsStore.get())
 }
 
 NewsStore.delete = function(id) {
-
+  request.del('/api/article/' + id, () => NewsStore.get())
 }
 
 NewsStore.get = function(callback) {
@@ -37,7 +37,7 @@ NewsStore.subscribe = function(handler) {
 }
 
 NewsStore.whatever = function(id) {
-  request.del('/api/article/' + id).end()
+  // request.del('/api/article/' + id).end()
 }
 
 module.exports = NewsStore
