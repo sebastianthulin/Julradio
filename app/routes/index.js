@@ -3,8 +3,7 @@
 var express = require('express')
 var router = express.Router()
 var io = require('../../server').io
-
-var User = require('../models/User')
+var db = require('../models')
 
 router.post('/reloadclients', function(req, res) {
   io.emit('reload')
@@ -12,11 +11,11 @@ router.post('/reloadclients', function(req, res) {
 })
 
 router.post('/signup', function(req, res) {
-  var user = User(req.body)
+  var user = db.User(req.body)
 
   user.save(function(err, user) {
     req.session.user = user
-    res.send({user: user, err: err})
+    res.send({err, user})
   })
 })
 

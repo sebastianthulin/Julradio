@@ -12,6 +12,8 @@ var tw = require('node-tweet-stream')({
 
 tw.track('javascript')
 
+tw.on('error', err => console.log(err))
+
 tw.on('tweet', function(data) {
   var tweet = {
     id: data.id,
@@ -27,10 +29,5 @@ tw.on('tweet', function(data) {
   }
 })
 
-tw.on('error', function(err) {
-  console.log(err)
-})
 
-module.exports = function(socket) {
-  socket.emit('tweets', tweets)
-}
+module.exports = socket => socket.emit('tweets', tweets)

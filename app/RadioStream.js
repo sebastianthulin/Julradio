@@ -7,9 +7,8 @@ var history = []
 
 var stream = radio.createReadStream('http://s5.voscast.com:7346')
 
-stream.on('connect', function() {
-  console.log('connected to radio')
-})
+stream.on('connect', () => console.log('connected to radio'))
+stream.on('error', err => console.log(err))
 
 stream.on('metadata', function(data) {
   var title = radio.parseMetadata(data).StreamTitle
@@ -21,15 +20,10 @@ stream.on('metadata', function(data) {
   }
 })
 
-stream.on('error', function(err) {
-  console.log(err)
-})
-
-module.exports = function(socket) {
-  socket.emit('metadata', metadata)
-  socket.on('get history', function(fn) {
+module.exports = socket => socket
+  .emit('metadata', metadata)
+  .on('get history', function(fn) {
     if (typeof fn === 'function') {
       fn(history)
     }
   })
-}
