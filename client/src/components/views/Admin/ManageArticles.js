@@ -35,6 +35,7 @@ class ManageArticles extends React.Component {
 
   create() {
     NewsStore.create(article => {
+      this.context.router.transitionTo('/admin/articles/' + article._id)
       this.setState({selected: article})
     })
   }
@@ -55,6 +56,10 @@ class ManageArticles extends React.Component {
       </div>
     )
   }
+}
+
+ManageArticles.contextTypes = {
+  router: React.PropTypes.func
 }
 
 module.exports = ManageArticles

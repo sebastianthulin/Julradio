@@ -24,7 +24,7 @@ class ManageArticle extends React.Component {
         <input ref="title" defaultValue={article.title} />
         <textarea ref="text" defaultValue={article.text} />
         <div>
-          <button onClick={this.save.bind(this)}>Uppdatera</button>
+          <button onClick={this.save.bind(this)}>Spara</button>
           <button style={{float: 'right', marginRight: 0}} onClick={this.delete.bind(this)}>Ta Bort</button>
         </div>
       </div>

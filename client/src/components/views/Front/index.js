@@ -2,8 +2,8 @@ var React = require('react')
 var Modal = require('../../../services/Modal')
 var TweetStore = require('../../../stores/TweetStore')
 var NewsStore = require('../../../stores/NewsStore')
-var Article = require('./Article')
 var TwitterFeed = require('../../reusable/TwitterFeed')
+var Article = require('./Article')
 
 class Front extends React.Component {
   componentWillMount() {

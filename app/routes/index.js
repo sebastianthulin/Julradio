@@ -24,7 +24,6 @@ router.post('/signin', function(req, res) {
 })
 
 router.get('*', function(req, res) {
-  console.log(req.session.user)
   res.render('main')
 })
 
