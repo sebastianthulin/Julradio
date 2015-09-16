@@ -22,6 +22,12 @@ class App extends React.Component {
         <Header />
         <OnAir />
         <Router.RouteHandler />
+        <div className="footer">
+          <span className="footerLogo">Julradio</span>
+          <div className="fRow"><div className="fRowOne">Ansvarig</div><div className="fRowTwo">boss@julradio.se</div></div>
+          <div className="fRow"><div className="fRowOne">Inqueries</div><div className="fRowTwo">business@julradio.se</div></div>
+          <div className="fRow"><div className="fRowOne">Stuff</div><div className="fRowTwo">help@julradio.se</div></div>
+        </div>
         <ModalContainer />
         <Snowfall
           count={300}
