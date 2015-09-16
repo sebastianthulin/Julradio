@@ -45,8 +45,8 @@ class ManageArticles extends React.Component {
 
     return (
       <div>
-        <div className="three columns">
-          <h3>Admin - Nyheter</h3>
+        <div className="adminContent three columns">
+          <h3>Nyheter</h3>
           <button onClick={this.create.bind(this)}>Skapa ny</button>
           <div className="list">
             {articles.map(article => <Link key={article._id} to={'/admin/articles/' + article._id}>{article.title}</Link>)}
