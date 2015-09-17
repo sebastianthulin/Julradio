@@ -18,9 +18,7 @@ var dependencies = [
   'react-router'
 ]
 
-var reload = function() {
-  request.post('http://127.0.0.1:8080/reloadclients').end()
-}
+var reload = () => request.post('http://127.0.0.1:8080/reloadclients').end()
 
 gulp.task('js', function() {
   return browserify('./client/src/app', {debug: true})
