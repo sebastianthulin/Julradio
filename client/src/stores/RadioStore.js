@@ -7,7 +7,8 @@ var localStorage = window.localStorage || {}
 var store = {
   playing: false,
   metadata: {},
-  history: []
+  history: [],
+  volume: null
 }
 
 function handleMetadata(data) {
@@ -36,6 +37,15 @@ Radio.toggle = function() {
   audio.paused ? Radio.play() : Radio.pause()
 }
 
+Radio.setVolume = function(vol) {
+  vol = Math.min(1, vol)
+  vol = Math.max(0, vol)
+  audio.volume = vol
+  store.volume = vol
+  localStorage.volume = vol
+  Radio.emit('volume', vol)
+}
+
 Radio.subscribe = function(event, handler) {
   handler(store[event])
   Radio.on(event, handler)
@@ -54,6 +64,7 @@ Radio.subscribe.history = function(handler) {
 
 socket.on('metadata', handleMetadata)
 
+Radio.setVolume(localStorage.volume || 1)
 localStorage.playing == 1 && Radio.play()
 
 module.exports = Radio
