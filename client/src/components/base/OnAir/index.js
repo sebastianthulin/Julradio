@@ -33,6 +33,11 @@ class OnAir extends React.Component {
             <Link to="/historik" className="meta frst">Tidigare</Link>
             <span className="meta">{metadata.previous}</span>
           </section>
+          <div className="historyPop">
+            <Link to="/historik" className="tidigare">Tidigare</Link>
+            <div className="songk">Jingle balls - Jesus christ</div>
+            <div className="songk">Hard rock hallelujah - Lordi</div>
+          </div>
         </div>
         <Controls />
       </div>
