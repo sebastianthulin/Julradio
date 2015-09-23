@@ -18,20 +18,19 @@ class Controls extends React.Component {
   initDrag(ev) {
     ev.preventDefault()
     this.handleDrag(ev)
-    var mouseMoveHandler = this.handleDrag.bind(this)
-    var mouseUpHandler = function() {
-      document.removeEventListener('mousemove', mouseMoveHandler)
-      document.removeEventListener('mouseup', mouseUpHandler)
+    var handleDrag = this.handleDrag.bind(this)
+    var endDrag = function() {
+      document.removeEventListener('mousemove', handleDrag)
+      document.removeEventListener('mouseup', endDrag)
     }
-    document.addEventListener('mousemove', mouseMoveHandler)
-    document.addEventListener('mouseup', mouseUpHandler)
+    document.addEventListener('mousemove', handleDrag)
+    document.addEventListener('mouseup', endDrag)
   }
 
   handleDrag(ev) {
-    var slider = this.refs.slider.getDOMNode()
-    var rect = slider.getBoundingClientRect()
-    var left = ev.clientX - rect.left
-    RadioStore.setVolume(left / rect.width)
+    var rect = this.refs.slider.getDOMNode().getBoundingClientRect()
+    var offsetLeft = ev.clientX - rect.left
+    RadioStore.setVolume(offsetLeft / rect.width)
   }
 
   render() {
@@ -42,7 +41,7 @@ class Controls extends React.Component {
           <div className="volume" style={{width: volume * 100 + '%'}} />
         </div>
         <button className="play-container" onClick={RadioStore.toggle}>
-          {playing ? <i className="fa fa-pause" /> : <i className="fa fa-play" />}
+          <i className={playing ? 'fa fa-pause' : 'fa fa-play'} />
           <span>{playing ? 'Pausa' : 'Starta Radio'}</span>
         </button>
       </div>

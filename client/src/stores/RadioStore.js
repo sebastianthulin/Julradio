@@ -38,11 +38,8 @@ Radio.toggle = function() {
 }
 
 Radio.setVolume = function(vol) {
-  vol = Math.min(1, vol)
-  vol = Math.max(0, vol)
-  audio.volume = vol
-  store.volume = vol
-  localStorage.volume = vol
+  vol = vol > 1 ? 1 : vol < 0 ? 0 : vol
+  audio.volume = store.volume = localStorage.volume = vol
   Radio.emit('volume', vol)
 }
 

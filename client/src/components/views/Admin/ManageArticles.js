@@ -42,7 +42,6 @@ class ManageArticles extends React.Component {
 
   render() {
     var { articles, selected } = this.state
-
     return (
       <div>
         <div className="adminContent three columns">
