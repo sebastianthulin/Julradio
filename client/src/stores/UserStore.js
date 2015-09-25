@@ -9,20 +9,30 @@ UserStore.set = function(user) {
 }
 
 UserStore.logIn = function(creds, callback) {
-  request.post('/login', creds, function(err, res) {
-    callback(res.body.err, res.body.user)
-    if (res.body.user) {
-      UserStore.set(res.body.user)
-    }
+  return new Promise(function(resolve, reject) {
+    request.post('/login', creds, function(err, res) {
+      var { err, user } = res.body
+      user && UserStore.set(user)
+      if (err) {
+        reject(err)
+      } else {
+        resolve(user)
+      }
+    })
   })
 }
 
 UserStore.signUp = function(form, callback) {
-  request.post('/signup', form, function(err, res) {
-    callback(res.body.err, res.body.user)
-    if (res.body.user) {
-      UserStore.set(res.body.user)
-    }
+  return new Promise(function(resolve, reject) {
+    request.post('/signup', form, function(err, res) {
+      var { err, user } = res.body
+      user && UserStore.set(user)
+      if (err) {
+        reject(err)
+      } else {
+        resolve(user)
+      }
+    })
   })
 }
 
@@ -39,5 +49,7 @@ UserStore.subscribe = function(handler) {
     UserStore.removeListener('doc', handler)
   }
 }
+
+user && UserStore.set(user)
 
 module.exports = UserStore

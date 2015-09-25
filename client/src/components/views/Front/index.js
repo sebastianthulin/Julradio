@@ -7,20 +7,12 @@ var Article = require('./Article')
 
 class Front extends React.Component {
   componentWillMount() {
-    NewsStore.get(this.handleArticles.bind(this))
-    this.unsubscribe = TweetStore.subscribe(this.handleTweets.bind(this))
+    NewsStore.get(articles => this.setState({articles}))
+    this.unsubscribe = TweetStore.subscribe(tweets => this.setState({tweets}))
   }
 
   componentWillUnmount() {
     this.unsubscribe()
-  }
-
-  handleArticles(articles) {
-    this.setState({articles})
-  }
-
-  handleTweets(tweets) {
-    this.setState({tweets})
   }
 
   render() {

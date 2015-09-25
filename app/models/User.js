@@ -14,15 +14,17 @@ var schema = new Schema({
   }
 })
 
-var sha256 = text => crypto.createHash('sha256').update(text).digest('hex')
+var sha256 = str => crypto.createHash('sha256').update(str).digest('hex')
 
-var user = schema.methods = {}
-
-user.signUp = function(opts) {
+schema.methods.signUp = function(opts, callback) {
+  this.username = opts.username
+  this.email = opts.email
   this.password = sha256(opts.password)
+  this.save(callback)
+  return this
 }
 
-user.auth = function(password) {
+schema.methods.auth = function(password) {
   return sha256(password) === this.password
 }
 

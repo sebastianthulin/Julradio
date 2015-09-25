@@ -15,7 +15,7 @@ class OnAir extends React.Component {
 
   handleHistory(history) {
     this.setState({
-      history: history.slice().reverse().splice(1)
+      history: history.slice(31).reverse().slice(1)
     })
   }
 

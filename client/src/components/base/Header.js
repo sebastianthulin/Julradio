@@ -1,9 +1,27 @@
 var React = require('react')
 var { Link } = require('react-router')
 var Modal = require('../../services/Modal')
+var UserStore = require('../../stores/UserStore')
+
+class MenuItem extends React.Component {
+  render() {
+    var { to, onClick, children } = this.props
+    var btn = <button onClick={onClick}>{children}</button>
+    return this.props.if ?
+      to
+        ? <Link to={to}>{btn}</Link>
+        : btn
+      : null
+  }
+}
 
 class Header extends React.Component {
+  componentWillMount() {
+    UserStore.subscribe(user => this.setState({user}))
+  }
+
   render() {
+    var { user } = this.state
     return (
       <div id="header">
         <Link to="/" className="logo">
@@ -11,9 +29,10 @@ class Header extends React.Component {
           <span className="slogan">Nätets Bästa Julmusik</span>
         </Link>
         <div className="user">
-          <Link to="/admin/articles"><button>Admin</button></Link>
-          <button onClick={Modal.open.bind(null, 'LogIn')}>Logga in</button>
-          <button onClick={Modal.open.bind(null, 'SignUp')}>Registrera dig</button>
+          <MenuItem if={user} to="/admin/articles">Admin</MenuItem>
+          <MenuItem if={user} onClick={UserStore.logOut}>Logga ut</MenuItem>
+          <MenuItem if={!user} onClick={Modal.open.bind(null, 'LogIn')}>Logga in</MenuItem>
+          <MenuItem if={!user} onClick={Modal.open.bind(null, 'SignUp')}>Registrera dig</MenuItem>
         </div>
       </div>
     )
