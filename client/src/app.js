@@ -1,18 +1,17 @@
 require('./services/LiveReload')
-var React = require('react')
-var Router = require('react-router')
-var { Route, DefaultRoute } = Router
+const React = require('react')
+const Router = require('react-router')
+const { Route, DefaultRoute } = Router
 
 // Site base components
-var Header = require('./components/base/Header')
-var OnAir = require('./components/base/OnAir')
-var Footer = require('./components/base/Footer')
-var ModalContainer = require('./components/base/ModalContainer')
-var Snowfall = require('./components/base/Snowfall')
+const Header = require('./components/base/Header')
+const OnAir = require('./components/base/OnAir')
+const Footer = require('./components/base/Footer')
+const ModalContainer = require('./components/base/ModalContainer')
 
 // Views
-var Front = require('./components/views/Front')
-var Admin = require('./components/views/Admin')
+const Front = require('./components/views/Front')
+const Admin = require('./components/views/Admin')
 
 class App extends React.Component {
   render() {
@@ -23,13 +22,6 @@ class App extends React.Component {
         <Router.RouteHandler />
         <Footer />
         <ModalContainer />
-        <Snowfall
-          count={300}
-          minSize={1}
-          maxSize={2}
-          minSpeed={1}
-          maxSpeed={5}
-        />
       </div>
     )
   }

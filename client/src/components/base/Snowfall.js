@@ -1,21 +1,25 @@
 const React = require('react')
 const random = (min, max) => Math.round(min + Math.random() * (max - min))
-const getHeight = () => Math.max(window.innerHeight, document.body.scrollHeight)
-const getWidth = () => Math.max(window.innerWidth, document.body.scrollWidth)
 
 class Flake {
-  constructor(opts) {
+  constructor(opts, getHeight, getWidth) {
+    this.getHeight = getHeight
+    this.getWidth = getWidth
+    this.numFlakes = opts.count
     this.minSize = opts.minSize || 1
     this.maxSize = opts.maxSize || 2
     this.minSpeed = opts.minSpeed || 1
     this.maxSpeed = opts.maxSpeed || 5
     this.reset()
-    this.y = random(0, getHeight())
+    this.visible = false
+    this.shouldDie = !opts.active
     this.step = 0
+    this.y = random(0, this.getHeight())
   }
 
   reset() {
-    this.x = random(0, getWidth())
+    this.visible = !this.shouldDie
+    this.x = random(0, this.getWidth())
     this.y = random(0, this.maxSpeed)
     this.size = random((this.minSize * 100), (this.maxSize * 100)) / 100
     this.speed = random(this.minSpeed, this.maxSpeed)
@@ -26,39 +30,54 @@ class Flake {
     this.step += this.stepSize
     this.x += Math.cos(this.step)
     this.y += this.speed
-    if (this.y > getHeight() - this.size) {
+    if (this.y > this.getHeight() - this.size) {
       this.reset()
     }
+  }
+
+  kill() {
+    this.shouldDie = true
+  }
+
+  resume() {
+    this.shouldDie = false
   }
 }
 
 class Snowfall extends React.Component {
-  componentWillMount() {
+  componentDidMount() {
     this.flakes = []
+    this.canvas = this.refs.canvas.getDOMNode()
+    this.parent = this.canvas.parentNode
+    this.ctx = this.canvas.getContext('2d')
+    this.canvas.width = this.getWidth()
+    this.canvas.height = this.getHeight()
+    window.addEventListener('resize', this.resize.bind(this))
+
     for (var i = 0; i < this.props.count; i++) {
-      this.flakes.push(new Flake(this.props))
+      this.flakes.push(new Flake(this.props, this.getHeight.bind(this), this.getWidth.bind(this)))
+    }
+    this.tick()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.active !== nextProps.active) {
+      nextProps.active ? this.resume() : this.kill()
     }
   }
 
-  componentDidMount() {
-    this.canvas = this.refs.canvas.getDOMNode()
-    this.ctx = this.canvas.getContext('2d')
-    this.canvas.width = getWidth()
-    this.canvas.height = getHeight()
-    this.tick()
-    window.addEventListener('resize', this.resize.bind(this))
+  getHeight() {
+    return this.parent.clientHeight
   }
 
-  componentWillReceiveProps() {
-    this.resize()
+  getWidth() {
+    return this.parent.clientWidth
   }
 
   resize() {
     var { canvas } = this
-    canvas.style.display = 'none'
-    canvas.width = getWidth()
-    canvas.height = getHeight()
-    canvas.style.display = 'block'
+    canvas.width = this.getWidth()
+    canvas.height = this.getHeight()
   }
 
   tick() {
@@ -70,8 +89,16 @@ class Snowfall extends React.Component {
     while (i--) {
       var flake = this.flakes[i]
       flake.tick()
-      ctx.fillRect(flake.x, flake.y, flake.size, flake.size)
+      flake.visible && ctx.fillRect(flake.x, flake.y, flake.size, flake.size)
     }
+  }
+
+  kill() {
+    this.flakes.map(flake => flake.kill())
+  }
+
+  resume() {
+    this.flakes.map(flake => flake.resume())
   }
 
   render() {
