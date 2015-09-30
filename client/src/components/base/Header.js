@@ -28,6 +28,13 @@ class Header extends React.Component {
           <span className="julradio">Julradio</span>
           <span className="slogan">Nätets Bästa Julmusik</span>
         </Link>
+        <div className="headerLinks">
+          <div className="linkItem">HEM</div>
+          <div className="linkItem">TÄVLINGAR</div>
+          <div className="linkItem">CHATT</div>
+          <div className="linkItem">KONTAKT</div>
+          <div className="linkItem">LOGGA IN</div>
+        </div>
         <div className="user">
           <MenuItem if={user} to="/admin/articles">Admin</MenuItem>
           <MenuItem if={user} onClick={UserStore.logOut}>Logga ut</MenuItem>
