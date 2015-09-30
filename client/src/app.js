@@ -12,6 +12,7 @@ const ModalContainer = require('./components/base/ModalContainer')
 // Views
 const Front = require('./components/views/Front')
 const Admin = require('./components/views/Admin')
+const UserProfile = require('./components/views/UserProfile')
 
 class App extends React.Component {
   render() {
@@ -29,6 +30,7 @@ class App extends React.Component {
 
 const routes = (
   <Route handler={App}>
+    <Route path="/user/:username" handler={UserProfile} />
     <Route path="/admin/:panel" handler={Admin} />
     <Route path="/admin/:panel/:value" handler={Admin} />
     <DefaultRoute handler={Front} />

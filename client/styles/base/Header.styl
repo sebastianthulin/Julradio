@@ -1,39 +1,29 @@
 #header
-  position relative
-  height 100px
-  margin 0 auto
+  display flex
+  align-items center
+  justify-content space-between
+  padding 4px 30px
   background rgba(255, 0, 0, 0.3)
-  .logo
-    position absolute
-    bottom 8px
-    left 30px
-    font-size 46px
-    color #FFF
-    text-decoration none
-    &:hover
-      color #a00
-  .julradio
-    font-family 'Lobster'
-  .slogan
-    font-size 13px
-    position absolute
-    width 200px
-    top 52px
-    left 21px
-  .user
-    position absolute
-    right 0px
-    top 0px
-    .details
-      margin 10px
-      text-align right
+  +desktop()
+    padding 4px 60px
 
+  .julradio
+    color #FFF
+    font-size 46px
+    font-family 'Lobster'
+    text-decoration none
+    transition color .2s
+    &:hover
+      color rgba(255, 255, 255, 0.78)
+
+  .user
     button
-      background rgba(255,0,0,0.4)
-      border 0px
-      color white
-      margin 0px 0px 0px 5px
-      padding 3px 10px 1px 10px
-      font-size 13px
-      border-radius 0px 0px 4px 4px
+      padding 0 20px
+      background none
+      color #FFF
       cursor pointer
+      border none
+      border-right 1px solid
+    > button:last-child, > a:last-child button
+      padding-right 0
+      border-right none
