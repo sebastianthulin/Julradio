@@ -94,11 +94,11 @@ class Snowfall extends React.Component {
   }
 
   kill() {
-    this.flakes.map(flake => flake.kill())
+    this.flakes.forEach(flake => flake.kill())
   }
 
   resume() {
-    this.flakes.map(flake => flake.resume())
+    this.flakes.forEach(flake => flake.resume())
   }
 
   render() {

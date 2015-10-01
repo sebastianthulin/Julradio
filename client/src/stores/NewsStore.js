@@ -1,7 +1,8 @@
-var { EventEmitter } = require('events')
-var request = require('superagent')
-var socket = require('../services/socket')
-var NewsStore = new EventEmitter
+const { EventEmitter } = require('events')
+const request = require('superagent')
+const socket = require('../services/socket')
+const NewsStore = new EventEmitter
+
 var articles = []
 
 NewsStore.create = function(callback) {
@@ -34,10 +35,6 @@ NewsStore.subscribe = function(handler) {
   return function unsubscribe() {
     NewsStore.removeListener('articles', handler)
   }
-}
-
-NewsStore.whatever = function(id) {
-  // request.del('/api/article/' + id).end()
 }
 
 module.exports = NewsStore
