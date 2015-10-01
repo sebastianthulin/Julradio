@@ -20,6 +20,10 @@ class Header extends React.Component {
     var { user } = this.state
 
     var menuItems = [{
+      if: true,
+      text: 'Chatt',
+      to: '/Chatt'
+    }, {
       if: user,
       text: user && user.username,
       to: user && '/user/' + user.username
