@@ -1,20 +1,25 @@
 const React = require('react')
+const cx = require('classnames')
 const RadioStore = require('../../../stores/RadioStore')
+const UIStore = require('../../../stores/UIStore')
 const Snowfall = require('../../base/Snowfall')
 const Avatar = require('./Avatar')
 const VolumeSlider = require('./VolumeSlider')
+const NowPlaying = require('./NowPlaying')
 
 class OnAir extends React.Component {
   componentWillMount() {
     RadioStore.subscribe('playing', playing => this.setState({playing}))
-    RadioStore.subscribe('metadata', metadata => this.setState({metadata}))
-    // RadioStore.subscribe.history(this.handleHistory.bind(this))
+    UIStore.subscribe('NowPlaying', nowPlayingVisibility => this.setState({
+      nowPlayingVisibility
+    }))
   }
 
   render() {
-    var { playing, metadata } = this.state
+    const { playing, nowPlayingVisibility } = this.state
+    const { CURRENT_ONLY, HISTORY } = nowPlayingVisibility
     return (
-      <div id="on-air">
+      <div id="on-air" className={cx({ya: HISTORY})}>
         <Snowfall
           active={playing}
           count={500}
@@ -23,15 +28,14 @@ class OnAir extends React.Component {
           minSpeed={0.5}
           maxSpeed={2}
         />
-        <div className="info" style={{marginBottom: 10}}>
-          <span className="meta-1">Host</span>
-          <span className="meta-2">Oliver Johansson</span>
-        </div>
-        <Avatar />
-        <VolumeSlider />
-        <div className="info">
-          <span className="meta-1">Nu spelas</span>
-          <span className="meta-2">{metadata.current}</span>
+        <div className="flex-container">
+          <div className="host">
+            <span className="meta">Host</span>
+            <span>Oliver Johansson</span>
+          </div>
+          <Avatar />
+          <VolumeSlider />
+          <NowPlaying />
         </div>
       </div>
     )

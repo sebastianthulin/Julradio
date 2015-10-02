@@ -26,7 +26,7 @@ gulp.task('js', function() {
     .transform(babelify)
     .bundle()
     .on('error', function(err) {
-      console.log(err)
+      console.log(err.toString())
       this.emit('end')
     })
     .pipe(source('app.js'))

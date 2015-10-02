@@ -1,5 +1,5 @@
-var React = require('react')
-var RadioStore = require('../../../stores/RadioStore')
+const React = require('react')
+const RadioStore = require('../../../stores/RadioStore')
 
 class Avatar extends React.Component {
   componentWillMount() {
@@ -7,7 +7,7 @@ class Avatar extends React.Component {
   }
 
   render() {
-    var { playing } = this.state
+    const { playing } = this.state
     return (
       <div className="avatar">
         <div className="image" onClick={RadioStore.toggle}>

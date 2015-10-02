@@ -22,7 +22,7 @@ class Header extends React.Component {
     var menuItems = [{
       if: true,
       text: 'Chatt',
-      to: '/Chatt'
+      to: '/messages/asdf'
     }, {
       if: user,
       text: user && user.username,
