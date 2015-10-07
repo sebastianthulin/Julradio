@@ -1,9 +1,9 @@
 'use strict';
 
-var io = require('../server').io
-var tweets = []
+const io = require('../server').io
+const tweets = []
 
-var tw = require('node-tweet-stream')({
+const tw = require('node-tweet-stream')({
   consumer_key: 'TJdtltXD9Quw715oIYqOgjYB3',
   consumer_secret: 'meCMO8dxLzExeKTB7ZLo6Gqin76NOtylAKemEWGwuPzbPUoNNw',
   token: '2883350073-h7mL232SNhxSvwSEHWqsJkDnbjyilPxFZq1Rj7z',
@@ -15,7 +15,7 @@ tw.track('javascript')
 tw.on('error', err => console.log(err))
 
 tw.on('tweet', function(data) {
-  var tweet = {
+  const tweet = {
     id: data.id,
     text: data.text,
     username: data.user.screen_name,

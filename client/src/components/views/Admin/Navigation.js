@@ -4,7 +4,7 @@ var { Link } = require('react-router')
 class Navigation extends React.Component {
   render() {
     return (
-      <div className="adminMenu three columns">
+      <div className="two columns">
         <div className="group">
           <h4>Hantering</h4>
           <Link to="/admin/articles">Nyheter</Link>

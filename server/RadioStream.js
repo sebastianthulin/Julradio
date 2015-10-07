@@ -1,17 +1,18 @@
 'use strict';
 
-var radio = require('radio-stream')
-var io = require('../server').io
-var metadata = {}
-var history = []
+const radio = require('radio-stream')
+const config = require('../config')
+const io = require('../server').io
+const metadata = {}
+const history = []
 
-var stream = radio.createReadStream('http://s5.voscast.com:7346')
+const stream = radio.createReadStream(config.shoutCastUrl)
 
 stream.on('connect', () => console.log('connected to radio'))
 stream.on('error', err => console.log(err))
 
 stream.on('metadata', function(data) {
-  var title = radio.parseMetadata(data).StreamTitle
+  const title = radio.parseMetadata(data).StreamTitle
   if (title !== metadata.current) {
     history.push(title)
     metadata.previous = metadata.current

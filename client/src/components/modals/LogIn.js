@@ -12,7 +12,7 @@ class LogIn extends React.Component {
   }
 
   handleUser(user) {
-    Modal.close()
+    location.reload()
   }
 
   handleError(err) {

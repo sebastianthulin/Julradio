@@ -6,16 +6,11 @@ var ManageArticle = require('./ManageArticle')
 class ManageArticles extends React.Component {
   componentWillMount() {
     this.unsubscribe = NewsStore.subscribe(this.handleArticles.bind(this))
-  }
-
-  componentDidMount() {
-    this.selectedId = this.props.param
-    this.setArticle()
+    this.setArticle(this.props.param)
   }
 
   componentWillReceiveProps(props) {
-    this.selectedId = props.param
-    this.setArticle()
+    this.setArticle(props.param)
   }
 
   componentWillUnmount() {
@@ -28,30 +23,35 @@ class ManageArticles extends React.Component {
     this.setArticle()
   }
 
-  setArticle() {
-    var selected = this.articles.filter(article => article._id === this.selectedId)[0]
+  setArticle(id) {
+    id = parseInt(id || this.props.param)
+    this.selectedId = id
+    var selected = this.articles.filter(article => article.id === id)[0]
     this.setState({selected})
   }
 
+  goto(ev) {
+    var articleId = ev.target.value
+    this.context.router.transitionTo('/admin/articles/' + articleId)
+    this.setState({creatingNew: false})
+  }
+
   create() {
-    NewsStore.create(article => {
-      this.context.router.transitionTo('/admin/articles/' + article._id)
-      this.setState({selected: article})
-    })
+    this.context.router.transitionTo('/admin/articles')
+    this.setState({creatingNew: true})
   }
 
   render() {
-    var { articles, selected } = this.state
+    var { articles, creatingNew, selected } = this.state
     return (
-      <div>
-        <div className="adminContent three columns">
-          <h3>Nyheter</h3>
-          <button onClick={this.create.bind(this)}>Skapa ny</button>
-          <div className="list">
-            {articles.map(article => <Link key={article._id} to={'/admin/articles/' + article._id}>{article.title}</Link>)}
-          </div>
-        </div>
-        {selected && <ManageArticle key={selected._id} article={selected} />}
+      <div className="ten columns">
+        <h3>Nyheter</h3>
+        <select value={this.selectedId} onChange={this.goto.bind(this)}>
+          {articles.map(article => <option value={article.id} key={article.id}>{article.title}</option>)}
+        </select>
+        <button onClick={this.create.bind(this)}>Skapa ny</button>
+        {creatingNew && <ManageArticle article={{}} />}
+        {!creatingNew && selected && <ManageArticle key={selected.id} article={selected} />}
       </div>
     )
   }

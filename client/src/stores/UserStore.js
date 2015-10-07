@@ -1,6 +1,6 @@
-var { EventEmitter } = require('events')
-var request = require('superagent')
-var UserStore = new EventEmitter
+const { EventEmitter } = require('events')
+const request = require('superagent')
+const UserStore = new EventEmitter
 var doc
 
 UserStore.set = function(user) {
@@ -10,7 +10,7 @@ UserStore.set = function(user) {
 
 UserStore.logIn = function(creds, callback) {
   return new Promise(function(resolve, reject) {
-    request.post('/login', creds, function(err, res) {
+    request.post('/user/login', creds, function(err, res) {
       var { err, user } = res.body
       user && UserStore.set(user)
       if (err) {
@@ -24,7 +24,7 @@ UserStore.logIn = function(creds, callback) {
 
 UserStore.signUp = function(form, callback) {
   return new Promise(function(resolve, reject) {
-    request.post('/signup', form, function(err, res) {
+    request.post('/user/signup', form, function(err, res) {
       var { err, user } = res.body
       user && UserStore.set(user)
       if (err) {
@@ -38,7 +38,7 @@ UserStore.signUp = function(form, callback) {
 
 UserStore.logOut = function() {
   doc = null
-  request.post('/logout').end()
+  request.post('/user/logout').end()
   UserStore.emit('doc', null)
 }
 

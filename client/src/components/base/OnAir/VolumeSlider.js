@@ -29,7 +29,7 @@ class VolumeSlider extends React.Component {
     return (
       <div className="volume-slider" ref="slider" onMouseDown={this.initDrag.bind(this)}>
         <div className="volume" style={{width: volume * 100 + '%'}} />
-        <div className="knot" />
+        <div className="handle" />
       </div>
     )
   }
