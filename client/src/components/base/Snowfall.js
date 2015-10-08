@@ -47,7 +47,7 @@ class Flake {
 class Snowfall extends React.Component {
   componentDidMount() {
     this.flakes = []
-    this.canvas = this.refs.canvas.getDOMNode()
+    this.canvas = this.refs.canvas
     this.parent = this.canvas.parentNode
     this.ctx = this.canvas.getContext('2d')
     this.canvas.width = this.getWidth()

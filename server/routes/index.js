@@ -5,8 +5,9 @@ const router = express.Router()
 const db = require('../models')
 const io = require('../../server').io
 
-router.use('/user', require('./user'))
-router.use('/articles', require('./articles'))
+router.use('/api/user', require('./user'))
+router.use('/api/articles', require('./articles'))
+router.use('/api/chat', require('./chat'))
 
 router.post('/reloadclients', function(req, res) {
   io.emit('reload')

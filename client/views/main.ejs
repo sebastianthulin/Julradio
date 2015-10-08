@@ -8,7 +8,7 @@
 </head>
 <body>
   <script>
-  var user = <%- user ? JSON.stringify(user) : 'null' %>
+  window.__USER__ = <%- user ? JSON.stringify(user) : 'null' %>
   </script>
   <script src="/vendor.js"></script>
   <script src="/app.js"></script>

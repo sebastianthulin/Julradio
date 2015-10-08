@@ -1,7 +1,9 @@
 require('./services/LiveReload')
 const React = require('react')
-const Router = require('react-router')
-const { Route, DefaultRoute } = Router
+const ReactDOM = require('react-dom')
+const { Router, IndexRoute, Route } = require('react-router')
+const history = require('react-router/node_modules/history/lib/createBrowserHistory')()
+
 
 // Site base components
 const Header = require('./components/base/Header')
@@ -11,9 +13,10 @@ const ModalContainer = require('./components/base/ModalContainer')
 
 // Views
 const Front = require('./components/views/Front')
-const Admin = require('./components/views/Admin')
 const UserProfile = require('./components/views/UserProfile')
 const Messages = require('./components/views/Messages')
+const Admin = require('./components/views/Admin')
+const ManageArticles = require('./components/views/Admin/ManageArticles')
 
 class App extends React.Component {
   render() {
@@ -21,7 +24,7 @@ class App extends React.Component {
       <div id="app">
         <Header />
         <OnAir />
-        <Router.RouteHandler />
+        {this.props.children}
         <Footer />
         <ModalContainer />
       </div>
@@ -30,15 +33,18 @@ class App extends React.Component {
 }
 
 const routes = (
-  <Route handler={App}>
-    <Route path="/messages/:username" handler={Messages} />
-    <Route path="/user/:username" handler={UserProfile} />
-    <Route path="/admin/:panel" handler={Admin} />
-    <Route path="/admin/:panel/:value" handler={Admin} />
-    <DefaultRoute handler={Front} />
+  <Route path="/" component={App}>
+    <IndexRoute component={Front} />
+    <Route path="messages/:username" component={Messages} />
+    <Route path="user/:username" component={UserProfile} />
+    <Route path="admin" component={Admin}>
+      <Route path="articles" component={ManageArticles} />
+      <Route path="articles/:id" component={ManageArticles} />
+    </Route>
   </Route>
 )
 
-Router.run(routes, Router.HistoryLocation, function(Handler) {
-  React.render(<Handler />, document.body)
-})
+ReactDOM.render(
+    <Router children={routes} history={history} />
+  document.body
+)

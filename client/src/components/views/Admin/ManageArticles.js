@@ -1,16 +1,16 @@
-var React = require('react')
-var { Link } = require('react-router')
-var NewsStore = require('../../../stores/NewsStore')
-var ManageArticle = require('./ManageArticle')
+const React = require('react')
+const { Link } = require('react-router')
+const NewsStore = require('../../../stores/NewsStore')
+const ManageArticle = require('./ManageArticle')
 
 class ManageArticles extends React.Component {
   componentWillMount() {
     this.unsubscribe = NewsStore.subscribe(this.handleArticles.bind(this))
-    this.setArticle(this.props.param)
+    this.setArticle(this.props.params.id)
   }
 
   componentWillReceiveProps(props) {
-    this.setArticle(props.param)
+    this.setArticle(props.params.id)
   }
 
   componentWillUnmount() {
@@ -24,25 +24,26 @@ class ManageArticles extends React.Component {
   }
 
   setArticle(id) {
-    id = parseInt(id || this.props.param)
+    id = parseInt(id || this.props.params.id)
     this.selectedId = id
-    var selected = this.articles.filter(article => article.id === id)[0]
+    const selected = this.articles.filter(article => article.id === id)[0]
     this.setState({selected})
   }
 
   goto(ev) {
     var articleId = ev.target.value
-    this.context.router.transitionTo('/admin/articles/' + articleId)
+    this.props.history.pushState(null, `/admin/articles/${articleId}`)
     this.setState({creatingNew: false})
   }
 
   create() {
-    this.context.router.transitionTo('/admin/articles')
+    this.props.history.pushState(null, '/admin/articles')
     this.setState({creatingNew: true})
   }
 
   render() {
-    var { articles, creatingNew, selected } = this.state
+    const { articles, creatingNew, selected } = this.state
+    const { history } = this.props
     return (
       <div className="ten columns">
         <h3>Nyheter</h3>
@@ -50,15 +51,11 @@ class ManageArticles extends React.Component {
           {articles.map(article => <option value={article.id} key={article.id}>{article.title}</option>)}
         </select>
         <button onClick={this.create.bind(this)}>Skapa ny</button>
-        {creatingNew && <ManageArticle article={{}} />}
-        {!creatingNew && selected && <ManageArticle key={selected.id} article={selected} />}
+        {creatingNew && <ManageArticle article={{}} history={history} />}
+        {!creatingNew && selected && <ManageArticle key={selected.id} article={selected} history={history} />}
       </div>
     )
   }
-}
-
-ManageArticles.contextTypes = {
-  router: React.PropTypes.func
 }
 
 module.exports = ManageArticles

@@ -12,10 +12,11 @@ var request = require('superagent')
 var dependencies = [
   'events',
   'react',
+  'react-dom',
+  'react-router',
   'socket.io-client',
   'superagent',
-  'classnames',
-  'react-router'
+  'classnames'
 ]
 
 var reload = () => request.post('http://127.0.0.1:8080/reloadclients').end()

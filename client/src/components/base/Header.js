@@ -1,12 +1,12 @@
-var React = require('react')
-var { Link } = require('react-router')
-var Modal = require('../../services/Modal')
-var UserStore = require('../../stores/UserStore')
+const React = require('react')
+const { Link } = require('react-router')
+const Modal = require('../../services/Modal')
+const UserStore = require('../../stores/UserStore')
 
 class MenuItem extends React.Component {
   render() {
-    var { text, to, onClick } = this.props
-    var btn = <button onClick={onClick}>{text}</button>
+    const { text, to, onClick } = this.props
+    const btn = <button onClick={onClick}>{text}</button>
     return to ? <Link to={to}>{btn}</Link> : btn
   }
 }
@@ -17,11 +17,10 @@ class Header extends React.Component {
   }
 
   render() {
-    var { user } = this.state
-
-    var menuItems = [{
+    const { user } = this.state
+    const menuItems = [{
       if: true,
-      text: 'Chatt',
+      text: 'Meddelanden',
       to: '/messages/asdf'
     }, {
       if: user,

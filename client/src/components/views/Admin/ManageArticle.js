@@ -1,5 +1,5 @@
-var React = require('react')
-var NewsStore = require('../../../stores/NewsStore')
+const React = require('react')
+const NewsStore = require('../../../stores/NewsStore')
 
 class ManageArticle extends React.Component {
   componentWillMount() {
@@ -7,9 +7,9 @@ class ManageArticle extends React.Component {
   }
 
   save() {
-    var opts = {
-      title: this.refs.title.getDOMNode().value,
-      content: this.refs.content.getDOMNode().value
+    const opts = {
+      title: this.refs.title.value,
+      content: this.refs.content.value
     }
 
     if (this.id) {
@@ -18,17 +18,17 @@ class ManageArticle extends React.Component {
 
     NewsStore.create(opts, article => {
       this.id = article.id
-      this.context.router.transitionTo('/admin/articles/' + article.id)
+      this.props.history.pushState(null, `/admin/articles/${article.id}`)
     })
   }
 
   delete() {
     NewsStore.delete(this.id)
-    this.context.router.transitionTo('/admin/articles')
+    this.props.history.pushState(null, '/admin/articles')
   }
 
   render() {
-    var { article } = this.props
+    const { article } = this.props
     return (
       <div>
         <input ref="title" defaultValue={article.title} />

@@ -19,7 +19,7 @@ class VolumeSlider extends React.Component {
   }
 
   handleDrag(ev) {
-    const rect = this.refs.slider.getDOMNode().getBoundingClientRect()
+    const rect = this.refs.slider.getBoundingClientRect()
     const offsetLeft = ev.clientX - rect.left
     RadioStore.setVolume(offsetLeft / rect.width)
   }
