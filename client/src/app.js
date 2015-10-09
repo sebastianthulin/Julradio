@@ -1,9 +1,8 @@
 require('./services/LiveReload')
 const React = require('react')
 const ReactDOM = require('react-dom')
-const { Router, IndexRoute, Route } = require('react-router')
+const { Router, Route, IndexRoute } = require('react-router')
 const history = require('react-router/node_modules/history/lib/createBrowserHistory')()
-
 
 // Site base components
 const Header = require('./components/base/Header')
@@ -21,7 +20,7 @@ const ManageArticles = require('./components/views/Admin/ManageArticles')
 class App extends React.Component {
   render() {
     return (
-      <div id="app">
+      <div>
         <Header />
         <OnAir />
         {this.props.children}
@@ -35,8 +34,10 @@ class App extends React.Component {
 const routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Front} />
-    <Route path="messages/:username" component={Messages} />
-    <Route path="user/:username" component={UserProfile} />
+    <Route path="medarbetare" component={Staff} />
+    <Route path="messages" component={Messages} />
+    <Route path="messages/:chatId" component={Messages} />
+    <Route path="@:username" component={UserProfile} />
     <Route path="admin" component={Admin}>
       <Route path="articles" component={ManageArticles} />
       <Route path="articles/:id" component={ManageArticles} />
@@ -45,6 +46,6 @@ const routes = (
 )
 
 ReactDOM.render(
-    <Router children={routes} history={history} />
-  document.body
+  <Router children={routes} history={history} />,
+  document.getElementById('app')
 )

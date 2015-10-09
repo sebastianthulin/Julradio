@@ -14,6 +14,13 @@ router.get('/', function(req, res) {
   })
 })
 
+router.use(function(req, res, next) {
+  if ('isAdmin') next()
+  else {
+    res.end(404)
+  }
+})
+
 router.post('/', function(req, res) {
   const b = req.body
   new db.Article({

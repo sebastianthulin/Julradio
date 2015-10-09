@@ -4,7 +4,7 @@ const bookshelf = require('./').bookshelf
 
 const Conversation = bookshelf.Model.extend({  
   tableName: 'Conversations',
-  hasTimestamps: true,
+  // hasTimestamps: true,
   lastMessage: function() {
     return this.belongsTo('Messages', 'lastMessageId')
   },

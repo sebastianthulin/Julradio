@@ -21,11 +21,11 @@ class Header extends React.Component {
     const menuItems = [{
       if: true,
       text: 'Meddelanden',
-      to: '/messages/asdf'
+      to: '/messages/'
     }, {
       if: user,
       text: user && user.username,
-      to: user && '/user/' + user.username
+      to: user && `/@${user.username}`
     }, {
       if: user,
       text: 'Admin',

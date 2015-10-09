@@ -14,7 +14,10 @@ stream.on('error', err => console.log(err))
 stream.on('metadata', function(data) {
   const title = radio.parseMetadata(data).StreamTitle
   if (title !== metadata.current) {
-    history.push(title)
+    history.push({
+      title,
+      playedAt: Date.now()
+    })
     metadata.previous = metadata.current
     metadata.current = title
     io.emit('metadata', metadata)

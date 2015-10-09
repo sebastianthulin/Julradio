@@ -23,7 +23,7 @@ class NowPlaying extends React.Component {
     return (
       <div>
         <span className="meta">Tidigare:</span>
-        {history.map(title => <span>{title}</span>)}
+        {history.map(song => <span key={song.playedAt}>{song.title}</span>)}
       </div>
     )
   }
