@@ -34,9 +34,8 @@ class App extends React.Component {
 const routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Front} />
-    <Route path="medarbetare" component={Staff} />
     <Route path="messages" component={Messages} />
-    <Route path="messages/:chatId" component={Messages} />
+    <Route path="messages/:user" component={Messages} />
     <Route path="@:username" component={UserProfile} />
     <Route path="admin" component={Admin}>
       <Route path="articles" component={ManageArticles} />

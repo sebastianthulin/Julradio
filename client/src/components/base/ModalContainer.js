@@ -1,7 +1,7 @@
-var React = require('react')
-var Modal = require('../../services/Modal')
+const React = require('react')
+const Modal = require('../../services/Modal')
 
-var modals = {
+const modals = {
   LogIn: require('../modals/LogIn'),
   SignUp: require('../modals/SignUp'),
   RequestSong: require('../modals/RequestSong')
@@ -14,8 +14,8 @@ class ModalContainer extends React.Component {
   }
 
   handleModal(name) {
-    var Modal = modals[name]
-    this.setState({Modal})
+    const Modal = modals[name]
+    this.setState({ Modal })
     document.removeEventListener('click', this.boundHandleClick)
     if (Modal) {
       this.boundHandleClick = this.handleClick.bind(this)
@@ -24,15 +24,15 @@ class ModalContainer extends React.Component {
   }
 
   handleClick(ev) {
-    if (React.findDOMNode(this) === ev.target) {
+    if (this.refs.container === ev.target) {
       Modal.close()
     }
   }
 
   render() {
-    var { Modal } = this.state
+    const { Modal } = this.state
     return !Modal ? null : (
-      <div id="modal-container">
+      <div id="modal-container" ref="container">
         <Modal />
       </div>
     )

@@ -4,71 +4,59 @@ const socket = require('../services/socket')
 const UserStore = require('./UserStore')
 const ChatStore = new EventEmitter
 const threadsById = {}
-const messageIdsByThreadIds = {}
+const threadsByUserId = {}
+const messageIdsByThreadId = {}
 const messagesById = {}
+const threadIds = []
 
 const state = {
   loaded: false,
-  selectedThreadId: null,
-  threads: [],
-  messages: []
+  targetUser: null,
+  messages: [],
+  threads: []
 }
 
-function getMessages(chatId) {
-  return messageIdsByThreadIds[chatId].map(id => messagesById[id])
-  // correct the order of messages by ordering by date?
-}
+ChatStore.select = function(username) {
+  var thread
+  UserStore.getByUsername(username).then(function(user) {
+    if (!user) {
+      return ChatStore.deselect()
+    }
 
-function updateState() {
-  if (state.selectedThreadId) {
-    state.messages = getMessages(state.selectedThreadId)
-  } else {
-    state.messages = []
-  }
-  // ChatStore.emit('messages', state.messages)
-  ChatStore.emit('state', state)
-}
-
-ChatStore.sendMessage = function(text, chatId) {
-  const id = Math.random().toString(36).substr(2)
-  const message = { text, conversationId: chatId }
-  messagesById[id] = message
-  messageIdsByThreadIds[chatId].push(id)
-  socket.emit('chat:message', message)
-  request.post('/api/chat', message).then(function(res) {
-    // Succes...
+    thread = threadsByUserId[user._id]
+    state.targetUser = user
+    updateMessages()
+    if (thread && !thread.loaded) {
+      return request.get(`/api/chat/${thread._id}`)
+    }
+  }).then(function({body: messages}) {
+    messages.sort((a, b) => new Date(b.date) - new Date(a.date))
+    const messageIds = messageIdsByThreadId[thread._id] = []
+    var i = messages.length
+    while (i--) {
+      var msg = messages[i]
+      messageIds.push(msg._id)
+      messagesById[msg._id] = msg
+    }
+    updateMessages()
   }, function(err) {
-    // tell the user that the message failed
-    console.log(err)
+    console.log('couldnt select conversation', err)
   })
-  message.id = id
-  message.user = UserStore.get()
-  updateState()
 }
 
-ChatStore.select = function(chatId) {
-  if (!Number(chatId)) {
-    state.selectedThreadId = null
-    updateState()
-    return
-  }
+ChatStore.deselect = function() {
+  state.messages = []
+  state.targetUser = null
+  push()
+}
 
-  state.selectedThreadId = chatId
-  if (!messageIdsByThreadIds[chatId]) {
-    request.get(`/api/chat/${chatId}`).then(function(res) {
-      const messages = res.body
-      var i = messages.length
-      while (i--) {
-        messagesById[messages[i].id] = messages[i]
-      }
-      messageIdsByThreadIds[chatId] = messages.map(msg => msg.id)
-      updateState()
-    }, function(err) {
-      console.log('err', err)
-    })
-  } else {
-    updateState()
-  }
+ChatStore.sendMessage = function(text) {
+  console.log(getConversationId())
+  socket.emit('chat:message', {
+    text,
+    conversationId: getConversationId(),
+    userId: state.targetUser && state.targetUser._id
+  })
 }
 
 ChatStore.subscribe = function(handler) {
@@ -79,45 +67,62 @@ ChatStore.subscribe = function(handler) {
   }
 }
 
-ChatStore.onReady = function(handler) {
-  if (state.loaded) {
-    handler()
-  } else {
-    var fn = function() {
-      handler()
-      ChatStore.removeListener('ready', fn)
-    }
-    ChatStore.on('ready', fn)
+ChatStore.onReady = handler => state.loaded ? handler() : ChatStore.once('ready', handler)
+
+const push = () => ChatStore.emit('state', state)
+
+const getConversationId = () => (threadsByUserId[state.targetUser && state.targetUser._id] || {})._id
+
+function updateThreads() {
+  state.threads = threadIds.map(id => threadsById[id])
+  state.threads.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+}
+
+function updateMessages() {
+  const messageIds = messageIdsByThreadId[getConversationId()]
+  state.messages = messageIds ? messageIds.map(id => messagesById[id]) : []
+  push()
+}
+
+function insertConversation(conv) {
+  const uid = UserStore.get()._id
+  const conversation = {
+    _id: conv._id,
+    user: conv.users.filter(user => user._id !== uid)[0],
+    lastMessage: conv.lastMessage,
+    loaded: false,
+    unread: false,
+    updatedAt: conv.updatedAt
   }
+  UserStore.insert(conversation.user)
+  threadsById[conversation._id] = conversation
+  threadsByUserId[conversation.user._id] = conversation
+  threadIds.push(conversation._id)
 }
 
 socket.on('chat:message', function(message) {
-  messagesById[message.id] = message
-  if (messageIdsByThreadIds[message.chatId]) {
-    messageIdsByThreadIds[message.chatId].push(message.id)
-    updateState()
-  }
+  const chatId = message.conversation
+  messagesById[message._id] = message
+  messageIdsByThreadId[chatId] = messageIdsByThreadId[chatId] || []
+  messageIdsByThreadId[chatId].push(message._id)
+  threadsById[chatId] = threadsById[chatId] || {}
+  threadsById[chatId].lastMessage = message
+  threadsById[chatId].updatedAt = Date.now()
+  updateThreads()
+  updateMessages()
 })
 
-request.get('/api/chat').then(function(res) {
-  const uid = UserStore.get().id
-  const conversations = res.body.map(conv => ({
-    id: conv.id,
-    user: conv.users.filter(user => user.id !== uid)[0],
-    lastMessage: conv.lastMessage,
-    loaded: false,
-    messageIds: [],
-    unread: false
-  }))
+socket.on('chat:conversation', function(conv) {
+  insertConversation(conv)
+  updateThreads()
+  push()
+})
 
-  var i = conversations.length
-  while (i--) {
-    threadsById[conversations[i].id] = conversations[i]
-  }
-
-  state.threads = conversations
+request.get('/api/chat').then(function({ body: conversations }) {
+  conversations.forEach(insertConversation)
   state.loaded = true
-  ChatStore.emit('state', state)
+  updateThreads()
+  push()
   ChatStore.emit('ready')
 }, function(err) {
   console.log('could not load messages')

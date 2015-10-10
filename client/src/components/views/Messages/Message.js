@@ -1,10 +1,9 @@
 const React = require('react')
+const cx = require('classnames')
 
 const Message = ({ message, user }) => (
-  <div className="message">
-    <div className={message.user.id === user.id ? 'right' : 'left'}>
-      {message.text}
-    </div>
+  <div className={cx('message', message.user === user._id ? 'right' : 'left')}>
+    {message.text}
   </div>
 )
 

@@ -15,12 +15,14 @@ router.post('/reloadclients', function(req, res) {
 })
 
 router.use(function(req, res, next) {
+  console.log(req.ip)
   const uid = req.session.uid
   if (!uid) return next()
-  new db.User({id: uid}).fetch().then(function(model) {
-    if (model) {
-      req.user = model.toJSON()
-    }
+  db.User.findById(uid).exec().then(function(user) {
+    req.user = user
+    next()
+  }, function(err) {
+    req.session.uid = undefined
     next()
   })
 })

@@ -4,22 +4,22 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const schema = new Schema({
-  text: {
-    type: String,
-    required: true
-  },
-  user: {
+  users: [{
     type: Schema.ObjectId,
     ref: 'users'
-  },
-  conversation: {
+  }],
+  lastMessage: {
     type: Schema.ObjectId,
-    ref: 'conversations'
+    ref: 'messages'
   },
-  date: {
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
     type: Date,
     default: Date.now
   }
 })
 
-module.exports = mongoose.model('messages', schema)
+module.exports = mongoose.model('conversations', schema)

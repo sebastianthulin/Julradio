@@ -1,11 +1,12 @@
-var { EventEmitter } = require('events')
-var socket = require('../services/socket')
-var Radio = new EventEmitter
-var audio = new Audio
-var localStorage = window.localStorage || {}
+const { EventEmitter } = require('events')
+const socket = require('../services/socket')
+const Radio = new EventEmitter
+const audio = new Audio
+const localStorage = window.localStorage || {}
 
-var store = {
+const store = {
   playing: false,
+  onair: false,
   metadata: {},
   history: [],
   volume: null
@@ -60,6 +61,16 @@ Radio.subscribe.history = function(handler) {
 }
 
 socket.on('metadata', handleMetadata)
+
+audio.addEventListener('playing', function() {
+  store.onair = true
+  Radio.emit('onair', true)
+})
+
+audio.addEventListener('pause', function() {
+  store.onair = false
+  Radio.emit('onair', false)
+})
 
 Radio.setVolume(localStorage.volume || 1)
 localStorage.playing == 1 && Radio.play()

@@ -3,7 +3,7 @@ const NewsStore = require('../../../stores/NewsStore')
 
 class ManageArticle extends React.Component {
   componentWillMount() {
-    this.id = this.props.article.id
+    this.id = this.props.article._id
   }
 
   save() {
@@ -17,8 +17,8 @@ class ManageArticle extends React.Component {
     }
 
     NewsStore.create(opts, article => {
-      this.id = article.id
-      this.props.history.pushState(null, `/admin/articles/${article.id}`)
+      this.id = article._id
+      this.props.history.pushState(null, `/admin/articles/${article._id}`)
     })
   }
 

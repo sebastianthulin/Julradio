@@ -24,9 +24,9 @@ class ManageArticles extends React.Component {
   }
 
   setArticle(id) {
-    id = parseInt(id || this.props.params.id)
+    id = id || this.props.params.id
     this.selectedId = id
-    const selected = this.articles.filter(article => article.id === id)[0]
+    const selected = this.articles.filter(article => article._id === id)[0]
     this.setState({selected})
   }
 
@@ -48,11 +48,11 @@ class ManageArticles extends React.Component {
       <div className="ten columns">
         <h3>Nyheter</h3>
         <select value={this.selectedId} onChange={this.goto.bind(this)}>
-          {articles.map(article => <option value={article.id} key={article.id}>{article.title}</option>)}
+          {articles.map(article => <option value={article._id} key={article._id}>{article.title}</option>)}
         </select>
         <button onClick={this.create.bind(this)}>Skapa ny</button>
         {creatingNew && <ManageArticle article={{}} history={history} />}
-        {!creatingNew && selected && <ManageArticle key={selected.id} article={selected} history={history} />}
+        {!creatingNew && selected && <ManageArticle key={selected._id} article={selected} history={history} />}
       </div>
     )
   }

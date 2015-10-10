@@ -21,7 +21,7 @@ class Front extends React.Component {
       <div id="front" className="row content">
         <div className="two-thirds column">
           <h1>Blogg</h1>
-          {articles.map(article => <Article key={article.id} article={article} />)}
+          {articles.map(article => <Article key={article._id} article={article} />)}
         </div>
         <div className="one-third column">
           {tweets.length > 0 && <span className="hashtagJulradio">#julradio</span>}

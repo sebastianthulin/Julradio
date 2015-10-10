@@ -1,7 +1,29 @@
 const { EventEmitter } = require('events')
 const request = require('superagent')
 const UserStore = new EventEmitter
-var doc
+const usersById = {}
+
+var doc = window.__USER__
+
+UserStore.insert = function(user) {
+  usersById[user._id] = user
+  usersById[user.username] = user
+}
+
+UserStore.getByUsername = function(username) {
+  return new Promise(function(resolve, reject) {
+    if (!username) {
+      resolve(null)
+    } else if (usersById[username]) {
+      resolve(usersById[username])
+    } else {
+      request.get(`/api/user/${username}`).then(function({ body: user }) {
+        user && UserStore.insert(user)
+        resolve(user)
+      }, reject)
+    }
+  })
+}
 
 UserStore.set = function(user) {
   doc = user
@@ -51,7 +73,5 @@ UserStore.subscribe = function(handler) {
 }
 
 UserStore.get = () => doc
-
-window.__USER__ && UserStore.set(window.__USER__)
 
 module.exports = UserStore

@@ -1,12 +1,25 @@
 'use strict';
 
-const bookshelf = require('./').bookshelf
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
-const Article = bookshelf.Model.extend({
-  tableName: 'Articles',
-  user: function() {
-    return this.belongsTo('Users', 'userId')
+const schema = new Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
+  user: {
+    type: Schema.ObjectId,
+    ref: 'users'
+  },
+  date: {
+    type: Date,
+    default: Date.now
   }
 })
 
-module.exports = bookshelf.model('Articles', Article)
+module.exports = mongoose.model('articles', schema)
