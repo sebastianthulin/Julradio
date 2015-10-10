@@ -2,13 +2,9 @@
 
 const db = require('./models')
 const io = require('../server').io
-const mongoose = require('mongoose')
-
-// Reddan: 5605456bfef38acf1f4a511b
-// Glutch: 5611bdfdf1695c94128309a8
 
 module.exports = function(socket) {
-  var uid = socket.request.session.uid
+  const uid = socket.request.session.uid
   if (!uid) return
 
   socket.join(uid)

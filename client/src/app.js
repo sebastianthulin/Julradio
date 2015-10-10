@@ -13,6 +13,7 @@ const ModalContainer = require('./components/base/ModalContainer')
 // Views
 const Front = require('./components/views/Front')
 const UserProfile = require('./components/views/UserProfile')
+const Settings = require('./components/views/Settings')
 const Messages = require('./components/views/Messages')
 const Admin = require('./components/views/Admin')
 const ManageArticles = require('./components/views/Admin/ManageArticles')
@@ -37,6 +38,7 @@ const routes = (
     <Route path="messages" component={Messages} />
     <Route path="messages/:user" component={Messages} />
     <Route path="@:username" component={UserProfile} />
+    <Route path="settings" component={Settings} />
     <Route path="admin" component={Admin}>
       <Route path="articles" component={ManageArticles} />
       <Route path="articles/:id" component={ManageArticles} />

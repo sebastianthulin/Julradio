@@ -51,10 +51,9 @@ ChatStore.deselect = function() {
 }
 
 ChatStore.sendMessage = function(text) {
-  console.log(getConversationId())
   socket.emit('chat:message', {
     text,
-    conversationId: getConversationId(),
+    conversationId: ChatStore.getConversationId(),
     userId: state.targetUser && state.targetUser._id
   })
 }
@@ -69,9 +68,9 @@ ChatStore.subscribe = function(handler) {
 
 ChatStore.onReady = handler => state.loaded ? handler() : ChatStore.once('ready', handler)
 
-const push = () => ChatStore.emit('state', state)
+ChatStore.getConversationId = () => (threadsByUserId[state.targetUser && state.targetUser._id] || {})._id
 
-const getConversationId = () => (threadsByUserId[state.targetUser && state.targetUser._id] || {})._id
+const push = () => ChatStore.emit('state', state)
 
 function updateThreads() {
   state.threads = threadIds.map(id => threadsById[id])
@@ -79,7 +78,7 @@ function updateThreads() {
 }
 
 function updateMessages() {
-  const messageIds = messageIdsByThreadId[getConversationId()]
+  const messageIds = messageIdsByThreadId[ChatStore.getConversationId()]
   state.messages = messageIds ? messageIds.map(id => messagesById[id]) : []
   push()
 }
@@ -122,7 +121,7 @@ request.get('/api/chat').then(function({ body: conversations }) {
   conversations.forEach(insertConversation)
   state.loaded = true
   updateThreads()
-  push()
+  // push()
   ChatStore.emit('ready')
 }, function(err) {
   console.log('could not load messages')

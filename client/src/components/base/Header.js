@@ -28,6 +28,10 @@ class Header extends React.Component {
       to: user && `/@${user.username}`
     }, {
       if: user,
+      text: 'Inställningar',
+      to: '/settings'
+    }, {
+      if: user,
       text: 'Admin',
       to: '/admin/articles'
     }, {

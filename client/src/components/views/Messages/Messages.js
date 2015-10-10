@@ -68,11 +68,12 @@ class Messages extends React.Component {
 
   render() {
     const { threads, selectedThreadId, targetUser } = this.state
+    const selected = ChatStore.getConversationId()
     return (
       <div className="row content">
         <div className="messenger">
           <div className="conversations">
-            {threads.map(thread => <Conversation key={thread._id} selected={selectedThreadId === thread._id} {...thread} />)}
+            {threads.map(thread => <Conversation key={thread._id} selected={selected === thread._id} {...thread} />)}
           </div>
           <div className="chat">
             {targetUser && this.renderChat()}
