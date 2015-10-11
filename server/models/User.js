@@ -14,9 +14,13 @@ const schema = new Schema({
   realname: String,
   description: String,
   title: String,
+  picture: {
+    type: Schema.ObjectId,
+    ref: 'pictures'
+  },
   admin: {
     type: Boolean,
-    default: false
+    default: true
   },
   crew: {
     type: Boolean,

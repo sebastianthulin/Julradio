@@ -1,5 +1,6 @@
 const { EventEmitter } = require('events')
 const request = require('superagent')
+const marked = require('marked')
 const socket = require('../services/socket')
 const NewsStore = new EventEmitter
 var articles = []
@@ -21,8 +22,9 @@ NewsStore.delete = function(id) {
 
 NewsStore.get = function(callback) {
   callback && callback(articles)
-  request.get('/api/articles', function(err, res) {
-    articles = res.body
+  request.get('/api/articles', function(err, { body }) {
+    articles = body
+    articles.forEach(article => article.marked = marked(article.content))
     callback && callback(articles)
     NewsStore.emit('articles', articles)
   })

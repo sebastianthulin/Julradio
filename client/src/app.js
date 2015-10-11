@@ -2,7 +2,15 @@ require('./services/LiveReload')
 const React = require('react')
 const ReactDOM = require('react-dom')
 const { Router, Route, IndexRoute } = require('react-router')
+const marked = require('marked')
 const history = require('react-router/node_modules/history/lib/createBrowserHistory')()
+
+// Config
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+  sanitize: true
+})
 
 // Site base components
 const Header = require('./components/base/Header')

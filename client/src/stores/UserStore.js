@@ -39,7 +39,7 @@ UserStore.updateSettings = function(opts) {
     request.put('/api/user/settings', opts).then(function({ body: user }) {
       UserStore.set(user)
       resolve(user)
-    }, reject)
+    }, ({ response }) => reject(response.body.err))
   })
 }
 
@@ -47,6 +47,18 @@ UserStore.updatePassword = function(opts) {
   return new Promise(function(resolve, reject) {
     request.put('/api/user/password', opts)
       .then(resolve, ({ response }) => reject(response.body.err))
+  })
+}
+
+UserStore.setAvatar = function(file) {
+  const formData = new FormData
+  formData.append('avatar', file)
+  return new Promise(function(resolve, reject) {
+    request.post('/api/user/profilepicture').send(formData).then(function({ body: user }) {
+      console.log(user)
+      UserStore.set(user)
+      resolve(user)
+    }, ({ response }) => reject(response.body.err))
   })
 }
 

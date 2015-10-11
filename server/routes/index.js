@@ -15,10 +15,9 @@ router.post('/reloadclients', function(req, res) {
 })
 
 router.use(function(req, res, next) {
-  console.log(req.ip, req.url)
   const uid = req.session.uid
   if (!uid) return next()
-  db.User.findById(uid).select('-hash').exec().then(function(user) {
+  db.User.findById(uid).select('-hash').populate('picture').exec().then(function(user) {
     req.user = user
     next()
   }, function(err) {
@@ -28,6 +27,7 @@ router.use(function(req, res, next) {
 })
 
 router.get('*', function(req, res) {
+  console.log(req.ip, req.url, req.user && req.user.username)
   res.render('main', {
     user: req.user
   })

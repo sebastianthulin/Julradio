@@ -20,6 +20,10 @@ class Header extends React.Component {
     const { user } = this.state
     const menuItems = [{
       if: true,
+      text: 'IRC',
+      to: 'https://webchat.quakenet.org/?channels=julradio&nick='
+    }, {
+      if: true,
       text: 'Meddelanden',
       to: '/messages/'
     }, {

@@ -16,7 +16,8 @@ var dependencies = [
   'react-router',
   'socket.io-client',
   'superagent',
-  'classnames'
+  'classnames',
+  'marked'
 ]
 
 var reload = () => request.post('http://127.0.0.1:8080/reloadclients').end()

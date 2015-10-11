@@ -20,7 +20,7 @@ class Front extends React.Component {
     return (
       <div id="front" className="row content">
         <div className="two-thirds column">
-          <h1>Blogg</h1>
+          <h1>Aktuellt just nu</h1>
           {articles.map(article => <Article key={article._id} article={article} />)}
         </div>
         <div className="one-third column">

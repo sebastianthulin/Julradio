@@ -17,10 +17,7 @@ class Settings extends React.Component {
       description: this.refs.description.value
     }).then(user => {
       alert('inställningar sparade.')
-    }).catch(err => {
-      console.log(err)
-      alert('error! kolla konsollen')
-    })
+    }).catch(this.handleError.bind(this))
   }
 
   savePassword() {
@@ -33,7 +30,18 @@ class Settings extends React.Component {
       this.refs.newPassword.value = ''
       this.refs.repeatPassword.value = ''
       alert('lösenord uppdaterat.')
-    }).catch(alert)
+    }).catch(this.handleError.bind(this))
+  }
+
+  setAvatar(ev) {
+    const file = ev.target.files[0]
+    UserStore.setAvatar(file).then(() => {
+      alert('profilbild uppdaterad.')
+    }).catch(this.handleError.bind(this))
+  }
+
+  handleError(err) {
+    alert(err)
   }
 
   render() {
@@ -77,7 +85,9 @@ class Settings extends React.Component {
           <button onClick={this.savePassword.bind(this)}>Spara lösenord</button>
         </div>
         <div className="one-third column">
-          <h4>Något mer här kanske?</h4>
+          <h4>Profilbild</h4>
+          <input type="file" onChange={this.setAvatar.bind(this)} />
+          <p>högst 2mb</p>
         </div>
       </div>
     )

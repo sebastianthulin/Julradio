@@ -5,10 +5,16 @@ const router = express.Router()
 const db = require('../models')
 
 router.get('/', function(req, res) {
-  db.Article.find().populate('user').lean().exec().then(function(articles) {
-    res.send(articles)
-  }, function(err) {
-    console.log(err)
+  db.Article.find().populate({
+    path: 'user',
+    select: '-hash'
+  }).exec().then(function(articles) {
+    db.Article.populate(articles, {
+      path: 'user.picture',
+      model: 'pictures'
+    }, function(err, articles) {
+      res.send(articles)
+    })
   })
 })
 

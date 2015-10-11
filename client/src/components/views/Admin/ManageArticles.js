@@ -20,34 +20,34 @@ class ManageArticles extends React.Component {
   handleArticles(articles) {
     this.articles = articles
     this.setState({ articles })
-    this.setArticle()
+    this.setArticle(this.props.params.id)
   }
 
   setArticle(id) {
-    id = id || this.props.params.id
-    this.selectedId = id
     const selected = this.articles.filter(article => article._id === id)[0]
-    this.setState({ selected })
+    this.setState({
+      selected,
+      selectedId: id || '',
+      creatingNew: false
+    })
   }
 
-  goto(ev) {
-    var articleId = ev.target.value
+  goto({ target: { value: articleId } }) {
     this.props.history.pushState(null, `/admin/articles/${articleId}`)
-    this.setState({creatingNew: false})
   }
 
   create() {
-    this.props.history.pushState(null, '/admin/articles')
     this.setState({creatingNew: true})
   }
 
   render() {
-    const { articles, creatingNew, selected } = this.state
+    const { articles, creatingNew, selected, selectedId } = this.state
     const { history } = this.props
     return (
       <div className="ten columns">
         <h3>Nyheter</h3>
-        <select value={this.selectedId} onChange={this.goto.bind(this)}>
+        <select value={selectedId} onChange={this.goto.bind(this)} style={{width: 'auto', marginRight: 5}}>
+          <option value={''}>Välj artikel</option>
           {articles.map(article => <option value={article._id} key={article._id}>{article.title}</option>)}
         </select>
         <button onClick={this.create.bind(this)}>Skapa ny</button>

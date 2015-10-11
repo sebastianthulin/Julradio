@@ -2,8 +2,27 @@
 
 const crypto = require('crypto')
 const express = require('express')
+const multer = require('multer')
+const fs = require('fs')
 const router = express.Router()
 const db = require('../models')
+
+const upload = multer({
+  dest: 'uploads/',
+  limits: {
+    fileSize: 2000000
+  },
+  fileFilter: function(req, file, cb) {
+    const isImage = file.mimetype.split('/')[0] === 'image'
+    const extension = '.' + file.originalname.split('.').pop().toLowerCase()
+    file.extension = extension
+    if (isImage) {
+      cb(null, true)
+    } else {
+      cb(new Error('NOT_AN_IMAGE'))
+    }
+  }
+}).single('avatar')
 
 router.get('/logout', function(req, res) {
   req.session.uid = null
@@ -12,7 +31,7 @@ router.get('/logout', function(req, res) {
 
 router.get('/byname/:username', function(req, res) {
   const username = req.params.username
-  db.User.findOne({ username }).select('-hash').exec(function(err, user) {
+  db.User.findOne({ username }).select('-hash').populate('picture').exec(function(err, user) {
     user ? res.send(user) : res.sendStatus(200)
   })
 })
@@ -74,6 +93,40 @@ router.put('/password', function(req, res) {
     res.sendStatus(200)
   }, function(err) {
     res.status(500).send({err: err.toString()})
+  })
+})
+
+router.post('/profilepicture', function(req, res) {
+  const userId = req.session.uid
+  upload(req, res, function(err) {
+    if (err) {
+      return res.status(500).send({err: 'INVALID_IMAGE'})
+    }
+
+    const picture = new db.Picture({
+      extension: req.file.extension,
+      user: userId
+    })
+
+    fs.rename(req.file.path, 'public/i/' + picture._id + picture.extension, function(err) {
+      if (err) {
+        console.log('/profilepicture error1', err)
+        return res.status(500).send({err: 'UNKNOWN_ERROR'})
+      }
+
+      picture.save().then(function() {
+        return db.User.findByIdAndUpdate(userId, {
+          picture: picture._id
+        }, {
+          new: true
+        }).select('-hash').populate('picture').exec()
+      }).then(function(user) {
+        res.send(user)
+      }, function(err) {
+        console.log('/profilepicture error2', err)
+        res.status(500).send({err: 'UNKNOWN_ERROR'})
+      })
+    })
   })
 })
 
