@@ -54,7 +54,8 @@ class ManageUsers extends React.Component {
               </tr>
               {users && users.map(user => <User key={user._id} {...user} />)}
             </tbody>
-          </table> 
+          </table>
+          {users && this.users.length + ' användare'}
           {!users && 'Laddar...'}
         </div>
         {selectedUser && <ManageUser key={selectedUser._id} user={selectedUser} />}

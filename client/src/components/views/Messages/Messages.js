@@ -10,6 +10,7 @@ class Messages extends React.Component {
   componentWillMount() {
     this.unsub = ChatStore.subscribe(state => this.setState(state))
     ChatStore.select(this.props.params.user)
+    document.getElementById('footer').style.display = 'none'
   }
 
   componentWillReceiveProps(props) {
@@ -30,6 +31,7 @@ class Messages extends React.Component {
 
   componentWillUnmount() {
     this.unsub()
+    document.getElementById('footer').style.display = 'block'
   }
 
   sendMessage(ev) {
@@ -71,15 +73,12 @@ class Messages extends React.Component {
     const { threads, selectedThreadId, targetUser } = this.state
     const selected = ChatStore.getConversationId()
     return (
-      <div className="row content">
-        <div className="messenger">
-          <div className="conversations">
-            {threads.map(thread => <Conversation key={thread._id} selected={selected === thread._id} {...thread} />)}
-          </div>
-          <div className="chat">
-            {targetUser && this.renderChat()}
-            {!targetUser && this.renderWhatever()}
-          </div>
+      <div id="messenger">
+        <div className="conversations">
+          {threads.map(thread => <Conversation key={thread._id} selected={selected === thread._id} {...thread} />)}
+        </div>
+        <div className="chat">
+          {targetUser ? this.renderChat() : this.renderWhatever()}
         </div>
       </div>
     )

@@ -1,21 +1,25 @@
-.messenger
+#messenger
   position relative
-  height 700px
+  min-height 450px
+  height calc(100vh - 470px)
+  background rgba(255, 0, 0, 0.2)
   .conversations
-    width 30%
+    width 60px
     height 100%
-    padding 20px
-    background rgba(255, 255, 255, 0.15)
+    border-right 1px solid rgba(255, 255, 255, 0.17)
     .conversation
       display block
       width 100%
       height 60px
       line-height 50px
       font-size 16px
-      border-bottom 1px solid rgba(255, 255, 255, 0.37)
-      padding 10px 5px
+      border-bottom 1px solid rgba(255, 255, 255, 0.17)
+      padding 10px
       &.selected
-        background #F00
+        background rgba(255, 255, 255, 0.17)
+        border-color transparent
+      &:last-child
+        border none
 
     .picture
       height 40px
@@ -28,27 +32,42 @@
 
     .username
       color #FFF
-      display inline-block
+      display none
       height 40px
       line-height 40px
       float left
+
+    +tablet()
+      width 25%
+      .username
+        display inline-block
       
   .chat
     position absolute
     right 0px
     top 0px
-    width 70%
+    width calc(100% - 60px)
     height 100%
-    background rgba(255, 255, 255, 0.1)
     overflow scroll
+    +tablet()
+      width 75%
     
   .user
+    display table
     position absolute
     top 0
     width 100%
     height 40px
     text-align center
-    background #f00
+    border-bottom 1px solid rgba(255, 255, 255, 0.17)
+    a
+      display table-cell
+      vertical-align middle
+      text-decoration none
+      color #FFF
+      font-size 18px
+      &:hover
+        text-decoration underline
 
   .message-container
     position absolute
@@ -77,5 +96,3 @@
     width 100%
     height 40px
     padding 0 10px
-    outline none
-    border none

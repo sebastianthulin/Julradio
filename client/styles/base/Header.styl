@@ -2,10 +2,11 @@
   display flex
   align-items center
   justify-content space-between
-  padding 4px 30px
+  padding 0 30px
   background rgba(255, 0, 0, 0.3)
+  height 70px
   +desktop()
-    padding 4px 60px
+    padding 0 60px
 
   .julradio
     color #FFF
@@ -18,37 +19,11 @@
 
   .user
     button
-      padding 0 10px
-      background none
+      margin-left 4px
+      padding 2px 6px
+      background rgba(255, 255, 255, 0.17)
       color #FFF
       cursor pointer
       border none
-      border-right 1px solid
-    > button:last-child, > a:last-child button
-      padding-right 0
-      border-right none
-
-.headerLinks
-  height: 50px;
-  margin-top: 38px;
-  display: inline-table;
-  position: absolute;
-  left: 50%;
-  margin-left: -239px;
-  
-  .linkItem
-    float: left;
-    display: table;
-    font-size: 16px;
-    margin-right: 20px;
-    border-right: 1px solid #FFF;
-    padding: 1px 20px 0px 0px;
-    font-family: roboto;
-    font-weight: 100;
-    line-height: 16px;
-    cursor pointer
-    
-    &:last-child
-      margin-right 0px
-      padding 1px 0px 0px 0px
-      border-right 0px
+      border-radius 3px
+      font-family 'Proxima Nova Regular'

@@ -13,6 +13,7 @@ class Settings extends React.Component {
   save() {
     UserStore.updateSettings({
       email: this.refs.email.value,
+      realname: this.refs.realname.value,
       description: this.refs.description.value
     }).then(user => {
       alert('inställningar sparade.')
@@ -44,6 +45,10 @@ class Settings extends React.Component {
           <div>
             <h6>Email</h6>
             <input type="text" defaultValue={user.email} ref="email" />
+          </div>
+          <div>
+            <h6>IRL namn</h6>
+            <input type="text" defaultValue={user.realname} ref="realname" />
           </div>
           <div>
             <h6>Description</h6>

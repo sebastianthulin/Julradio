@@ -15,6 +15,7 @@ const Front = require('./components/views/Front')
 const UserProfile = require('./components/views/UserProfile')
 const Settings = require('./components/views/Settings')
 const Messages = require('./components/views/Messages')
+const Crew = require('./components/views/Crew')
 const Admin = require('./components/views/Admin')
 const ManageArticles = require('./components/views/Admin/ManageArticles')
 const ManageUsers = require('./components/views/Admin/ManageUsers')
@@ -36,6 +37,7 @@ class App extends React.Component {
 const routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Front} />
+    <Route path="medarbetare" component={Crew} />
     <Route path="messages" component={Messages} />
     <Route path="messages/:user" component={Messages} />
     <Route path="@:username" component={UserProfile} />

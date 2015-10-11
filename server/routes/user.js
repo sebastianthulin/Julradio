@@ -57,6 +57,7 @@ router.put('/settings', function(req, res) {
   const b = req.body
   db.User.findByIdAndUpdate(req.session.uid, {
     email: b.email,
+    realname: b.realname,
     description: b.description
   }, {
     new: true
