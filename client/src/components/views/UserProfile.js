@@ -1,11 +1,10 @@
 const React = require('react')
 const UserStore = require('../../stores/UserStore')
-
-const VIEW_PROFILE = 'VIEW_PROFILE'
-const EDIT_PROFILE = 'EDIT_PROFILE'
+const { Link } = require('react-router')
 
 class UserProfile extends React.Component {
   componentWillMount() {
+    this.authedUser = (UserStore.get() || {})._id
     this.setUser(this.props.params.username)
   }
 
@@ -14,7 +13,7 @@ class UserProfile extends React.Component {
   }
 
   setUser(username) {
-    UserStore.getByUsername(username).then(user => this.setState({ user }))
+    UserStore.getByUsername(username, user => this.setState({ user }))
   }
 
   render() {
@@ -25,11 +24,10 @@ class UserProfile extends React.Component {
       <div className="row content">
         <div className="profileBox">
           <div className="profPicture"></div>
-
-          {false && <div className="profPM">Skicka Meddelande</div>}
+          {this.authedUser !== user._id && <Link to={`/messages/${user.username}`} className="profPM">Skicka Meddelande</Link>}
           <div className="profName">{user.username}</div>
-
-          <div className="profAge">Göteborg, 20 År</div>
+          {user.title && <div className="title">{user.title}</div>}
+          <div className="profAge">Göteborg, 20 år</div>
           <div className="profText">
             <div className="profTextBox">{user.description}</div>
           </div>

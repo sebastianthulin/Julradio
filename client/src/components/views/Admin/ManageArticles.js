@@ -19,7 +19,7 @@ class ManageArticles extends React.Component {
 
   handleArticles(articles) {
     this.articles = articles
-    this.setState({articles})
+    this.setState({ articles })
     this.setArticle()
   }
 
@@ -27,7 +27,7 @@ class ManageArticles extends React.Component {
     id = id || this.props.params.id
     this.selectedId = id
     const selected = this.articles.filter(article => article._id === id)[0]
-    this.setState({selected})
+    this.setState({ selected })
   }
 
   goto(ev) {

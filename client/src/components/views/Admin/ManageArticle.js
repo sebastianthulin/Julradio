@@ -42,8 +42,4 @@ class ManageArticle extends React.Component {
   }
 }
 
-ManageArticle.contextTypes = {
-  router: React.PropTypes.func
-}
-
 module.exports = ManageArticle

@@ -1,5 +1,6 @@
 const React = require('react')
 const cx = require('classnames')
+const { Link } = require('react-router')
 const ChatStore = require('../../../stores/ChatStore')
 const UserStore = require('../../../stores/UserStore')
 const Message = require('./Message')
@@ -50,14 +51,14 @@ class Messages extends React.Component {
 
   renderChat() {
     const { messages, targetUser } = this.state
-    const user = UserStore.get()
+    const userId = UserStore.get()._id
     return (
       <div>
         <div className="user">
-          {targetUser.username}
+          <Link to={`/@${targetUser.username}`}>{targetUser.username}</Link>
         </div>
         <div className="message-container" ref="messages">
-          {messages.map(message => <Message key={message._id} user={user} message={message} />)}
+          {messages.map(message => <Message key={message._id} right={userId === message.user} message={message} />)}
         </div>
         <form onSubmit={this.sendMessage.bind(this)}>
           <input type="text" placeholder="Skriv ett meddelande..." ref="input" />

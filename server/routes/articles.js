@@ -13,10 +13,13 @@ router.get('/', function(req, res) {
 })
 
 router.use(function(req, res, next) {
-  if ('isAdmin') next()
-  else {
-    res.end(404)
-  }
+  db.User.findById(req.session.uid).exec().then(function(user) {
+    if (user && user.admin) {
+      next()
+    } else {
+      res.sendStatus(404)
+    }
+  })
 })
 
 router.post('/', function(req, res) {

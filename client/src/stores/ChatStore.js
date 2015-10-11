@@ -17,30 +17,32 @@ const state = {
 }
 
 ChatStore.select = function(username) {
-  var thread
-  UserStore.getByUsername(username).then(function(user) {
+  UserStore.getByUsername(username, function(user) {
     if (!user) {
       return ChatStore.deselect()
     }
 
-    thread = threadsByUserId[user._id]
+    const thread = threadsByUserId[user._id]
     state.targetUser = user
     updateMessages()
-    if (thread && !thread.loaded) {
-      return request.get(`/api/chat/${thread._id}`)
+
+    if (!thread || thread.loaded) {
+      return
     }
-  }).then(function({body: messages}) {
-    messages.sort((a, b) => new Date(b.date) - new Date(a.date))
-    const messageIds = messageIdsByThreadId[thread._id] = []
-    var i = messages.length
-    while (i--) {
-      var msg = messages[i]
-      messageIds.push(msg._id)
-      messagesById[msg._id] = msg
-    }
-    updateMessages()
-  }, function(err) {
-    console.log('couldnt select conversation', err)
+
+    request.get(`/api/chat/${thread._id}`).then(function({ body: messages }) {
+      messages.sort((a, b) => new Date(b.date) - new Date(a.date))
+      const messageIds = messageIdsByThreadId[thread._id] = []
+      var i = messages.length
+      while (i--) {
+        var msg = messages[i]
+        messageIds.push(msg._id)
+        messagesById[msg._id] = msg
+      }
+      updateMessages()
+    }, function(err) {
+      console.log('Couldn\'t select conversation', err)
+    })
   })
 }
 

@@ -8,11 +8,7 @@ class LogIn extends React.Component {
     UserStore.logIn({
       username: this.refs.username.value,
       password: this.refs.password.value
-    }).then(this.handleUser.bind(this), this.handleError.bind(this))
-  }
-
-  handleUser(user) {
-    location.reload()
+    }).catch(this.handleError.bind(this))
   }
 
   handleError(err) {

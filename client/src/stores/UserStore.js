@@ -2,66 +2,83 @@ const { EventEmitter } = require('events')
 const request = require('superagent')
 const UserStore = new EventEmitter
 const usersById = {}
-
-var doc = window.__USER__
+var doc
 
 UserStore.insert = function(user) {
   usersById[user._id] = user
   usersById[user.username] = user
 }
 
-UserStore.getByUsername = function(username) {
-  return new Promise(function(resolve, reject) {
-    if (!username) {
-      resolve(null)
-    } else if (usersById[username]) {
-      resolve(usersById[username])
-    } else {
-      request.get(`/api/user/${username}`).then(function({ body: user }) {
-        user && UserStore.insert(user)
-        resolve(user)
-      }, reject)
-    }
+UserStore.getByUsername = function(username, callback) {
+  if (!username) {
+    callback(null)
+  } else if (usersById[username]) {
+    callback(usersById[username])
+  } else {
+    request.get(`/api/user/byname/${username}`).then(function({ body: user }) {
+      user && UserStore.insert(user)
+      callback(user)
+    })
+  }
+}
+
+UserStore.getAll = function(callback) {
+  request.get('/api/user/all').then(function({ body: users }) {
+    callback(users)
   })
 }
 
 UserStore.set = function(user) {
   doc = user
+  UserStore.insert(user)
   UserStore.emit('doc', user)
+}
+
+UserStore.updateSettings = function(opts) {
+  return new Promise(function(resolve, reject) {
+    request.put('/api/user/settings', opts).then(function({ body: user }) {
+      UserStore.set(user)
+      resolve(user)
+    }, reject)
+  })
+}
+
+UserStore.updatePassword = function(opts) {
+  return new Promise(function(resolve, reject) {
+    request.put('/api/user/password', opts)
+      .then(resolve, ({ response }) => reject(response.body.err))
+  })
+}
+
+UserStore.updateUserSettings = function(userId, opts) {
+  return new Promise(function(resolve, reject) {
+    request.put(`/api/user/${userId}`, opts)
+      .then(resolve, ({ response }) => reject(response.body.err))
+  })
 }
 
 UserStore.logIn = function(creds, callback) {
   return new Promise(function(resolve, reject) {
-    request.post('/api/user/login', creds, function(err, res) {
-      var { err, user } = res.body
-      user && UserStore.set(user)
-      if (err) {
-        reject(err)
-      } else {
-        resolve(user)
-      }
+    request.post('/api/user/login', creds).then(function({ body: user }) {
+      location.reload()
+    }, function({ response }) {
+      reject(response.body.err)
     })
   })
 }
 
 UserStore.signUp = function(form, callback) {
   return new Promise(function(resolve, reject) {
-    request.post('/api/user/signup', form, function(err, res) {
-      var { err, user } = res.body
-      user && UserStore.set(user)
-      if (err) {
-        reject(err)
-      } else {
-        resolve(user)
-      }
+    request.post('/api/user/signup', form).then(function({ body: user }) {
+      location.reload()
+    }, function({ response }) {
+      reject(response.body.err)
     })
   })
 }
 
 UserStore.logOut = function() {
-  doc = null
-  request.post('/api/user/logout').end()
-  UserStore.emit('doc', null)
+  window.location = '/api/user/logout'
 }
 
 UserStore.subscribe = function(handler) {
@@ -73,5 +90,7 @@ UserStore.subscribe = function(handler) {
 }
 
 UserStore.get = () => doc
+
+window.__USER__ && UserStore.set(window.__USER__)
 
 module.exports = UserStore
