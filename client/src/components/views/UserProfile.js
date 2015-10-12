@@ -30,10 +30,40 @@ class UserProfile extends React.Component {
           <div className="profName">{user.username}</div>
           {user.title && <div className="title">{user.title}</div>}
           <div className="profAge">Göteborg, 20 år</div>
-          <div className="profText">
-            <div className="profTextBox">{user.description}</div>
-          </div>
+          <div className="profText">{user.description}</div>
         </div>
+
+        <div className="wall">
+          <input type="text" className="wallMessage" placeholder="Skriv ett inlägg i gästboken"/>
+          <div className="wallPost">
+            <div className="wallPostAuthor">
+              <div className="wallPostAuthorPicture"></div>
+              <div className="wallPostAuthorName">Oliver Johansson</div>
+              <div className="wallPostAuthorTime">3 dagar sedan</div>
+            </div>
+            <div className="wallPostText">Gud va du är söt asså wow. Gillar du också pepparkakor? Ska vi bli tillsammans?</div>
+          </div>
+
+          <div className="wallPost">
+            <div className="wallPostAuthor">
+              <div className="wallPostAuthorPicture"></div>
+              <div className="wallPostAuthorName">Oliver Johansson</div>
+              <div className="wallPostAuthorTime">3 dagar sedan</div>
+            </div>
+            <div className="wallPostText">Lilla snigel akta dig, akta dig, akta dig</div>
+          </div>
+
+          <div className="wallPost">
+            <div className="wallPostAuthor">
+              <div className="wallPostAuthorPicture"></div>
+              <div className="wallPostAuthorName">Oliver Johansson</div>
+              <div className="wallPostAuthorTime">365 dagar sedan</div>
+            </div>
+            <div className="wallPostText">Grattis på födelsedagen din lilla fjärt</div>
+          </div>
+
+        </div>
+
       </div>
     )
   }

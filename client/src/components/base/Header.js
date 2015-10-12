@@ -55,6 +55,7 @@ class Header extends React.Component {
     return (
       <div id="header">
         <Link to="/" className="julradio">Julradio</Link>
+        <div className="slogan">Nätets bästa julmusik</div>
         <div className="user">
           {menuItems}
         </div>
