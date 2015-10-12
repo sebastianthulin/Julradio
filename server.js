@@ -31,3 +31,5 @@ io.on('connection', require('./server/RadioStream'))
 io.on('connection', require('./server/Chat'))
 
 server.listen(8080, () => console.log('server started on port 8080'))
+
+require('./server/models').Article.find().remove().exec()
