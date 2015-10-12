@@ -2,7 +2,7 @@ const React = require('react')
 const cx = require('classnames')
 const { Link } = require('react-router')
 const ChatStore = require('../../../stores/ChatStore')
-const UserStore = require('../../../stores/UserStore')
+const User = require('../../../services/User')
 const Message = require('./Message')
 const Conversation = require('./Conversation')
 
@@ -53,7 +53,7 @@ class Messages extends React.Component {
 
   renderChat() {
     const { messages, targetUser } = this.state
-    const userId = UserStore.get()._id
+    const userId = User.get()._id
     return (
       <div>
         <div className="user">

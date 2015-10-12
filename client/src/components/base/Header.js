@@ -1,7 +1,7 @@
 const React = require('react')
 const { Link } = require('react-router')
 const Modal = require('../../services/Modal')
-const UserStore = require('../../stores/UserStore')
+const User = require('../../services/User')
 
 const MenuItem = ({ children, to, onClick, if: visible }) => {
   const btn = <button onClick={onClick}>{children}</button>
@@ -14,7 +14,7 @@ const MenuItem = ({ children, to, onClick, if: visible }) => {
 
 class Header extends React.Component {
   componentWillMount() {
-    UserStore.subscribe(user => this.setState({ user }))
+    User.subscribe(user => this.setState({ user }))
   }
 
   render() {
@@ -46,7 +46,7 @@ class Header extends React.Component {
           <MenuItem if={user} to="/settings">
             <i className="fa fa-cog bigIco" />
           </MenuItem>
-          <MenuItem if={user} onClick={UserStore.logOut}>
+          <MenuItem if={user} onClick={User.logOut}>
             <i className="fa fa-sign-out bigIco" />
           </MenuItem>
           <MenuItem if={!user} onClick={Modal.open.bind(null, 'LogIn')}>

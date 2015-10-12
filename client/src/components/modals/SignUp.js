@@ -1,11 +1,11 @@
 const React = require('react')
 const Modal = require('../../services/Modal')
-const UserStore = require('../../stores/UserStore')
+const User = require('../../services/User')
 
 class SignUp extends React.Component {
   handleSubmit(ev) {
     ev.preventDefault()
-    UserStore.signUp({
+    User.signUp({
       username: this.refs.username.value,
       email: this.refs.email.value,
       password: this.refs.password.value

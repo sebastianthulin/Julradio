@@ -1,11 +1,11 @@
 const React = require('react')
 const Modal = require('../../services/Modal')
-const UserStore = require('../../stores/UserStore')
+const User = require('../../services/User')
 
 class LogIn extends React.Component {
   handleSubmit(ev) {
     ev.preventDefault()
-    UserStore.logIn({
+    User.logIn({
       username: this.refs.username.value,
       password: this.refs.password.value
     }).catch(this.handleError.bind(this))

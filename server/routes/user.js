@@ -36,6 +36,35 @@ router.get('/byname/:username', function(req, res) {
   })
 })
 
+router.get('/wallposts/:userId', function(req, res) {
+  console.log(req.params.userId)
+  db.WallPost.find({
+    to: req.params.userId
+  }).populate({
+    path: 'from',
+    select: '-hash'
+  }).exec().then(function(posts) {
+    db.WallPost.populate(posts, {
+      path: 'from.picture',
+      model: 'pictures'
+    }, function(err, posts) {
+      res.send(posts)
+    })
+  }, function(err) {
+    res.send([])
+  })
+})
+
+router.post('/wallpost', function(req, res) {
+  new db.WallPost({
+    text: req.body.text,
+    to: req.body.userId,
+    from: req.session.uid
+  }).save(function(err, doc) {
+    res.send(doc)
+  })
+})
+
 router.post('/signup', function(req, res) {
   new db.User().signUp(req.body).then(function(user) {
     delete user.hash

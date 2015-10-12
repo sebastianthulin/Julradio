@@ -1,6 +1,7 @@
 const { EventEmitter } = require('events')
 const request = require('superagent')
 const socket = require('../services/socket')
+const User = require('../services/User')
 const UserStore = require('./UserStore')
 const ChatStore = new EventEmitter
 const threadsById = {}
@@ -86,7 +87,7 @@ function updateMessages() {
 }
 
 function insertConversation(conv) {
-  const uid = UserStore.get()._id
+  const uid = User.get()._id
   const conversation = {
     _id: conv._id,
     user: conv.users.filter(user => user._id !== uid)[0],

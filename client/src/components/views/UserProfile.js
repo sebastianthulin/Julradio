@@ -1,10 +1,23 @@
 const React = require('react')
+const User = require('../../services/User')
 const UserStore = require('../../stores/UserStore')
 const { Link } = require('react-router')
 
+const WallPost = ({ text, from: user }) => (
+  <div className="wallPost">
+    <div className="wallPostAuthor">
+      {user.picture && <div className="wallPostAuthorPicture" style={{backgroundImage: `url('/i/${user.picture._id + user.picture.extension}')`}} />}
+      <Link to={'/@' + user.username} className="wallPostAuthorName">{user.username}</Link>
+      <div className="wallPostAuthorTime">3 dagar sedan</div>
+    </div>
+    <div className="wallPostText">{text}</div>
+  </div>
+)
+
 class UserProfile extends React.Component {
   componentWillMount() {
-    this.authedUser = (UserStore.get() || {})._id
+    this.authedUser = (User.get() || {})._id
+    this.state = {}
     this.setUser(this.props.params.username)
   }
 
@@ -13,11 +26,33 @@ class UserProfile extends React.Component {
   }
 
   setUser(username) {
-    UserStore.getByUsername(username, user => this.setState({ user }))
+    this.state.posts = []
+    UserStore.getByUsername(username, this.handleUser.bind(this))
+  }
+
+  handleUser(user) {
+    this.setState({ user })
+    this.getWallPosts(user._id)
+  }
+
+  getWallPosts(userId) {
+    UserStore.getWallPosts(userId, posts => this.setState({ posts }))
+  }
+
+  wallPost(ev) {
+    ev.preventDefault()
+    const text = this.refs.wallInput.value.trim()
+    this.refs.wallInput.value = ''
+    if (!text) return
+    User.wallPost(this.state.user._id, text).then(() => {
+      this.getWallPosts(this.state.user._id)
+    }).catch(err => {
+      alert('något gick fel.')
+    })
   }
 
   render() {
-    const { user } = this.state || {}
+    const { user, posts } = this.state
     if (!user) return null
 
     return (
@@ -34,36 +69,11 @@ class UserProfile extends React.Component {
         </div>
 
         <div className="wall">
-          <input type="text" className="wallMessage" placeholder="Skriv ett inlägg i gästboken"/>
-          <div className="wallPost">
-            <div className="wallPostAuthor">
-              <div className="wallPostAuthorPicture"></div>
-              <div className="wallPostAuthorName">Oliver Johansson</div>
-              <div className="wallPostAuthorTime">3 dagar sedan</div>
-            </div>
-            <div className="wallPostText">Gud va du är söt asså wow. Gillar du också pepparkakor? Ska vi bli tillsammans?</div>
-          </div>
-
-          <div className="wallPost">
-            <div className="wallPostAuthor">
-              <div className="wallPostAuthorPicture"></div>
-              <div className="wallPostAuthorName">Oliver Johansson</div>
-              <div className="wallPostAuthorTime">3 dagar sedan</div>
-            </div>
-            <div className="wallPostText">Lilla snigel akta dig, akta dig, akta dig</div>
-          </div>
-
-          <div className="wallPost">
-            <div className="wallPostAuthor">
-              <div className="wallPostAuthorPicture"></div>
-              <div className="wallPostAuthorName">Oliver Johansson</div>
-              <div className="wallPostAuthorTime">365 dagar sedan</div>
-            </div>
-            <div className="wallPostText">Grattis på födelsedagen din lilla fjärt</div>
-          </div>
-
+          <form onSubmit={this.wallPost.bind(this)}>
+            <input type="text" ref="wallInput" className="wallMessage" placeholder="Skriv ett inlägg i gästboken" />
+          </form>
+          {posts && posts.map(post => <WallPost key={post._id} {...post} />)}
         </div>
-
       </div>
     )
   }

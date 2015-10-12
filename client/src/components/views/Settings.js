@@ -1,9 +1,9 @@
 const React = require('react')
-const UserStore = require('../../stores/UserStore')
+const User = require('../../services/User')
 
 class Settings extends React.Component {
   componentWillMount() {
-    this.unsub = UserStore.subscribe(user => this.setState({ user }))
+    this.unsub = User.subscribe(user => this.setState({ user }))
   }
 
   componentWillUnmount() {
@@ -11,7 +11,7 @@ class Settings extends React.Component {
   }
 
   save() {
-    UserStore.updateSettings({
+    User.updateSettings({
       email: this.refs.email.value,
       realname: this.refs.realname.value,
       description: this.refs.description.value
@@ -21,7 +21,7 @@ class Settings extends React.Component {
   }
 
   savePassword() {
-    UserStore.updatePassword({
+    User.updatePassword({
       current: this.refs.currentPassword.value,
       new: this.refs.newPassword.value,
       repeat: this.refs.repeatPassword.value
@@ -35,7 +35,7 @@ class Settings extends React.Component {
 
   setAvatar(ev) {
     const file = ev.target.files[0]
-    UserStore.setAvatar(file).then(() => {
+    User.setAvatar(file).then(() => {
       alert('profilbild uppdaterad.')
     }).catch(this.handleError.bind(this))
   }
