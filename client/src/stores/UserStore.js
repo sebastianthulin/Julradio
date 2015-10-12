@@ -2,7 +2,7 @@ const { EventEmitter } = require('events')
 const request = require('superagent')
 const UserStore = new EventEmitter
 const usersById = {}
-var doc
+var doc = null
 
 UserStore.insert = function(user) {
   usersById[user._id] = user
