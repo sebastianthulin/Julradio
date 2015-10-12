@@ -1,14 +1,15 @@
 const React = require('react')
 const User = require('../../services/User')
 const UserStore = require('../../stores/UserStore')
+const TimeSince = require('../reusable/TimeSince')
 const { Link } = require('react-router')
 
-const WallPost = ({ text, from: user }) => (
+const WallPost = ({ text, date, from: user }) => (
   <div className="wallPost">
     <div className="wallPostAuthor">
       {user.picture && <div className="wallPostAuthorPicture" style={{backgroundImage: `url('/i/${user.picture._id + user.picture.extension}')`}} />}
       <Link to={'/@' + user.username} className="wallPostAuthorName">{user.username}</Link>
-      <div className="wallPostAuthorTime">3 dagar sedan</div>
+      <TimeSince className="wallPostAuthorTime" date={date} />
     </div>
     <div className="wallPostText">{text}</div>
   </div>

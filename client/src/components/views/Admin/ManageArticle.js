@@ -1,5 +1,5 @@
 const React = require('react')
-const NewsStore = require('../../../stores/NewsStore')
+const ArticleStore = require('../../../stores/ArticleStore')
 
 class ManageArticle extends React.Component {
   componentWillMount() {
@@ -13,17 +13,17 @@ class ManageArticle extends React.Component {
     }
 
     if (this.id) {
-      return NewsStore.update(this.id, opts)
+      return ArticleStore.update(this.id, opts)
     }
 
-    NewsStore.create(opts, article => {
+    ArticleStore.create(opts, article => {
       this.id = article._id
       this.props.history.pushState(null, `/admin/articles/${article._id}`)
     })
   }
 
   delete() {
-    NewsStore.delete(this.id)
+    ArticleStore.delete(this.id)
     this.props.history.pushState(null, '/admin/articles')
   }
 

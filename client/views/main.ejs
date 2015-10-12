@@ -10,6 +10,7 @@
   <div id="app"></div>
   <script>
   window.__USER__ = <%- user ? JSON.stringify(user) : 'null' %>
+  window.__TIMEDIFFERENCE__ = <%- Date.now() %> - Date.now()
   </script>
   <script src="/vendor.js"></script>
   <script src="/app.js"></script>

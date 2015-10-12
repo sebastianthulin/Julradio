@@ -1,11 +1,11 @@
 const React = require('react')
 const { Link } = require('react-router')
-const NewsStore = require('../../../stores/NewsStore')
+const ArticleStore = require('../../../stores/ArticleStore')
 const ManageArticle = require('./ManageArticle')
 
 class ManageArticles extends React.Component {
   componentWillMount() {
-    this.unsubscribe = NewsStore.subscribe(this.handleArticles.bind(this))
+    this.unsubscribe = ArticleStore.subscribe(this.handleArticles.bind(this))
     this.setArticle(this.props.params.id)
   }
 

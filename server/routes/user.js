@@ -37,7 +37,6 @@ router.get('/byname/:username', function(req, res) {
 })
 
 router.get('/wallposts/:userId', function(req, res) {
-  console.log(req.params.userId)
   db.WallPost.find({
     to: req.params.userId
   }).populate({

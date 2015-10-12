@@ -1,13 +1,13 @@
 var React = require('react')
 var Modal = require('../../../services/Modal')
 var TweetStore = require('../../../stores/TweetStore')
-var NewsStore = require('../../../stores/NewsStore')
+var ArticleStore = require('../../../stores/ArticleStore')
 var TwitterFeed = require('../../reusable/TwitterFeed')
 var Article = require('./Article')
 
 class Front extends React.Component {
   componentWillMount() {
-    NewsStore.get(articles => this.setState({articles}))
+    ArticleStore.get(articles => this.setState({articles}))
     this.unsubscribe = TweetStore.subscribe(tweets => this.setState({tweets}))
   }
 
