@@ -43,6 +43,7 @@ class ManageUsers extends React.Component {
     return (
       <div className="ten columns">
         <div className="one-half column">
+          <h3>Konton</h3>
           <input type="text" placeholder="Sök..." onChange={this.filter.bind(this)} />
           <table>
             <tbody>

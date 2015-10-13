@@ -23,7 +23,23 @@ function sendCrew(req, res) {
 
 router.get('/crew', sendCrew)
 
-router.post('/crew', function(req, res, next) {
+router.get('/schedule', function(req, res) {
+  db.redis.get('schedule', function(err, result) {
+    res.send({text: result || ''})
+  })
+})
+
+router.use(function(req, res, next) {
+  db.User.findById(req.session.uid).exec().then(function(user) {
+    if (user && user.admin) {
+      next()
+    } else {
+      res.sendStatus(404)
+    }
+  })
+})
+
+router.put('/crew', function(req, res, next) {
   const userIds = req.body
 
   if (!Array.isArray(userIds)) {
@@ -39,5 +55,20 @@ router.post('/crew', function(req, res, next) {
   db.redis.set('crew', JSON.stringify(userIds))
   next()
 }, sendCrew)
+
+router.put('/schedule', function(req, res) {
+  const text = req.body.text
+  if (typeof text === 'string') {
+    db.redis.set('schedule', text, function(err, result) {
+      if (err) {
+        res.sendStatus(500)
+      } else {
+        res.sendStatus(200)
+      }
+    })
+  } else {
+    res.sendStatus(500)
+  }
+})
 
 module.exports = router

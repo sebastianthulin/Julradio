@@ -17,9 +17,12 @@ class RequestSong extends React.Component {
       <div className="modal">
         <header>Önska en låt</header>
         <main>
-          <input type="text" placeholder="Ditt Namn" />
-          <input type="text" ref="songName" placeholder="Låt" />
-          <textarea ref="text" placeholder="Text" />
+          <label>Ditt namn</label>
+          <input type="text" />
+          <label>Låt</label>
+          <input type="text" ref="songName" />
+          <label>Text</label>
+          <textarea ref="text" />
           <div className="submit">
             <button style={{marginRight: 10}}>Skicka önskning</button>
             <a target="_blank" onClick={this.setHref.bind(this)}>

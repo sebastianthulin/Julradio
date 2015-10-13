@@ -61,7 +61,7 @@ UserStore.updateUserSettings = function(userId, opts) {
 
 UserStore.updateCrew = function(userIds) {
   return new Promise(function(resolve, reject) {
-    request.post('/api/crew', userIds).then(resolve, reject)
+    request.put('/api/crew', userIds).then(resolve, reject)
   })
 }
 

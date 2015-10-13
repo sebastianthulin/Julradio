@@ -7,6 +7,7 @@ var Article = require('./Article')
 
 class Front extends React.Component {
   componentWillMount() {
+    ArticleStore.getSchedule(schedule => this.setState({ schedule }))
     ArticleStore.get(articles => this.setState({articles}))
     this.unsubscribe = TweetStore.subscribe(tweets => this.setState({tweets}))
   }
@@ -16,11 +17,15 @@ class Front extends React.Component {
   }
 
   render() {
-    var { articles, tweets } = this.state
+    var { articles, schedule, tweets } = this.state
     return (
       <div id="front" className="row content">
         <div className="two-thirds column">
           <h1>Aktuellt just nu</h1>
+          <div className="article">
+            <h2>Tablå</h2>
+            <div dangerouslySetInnerHTML={{__html: schedule && schedule.marked}} />
+          </div>
           {articles.map(article => <Article key={article._id} article={article} />)}
         </div>
         <div className="one-third column">
