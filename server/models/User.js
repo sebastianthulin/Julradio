@@ -7,6 +7,10 @@ const crypto = require('crypto')
 const schema = new Schema({
   username: {
     type: String,
+  },
+  usernameLower: {
+    type: String,
+    lowercase: true,
     unique: true
   },
   email: String,
@@ -86,3 +90,10 @@ schema.methods.updatePassword = function(opts) {
 }
 
 module.exports = mongoose.model('users', schema)
+
+module.exports.find(function(err, docs) {
+  for (let user of docs) {
+    user.usernameLower = user.username
+    user.save()
+  }
+})

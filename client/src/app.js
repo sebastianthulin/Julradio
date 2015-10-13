@@ -27,6 +27,7 @@ const Crew = require('./components/views/Crew')
 const Admin = require('./components/views/Admin')
 const ManageArticles = require('./components/views/Admin/ManageArticles')
 const ManageUsers = require('./components/views/Admin/ManageUsers')
+const ManageSchedule = require('./components/views/Admin/ManageSchedule')
 
 class App extends React.Component {
   render() {
@@ -55,6 +56,7 @@ const routes = (
       <Route path="articles/:id" component={ManageArticles} />
       <Route path="users" component={ManageUsers} />
       <Route path="users/:username" component={ManageUsers} />
+      <Route path="schedule" component={ManageSchedule} />
     </Route>
   </Route>
 )

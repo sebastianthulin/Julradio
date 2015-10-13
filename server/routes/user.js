@@ -75,10 +75,10 @@ router.post('/signup', function(req, res) {
 })
 
 router.post('/login', function(req, res) {
-  const b = req.body
-  db.User.findOne({username: b.username}).exec().then(function(user) {
+  const username = typeof req.body.username === 'string' && req.body.username.toLowerCase()
+  db.User.findOne({usernameLower: username}).exec().then(function(user) {
     if (user) {
-      if (user.auth(b.password)) {
+      if (user.auth(req.body.password)) {
         user.lastVisit = Date.now()
         user.save()
         req.session.uid = user.id

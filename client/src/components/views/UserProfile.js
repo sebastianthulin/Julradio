@@ -67,6 +67,7 @@ class UserProfile extends React.Component {
           {user.title && <div className="title">{user.title}</div>}
           <div className="profAge">Göteborg, 20 år</div>
           <div className="profText">{user.description}</div>
+          Joined {user.date}
         </div>
 
         <div className="wall">

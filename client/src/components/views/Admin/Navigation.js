@@ -6,9 +6,9 @@ const Navigation = () => (
     <div className="group">
       <h4>Hantering</h4>
       <Link to="/admin/articles">Nyheter</Link>
-      <Link to="/admin/users">Konton</Link>
       <a>Tävlingar</a>
-      <a>Poll</a>
+      <Link to="/admin/users">Konton</Link>
+      <Link to="/admin/schedule">Tablå</Link>
     </div>
     <div className="group">
       <h4>Notiser</h4>

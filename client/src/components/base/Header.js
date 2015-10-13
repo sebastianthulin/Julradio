@@ -23,7 +23,7 @@ class Header extends React.Component {
       <div id="header">
         <Link to="/" className="julradio">Julradio</Link>
         <div className="slogan">Nätets bästa julmusik</div>
-        <div className="user">
+        <div className="menu">
           <MenuItem if={user && user.admin} to="/admin/articles">
             <i className="fa fa-shield" />
             Admin
@@ -42,12 +42,12 @@ class Header extends React.Component {
             <i className="fa fa-user" />
             {user && user.username}
           </MenuItem>
-          <div className="menuDivider"></div>
+          <div className="menu-divider" />
           <MenuItem if={user} to="/settings">
-            <i className="fa fa-cog bigIco" />
+            <i className="fa fa-cog big" />
           </MenuItem>
           <MenuItem if={user} onClick={User.logOut}>
-            <i className="fa fa-sign-out bigIco" />
+            <i className="fa fa-sign-out big" />
           </MenuItem>
           <MenuItem if={!user} onClick={Modal.open.bind(null, 'LogIn')}>
             <i className="fa fa-heart" />
