@@ -30,8 +30,8 @@ router.get('/logout', function(req, res) {
 })
 
 router.get('/byname/:username', function(req, res) {
-  const username = req.params.username
-  db.User.findOne({ username }).select('-hash').populate('picture').exec(function(err, user) {
+  const username = typeof req.params.username === 'string' && req.params.username.toLowerCase()
+  db.User.findOne({ usernameLower: username }).select('-hash').populate('picture').exec(function(err, user) {
     user ? res.send(user) : res.sendStatus(200)
   })
 })
@@ -169,7 +169,7 @@ router.use(function(req, res, next) {
 })
 
 router.get('/all', function(req, res) {
-  db.User.find().select('username admin crew').exec(function(err, users) {
+  db.User.find().select('username admin').exec(function(err, users) {
     res.send(users)
   })
 })
@@ -179,8 +179,7 @@ router.put('/:userId', function(req, res) {
   db.User.findByIdAndUpdate(req.params.userId, {
     username: b.username,
     title: b.title,
-    admin: b.admin,
-    crew: b.crew
+    admin: b.admin
   }).exec().then(function() {
     res.sendStatus(200)
   }, function(err) {

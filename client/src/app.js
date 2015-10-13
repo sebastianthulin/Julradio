@@ -28,6 +28,7 @@ const Admin = require('./components/views/Admin')
 const ManageArticles = require('./components/views/Admin/ManageArticles')
 const ManageUsers = require('./components/views/Admin/ManageUsers')
 const ManageSchedule = require('./components/views/Admin/ManageSchedule')
+const ManageCrew = require('./components/views/Admin/ManageCrew')
 
 class App extends React.Component {
   render() {
@@ -46,7 +47,7 @@ class App extends React.Component {
 const routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Front} />
-    <Route path="medarbetare" component={Crew} />
+    <Route path="crew" component={Crew} />
     <Route path="messages" component={Messages} />
     <Route path="messages/:user" component={Messages} />
     <Route path="@:username" component={UserProfile} />
@@ -57,6 +58,7 @@ const routes = (
       <Route path="users" component={ManageUsers} />
       <Route path="users/:username" component={ManageUsers} />
       <Route path="schedule" component={ManageSchedule} />
+      <Route path="crew" component={ManageCrew} />
     </Route>
   </Route>
 )

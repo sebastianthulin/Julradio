@@ -3,6 +3,7 @@ const request = require('superagent')
 const UserStore = new EventEmitter
 const usersByName = {}
 const wallPostsByUserId = {}
+var crew
 
 UserStore.insert = function(user) {
   usersByName[user.username] = user
@@ -19,6 +20,15 @@ UserStore.getByUsername = function(username, callback) {
       callback(user)
     })
   }
+}
+
+UserStore.getCrew = function(callback) {
+  if (crew) callback(crew)
+  request.get('/api/crew').then(({ body }) => {
+    crew = body
+    crew.forEach(UserStore.insert)
+    callback(crew)
+  })
 }
 
 UserStore.getWallPosts = function(userId, callback) {
@@ -46,6 +56,12 @@ UserStore.updateUserSettings = function(userId, opts) {
   return new Promise(function(resolve, reject) {
     request.put(`/api/user/${userId}`, opts)
       .then(resolve, ({ response }) => reject(response.body.err))
+  })
+}
+
+UserStore.updateCrew = function(userIds) {
+  return new Promise(function(resolve, reject) {
+    request.post('/api/crew', userIds).then(resolve, reject)
   })
 }
 

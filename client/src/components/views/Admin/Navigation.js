@@ -9,6 +9,7 @@ const Navigation = () => (
       <a>Tävlingar</a>
       <Link to="/admin/users">Konton</Link>
       <Link to="/admin/schedule">Tablå</Link>
+      <Link to="/admin/crew">Medarbetare</Link>
     </div>
     <div className="group">
       <h4>Notiser</h4>

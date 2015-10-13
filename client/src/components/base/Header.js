@@ -28,6 +28,9 @@ class Header extends React.Component {
             <i className="fa fa-shield" />
             Admin
           </MenuItem>
+          <MenuItem to="/crew">
+            Medarbetare
+          </MenuItem>
           <a href="https://webchat.quakenet.org/?channels=julradio&nick=" target="_new">
             <button>
               <i className="fa fa-certificate" />

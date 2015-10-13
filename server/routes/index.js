@@ -8,6 +8,7 @@ const io = require('../../server').io
 router.use('/api/user', require('./user'))
 router.use('/api/articles', require('./articles'))
 router.use('/api/chat', require('./chat'))
+router.use('/api', require('./misq'))
 
 router.post('/reloadclients', function(req, res) {
   io.emit('reload')

@@ -3,11 +3,10 @@ const { Link } = require('react-router')
 const UserStore = require('../../../stores/UserStore')
 const ManageUser = require('./ManageUser')
 
-const User = ({ username, admin, crew }) => (
+const User = ({ username, admin }) => (
   <tr>
     <td><Link to={`/admin/users/${username}`}>{username}</Link></td>
     <td>{admin.toString()}</td>
-    <td>{crew.toString()}</td>
   </tr>
 )
 
@@ -50,7 +49,6 @@ class ManageUsers extends React.Component {
               <tr>
                 <th>Användarnamn</th>
                 <th>Admin</th>
-                <th>Crew</th>
               </tr>
               {users && users.map(user => <User key={user._id} {...user} />)}
             </tbody>

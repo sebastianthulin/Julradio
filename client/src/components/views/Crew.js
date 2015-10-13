@@ -1,9 +1,11 @@
 const React = require('react')
-const request = require('superagent')
+const { Link } = require('react-router')
+const UserStore = require('../../stores/UserStore')
 
-const Member = ({ id, username, realname, title, description }) => (
+const Member = ({ id, username, realname, title, description, picture }) => (
   <div>
-    <h3>{realname} ({username}) ({title})</h3>
+    {picture && <img src={'/i/' + picture._id + picture.extension} width="100" />}
+    <h3>{realname} (<Link to={`/@${username}`}>@{username}</Link>) ({title})</h3>
     <p>{description}</p>
   </div>
 )
@@ -11,14 +13,14 @@ const Member = ({ id, username, realname, title, description }) => (
 class Crew extends React.Component {
   componentWillMount() {
     this.state = {crew: []}
-    request.get('/api/crew').then(({ body: crew }) => this.setState({ crew }))
+    UserStore.getCrew(crew => this.setState({ crew }))
   }
 
   render() {
     const { crew } = this.state
     return (
       <div className="row content">
-        {crew.map(member => <Member key={member.id} {...member} />)}
+        {crew.map(user => <Member key={user._id} {...user} />)}
       </div>
     )
   }

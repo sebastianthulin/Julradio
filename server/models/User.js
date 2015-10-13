@@ -26,10 +26,6 @@ const schema = new Schema({
     type: Boolean,
     default: true
   },
-  crew: {
-    type: Boolean,
-    default: false
-  },
   lastVisit: {
     type: Date,
     default: Date.now

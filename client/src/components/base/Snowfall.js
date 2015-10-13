@@ -60,9 +60,9 @@ class Snowfall extends React.Component {
     this.tick()
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.active !== nextProps.active) {
-      nextProps.active ? this.resume() : this.kill()
+  componentWillReceiveProps(props) {
+    if (this.props.active !== props.active) {
+      props.active ? this.resume() : this.kill()
     }
   }
 

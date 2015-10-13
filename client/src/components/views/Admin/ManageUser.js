@@ -6,8 +6,7 @@ class ManageUser extends React.Component {
     UserStore.updateUserSettings(this.props.user._id, {
       username: this.refs.username.value,
       title: this.refs.title.value,
-      admin: this.refs.admin.checked,
-      crew: this.refs.crew.checked
+      admin: this.refs.admin.checked
     }).then(function() {
       alert('Ändringar sparade.')
     }).catch(function(err) {
@@ -31,10 +30,6 @@ class ManageUser extends React.Component {
         <div>
           <h6>Admin</h6>
           <input type="checkbox" defaultChecked={user.admin} ref="admin" />
-        </div>
-        <div>
-          <h6>Crewmember</h6>
-          <input type="checkbox" defaultChecked={user.crew} ref="crew" />
         </div>
         <button onClick={this.save.bind(this)}>Spara ändringar</button>
       </div>
