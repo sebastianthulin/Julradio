@@ -51,43 +51,36 @@ class Settings extends React.Component {
         <div className="one-third column">
           <h4>Allmänt</h4>
           <div>
-            <h6>Email</h6>
-            <input type="text" defaultValue={user.email} ref="email" />
+            <input className="settingsInput" type="text" defaultValue={user.email} ref="email" placeholder="Email"/>
           </div>
           <div>
-            <h6>IRL namn</h6>
-            <input type="text" defaultValue={user.realname} ref="realname" />
+            <input className="settingsInput" type="text" defaultValue={user.realname} ref="realname" placeholder="IRL Namn"/>
           </div>
           <div>
-            <h6>Description</h6>
-            <textarea defaultValue={user.description} ref="description" />
+            <textarea className="settingsInput settingsInputArea" defaultValue={user.description} ref="description" placeholder="Personlig beskrivning"/>
           </div>
-          <div>
-            <h6>DOB</h6>
-            ...
-          </div>
-          <button onClick={this.save.bind(this)}>Spara ändringar</button>
+          <button className="settingsSave" onClick={this.save.bind(this)}>Spara ändringar</button>
         </div>
         <div className="one-third column">
           <h4>Lösenord</h4>
           <div>
-            <h6>Nuvarande lösenord</h6>
-            <input type="password" ref="currentPassword" />
+            <input className="settingsInput" type="password" ref="currentPassword" placeholder="Nuvarande lösenord"/>
           </div>
           <div>
-            <h6>Nytt lösenord</h6>
-            <input type="password" ref="newPassword" />
+            <input className="settingsInput" type="password" ref="newPassword" placeholder="Nytt lösenord"/>
           </div>
           <div>
-            <h6>Repetera</h6>
-            <input type="password" ref="repeatPassword" />
+            <input className="settingsInput" type="password" ref="repeatPassword" placeholder="Repetera"/>
           </div>
-          <button onClick={this.savePassword.bind(this)}>Spara lösenord</button>
+          <button className="settingsSave" onClick={this.savePassword.bind(this)}>Spara lösenord</button>
         </div>
         <div className="one-third column">
           <h4>Profilbild</h4>
           <input type="file" onChange={this.setAvatar.bind(this)} />
-          <p>högst 2mb</p>
+          <br/>
+          högst 2mb
+          <br/>
+          Helst en kvadrat
         </div>
       </div>
     )
