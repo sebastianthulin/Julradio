@@ -7,7 +7,7 @@ class ManageSchedule extends React.Component {
   }
 
   save() {
-    var text = this.refs.textarea.value.trim()
+    const text = this.refs.textarea.value.trim()
     ArticleStore.saveSchedule(text).then(() => {
       alert('Sparat.')
     }, () => {
@@ -21,6 +21,7 @@ class ManageSchedule extends React.Component {
       <div className="ten columns">
         <h3>Tablå</h3>
         Här kan <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">markdown</a> användas.
+        {!schedule && <textarea disabled />}
         {schedule && <textarea ref="textarea" defaultValue={schedule.text} />}
         <button onClick={this.save.bind(this)}>Spara</button>
       </div>

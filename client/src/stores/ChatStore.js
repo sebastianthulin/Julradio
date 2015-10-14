@@ -40,6 +40,7 @@ ChatStore.select = function(username) {
         messageIds.push(msg._id)
         messagesById[msg._id] = msg
       }
+      thread.loaded = true
       updateMessages()
     }, function(err) {
       console.log('Couldn\'t select conversation', err)

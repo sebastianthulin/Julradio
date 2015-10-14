@@ -4,15 +4,19 @@
 body
   margin 0
   color #FFF
-  background #280000 url('/images/dark-red-christmas-background.jpg') fixed 100%
+  background #280000 url('/images/dark-red-christmas-background.jpg') fixed center
   &.no-scroll
     overflow hidden
     
 body, input, textarea, button, select
-  font-family 'Proxima Nova Light'
+  font-family 'Roboto'
   outline none
   border none
   border-radius 0
+  
+a
+  color #0F0
+  text-decoration none
 
 #app
   margin 0 auto
@@ -30,36 +34,19 @@ body, input, textarea, button, select
   pointer-events none
   top 0
   left 0
-  
-.settingsInput
-  height 40px
-  line-height 42px
-  padding 0px 10px
-  border-radius 3px
-  margin-bottom 10px
-  width 230px
-  
-.settingsSave
-  height 40px
-  line-height 42px
-  padding 0px 10px
-  border-radius 3px
-  width 230px
-  background white
-  
-.settingsInputArea
-  min-height 100px
-  line-height 16px
-  padding-top 10px
-  margin-bottom 2px
-  resize vertical
-  
-input[type="file"]
-  color white
-  line-height 16px
 
-h6
-  margin 10px 0px 0px 0px
-  
-h4
-  margin 0px 0px 10px 0px
+.markdown-body
+  word-wrap break-word
+  // word-break break-all
+  :last-child
+    margin-bottom 0
+  p, blockquote, ul, ol, dl, table, pre
+    margin-top 0
+  h1, h2, h3, h4, h5, h6
+    margin-bottom 12px
+  ul, ol
+    padding-left 29px
+  blockquote
+    padding 0 15px
+    border-left 4px solid #ddd
+    margin-left 0

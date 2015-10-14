@@ -17,7 +17,8 @@ var dependencies = [
   'socket.io-client',
   'superagent',
   'classnames',
-  'marked'
+  'marked',
+  'react-router/node_modules/history/lib/createBrowserHistory'
 ]
 
 var reload = () => request.post('http://127.0.0.1:8080/reloadclients').end()
