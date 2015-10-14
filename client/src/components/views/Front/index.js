@@ -21,11 +21,10 @@ class Front extends React.Component {
     return (
       <div id="front" className="row content">
         <div className="two-thirds column">
-          <h1>Aktuellt just nu</h1>
-          <div className="article">
-            <h2>Tablå</h2>
+          <div className="scheduleBox">
             <div dangerouslySetInnerHTML={{__html: schedule && schedule.marked}} />
           </div>
+          <h2>Aktuellt just nu</h2>
           {articles.map(article => <Article key={article._id} article={article} />)}
         </div>
         <div className="one-third column">

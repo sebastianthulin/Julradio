@@ -29,7 +29,7 @@ class Header extends React.Component {
             Admin
           </MenuItem>
           <MenuItem to="/crew">
-            <i className="fa check-circle" />
+            <i className="fa fa-check-circle" />
             Medarbetare
           </MenuItem>
           <a href="https://webchat.quakenet.org/?channels=julradio&nick=" target="_new">

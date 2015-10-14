@@ -20,6 +20,7 @@ class ManageSchedule extends React.Component {
     return (
       <div className="ten columns">
         <h3>Tablå</h3>
+        Här kan <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">markdown</a> användas.
         {schedule && <textarea ref="textarea" defaultValue={schedule.text} />}
         <button onClick={this.save.bind(this)}>Spara</button>
       </div>
