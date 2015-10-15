@@ -3,6 +3,8 @@
 const db = require('./models')
 const io = require('../server').io
 
+const Notification = require('./Notification')
+
 module.exports = function(socket) {
   const uid = socket.request.session.uid
   if (!uid) return
@@ -61,6 +63,7 @@ module.exports = function(socket) {
       conversation.save()
       conversation.users.forEach(function(userId) {
         io.to(userId).emit('chat:message', message)
+        Notification('message', userId, message)
       })
     }).catch(function(err) {
       console.log('@sendMessage', err)
