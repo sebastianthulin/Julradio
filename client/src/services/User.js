@@ -16,6 +16,14 @@ User.wallPost = function(userId, text) {
   })
 }
 
+User.deleteWallPost = function(postId) {
+  return new Promise(function(resolve, reject) {
+    request.del('/api/user/wallpost/' + postId).then(function(res) {
+      resolve(res)
+    }, (res) => reject(res))
+  })
+}
+
 User.updateSettings = function(opts) {
   return new Promise(function(resolve, reject) {
     request.put('/api/user/settings', opts).then(function({ body: user }) {

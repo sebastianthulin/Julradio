@@ -4,20 +4,35 @@ const UserStore = require('../../stores/UserStore')
 const TimeSince = require('../reusable/TimeSince')
 const { Link } = require('react-router')
 
-const WallPost = ({ text, date, from: user }) => (
-  <div className="wallPost">
-    <div className="wallPostAuthor">
-      {user.picture && <div className="wallPostAuthorPicture" style={{backgroundImage: `url('/i/${user.picture._id + user.picture.extension}')`}} />}
-      <Link to={'/@' + user.username} className="wallPostAuthorName">{user.username}</Link>
-      <TimeSince className="wallPostAuthorTime" date={date} />
-    </div>
-    <div className="wallPostText">{text}</div>
-  </div>
-)
+
+class WallPost extends React.Component {
+  delete() {
+    const { _id } = this.props
+    User.deleteWallPost(_id).then(() => {
+      //get posts
+    }).catch(err => {
+      alert('Något gick fel' + err)
+    })
+  }
+
+  render() {
+    const { _id, text, date, from: user, canRemove } = this.props
+
+    return (<div className="wallPost">
+      <div className="wallPostAuthor">
+        {user.picture && <div className="wallPostAuthorPicture" style={{backgroundImage: `url('/i/${user.picture._id + user.picture.extension}')`}} />}
+        <Link to={'/@' + user.username} className="wallPostAuthorName">{user.username}</Link>
+        <TimeSince className="wallPostAuthorTime" date={date} />
+      </div>
+      <div className="wallPostText">{text}</div>
+      {canRemove && <div><button onClick={ this.delete.bind(this) }>Radera</button></div>}
+    </div>)
+  }
+}
 
 class UserProfile extends React.Component {
   componentWillMount() {
-    this.authedUser = (User.get() || {})._id
+    this.authedUser = User.get() || {}
     this.state = {}
     this.setUser(this.props.params.username)
   }
@@ -62,7 +77,7 @@ class UserProfile extends React.Component {
           <div className="profPicture">
             {user.picture && <img src={'/i/' + user.picture._id + user.picture.extension} alt="Profilbild" />}
           </div>
-          {this.authedUser !== user._id && <Link to={`/messages/${user.username}`} className="profPM">Skicka Meddelande</Link>}
+          {this.authedUser._id !== user._id && <Link to={`/messages/${user.username}`} className="profPM">Skicka Meddelande</Link>}
           <div className="profName">{user.username}</div>
           {user.title && <div className="title">{user.title}</div>}
           <div className="profAge">{user.location && user.location + ','} {user.gender} 20 år</div>
@@ -74,7 +89,7 @@ class UserProfile extends React.Component {
           <form onSubmit={this.wallPost.bind(this)}>
             <input type="text" ref="wallInput" className="wallMessage" placeholder="Skriv ett inlägg i gästboken" />
           </form>
-          {posts && posts.map(post => <WallPost key={post._id} {...post} />)}
+          {posts && posts.map(post => <WallPost key={post._id} {...post} canRemove={ this.authedUser._id === user._id || this.authedUser._id === post.from._id || this.authedUser.admin } />)}
         </div>
       </div>
     )
