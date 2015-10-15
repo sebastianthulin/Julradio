@@ -10,10 +10,13 @@ const stream = radio.createReadStream(config.shoutCastUrl)
 
 stream.on('connect', () => console.log('connected to radio'))
 stream.on('error', err => console.log(err))
+stream.on('close', function() {
+  console.log('radio connection closed')
+})
 
 stream.on('metadata', function(data) {
   const title = radio.parseMetadata(data).StreamTitle
-  if (title !== metadata.current) {
+  if (title && title !== metadata.current) {
     history.push({
       title,
       playedAt: Date.now()

@@ -17,7 +17,6 @@ class ManageArticle extends React.Component {
     }
 
     ArticleStore.create(opts, article => {
-      this.id = article._id
       this.props.history.pushState(null, `/admin/articles/${article._id}`)
     })
   }
@@ -31,7 +30,7 @@ class ManageArticle extends React.Component {
     const { article } = this.props
     return (
       <div>
-        <input ref="title" defaultValue={article.title} />
+        <input ref="title" placeholder="Rubrik" defaultValue={article.title} />
         <textarea ref="content" defaultValue={article.content} />
         <div style={{float: 'right'}}>
           <button onClick={this.save.bind(this)}>Spara</button>

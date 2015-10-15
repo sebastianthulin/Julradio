@@ -34,7 +34,6 @@ ArticleStore.get = function(callback) {
 ArticleStore.getSchedule = function(callback) {
   request.get('/api/schedule', function(err, { body: schedule }) {
     schedule.marked = marked(schedule.text)
-    console.log(schedule)
     callback(schedule)
   })
 }

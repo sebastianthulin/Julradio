@@ -1,15 +1,18 @@
 'use strict';
 
-var gulp = require('gulp')
-var browserify = require('browserify')
-var babelify = require('babelify')
-var uglify = require('gulp-uglify')
-var stylus = require('gulp-stylus')
-var source = require('vinyl-source-stream')
-var buffer = require('vinyl-buffer')
-var request = require('superagent')
+const gulp = require('gulp')
+const util = require('gulp-util')
+const browserify = require('browserify')
+const babelify = require('babelify')
+const uglify = require('gulp-uglify')
+const stylus = require('gulp-stylus')
+const source = require('vinyl-source-stream')
+const buffer = require('vinyl-buffer')
+const request = require('superagent')
 
-var dependencies = [
+const reload = () => request.post('http://127.0.0.1:8080/reloadclients').end()
+const production = process.env.NODE_ENV === 'production'
+const dependencies = [
   'events',
   'react',
   'react-dom',
@@ -21,10 +24,8 @@ var dependencies = [
   'react-router/node_modules/history/lib/createBrowserHistory'
 ]
 
-var reload = () => request.post('http://127.0.0.1:8080/reloadclients').end()
-
 gulp.task('js', function() {
-  return browserify('./client/src/app', {debug: true})
+  return browserify('./client/src/app', {debug: production})
     .external(dependencies)
     .transform(babelify)
     .bundle()
@@ -33,6 +34,8 @@ gulp.task('js', function() {
       this.emit('end')
     })
     .pipe(source('app.js'))
+    .pipe(production ? buffer() : util.noop())
+    .pipe(production ? uglify() : util.noop())
     .pipe(gulp.dest('./public'))
     .on('finish', reload)
 })
@@ -44,11 +47,11 @@ gulp.task('css', function() {
     .on('finish', reload)
 })
 
-gulp.task('vendor', function() {
+gulp.task('vendors', function() {
   return browserify()
     .require(dependencies)
     .bundle()
-    .pipe(source('vendor.js'))
+    .pipe(source('vendors.js'))
     .pipe(buffer())
     .pipe(uglify())
     .pipe(gulp.dest('./public'))
@@ -59,6 +62,6 @@ gulp.task('watch', function() {
   gulp.watch('./client/styles/**/*.styl', ['css'])
 })
 
-gulp.task('build', ['js', 'css', 'vendor'])
+gulp.task('build', ['js', 'css', 'vendors'])
 
 gulp.task('default', ['build', 'watch'])

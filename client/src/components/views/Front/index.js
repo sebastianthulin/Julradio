@@ -1,9 +1,10 @@
-var React = require('react')
-var Modal = require('../../../services/Modal')
-var TweetStore = require('../../../stores/TweetStore')
-var ArticleStore = require('../../../stores/ArticleStore')
-var TwitterFeed = require('../../reusable/TwitterFeed')
-var Article = require('./Article')
+const React = require('react')
+const Modal = require('../../../services/Modal')
+const TweetStore = require('../../../stores/TweetStore')
+const ArticleStore = require('../../../stores/ArticleStore')
+const TwitterFeed = require('../../reusable/TwitterFeed')
+const Article = require('./Article')
+const Schedule = require('./Schedule')
 
 class Front extends React.Component {
   componentWillMount() {
@@ -17,13 +18,11 @@ class Front extends React.Component {
   }
 
   render() {
-    var { articles, schedule, tweets } = this.state
+    const { articles, schedule, tweets } = this.state
     return (
       <div id="front" className="row content">
         <div className="two-thirds column">
-          <div className="scheduleBox">
-            <div dangerouslySetInnerHTML={{__html: schedule && schedule.marked}} />
-          </div>
+          {schedule && <Schedule {...schedule} />}
           <h2>Aktuellt just nu</h2>
           {articles.map(article => <Article key={article._id} article={article} />)}
         </div>

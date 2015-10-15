@@ -16,7 +16,7 @@ const config = {
 
   },
   production: {
-
+    shoutCastUrl: 'http://s5.voscast.com:7346'
   }
 }
 
