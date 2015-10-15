@@ -8,7 +8,7 @@ const io = require('../../server').io
 router.use(function(req, res, next) {
   const uid = req.session.uid
   if (!uid) return next()
-  db.User.findById(uid).select('-hash').populate('picture').exec().then(function(user) {
+  db.User.findById(uid).select('-hash').populate('picture').lean().exec().then(function(user) {
     req.user = user
     next()
   }, function(err) {

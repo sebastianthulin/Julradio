@@ -16,7 +16,7 @@ class ManageUser extends React.Component {
   }
 
   render() {
-    const { user } = this.props
+    const { user, user: { picture } } = this.props
     return (
       <div className="one-half column">
         <div>
@@ -27,11 +27,14 @@ class ManageUser extends React.Component {
           <h6>Titel</h6>
           <input type="text" defaultValue={user.title} ref="title" />
         </div>
+        {picture && <img src={'/i/' + picture._id + picture.extension} width="100" />}
+        {picture && <button>Ta bort bild</button>}
         <div>
           <h6>Admin</h6>
           <input type="checkbox" defaultChecked={user.admin} ref="admin" />
         </div>
         <button onClick={this.save.bind(this)}>Spara ändringar</button>
+        <button>Banna</button>
       </div>
     )
   }

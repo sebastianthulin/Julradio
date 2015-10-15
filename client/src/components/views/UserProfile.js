@@ -65,7 +65,7 @@ class UserProfile extends React.Component {
           {this.authedUser !== user._id && <Link to={`/messages/${user.username}`} className="profPM">Skicka Meddelande</Link>}
           <div className="profName">{user.username}</div>
           {user.title && <div className="title">{user.title}</div>}
-          <div className="profAge">Göteborg, 20 år</div>
+          <div className="profAge">{user.location && user.location + ','} {user.gender} 20 år</div>
           <div className="profText">{user.description}</div>
           Joined {user.date}
         </div>

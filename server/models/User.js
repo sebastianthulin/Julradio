@@ -17,6 +17,8 @@ const schema = new Schema({
   hash: String,
   realname: String,
   description: String,
+  gender: String,
+  location: String,
   title: String,
   picture: {
     type: Schema.ObjectId,

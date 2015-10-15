@@ -14,7 +14,9 @@ class Settings extends React.Component {
     User.updateSettings({
       email: this.refs.email.value,
       realname: this.refs.realname.value,
-      description: this.refs.description.value
+      description: this.refs.description.value,
+      gender: this.refs.gender.value,
+      location: this.refs.location.value
     }).then(user => {
       alert('inställningar sparade.')
     }).catch(this.handleError.bind(this))
@@ -55,6 +57,14 @@ class Settings extends React.Component {
           </div>
           <div>
             <input className="settingsInput" type="text" defaultValue={user.realname} ref="realname" placeholder="IRL Namn"/>
+          </div>
+          <select defaultValue={user.gender} ref="gender">
+            <option value="">Kön</option>
+            <option value="male">Pojke</option>
+            <option value="female">Flicka</option>
+          </select>
+          <div>
+            <input className="settingsInput" type="text" defaultValue={user.location} ref="location" placeholder="Bor"/>
           </div>
           <div>
             <textarea className="settingsInput settingsInputArea" defaultValue={user.description} ref="description" placeholder="Personlig beskrivning"/>

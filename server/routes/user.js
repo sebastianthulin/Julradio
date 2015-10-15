@@ -31,7 +31,7 @@ router.get('/logout', function(req, res) {
 
 router.get('/byname/:username', function(req, res) {
   const username = typeof req.params.username === 'string' && req.params.username.toLowerCase()
-  db.User.findOne({ usernameLower: username }).select('-hash').populate('picture').exec(function(err, user) {
+  db.User.findOne({usernameLower: username}).select('-hash').populate('picture').lean().exec(function(err, user) {
     user ? res.send(user) : res.sendStatus(200)
   })
 })
@@ -105,10 +105,12 @@ router.put('/settings', function(req, res) {
   db.User.findByIdAndUpdate(req.session.uid, {
     email: b.email,
     realname: b.realname,
-    description: b.description
+    description: b.description,
+    gender: b.gender,
+    location: b.location
   }, {
     new: true
-  }).exec().then(function(user) {
+  }).select('-hash').populate('picture').exec().then(function(user) {
     res.send(user)
   })
 })

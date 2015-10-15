@@ -25,7 +25,7 @@ const dependencies = [
 ]
 
 gulp.task('js', function() {
-  return browserify('./client/src/app', {debug: production})
+  return browserify('./client/src/app', {debug: !production})
     .external(dependencies)
     .transform(babelify)
     .bundle()

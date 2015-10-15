@@ -1,5 +1,4 @@
 const React = require('react')
-const { Link } = require('react-router')
 const ArticleStore = require('../../../stores/ArticleStore')
 const ManageArticle = require('./ManageArticle')
 
