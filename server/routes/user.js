@@ -54,33 +54,6 @@ router.get('/wallposts/:userId', function(req, res) {
   })
 })
 
-router.post('/wallpost', function(req, res) {
-  new db.WallPost({
-    text: req.body.text,
-    to: req.body.userId,
-    from: req.session.uid
-  }).save(function(err, doc) {
-    res.send(doc)
-  })
-})
-
-router.delete('/wallpost/:id', function(req, res) {
-  const b = req.params
-  db.WallPost.findOne({
-    _id: b.id
-  }).exec().then(function(post) {
-    if (req.user && (req.user.admin || req.session.uid == post.from || req.session.uid == post.to)) {
-      post.remove().then(function() {
-        res.send({ post })
-      })
-    } else {
-      req.status(500).send({err: 'Du kan inte ta bort detta inlägg'})
-    }
-  }, function(err) {
-    res.status(500).send({err: err.toString()})
-  })
-})
-
 router.post('/signup', function(req, res) {
   new db.User().signUp(req.body).then(function(user) {
     delete user.hash
@@ -115,6 +88,33 @@ router.use(function(req, res, next) {
   } else {
     res.status(500).send({err: 'not signed in'})
   }
+})
+
+router.post('/wallpost', function(req, res) {
+  new db.WallPost({
+    text: req.body.text,
+    to: req.body.userId,
+    from: req.session.uid
+  }).save(function(err, doc) {
+    res.send(doc)
+  })
+})
+
+router.delete('/wallpost/:id', function(req, res) {
+  const b = req.params
+  db.WallPost.findOne({
+    _id: b.id
+  }).exec().then(function(post) {
+    if (req.user.admin || req.session.uid == post.from || req.session.uid == post.to) {
+      post.remove().then(function() {
+        res.sendStatus(200)
+      })
+    } else {
+      req.status(500).send({err: 'Du kan inte ta bort detta inlägg'})
+    }
+  }, function(err) {
+    res.status(500).send({err: err.toString()})
+  })
 })
 
 router.put('/settings', function(req, res) {

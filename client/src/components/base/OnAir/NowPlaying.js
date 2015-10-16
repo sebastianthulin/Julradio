@@ -6,9 +6,9 @@ const UIStore = require('../../../stores/UIStore')
 class NowPlaying extends React.Component {
   componentWillMount() {
     this.state = {}
-    RadioStore.subscribe('metadata', metadata => this.setState({metadata}))
-    RadioStore.subscribe.history(history => this.setState({history}))
-    UIStore.subscribe('NowPlaying', visibility => this.setState({visibility}))
+    RadioStore.subscribe('currentlyPlaying', currentlyPlaying => this.setState({ currentlyPlaying }))
+    RadioStore.subscribe('history', history => this.setState({ history }))
+    UIStore.subscribe('NowPlaying', visibility => this.setState({ visibility }))
   }
 
   toggle() {
@@ -18,24 +18,23 @@ class NowPlaying extends React.Component {
   }
 
   renderHistory() {
-    var { history } = this.state
-    history = history.slice(history.length > 30 && 31).reverse().slice(1)
+    var history = this.state.history.slice().reverse().slice(1)
     return (
       <div>
         <span className="meta">Tidigare:</span>
-        {history.map(song => <span key={song.playedAt}>{song.title}</span>)}
+        {history.map(song => <span key={song.date}>{song.title}</span>)}
       </div>
     )
   }
 
   render() {
-    const { metadata, visibility } = this.state
+    const { currentlyPlaying, visibility } = this.state
     const { CURRENT_ONLY, HISTORY } = visibility
     const className = cx('now-playing', { big: HISTORY })
     return (
       <div className={className} onClick={this.toggle.bind(this)}>
         <span className="meta">Nu spelas</span>
-        <span>{metadata.current}</span>
+        <span>{currentlyPlaying.title}</span>
         {HISTORY && this.renderHistory()}
       </div>
     )

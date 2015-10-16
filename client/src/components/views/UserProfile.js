@@ -4,20 +4,9 @@ const UserStore = require('../../stores/UserStore')
 const TimeSince = require('../reusable/TimeSince')
 const { Link } = require('react-router')
 
-
 class WallPost extends React.Component {
-  delete() {
-    const { _id } = this.props
-    User.deleteWallPost(_id).then(() => {
-      //get posts
-    }).catch(err => {
-      alert('Något gick fel' + err)
-    })
-  }
-
   render() {
-    const { _id, text, date, from: user, canRemove } = this.props
-
+    const { _id, text, date, from: user, canRemove, onDelete } = this.props
     return (<div className="wallPost">
       <div className="wallPostAuthor">
         {user.picture && <div className="wallPostAuthorPicture" style={{backgroundImage: `url('/i/${user.picture._id + user.picture.extension}')`}} />}
@@ -25,7 +14,7 @@ class WallPost extends React.Component {
         <TimeSince className="wallPostAuthorTime" date={date} />
       </div>
       <div className="wallPostText">{text}</div>
-      {canRemove && <div><button onClick={ this.delete.bind(this) }>Radera</button></div>}
+      {canRemove && <div><button onClick={onDelete}>Radera</button></div>}
     </div>)
   }
 }
@@ -67,6 +56,18 @@ class UserProfile extends React.Component {
     })
   }
 
+  deleteWallPost(id) {
+    if (!confirm('Ta bort inlägg?')) {
+      return
+    }
+
+    User.deleteWallPost(id).then(() => {
+      this.getWallPosts(this.state.user._id)
+    }).catch(err => {
+      alert('Något gick fel', err)
+    })
+  }
+
   render() {
     const { user, posts } = this.state
     if (!user) return null
@@ -89,7 +90,7 @@ class UserProfile extends React.Component {
           <form onSubmit={this.wallPost.bind(this)}>
             <input type="text" ref="wallInput" className="wallMessage" placeholder="Skriv ett inlägg i gästboken" />
           </form>
-          {posts && posts.map(post => <WallPost key={post._id} {...post} canRemove={ this.authedUser._id === user._id || this.authedUser._id === post.from._id || this.authedUser.admin } />)}
+          {posts && posts.map(post => <WallPost key={post._id} {...post} canRemove={this.authedUser._id === user._id || this.authedUser._id === post.from._id || this.authedUser.admin} onDelete={this.deleteWallPost.bind(this, post._id)} />)}
         </div>
       </div>
     )
