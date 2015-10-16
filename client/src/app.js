@@ -3,7 +3,8 @@ const React = require('react')
 const ReactDOM = require('react-dom')
 const { Router, Route, IndexRoute } = require('react-router')
 const marked = require('marked')
-const history = require('react-router/node_modules/history/lib/createBrowserHistory')()
+const createBrowserHistory = require('history/lib/createBrowserHistory')
+const User = require('./services/User')
 
 // Config
 marked.setOptions({
@@ -44,15 +45,28 @@ class App extends React.Component {
   }
 }
 
+function requireAuth(nextState, replaceState) {
+  if (!User.get()) {
+    replaceState({nextPathname: nextState.location.pathname}, '/')
+  }
+}
+
+function requireAdminAuth(nextState, replaceState) {
+  if (!(User.get() || {}).admin) {
+    replaceState({nextPathname: nextState.location.pathname}, '/')
+  }
+}
+
+const history = createBrowserHistory()
 const routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Front} />
     <Route path="crew" component={Crew} />
-    <Route path="messages" component={Messages} />
-    <Route path="messages/:user" component={Messages} />
+    <Route path="messages" component={Messages} onEnter={requireAuth} />
+    <Route path="messages/:user" component={Messages} onEnter={requireAuth} />
     <Route path="@:username" component={UserProfile} />
-    <Route path="settings" component={Settings} />
-    <Route path="admin" component={Admin}>
+    <Route path="settings" component={Settings} onEnter={requireAuth} />
+    <Route path="admin" component={Admin} onEnter={requireAdminAuth}>
       <Route path="articles" component={ManageArticles} />
       <Route path="articles/:id" component={ManageArticles} />
       <Route path="users" component={ManageUsers} />

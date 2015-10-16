@@ -11,6 +11,7 @@
     "ejs": "^2.3.3",
     "express": "^4.13.3",
     "express-session": "^1.11.3",
+    "history": "^1.12.5",
     "marked": "^0.3.5",
     "mongoose": "^4.1.10",
     "multer": "^1.0.6",

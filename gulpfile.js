@@ -21,7 +21,7 @@ const dependencies = [
   'superagent',
   'classnames',
   'marked',
-  'react-router/node_modules/history/lib/createBrowserHistory'
+  'history/lib/createBrowserHistory'
 ]
 
 gulp.task('js', function() {

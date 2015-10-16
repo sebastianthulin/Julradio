@@ -37,7 +37,7 @@ stream.on('metadata', function(data) {
   io.emit('metadata', { playing })
 
   db.Song.findOne().sort('-_id').exec(function(err, doc) {
-    if (!doc || doc.title !== title) {
+    if (!doc || (doc && doc.title !== title)) {
       new db.Song({ title }).save()
     }
   })
