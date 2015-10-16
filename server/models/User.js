@@ -20,6 +20,7 @@ const schema = new Schema({
   gender: String,
   location: String,
   title: String,
+  banned: Boolean,
   picture: {
     type: Schema.ObjectId,
     ref: 'pictures'

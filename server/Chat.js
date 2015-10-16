@@ -21,32 +21,29 @@ module.exports = function(socket) {
 
   function getConversationId(userId) {
     var users
-    return new Promise(function(resolve, reject) {
-      db.User.findById(userId).exec().then(function(user) {
-        if (!user || user._id.toString() === uid.toString()) {
-          throw new Error('invalid user')
-        }
-        users = [uid, user._id]
-        return db.Conversation.findOne({$and: [
-          {users: uid},
-          {users: user._id}
-        ]}).exec()
-      }).then(function(conversation) {
-        if (conversation) {
-          return conversation
-        } else {
-          return createConversation(users)
-        }
-      }).then(function(conversation) {
-        resolve(conversation._id)
-      }, reject)
+    return db.User.findById(userId).exec().then(function(user) {
+      if (!user || user._id.toString() === uid.toString()) {
+        throw new Error('invalid user')
+      }
+      users = [uid, user._id]
+      return db.Conversation.findOne({$and: [
+        {users: uid},
+        {users: user._id}
+      ]}).exec()
+    }).then(function(conversation) {
+      if (conversation) {
+        return conversation
+      } else {
+        return createConversation(users)
+      }
+    }).then(function(conversation) {
+      return conversation._id
     })
   }
 
   function sendMessage(conversationId, text) {
     db.Conversation.findById(conversationId).exec().then(function(conversation) {
       if (!conversation) {
-        // errors do not seem to get caught
         throw new Error('conversation not found')
       } else if (conversation.users.indexOf(uid) === -1) {
         throw new Error('not authorised')
@@ -65,13 +62,13 @@ module.exports = function(socket) {
       conversation.users.forEach(function(userId) {
         io.to(userId).emit('chat:message', message)
       })
-    }, function(err) {
-      console.log(err)
+    }).catch(function(err) {
+      console.log('@sendMessage', err)
     })
   }
 
   socket.on('chat:message', function(opts) {
-    if (!opts.text) {
+    if (typeof opts !== 'object' || !opts.text) {
       return
     }
 
@@ -81,7 +78,7 @@ module.exports = function(socket) {
       getConversationId(opts.userId).then(function(conversationId) {
         sendMessage(conversationId, opts.text)
       }).catch(function(err) {
-        console.log('err', err)
+        console.log('@chat:message handler', err)
       })
     }
   })

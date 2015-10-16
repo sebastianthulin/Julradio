@@ -1,7 +1,12 @@
 'use strict';
 
-const fs = require('fs')
+const mongoose = require('mongoose')
 const redis = require('redis')
+const fs = require('fs')
+const config = require('../../config')
+
+mongoose.Promise = Promise
+mongoose.connect(config.mongodbUrl)
 
 exports.redis = redis.createClient()
 

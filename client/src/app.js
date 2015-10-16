@@ -2,8 +2,8 @@ require('./services/LiveReload')
 const React = require('react')
 const ReactDOM = require('react-dom')
 const { Router, Route, IndexRoute } = require('react-router')
-const marked = require('marked')
 const createBrowserHistory = require('history/lib/createBrowserHistory')
+const marked = require('marked')
 const User = require('./services/User')
 
 // Config

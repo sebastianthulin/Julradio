@@ -68,7 +68,9 @@ router.post('/login', function(req, res) {
   const username = typeof req.body.username === 'string' && req.body.username.toLowerCase()
   db.User.findOne({usernameLower: username}).exec().then(function(user) {
     if (user) {
-      if (user.auth(req.body.password)) {
+      if (user.banned) {
+        res.status(500).send({err: 'BANNED'})
+      } else if (user.auth(req.body.password)) {
         user.lastVisit = Date.now()
         user.save()
         req.session.uid = user.id
@@ -157,7 +159,7 @@ router.post('/profilepicture', function(req, res) {
 
     fs.rename(req.file.path, 'public/i/' + picture._id + picture.extension, function(err) {
       if (err) {
-        console.log('/profilepicture error1', err)
+        console.log('@/profilepicture handler a', err)
         return res.status(500).send({err: 'UNKNOWN_ERROR'})
       }
 
@@ -170,7 +172,7 @@ router.post('/profilepicture', function(req, res) {
       }).then(function(user) {
         res.send(user)
       }, function(err) {
-        console.log('/profilepicture error2', err)
+        console.log('@/profilepicture handler b', err)
         res.status(500).send({err: 'UNKNOWN_ERROR'})
       })
     })
@@ -182,13 +184,13 @@ router.use(function(req, res, next) {
     if (user && user.admin) {
       next()
     } else {
-      res.sendStatus(404)
+      res.sendStatus(500)
     }
   })
 })
 
 router.get('/all', function(req, res) {
-  db.User.find().select('username admin').exec(function(err, users) {
+  db.User.find().select('username admin banned').exec(function(err, users) {
     res.send(users)
   })
 })
@@ -198,7 +200,8 @@ router.put('/:userId', function(req, res) {
   db.User.findByIdAndUpdate(req.params.userId, {
     username: b.username,
     title: b.title,
-    admin: b.admin
+    admin: b.admin,
+    banned: b.banned
   }).exec().then(function() {
     res.sendStatus(200)
   }, function(err) {

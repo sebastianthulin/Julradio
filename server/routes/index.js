@@ -9,9 +9,14 @@ router.use(function(req, res, next) {
   const uid = req.session.uid
   if (!uid) return next()
   db.User.findById(uid).select('-hash').populate('picture').lean().exec().then(function(user) {
+    if (!user || (user && user.banned)) {
+      // Disauth user
+      throw new Error()
+    }
+
     req.user = user
     next()
-  }, function(err) {
+  }).catch(function(err) {
     req.session.uid = undefined
     next()
   })
