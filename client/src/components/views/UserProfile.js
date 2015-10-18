@@ -2,20 +2,23 @@ const React = require('react')
 const User = require('../../services/User')
 const UserStore = require('../../stores/UserStore')
 const TimeSince = require('../reusable/TimeSince')
+const ProfilePicture = require('../reusable/ProfilePicture')
 const { Link } = require('react-router')
 
 class WallPost extends React.Component {
   render() {
-    const { _id, text, date, from: user, canRemove, onDelete } = this.props
-    return (<div className="wallPost">
-      <div className="wallPostAuthor">
-        {user.picture && <div className="wallPostAuthorPicture" style={{backgroundImage: `url('/i/${user.picture._id + user.picture.extension}')`}} />}
-        <Link to={'/@' + user.username} className="wallPostAuthorName">{user.username}</Link>
-        <TimeSince className="wallPostAuthorTime" date={date} />
+    const { _id, text, date, from: user, removable, onDelete } = this.props
+    return (
+      <div className="wallPost">
+        <div className="wallPostAuthor">
+          {user.picture && <ProfilePicture {...user.picture} />}
+          <Link to={'/@' + user.username} className="wallPostAuthorName">{user.username}</Link>
+          <TimeSince className="wallPostAuthorTime" date={date} />
+        </div>
+        <div className="wallPostText">{text}</div>
+        {removable && <div><button onClick={onDelete}>Radera</button></div>}
       </div>
-      <div className="wallPostText">{text}</div>
-      {canRemove && <div><button onClick={onDelete}>Radera</button></div>}
-    </div>)
+    )
   }
 }
 
@@ -75,9 +78,7 @@ class UserProfile extends React.Component {
     return (
       <div className="row content">
         <div className="profileBox">
-          <div className="profPicture">
-            {user.picture && <img src={'/i/' + user.picture._id + user.picture.extension} alt="Profilbild" />}
-          </div>
+          {user.picture && <ProfilePicture {...user.picture} />}
           {this.authedUser._id !== user._id && <Link to={`/messages/${user.username}`} className="profPM">Skicka Meddelande</Link>}
           <div className="profName">{user.username}</div>
           {user.title && <div className="title">{user.title}</div>}
@@ -90,7 +91,7 @@ class UserProfile extends React.Component {
           <form onSubmit={this.wallPost.bind(this)}>
             <input type="text" ref="wallInput" className="wallMessage" placeholder="Skriv ett inlägg i gästboken" />
           </form>
-          {posts && posts.map(post => <WallPost key={post._id} {...post} canRemove={this.authedUser._id === user._id || this.authedUser._id === post.from._id || this.authedUser.admin} onDelete={this.deleteWallPost.bind(this, post._id)} />)}
+          {posts && posts.map(post => <WallPost key={post._id} {...post} removable={this.authedUser._id === user._id || this.authedUser._id === post.from._id || this.authedUser.admin} onDelete={this.deleteWallPost.bind(this, post._id)} />)}
         </div>
       </div>
     )

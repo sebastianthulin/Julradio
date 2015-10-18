@@ -5,13 +5,13 @@ const User = require('../../../services/User')
 const RadioStore = require('../../../stores/RadioStore')
 const Player = require('./Player')
 const Snowfall = require('../Snowfall')
+const ProfilePicture = require('../../reusable/ProfilePicture')
 
 const divider = <div className="divider" />
 
 class Sidebar extends React.Component {
   componentWillMount() {
     User.subscribe(user => this.setState({ user }))
-    RadioStore.subscribe('playing', playing => this.setState({ playing }))
     RadioStore.subscribe('onair', onair => this.setState({ onair }))
   }
 
@@ -19,7 +19,7 @@ class Sidebar extends React.Component {
     const { user } = this.state
     return user ? (
       <Link to={`/@${user.username}`} className="user">
-        <img src={`/i/${user.picture._id + user.picture.extension}`} />
+        <ProfilePicture {...user.picture} />
         {user.username}
       </Link>
     ) : (
@@ -37,7 +37,7 @@ class Sidebar extends React.Component {
   }
 
   render() {
-    const { user, playing, onair } = this.state
+    const { user, onair } = this.state
     return (
       <div id="sidebar">
         <Snowfall
@@ -67,10 +67,10 @@ class Sidebar extends React.Component {
           </button>
           {divider}
           <div className="shortcuts">
+            {user && user.admin && <Link to="/admin/articles">Admin</Link>}
+            {user && <Link to="/settings">Inställningar</Link>}
             <a href="https://webchat.quakenet.org/?channels=julradio&nick=" target="_new">IRC</a>
-            <Link to="/settings">Inställningar</Link>
             <Link to="/crew">Medarbetare</Link>
-            <Link to="/admin/articles">Admin</Link>
             {user && <a onClick={User.logOut}>Logga ut</a>}
           </div>
         </div>
