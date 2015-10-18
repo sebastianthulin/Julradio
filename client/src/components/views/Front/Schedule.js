@@ -1,7 +1,8 @@
 const React = require('react')
 
 const Schedule = schedule => (
-  <div className="scheduleBox">
+  <div className="content schedule">
+    <header>Tablå</header>
     <div dangerouslySetInnerHTML={{__html: schedule.marked}} />
   </div>
 )

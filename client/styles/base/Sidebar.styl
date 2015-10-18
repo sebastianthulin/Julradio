@@ -1,0 +1,109 @@
+#sidebar
+  position fixed
+  z-index 1
+  top 0
+  left 0
+  width 300px
+  height 100%
+  background rgba(255, 0, 0, 0.3)
+  transform translateX(-300px)
+  transition transform .4s
+  +tablet()
+    transform none
+  .main
+    display flex
+    flex-direction column
+    align-items center
+    justify-content space-between
+    height calc(100% - 80px)
+    padding 30px 0
+
+  .divider
+    height 1px
+    width 40%
+    background rgba(255, 255, 255, 0.36)
+
+  .logo
+    a
+      color #FFF
+      font-size 52px
+      font-family 'Lobster'
+      transition opacity .2s
+      &:hover
+        opacity 0.6
+        transition none
+    hr
+      width 100px
+      margin 0px auto
+      color rgb(255, 255, 255)
+
+  .user
+    img
+      width 140px
+      border-radius 50%
+    span
+      display block
+      text-align center
+      
+  button
+    padding 0
+    color #FFF
+    background none
+    i
+      display block
+      margin-bottom 6px
+      font-size 40px
+    span
+      font-size 13px
+      
+  .shortcuts a
+    display block
+    text-align center
+    color rgba(255, 255, 255, 0.6)
+    
+  #player
+    position absolute
+    bottom 0
+    left 0
+    height 80px
+    width 100%
+    background rgba(0, 0, 0, 0.26)
+    img
+      width 80px
+      height 100%
+      float left
+    .title-controls
+      display flex
+      flex-direction column
+      justify-content space-between
+      height 100%
+      padding 14px
+      .controls
+        display flex
+        align-items center
+        justify-content space-between
+        i
+          font-size 24px
+        .volume-slider
+          width 160px
+          height 6px
+          border-radius 3px
+          background rgba(255, 255, 255, 0.27)
+          text-align left
+          overflow hidden
+          cursor pointer
+          transition opacity .4s
+          .volume
+            display inline-block
+            vertical-align top
+            height 100%
+            background #DD1616
+          .handle
+            position absolute
+            display inline-block
+            margin-top -3px
+            margin-left -6px
+            width 12px
+            height 12px
+            border-radius 50%
+            background #FFF

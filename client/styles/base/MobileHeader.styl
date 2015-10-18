@@ -1,0 +1,21 @@
+#mobile-header
+  display flex
+  align-items center
+  position fixed
+  z-index 1
+  height 50px
+  width 100%
+  background rgba(165, 0, 0, 0.66)
+  transition opacity .4s
+  +tablet()
+    display none
+  button
+    position absolute
+  a.logo
+    margin 0px auto
+    font-family 'Lobster'
+    font-size 32px
+    transition opacity .2s
+    &:hover
+      opacity 0.6
+      transition none

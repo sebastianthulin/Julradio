@@ -1,22 +1,29 @@
 const { EventEmitter } = require('events')
 const UIStore = new EventEmitter
-const states = {
+
+const state = {
   NowPlaying: {
     CURRENT_ONLY: true,
     HISTORY: false
-  }
+  },
+  SIDEBAR_OPEN: false
 }
 
-UIStore.set = function(UI, UIState) {
-  states[UI] = {[UIState]: true}
-  UIStore.emit(UI, states[UI])
+UIStore.set = function(UI) {
+  state[UI] = true
+  UIStore.emit('change', state)
 }
 
-UIStore.subscribe = function(UI, handler) {
-  handler(states[UI])
-  UIStore.on(UI, handler)
+UIStore.close = function(UI) {
+  state[UI] = false
+  UIStore.emit('change', state)
+}
+
+UIStore.subscribe = function(handler) {
+  handler(state)
+  UIStore.on('change', handler)
   return function() {
-    UIStore.removeListener(UI, handler)
+    UIStore.removeListener('change', handler)
   }
 }
 

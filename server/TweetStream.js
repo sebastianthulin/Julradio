@@ -1,16 +1,12 @@
 'use strict';
 
+const config = require('../config')
 const io = require('../server').io
 const tweets = []
 
-const tw = require('node-tweet-stream')({
-  consumer_key: 'TJdtltXD9Quw715oIYqOgjYB3',
-  consumer_secret: 'meCMO8dxLzExeKTB7ZLo6Gqin76NOtylAKemEWGwuPzbPUoNNw',
-  token: '2883350073-h7mL232SNhxSvwSEHWqsJkDnbjyilPxFZq1Rj7z',
-  token_secret: 'H56tmbnfMPSk9Xm6HVwvgJstHRdFehugVoOEHZIPwbGZj'
-})
+const tw = require('node-tweet-stream')(config.twitterTokens)
 
-tw.track('javascript')
+config.track.forEach(tw.track.bind(tw))
 
 tw.on('error', err => console.log(err))
 
@@ -28,6 +24,5 @@ tw.on('tweet', function(data) {
     tweets.splice(50, 1)
   }
 })
-
 
 module.exports = socket => socket.emit('tweets', tweets)

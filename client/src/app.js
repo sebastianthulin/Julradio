@@ -4,7 +4,9 @@ const ReactDOM = require('react-dom')
 const { Router, Route, IndexRoute } = require('react-router')
 const createBrowserHistory = require('history/lib/createBrowserHistory')
 const marked = require('marked')
+const cx = require('classnames')
 const User = require('./services/User')
+const UIStore = require('./stores/UIStore')
 
 // Config
 marked.setOptions({
@@ -14,8 +16,8 @@ marked.setOptions({
 })
 
 // Site base components
-const Header = require('./components/base/Header')
-const OnAir = require('./components/base/OnAir')
+const Sidebar = require('./components/base/Sidebar')
+const MobileHeader = require('./components/base/MobileHeader')
 const Footer = require('./components/base/Footer')
 const ModalContainer = require('./components/base/ModalContainer')
 
@@ -32,13 +34,32 @@ const ManageSchedule = require('./components/views/Admin/ManageSchedule')
 const ManageCrew = require('./components/views/Admin/ManageCrew')
 
 class App extends React.Component {
+  componentWillMount() {
+    UIStore.subscribe(this.handleUI.bind(this))
+  }
+
+  handleUI(UI) {
+    const { SIDEBAR_OPEN } = UI
+    document.body.classList[SIDEBAR_OPEN ? 'add' : 'remove']('no-scroll')
+    this.setState({ UI })
+  }
+
+  closeSidebar() {
+    if (this.refs.app.className === 'sidebar-visible') {
+      UIStore.close('SIDEBAR_OPEN')
+    }
+  }
+
   render() {
+    const { SIDEBAR_OPEN } = this.state.UI
     return (
-      <div>
-        <Header />
-        <OnAir />
-        {this.props.children}
-        <Footer />
+      <div id="app" ref="app" className={cx({'sidebar-visible': SIDEBAR_OPEN})}>
+        <MobileHeader />
+        <Sidebar />
+        <div id="site" onClick={this.closeSidebar.bind(this)}>
+          {this.props.children}
+        </div>
+        {/* <Footer /> */}
         <ModalContainer />
       </div>
     )
@@ -79,5 +100,5 @@ const routes = (
 
 ReactDOM.render(
   <Router children={routes} history={history} />,
-  document.getElementById('app')
+  document.getElementById('root')
 )

@@ -1,9 +1,6 @@
 #front
   width 100%
-  .scheduleBox
-    background rgba(0,0,0,0.15)
-    padding 20px
-    margin-bottom 30px
+  .schedule
     h1, h2, h3, h4, h5, h6
       margin 0px
 
@@ -17,28 +14,23 @@
       margin 10px 0px 0px 0px
 
   .article
-    border-top 1px solid rgba(255, 255, 255, 0.25)
-    padding 20px 0
     .header
-      position relative
-      height 50px
-      margin-bottom 20px
-      line-height 1
+      margin-bottom 30px
+      padding-bottom 20px
+      line-height 25px
+      border-bottom 1px solid rgba(255, 255, 255, 0.4)
       img
+        float left
         width 50px
         height 50px
+        margin-right 10px
         border-radius 50%
-      .user, .timestamp
-        position absolute
-        left 60px
       .user
-        top 5px
         color #FFF
         text-decoration none
         &:hover
           border-bottom 1px solid
       .timestamp
-        bottom 5px
         color rgba(255, 255, 255, 0.53)
 
   .hashtagJulradio
@@ -48,11 +40,11 @@
 
   .compose
     position relative
+    margin-bottom 10px
     padding 10px
-    background #FFF
-    margin 10px 0
-    border-radius 3px
     color #000
+    background #FFF
+    border-radius 3px
     noUserSelect()
 
   .tweets

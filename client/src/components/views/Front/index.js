@@ -20,13 +20,12 @@ class Front extends React.Component {
   render() {
     const { articles, schedule, tweets } = this.state
     return (
-      <div id="front" className="row content">
+      <div id="front" className="row">
         <div className="two-thirds column">
           {schedule && <Schedule {...schedule} />}
-          <h2>Aktuellt just nu</h2>
           {articles.map(article => <Article key={article._id} article={article} />)}
         </div>
-        <div className="one-third column">
+        <div className="content one-third column">
           {tweets.length > 0 && <span className="hashtagJulradio">#julradio</span>}
           <div className="compose" onClick={Modal.open.bind(null, 'RequestSong')}>
             Skriv en önskning...

@@ -3,7 +3,7 @@ const RadioStore = require('../../../stores/RadioStore')
 
 class VolumeSlider extends React.Component {
   componentWillMount() {
-    RadioStore.subscribe('volume', volume => this.setState({volume}))
+    RadioStore.subscribe('volume', volume => this.setState({ volume }))
   }
 
   initDrag(ev) {

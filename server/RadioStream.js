@@ -9,11 +9,10 @@ var history = []
 var playing = {}
 
 db.Song.find().sort('-_id').limit(30).exec(function(err, docs) {
-  var titles = docs.map(doc => doc.title)
   history = docs.reverse()
 })
 
-const stream = radio.createReadStream(config.shoutCastUrl)
+const stream = new radio.ReadStream(config.shoutCastUrl)
 
 stream.on('connect', () => console.log('connected to radio'))
 stream.on('error', err => console.log(err))
@@ -29,7 +28,7 @@ stream.on('metadata', function(data) {
   }
 
   if (song.title !== (history[history.length - 1] || {}).title) {
-    history = history.slice(history.length > 29 && 30)
+    history.length === 30 && history.splice(0, 1)
     history.push(song)
   }
 
@@ -43,5 +42,4 @@ stream.on('metadata', function(data) {
   })
 })
 
-module.exports = socket => socket
-  .emit('metadata', { playing, history })
+module.exports = socket => socket.emit('metadata', { playing, history })

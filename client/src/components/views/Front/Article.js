@@ -3,13 +3,14 @@ const { Link } = require('react-router')
 const TimeSince = require('../../reusable/TimeSince')
 
 const Article = ({ article, article: { user } }) => (
-  <div className="article">
+  <div className="content article">
+    <h2>{article.title}</h2>
     <div className="header">
       {user.picture && <img src={'/i/' + user.picture._id + user.picture.extension} />}
       <Link to={`/@${user.username}`} className="user">{user.username}</Link>
+      <br />
       <TimeSince className="timestamp" date={article.date} />
     </div>
-    <h2>{article.title}</h2>
     <div className="markdown-body" dangerouslySetInnerHTML={{__html: article.marked}} />
   </div>
 )

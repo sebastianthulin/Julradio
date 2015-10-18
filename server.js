@@ -5,8 +5,7 @@ var express     = require('express'),
     server      = require('http').Server(app),
     io          = require('socket.io')(server),
     session     = require('express-session'),
-    RedisStore  = require('connect-redis')(session),
-    mongoose    = require('mongoose')
+    RedisStore  = require('connect-redis')(session)
 
 var sessionMiddleware = session({
   secret: 'omgdisawesome',
@@ -17,7 +16,6 @@ var sessionMiddleware = session({
 
 exports.io = io
 
-mongoose.connect('mongodb://localhost/Julradio')
 app.set('view engine', 'ejs')
 app.set('views', './client/views')
 app.use(express.static('./public'))
