@@ -7,7 +7,7 @@
   height 100%
   background rgba(130, 9, 9, 0.75)
   transform translateX(-300px)
-  transition transform .4s, background-color .4s
+  transition transform .4s
   +desktop()
     transform none
   .main
@@ -17,6 +17,8 @@
     justify-content space-between
     height calc(100% - 80px)
     padding 30px 0
+    &.abandoned
+      display block
 
   .divider
     height 1px
@@ -24,6 +26,7 @@
     background rgba(255, 255, 255, 0.36)
 
   .logo
+    text-align center
     a
       color #FFF
       font-size 52px
@@ -45,7 +48,25 @@
       display block
       text-align center
       
-  button
+  .login-area
+    margin 50px 0px
+    padding 50px 0px
+    text-align center
+    background rgba(0, 0, 0, 0.14)
+    button
+      display block
+      width 200px
+      margin 0 auto
+      padding 10px
+      color rgb(255, 255, 255)
+      border 1px solid rgba(255, 255, 255, 0.22)
+      background none
+      border-radius 3px
+      i
+        margin-left 4px
+        font-size 13px
+      
+  button.user-action
     padding 0
     color #FFF
     background none
