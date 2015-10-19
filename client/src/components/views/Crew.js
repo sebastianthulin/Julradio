@@ -19,7 +19,7 @@ class Crew extends React.Component {
   render() {
     const { crew } = this.state
     return (
-      <div className="row content">
+      <div className="row">
         {crew.map(user => <Member key={user._id} {...user} />)}
       </div>
     )

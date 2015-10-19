@@ -4,7 +4,7 @@ var Navigation = require('./Navigation')
 class Admin extends React.Component {
   render() {
     return (
-      <div id="admin" className="row content">
+      <div id="admin" className="row">
         <Navigation />
         {this.props.children}
       </div>

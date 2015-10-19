@@ -25,7 +25,7 @@ class Front extends React.Component {
           {schedule && <Schedule {...schedule} />}
           {articles.map(article => <Article key={article._id} article={article} />)}
         </div>
-        <div className="content one-third column">
+        <div className="one-third column">
           {tweets.length > 0 && <span className="hashtagJulradio">#julradio</span>}
           <div className="compose" onClick={Modal.open.bind(null, 'RequestSong')}>
             Skriv en önskning...

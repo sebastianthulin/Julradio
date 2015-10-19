@@ -14,6 +14,9 @@ body, input, textarea, button, select
   border none
   border-radius 0
   font-weight 300
+
+button
+  cursor pointer
   
 a
   color #FFF
@@ -29,17 +32,20 @@ a
     opacity 0
   
 #site
-  position absolute
+  position relative
   top 50px
   left 0
   width 100%
   height calc(100% - 50px)
-  padding 20px
+  min-height calc(100vh - 50px)
+  padding 40px
+  background rgba(108, 8, 8, 0.8)
   +desktop()
     top 0
     left 300px
     width calc(100% - 300px)
     height 100%
+    min-height 100vh
   &:after
     content ''
     position fixed
@@ -50,21 +56,6 @@ a
     pointer-events none
     background rgba(0, 0, 0, 0)
     transition background-color .4s
-
-.column, .columns
-  margin-left 20px
-
-.content
-  padding 20px
-  background rgba(130, 9, 9, 0.75)
-  border-radius 5px
-  margin-bottom 20px
-  overflow hidden
-  header
-    font-size 33px
-    margin -20px -20px 20px
-    padding 6px 20px
-    background rgba(0, 0, 0, 0.15)
 
 #snowfall
   position absolute

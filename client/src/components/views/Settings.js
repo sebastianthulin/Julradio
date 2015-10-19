@@ -49,7 +49,7 @@ class Settings extends React.Component {
   render() {
     const { user } = this.state
     return (
-      <div id="settings" className="row content">
+      <div id="settings" className="row">
         <div className="one-third column">
           <h4>Allmänt</h4>
           <div>
