@@ -1,7 +1,20 @@
 .wall
   width 580px
-  float right
+  margin auto
   padding 20px
+  
+  .removeDisPlsNow
+    position absolute
+    right 0px
+    top 0px
+    color white
+    background none
+    padding 5px 10px 0px 0px
+    border 0px
+    opacity 0.2
+    cursor pointer
+    &:hover
+      opacity 0.5
   
   .wallMessage
     width 100%
@@ -24,6 +37,7 @@
     margin-top 10px
     display table
     padding 10px
+    position relative
     
     .wallPostAuthor
       height 50px
@@ -52,17 +66,18 @@
         display block
 
 .profileBox
-  width 580px
-  height 300px
-  float left
+  width: 100%;
+  text-align: center;
+  padding 50px 0px
   
   .title
     color #FF0
   
   .profile-picture
-    width 150px
-    height 150px
-    float left
+    width: 150px;
+    height: 150px;
+    margin: auto;
+    display: table;
     img
       width 100%
     
@@ -81,17 +96,16 @@
     cursor pointer
     
   .profName, .profAge, .profText
-    display table
-    width 390px
-    float right
-    margin-right 20px
+    width 100%
+    display: table;
     
   .profName
-    margin-top 10px
-    font-size 25px
-    font-weight 100
-    font-family Lobster
-    line-height 30px
+    margin-top: 10px;
+    font-size: 25px;
+    font-weight: 100;
+    font-family: Lobster;
+    line-height: 30px;
+    
   
   .profAge
     font-size 14px

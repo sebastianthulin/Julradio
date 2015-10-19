@@ -16,7 +16,7 @@ class WallPost extends React.Component {
           <TimeSince className="wallPostAuthorTime" date={date} />
         </div>
         <div className="wallPostText">{text}</div>
-        {removable && <div><button onClick={onDelete}>Radera</button></div>}
+        {removable && <div><button className="removeDisPlsNow" onClick={onDelete}>x</button></div>}
       </div>
     )
   }
