@@ -7,7 +7,7 @@ body
   background #280000 url('/images/dark-red-christmas-background.jpg') fixed center
   &.no-scroll
     overflow hidden
-    
+
 body, input, textarea, button, select
   font-family 'Roboto'
   outline none
@@ -22,9 +22,10 @@ a
 #app.sidebar-visible
   #site:after
     pointer-events auto
-    background rgba(0, 0, 0, 0.69)
+    background-color rgba(17, 17, 17, 0.8)
   #sidebar
     transform none
+    background-color rgba(255, 0, 0, 0.47)
   #mobile-header
     opacity 0
   
@@ -35,7 +36,7 @@ a
   width 100%
   height calc(100% - 50px)
   padding 20px
-  +tablet()
+  +desktop()
     top 0
     left 300px
     width calc(100% - 300px)
@@ -49,7 +50,10 @@ a
     bottom 0
     pointer-events none
     background rgba(0, 0, 0, 0)
-    transition background .4s
+    transition background-color .4s
+
+.column, .columns
+  margin-left 20px
 
 .content
   padding 20px

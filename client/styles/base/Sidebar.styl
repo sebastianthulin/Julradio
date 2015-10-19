@@ -7,8 +7,8 @@
   height 100%
   background rgba(130, 9, 9, 0.75)
   transform translateX(-300px)
-  transition transform .4s
-  +tablet()
+  transition transform .4s, background-color .4s
+  +desktop()
     transform none
   .main
     display flex
@@ -49,10 +49,11 @@
     padding 0
     color #FFF
     background none
-    i
+    svg
       display block
-      margin-bottom 6px
-      font-size 40px
+      width 32px
+      height 40px
+      margin 0 auto 6px auto
     span
       font-size 13px
       

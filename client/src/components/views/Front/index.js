@@ -8,7 +8,7 @@ const Schedule = require('./Schedule')
 
 class Front extends React.Component {
   componentWillMount() {
-    ArticleStore.getSchedule(schedule => this.setState({ schedule }))
+    ArticleStore.getSchedule(schedule => this.setState({ schedule }), true)
     ArticleStore.get(articles => this.setState({articles}))
     this.unsubscribe = TweetStore.subscribe(tweets => this.setState({tweets}))
   }
@@ -30,6 +30,7 @@ class Front extends React.Component {
           <div className="compose" onClick={Modal.open.bind(null, 'RequestSong')}>
             Skriv en önskning...
           </div>
+          <span className="informer">Godkända önskningar och tweets med #julradio</span>
           <TwitterFeed tweets={tweets} />
         </div>
       </div>

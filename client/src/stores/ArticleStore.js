@@ -4,6 +4,7 @@ const marked = require('marked')
 const socket = require('../services/socket')
 const ArticleStore = new EventEmitter
 var articles = []
+var schedule
 
 ArticleStore.create = function(opts, callback) {
   request.post('/api/articles', opts, function(err, res) {
@@ -31,8 +32,10 @@ ArticleStore.get = function(callback) {
   })
 }
 
-ArticleStore.getSchedule = function(callback) {
-  request.get('/api/schedule', function(err, { body: schedule }) {
+ArticleStore.getSchedule = function(callback, returnCache) {
+  returnCache && schedule && callback(schedule)
+  request.get('/api/schedule', function(err, { body }) {
+    schedule = body
     schedule.marked = marked(schedule.text)
     callback(schedule)
   })

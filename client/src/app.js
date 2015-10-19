@@ -8,13 +8,6 @@ const cx = require('classnames')
 const User = require('./services/User')
 const UIStore = require('./stores/UIStore')
 
-// Config
-marked.setOptions({
-  gfm: true,
-  breaks: true,
-  sanitize: true
-})
-
 // Site base components
 const Sidebar = require('./components/base/Sidebar')
 const MobileHeader = require('./components/base/MobileHeader')
@@ -32,6 +25,13 @@ const ManageArticles = require('./components/views/Admin/ManageArticles')
 const ManageUsers = require('./components/views/Admin/ManageUsers')
 const ManageSchedule = require('./components/views/Admin/ManageSchedule')
 const ManageCrew = require('./components/views/Admin/ManageCrew')
+
+// Config
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+  sanitize: true
+})
 
 class App extends React.Component {
   componentWillMount() {
