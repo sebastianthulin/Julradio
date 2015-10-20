@@ -42,7 +42,7 @@ class ManageUsers extends React.Component {
   render() {
     const { users, selectedUser } = this.state || {}
     return (
-      <div className="ten columns">
+      <div>
         <div className="one-half column">
           <h3>Konton</h3>
           <input type="text" placeholder="Sök..." onChange={this.filter.bind(this)} />

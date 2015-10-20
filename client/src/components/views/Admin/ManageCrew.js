@@ -70,7 +70,7 @@ class ManageCrew extends React.Component {
   render() {
     const { crew } = this.state || {}
     return (
-      <div className="ten columns">
+      <div>
         <h3>Medarbetare</h3>
         <table>
           <tbody>

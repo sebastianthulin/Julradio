@@ -18,7 +18,7 @@ class ManageSchedule extends React.Component {
   render() {
     const { schedule } = this.state || {}
     return (
-      <div className="ten columns">
+      <div>
         <h3>Tablå</h3>
         Här kan <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">markdown</a> användas.
         {!schedule && <textarea disabled />}

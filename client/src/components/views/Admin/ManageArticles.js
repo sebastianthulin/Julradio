@@ -43,7 +43,7 @@ class ManageArticles extends React.Component {
     const { articles, creatingNew, selected, selectedId } = this.state
     const { history } = this.props
     return (
-      <div className="ten columns">
+      <div>
         <h3>Nyheter</h3>
         <select value={selectedId} onChange={this.goto.bind(this)} style={{width: 'auto', marginRight: 5}}>
           <option value={''}>Välj artikel</option>

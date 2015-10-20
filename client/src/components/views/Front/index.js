@@ -1,6 +1,6 @@
 const React = require('react')
 const Modal = require('../../../services/Modal')
-const TweetStore = require('../../../stores/TweetStore')
+const RequestStore = require('../../../stores/RequestStore')
 const ArticleStore = require('../../../stores/ArticleStore')
 const TwitterFeed = require('../../reusable/TwitterFeed')
 const Article = require('./Article')
@@ -10,7 +10,7 @@ class Front extends React.Component {
   componentWillMount() {
     ArticleStore.getSchedule(schedule => this.setState({ schedule }), true)
     ArticleStore.get(articles => this.setState({ articles }))
-    this.unsubscribe = TweetStore.subscribe(tweets => this.setState({ tweets }))
+    this.unsubscribe = RequestStore.subscribe(requests => this.setState({ requests }))
   }
 
   componentWillUnmount() {
@@ -18,7 +18,7 @@ class Front extends React.Component {
   }
 
   render() {
-    const { articles, schedule, tweets } = this.state
+    const { articles, schedule, requests } = this.state
     return (
       <div id="front" className="row">
         <div className="two-thirds column">
@@ -26,12 +26,12 @@ class Front extends React.Component {
         </div>
         <div className="one-third column">
           {schedule && <Schedule {...schedule} />}
-          {tweets.length > 0 && <span className="hashtagJulradio">#julradio</span>}
+          {requests.length > 0 && <span className="hashtagJulradio">#julradio</span>}
           <div className="compose" onClick={Modal.open.bind(null, 'RequestSong')}>
             Skriv en önskning...
           </div>
           <span className="informer">Godkända önskningar och tweets med #julradio</span>
-          <TwitterFeed tweets={tweets} />
+          <TwitterFeed tweets={requests} />
         </div>
       </div>
     )

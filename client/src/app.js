@@ -26,6 +26,7 @@ const ManageArticles = require('./components/views/Admin/ManageArticles')
 const ManageUsers = require('./components/views/Admin/ManageUsers')
 const ManageSchedule = require('./components/views/Admin/ManageSchedule')
 const ManageCrew = require('./components/views/Admin/ManageCrew')
+const ManageRequests = require('./components/views/Admin/ManageRequests')
 
 // Config
 marked.setOptions({
@@ -96,6 +97,7 @@ const routes = (
       <Route path="users/:username" component={ManageUsers} />
       <Route path="schedule" component={ManageSchedule} />
       <Route path="crew" component={ManageCrew} />
+      <Route path="requests" component={ManageRequests} />
     </Route>
   </Route>
 )

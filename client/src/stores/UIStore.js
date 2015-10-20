@@ -2,10 +2,6 @@ const { EventEmitter } = require('events')
 const UIStore = new EventEmitter
 
 const state = {
-  NowPlaying: {
-    CURRENT_ONLY: true,
-    HISTORY: false
-  },
   SIDEBAR_OPEN: false
 }
 
