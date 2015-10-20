@@ -10,6 +10,7 @@ class Messages extends React.Component {
   componentWillMount() {
     this.unsub = ChatStore.subscribe(state => this.setState(state))
     ChatStore.select(this.props.params.user)
+    document.getElementById('footer').style.display = 'none'
   }
 
   componentWillReceiveProps(props) {
@@ -30,6 +31,7 @@ class Messages extends React.Component {
 
   componentWillUnmount() {
     this.unsub()
+    document.getElementById('footer').style.display = 'block'
   }
 
   sendMessage(ev) {

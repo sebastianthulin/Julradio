@@ -18,6 +18,7 @@ const ModalContainer = require('./components/base/ModalContainer')
 const Front = require('./components/views/Front')
 const UserProfile = require('./components/views/UserProfile')
 const Settings = require('./components/views/Settings')
+const Settingsv2 = require('./components/views/Settingsv2')
 const Messages = require('./components/views/Messages')
 const Crew = require('./components/views/Crew')
 const Admin = require('./components/views/Admin')
@@ -39,13 +40,13 @@ class App extends React.Component {
   }
 
   handleUI(UI) {
+    this.setState({ UI })
     const { SIDEBAR_OPEN } = UI
     document.body.classList[SIDEBAR_OPEN ? 'add' : 'remove']('no-scroll')
-    this.setState({ UI })
   }
 
   closeSidebar() {
-    if (this.refs.app.className === 'sidebar-visible') {
+    if (this.state.UI.SIDEBAR_OPEN) {
       UIStore.close('SIDEBAR_OPEN')
     }
   }
@@ -53,13 +54,13 @@ class App extends React.Component {
   render() {
     const { SIDEBAR_OPEN } = this.state.UI
     return (
-      <div id="app" ref="app" className={cx({'sidebar-visible': SIDEBAR_OPEN})}>
+      <div id="app" className={cx({'sidebar-visible': SIDEBAR_OPEN})}>
         <MobileHeader />
         <Sidebar />
         <div id="site" onClick={this.closeSidebar.bind(this)}>
           {this.props.children}
+          <Footer />
         </div>
-        {/* <Footer /> */}
         <ModalContainer />
       </div>
     )
@@ -87,6 +88,7 @@ const routes = (
     <Route path="messages/:user" component={Messages} onEnter={requireAuth} />
     <Route path="@:username" component={UserProfile} />
     <Route path="settings" component={Settings} onEnter={requireAuth} />
+    <Route path="settings2" component={Settingsv2} onEnter={requireAuth} />
     <Route path="admin" component={Admin} onEnter={requireAdminAuth}>
       <Route path="articles" component={ManageArticles} />
       <Route path="articles/:id" component={ManageArticles} />

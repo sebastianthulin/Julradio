@@ -1,6 +1,10 @@
 var React = require('react')
 
 class Footer extends React.Component {
+  shouldComponentUpdate() {
+    return false
+  }
+
   render() {
     return (
       <div id="footer" className="row">
