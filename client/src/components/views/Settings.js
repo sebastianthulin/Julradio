@@ -3,35 +3,71 @@ const User = require('../../services/User')
 
 class Settings extends React.Component {
   componentWillMount() {
-    this.unsub = User.subscribe(user => this.setState({ user }))
+    this.timeouts = {}
+    this.unsub = User.subscribe(this.handleUser.bind(this))
   }
 
   componentWillUnmount() {
     this.unsub()
   }
 
-  save() {
-    User.updateSettings({
-      email: this.refs.email.value,
-      realname: this.refs.realname.value,
-      description: this.refs.description.value,
-      gender: this.refs.gender.value,
-      location: this.refs.location.value
-    }).then(user => {
-      alert('inställningar sparade.')
-    }).catch(this.handleError.bind(this))
+  handleUser(user) {
+    this.initialValues = {
+      email: user.email,
+      password: ''
+    }
+
+    this.setState({ user })
   }
 
-  savePassword() {
-    User.updatePassword({
-      current: this.refs.currentPassword.value,
-      new: this.refs.newPassword.value,
-      repeat: this.refs.repeatPassword.value
-    }).then(() => {
-      this.refs.currentPassword.value = ''
-      this.refs.newPassword.value = ''
-      this.refs.repeatPassword.value = ''
-      alert('lösenord uppdaterat.')
+  check() {
+    const values = {
+      email: this.refs.email.value,
+      password: this.refs.password.value
+    }
+
+    var changes = []
+    for (var i in values) {
+      if (values[i] !== this.initialValues[i]) {
+        changes.push({
+          email: 'email',
+          password: 'lösenord'
+        }[i])
+      }
+    }
+
+    changes = changes.join(', ').replace(/, (?=[^,]*$)/, ' & ')
+
+    if (changes !== this.state.changes) {
+      this.setState({ changes })
+    }
+  }
+
+  saveFields(ev) {
+    ev.preventDefault()
+    User.updateSettings({
+      email: this.refs.email.value,
+      password: this.refs.password.value,
+      auth: this.refs.auth.value
+    }).then(user => {
+      this.handleUser(user)
+      this.setState({changes: null})
+      this.refs.password.value = ''
+    }).catch(err => {
+      alert(err)
+    })
+  }
+
+  save(ev) {
+    const field = ev.target.name
+    const value = ev.target.value
+    clearTimeout(this.timeouts[field])
+    this.timeouts[field] = setTimeout(this.save2.bind(this, { field, value }), 500)
+  }
+
+  save2(opts) {
+    User.updateField(opts).then(() => {
+      console.log('saved.')
     }).catch(this.handleError.bind(this))
   }
 
@@ -43,54 +79,96 @@ class Settings extends React.Component {
   }
 
   handleError(err) {
-    alert(err)
+    console.log(err)
+    alert('gick inte att spara')
+  }
+
+  renderConfirmation() {
+    return (
+      <form onSubmit={this.saveFields.bind(this)}>
+        <label className="ani">
+          <div className="label">Nuvarande lösenord</div>
+          <input type="password" ref="auth" />
+        </label>
+        <div className="confirmation">
+          <p>{'För att ändra din ' + this.state.changes + ' så måste du skriva in ditt nuvarande lösenord.'}</p>
+          <button>Save</button>
+        </div>
+      </form>
+    )
   }
 
   render() {
-    const { user } = this.state
+    const { user, changes } = this.state
     return (
-      <div id="settings" className="row">
-        <div className="one-third column">
-          <h4>Allmänt</h4>
-          <div>
-            <input className="settingsInput" type="text" defaultValue={user.email} ref="email" placeholder="Email"/>
+      <div id="settings">
+        <h1>Profil inställningar</h1>
+        <div>
+          <label>
+            <div className="label">Email</div>
+            <input
+              type="text"
+              defaultValue={user.email}
+              ref="email"
+              onChange={this.check.bind(this)}
+            />
+          </label>
+          <label>
+            <div className="label">Lösenord</div>
+            <input
+              type="password"
+              ref="password"
+              placeholder="Skriv in nytt lösenord"
+              onChange={this.check.bind(this)}
+            />
+          </label>
+          {changes && this.renderConfirmation()}
+          <label>
+            <div className="label">IRL namn</div>
+            <input
+              type="text"
+              defaultValue={user.realname}
+              name="realname"
+              onChange={this.save.bind(this)}
+            />
+          </label>
+          <label>
+            <div className="label">Kön</div>
+            <select defaultValue={user.gender} name="gender" onChange={this.save.bind(this)}>
+              <option value="">Välj</option>
+              <option value="male">Pojke</option>
+              <option value="female">Flicka</option>
+            </select>
+          </label>
+          <label>
+            <div className="label">Bor</div>
+            <input
+              type="text"
+              defaultValue={user.location}
+              name="location"
+              onChange={this.save.bind(this)}
+            />
+          </label>
+          <label>
+            <div className="label">Personlig beskrivning</div>
+            <textarea
+              defaultValue={user.description}
+              name="description"
+              placeholder="— (500 tecken limit)"
+              maxLength={500}
+              onChange={this.save.bind(this)}
+            />
+          </label>
+          <label>
+            <div className="label">Profilbild</div>
+            <input
+              type="file"
+              onChange={this.setAvatar.bind(this)}
+            />
+          </label>
+          <div className="confirmation">
+            <p>Högst 2mb, helst en kvadrat</p>
           </div>
-          <div>
-            <input className="settingsInput" type="text" defaultValue={user.realname} ref="realname" placeholder="IRL Namn"/>
-          </div>
-          <select defaultValue={user.gender} ref="gender">
-            <option value="">Kön</option>
-            <option value="male">Pojke</option>
-            <option value="female">Flicka</option>
-          </select>
-          <div>
-            <input className="settingsInput" type="text" defaultValue={user.location} ref="location" placeholder="Bor"/>
-          </div>
-          <div>
-            <textarea className="settingsInput settingsInputArea" defaultValue={user.description} ref="description" placeholder="Personlig beskrivning"/>
-          </div>
-          <button className="settingsSave" onClick={this.save.bind(this)}>Spara ändringar</button>
-        </div>
-        <div className="one-third column">
-          <h4>Lösenord</h4>
-          <div>
-            <input className="settingsInput" type="password" ref="currentPassword" placeholder="Nuvarande lösenord"/>
-          </div>
-          <div>
-            <input className="settingsInput" type="password" ref="newPassword" placeholder="Nytt lösenord"/>
-          </div>
-          <div>
-            <input className="settingsInput" type="password" ref="repeatPassword" placeholder="Repetera"/>
-          </div>
-          <button className="settingsSave" onClick={this.savePassword.bind(this)}>Spara lösenord</button>
-        </div>
-        <div className="one-third column">
-          <h4>Profilbild</h4>
-          <input type="file" onChange={this.setAvatar.bind(this)} />
-          <br/>
-          högst 2mb
-          <br/>
-          Helst en kvadrat
         </div>
       </div>
     )

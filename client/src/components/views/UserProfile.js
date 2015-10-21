@@ -78,7 +78,7 @@ class UserProfile extends React.Component {
     return (
       <div className="row">
         <div className="profileBox">
-          {user.picture && <ProfilePicture {...user.picture} />}
+          <ProfilePicture {...user.picture} />
           {this.authedUser._id !== user._id && <Link to={`/messages/${user.username}`} className="profPM">Skicka Meddelande</Link>}
           <div className="profName">{user.username}</div>
           {user.title && <div className="title">{user.title}</div>}

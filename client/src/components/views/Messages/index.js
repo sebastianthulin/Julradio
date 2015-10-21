@@ -9,10 +9,9 @@ class MessagesContainer extends React.Component {
   }
 
   render() {
-    const { loaded } = this.state
-    return loaded ? <Messages {...this.props} /> : (
+    return this.state.loaded ? <Messages {...this.props} /> : (
       <div>
-        Loading...
+        Laddar...
       </div>
     )
   }

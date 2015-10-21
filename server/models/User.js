@@ -77,22 +77,4 @@ schema.methods.setPassword = function(password) {
   return false
 }
 
-schema.methods.updatePassword = function(opts) {
-  if (!this.auth(opts.current)) {
-    this.invalidate('current', 'INCORRECT_CURRENT_PASSWORD')
-  }
-  if (this.setPassword(opts.new)) {
-    if (opts.new !== opts.repeat) {
-      this.invalidate('repeat', 'DONT_MATCH')
-    }
-  }
-}
-
 module.exports = mongoose.model('users', schema)
-
-module.exports.find(function(err, docs) {
-  for (let user of docs) {
-    user.usernameLower = user.username
-    user.save()
-  }
-})

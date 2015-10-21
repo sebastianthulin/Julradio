@@ -1,0 +1,51 @@
+#crew
+  display flex
+  flex-wrap wrap
+
+.crew-member
+  position relative
+  display flex
+  flex-direction column
+  width 100%
+  height 370px
+  margin-bottom 10px
+  padding 20px
+  background rgba(255, 0, 0, 0.16)
+  border-radius 4px
+  border-bottom 3px solid rgba(0, 0, 0, 0.12)
+  &:after
+    position absolute
+    content ''
+    top 5px
+    bottom 5px
+    left 5px
+    right 5px
+    border 1px solid rgba(255, 255, 255, 0.06)
+    border-radius 2px
+    pointer-events none
+  +tablet()
+    width calc(100% / 2 - 10px)
+    margin 5px
+  
+  header
+    display flex
+    align-items center
+    margin-bottom 20px
+    img
+      width 90px
+      height 90px
+      margin-right 10px
+      background rgb(255, 255, 255)
+      border-radius 50%
+  p
+    margin 0
+    
+  .realname
+    font-size 18px
+    
+  .username a
+    color rgba(255, 255, 255, 0.56)
+    transition color .2s
+    &:hover
+      color #FFF
+      transition none

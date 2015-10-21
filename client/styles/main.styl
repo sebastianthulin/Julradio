@@ -39,8 +39,10 @@ a
   width 100%
   height calc(100% - 50px)
   min-height calc(100vh - 50px)
-  padding 40px
+  padding 20px
   background rgba(108, 8, 8, 0.8)
+  +mobile()
+    padding 40px
   +desktop()
     top 0
     left 300px
@@ -64,9 +66,6 @@ a
   top 0
   left 0
   z-index -1
-  
-.profile-picture
-  border-radius 50%
 
 .markdown-body
   color rgba(255, 255, 255, 0.76)

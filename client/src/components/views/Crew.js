@@ -1,11 +1,18 @@
 const React = require('react')
 const { Link } = require('react-router')
 const UserStore = require('../../stores/UserStore')
+const ProfilePicture = require('../reusable/ProfilePicture')
 
 const Member = ({ id, username, realname, title, description, picture }) => (
-  <div>
-    {picture && <img src={'/i/' + picture._id + picture.extension} width="100" />}
-    <h3>{realname} (<Link to={`/@${username}`}>@{username}</Link>) ({title})</h3>
+  <div className="crew-member">
+    <header>
+      {picture && <ProfilePicture {...picture} />}
+      <div className="meta">
+        <div className="realname">{realname}</div>
+        {title && <div className="title">{title}</div>}
+        <div className="username"><Link to={`/@${username}`}>@{username}</Link></div>
+      </div>
+    </header>
     <p>{description}</p>
   </div>
 )
@@ -19,11 +26,10 @@ class Crew extends React.Component {
   render() {
     const { crew } = this.state
     return (
-      <div className="row">
-        {crew.map(user => <Member key={user._id} {...user} />)}
+      <div id="crew">
+        {crew.map(user => <Member key={user.username} {...user} />)}
       </div>
     )
-  }
-}
+  }}
 
 module.exports = Crew

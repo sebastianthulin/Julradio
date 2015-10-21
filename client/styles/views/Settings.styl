@@ -1,33 +1,59 @@
-#settings
-  .settingsInput
-    height 40px
-    line-height 42px
-    padding 0px 10px
-    border-radius 3px
-    margin-bottom 10px
-    width 230px
-    
-  .settingsSave
-    height 40px
-    line-height 42px
-    padding 0px 10px
-    border-radius 3px
-    width 230px
-    background white
-    
-  .settingsInputArea
-    min-height 100px
-    line-height 16px
-    padding-top 10px
-    margin-bottom 2px
-    resize vertical
-    
-  input[type="file"]
-    color white
-    line-height 16px
+@keyframes stretch
+  from
+    max-height 0px
+  to
+    max-height 140px
 
-  h6
-    margin 10px 0px 0px 0px
-    
-  h4
-    margin 0px 0px 10px 0px
+#settings
+  max-width 600px
+  h1
+    margin-bottom 40px
+    font-size 35px
+
+  label
+    display flex
+    margin-bottom 20px
+    overflow-y hidden
+    align-items center
+    &.ani
+      animation stretch .2s
+
+    .label
+      width 130px
+      font-size 14px
+      color rgba(255, 255, 255, 0.4)
+
+    input, select, textarea
+      width calc(100% - 130px)
+      padding 14px 0
+      font-size 16px
+      color #FFF
+      border solid rgba(255, 255, 255, 0.2)
+      border-width 0 0 2px 0
+      background none
+      transition border-color .2s
+      &:focus
+        border-color rgba(255, 255, 255, 0.4)
+        transition none
+
+    textarea
+      min-height 125px
+      padding 14px
+      border-width 2px
+      resize vertical
+
+  .confirmation
+    display flex
+    padding-left 130px
+    margin-bottom 20px
+    p
+      margin 0px
+      color rgba(255, 255, 255, 0.48)
+
+    button
+      height 50px
+      margin-left 20px
+      padding 0px 20px
+      color #FFF
+      background rgba(255, 255, 255, 0.19)
+      border-radius 3px

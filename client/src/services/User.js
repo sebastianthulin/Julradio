@@ -24,19 +24,23 @@ User.deleteWallPost = function(postId) {
   })
 }
 
+User.updateField = function(opts) {
+  return new Promise(function(resolve, reject) {
+    request.put('/api/user/field', opts).then(function({ body: user }) {
+      User.set(user)
+      resolve(user)
+    }, reject)
+  })
+}
+
 User.updateSettings = function(opts) {
   return new Promise(function(resolve, reject) {
     request.put('/api/user/settings', opts).then(function({ body: user }) {
       User.set(user)
       resolve(user)
-    }, ({ response }) => reject(response.body.err))
-  })
-}
-
-User.updatePassword = function(opts) {
-  return new Promise(function(resolve, reject) {
-    request.put('/api/user/password', opts)
-      .then(resolve, ({ response }) => reject(response.body.err))
+    }, function({ response }) {
+      reject(response.body.err)
+    })
   })
 }
 
@@ -47,7 +51,9 @@ User.setAvatar = function(file) {
     request.post('/api/user/profilepicture').send(formData).then(function({ body: user }) {
       User.set(user)
       resolve(user)
-    }, ({ response }) => reject(response.body.err))
+    }, function({ response }) {
+      reject(response.body.err)
+    })
   })
 }
 

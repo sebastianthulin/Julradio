@@ -119,28 +119,43 @@ router.delete('/wallpost/:id', function(req, res) {
   })
 })
 
-router.put('/settings', function(req, res) {
+router.put('/field', function(req, res) {
   const b = req.body
-  db.User.findByIdAndUpdate(req.session.uid, {
-    email: b.email,
-    realname: b.realname,
-    description: b.description,
-    gender: b.gender,
-    location: b.location
-  }, {
-    new: true
-  }).select('-hash').populate('picture').exec().then(function(user) {
-    res.send(user)
-  })
+  const allow = ['realname', 'gender', 'location', 'description']
+  if (allow.indexOf(b.field) > -1) {
+    db.User.findByIdAndUpdate(req.session.uid, {
+      [b.field]: b.value
+    }, {
+      new: true
+    }).select('-hash').populate('picture').exec().then(function(user) {
+      res.send(user)
+    }).catch(function(err) {
+      console.log('@/field handler', err)
+      res.sendStatus(500)
+    })
+  } else {
+    res.sendStatus(500)
+  }
 })
 
-router.put('/password', function(req, res) {
-  db.User.findById(req.session.uid).then(function(user) {
-    user.updatePassword(req.body)
+router.put('/settings', function(req, res) {
+  const b = req.body
+  db.User.findById(req.session.uid).populate('picture').exec().then(function(user) {
+    if (!user.auth(b.auth)) {
+      throw new Error('INCORRECT_PASSWORD')
+    }
+    if (b.email) {
+      user.email = b.email
+    }
+    if (b.password) {
+      user.setPassword(b.password)
+    }
     return user.save()
-  }).then(function() {
-    res.sendStatus(200)
-  }, function(err) {
+  }).then(function(user) {
+    delete user.hash
+    res.send(user)
+  }).catch(function(err) {
+    console.log(err)
     res.status(500).send({err: err.toString()})
   })
 })
@@ -199,6 +214,7 @@ router.put('/:userId', function(req, res) {
   const b = req.body
   db.User.findByIdAndUpdate(req.params.userId, {
     username: b.username,
+    usernameLower: b.username.toLowerCase(),
     title: b.title,
     admin: b.admin,
     banned: b.banned

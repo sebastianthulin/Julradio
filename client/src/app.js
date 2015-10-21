@@ -11,14 +11,12 @@ const UIStore = require('./stores/UIStore')
 // Site base components
 const Sidebar = require('./components/base/Sidebar')
 const MobileHeader = require('./components/base/MobileHeader')
-const Footer = require('./components/base/Footer')
 const ModalContainer = require('./components/base/ModalContainer')
 
 // Views
 const Front = require('./components/views/Front')
 const UserProfile = require('./components/views/UserProfile')
 const Settings = require('./components/views/Settings')
-const Settingsv2 = require('./components/views/Settingsv2')
 const Messages = require('./components/views/Messages')
 const Crew = require('./components/views/Crew')
 const Admin = require('./components/views/Admin')
@@ -60,7 +58,6 @@ class App extends React.Component {
         <Sidebar />
         <div id="site" onClick={this.closeSidebar.bind(this)}>
           {this.props.children}
-          <Footer />
         </div>
         <ModalContainer />
       </div>
@@ -89,7 +86,6 @@ const routes = (
     <Route path="messages/:user" component={Messages} onEnter={requireAuth} />
     <Route path="@:username" component={UserProfile} />
     <Route path="settings" component={Settings} onEnter={requireAuth} />
-    <Route path="settings2" component={Settingsv2} onEnter={requireAuth} />
     <Route path="admin" component={Admin} onEnter={requireAdminAuth}>
       <Route path="articles(/:id)" component={ManageArticles} />
       <Route path="users(/:username)" component={ManageUsers} />
