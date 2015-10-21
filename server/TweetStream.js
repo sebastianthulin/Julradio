@@ -6,7 +6,7 @@ const tweets = []
 
 const tw = require('node-tweet-stream')(config.twitterTokens)
 
-config.track.forEach(tw.track.bind(tw))
+tw.track(config.track)
 
 tw.on('error', err => console.log(err))
 

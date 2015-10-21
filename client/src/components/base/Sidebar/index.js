@@ -7,8 +7,7 @@ const RadioStore = require('../../../stores/RadioStore')
 const Player = require('./Player')
 const Snowfall = require('../Snowfall')
 const ProfilePicture = require('../../reusable/ProfilePicture')
-const Fire = require('../../svg/Fire')
-const Messenger = require('../../svg/Messenger')
+const SVG = require('../../svg')
 
 const divider = <div className="divider" />
 
@@ -62,12 +61,12 @@ class Sidebar extends React.Component {
           {user && divider}
           {user && <Link to="/messages">
             <button className="user-action">
-              <Messenger />
+              <SVG.Messenger />
               Meddelanden
             </button>
           </Link>}
           {user && <button className="user-action">
-            <Fire />
+            <SVG.Fire />
             Träffa
           </button>}
           {user && divider}

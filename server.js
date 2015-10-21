@@ -9,7 +9,7 @@ var express     = require('express'),
 
 var sessionMiddleware = session({
   secret: 'omgdisawesome',
-  store: new RedisStore(),
+  store: new RedisStore,
   resave: true,
   saveUninitialized: true
 })
@@ -18,6 +18,7 @@ exports.io = io
 
 app.set('view engine', 'ejs')
 app.set('views', './client/views')
+// app.enable('trust proxy')
 app.use(express.static('./public'))
 app.use(sessionMiddleware)
 app.use(require('body-parser').json())

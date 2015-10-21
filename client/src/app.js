@@ -91,10 +91,8 @@ const routes = (
     <Route path="settings" component={Settings} onEnter={requireAuth} />
     <Route path="settings2" component={Settingsv2} onEnter={requireAuth} />
     <Route path="admin" component={Admin} onEnter={requireAdminAuth}>
-      <Route path="articles" component={ManageArticles} />
-      <Route path="articles/:id" component={ManageArticles} />
-      <Route path="users" component={ManageUsers} />
-      <Route path="users/:username" component={ManageUsers} />
+      <Route path="articles(/:id)" component={ManageArticles} />
+      <Route path="users(/:username)" component={ManageUsers} />
       <Route path="schedule" component={ManageSchedule} />
       <Route path="crew" component={ManageCrew} />
       <Route path="requests" component={ManageRequests} />
@@ -103,6 +101,6 @@ const routes = (
 )
 
 ReactDOM.render(
-  <Router children={routes} history={history} />,
+  <Router routes={routes} history={history} />,
   document.getElementById('root')
 )

@@ -38,7 +38,7 @@
     hr
       width 100px
       margin 0px auto
-      color rgb(255, 255, 255)
+      color #FFF
 
   .user
     img
@@ -58,7 +58,7 @@
       width 200px
       margin 0 auto
       padding 10px
-      color rgb(255, 255, 255)
+      color #FFF
       border 1px solid rgba(255, 255, 255, 0.22)
       background none
       border-radius 3px
@@ -70,6 +70,11 @@
     padding 0
     color #FFF
     background none
+    transition opacity .2s
+    &:hover
+      opacity 0.6
+      transition none
+
     svg
       display block
       width 32px
