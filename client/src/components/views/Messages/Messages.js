@@ -43,6 +43,10 @@ class Messages extends React.Component {
     this.refs.input.value = ''
   }
 
+  loadMore() {
+    ChatStore.load(this.props.params.user)
+  }
+
   renderWhatever() {
     return (
       <div style={{padding: 20}}>
@@ -60,6 +64,7 @@ class Messages extends React.Component {
           <Link to={`/@${targetUser.username}`}>{targetUser.username}</Link>
         </div>
         <div className="message-container" ref="messages">
+          <button onClick={this.loadMore.bind(this)}>More</button>
           {messages.map(message => <Message key={message._id} right={userId === message.user} message={message} />)}
         </div>
         <form onSubmit={this.sendMessage.bind(this)}>

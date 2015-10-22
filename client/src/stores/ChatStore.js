@@ -3,7 +3,6 @@ const request = require('superagent')
 const socket = require('../services/socket')
 const User = require('../services/User')
 const Sound = require('../services/Sound')
-
 const UserStore = require('./UserStore')
 const NotificationStore = require('./NotificationStore')
 const ChatStore = new EventEmitter
@@ -17,7 +16,8 @@ const state = {
   loaded: false,
   targetUser: null,
   messages: [],
-  threads: []
+  threads: [],
+  offset: 0
 }
 
 ChatStore.select = function(username) {
@@ -35,7 +35,7 @@ ChatStore.select = function(username) {
       return
     }
 
-    request.get(`/api/chat/${thread._id}`).then(function({ body: messages }) {
+    request.get(`/api/chat/${thread._id}/0`).then(function({ body: messages }) {
       messages.sort((a, b) => new Date(b.date) - new Date(a.date))
       const messageIds = messageIdsByThreadId[thread._id] = []
       var i = messages.length
@@ -44,15 +44,37 @@ ChatStore.select = function(username) {
         messageIds.push(msg._id)
         messagesById[msg._id] = msg
       }
-      thread.loaded = true
       updateMessages()
+      thread.loaded = true
     }, function(err) {
       console.log('Couldn\'t select conversation', err)
     })
   })
 }
 
+ChatStore.load = function() {
+  const convoId = ChatStore.getConversationId()
+  const messageIds = messageIdsByThreadId[convoId]
+  state.offset += 20
+  request.get(`/api/chat/${convoId}/${state.offset}`).then(function({ body: messages }) {
+
+    var i = messages.length
+    while (i--) {
+      var msg = messages[i]
+      messageIds.push(msg._id)
+      messagesById[msg._id] = msg
+    }
+
+    messageIds.sort((a, b) => new Date(messagesById[a].date) - new Date(messagesById[b].date))
+
+    updateMessages()
+  }, function(err) {
+    console.log('Couldn\'t select conversation', err)
+  })
+}
+
 ChatStore.deselect = function() {
+  state.offset = 0
   state.messages = []
   state.targetUser = null
   push()
