@@ -25,7 +25,6 @@ class WallPost extends React.Component {
 class ProfileOptions extends React.Component {
 
   componentWillMount() {
-
   }
 
   onBlock() {
@@ -43,7 +42,7 @@ class ProfileOptions extends React.Component {
     return (
       <div className="profOptions">
         <Link to={`/messages/${user.username}`} className="profButton">Skicka Meddelande</Link>
-        {relationship.hasBlocked ? <div onClick={this.onUnBlock.bind(this)} className="profButton">Avblockera</div> : <div onClick={this.onBlock.bind(this)} className="profButton">Blocka</div>}
+        {!relationship || !relationship.hasBlocked ? <div onClick={this.onBlock.bind(this)} className="profButton">Blocka</div> : <div onClick={this.onUnBlock.bind(this)} className="profButton">Avblockera</div>}
       </div>
     )
   }
@@ -52,9 +51,7 @@ class ProfileOptions extends React.Component {
 class UserProfile extends React.Component {
   componentWillMount() {
     this.authedUser = User.get() || {}
-    this.state = {
-      relationship: {}
-    }
+    this.state = {}
     this.setUser(this.props.params.username)
   }
 
@@ -62,8 +59,8 @@ class UserProfile extends React.Component {
     // Hämtar info om profilens relation till din användare:
     // isBlocked, hasBlocked etc.
 
-    const { user } = this.state
-    User.getProfile(user._id, (relationship) => {console.log(relationship); this.setState({ relationship })})
+    const { user } = this
+    User.getProfile(user._id, (relationship) => this.setState({ relationship }))
   }
 
   componentWillReceiveProps(props) {
@@ -76,9 +73,12 @@ class UserProfile extends React.Component {
   }
 
   handleUser(user) {
+    this.user = user
     this.setState({ user })
     this.getWallPosts(user._id)
-    this.getRelationship()
+    if (user._id !== this.authedUser._id) {
+      this.getRelationship()
+    }
   }
 
   getWallPosts(userId) {
@@ -126,10 +126,14 @@ class UserProfile extends React.Component {
         </div>
 
         <div className="wall">
-          {relationship.isBlocked ? <h3>Du är blockad av denna användare.</h3> : 
-            <form onSubmit={this.wallPost.bind(this)}>
-              <input type="text" ref="wallInput" className="wallMessage" placeholder="Skriv ett inlägg i gästboken" />
-            </form>
+          {
+            !relationship ? 
+              <form onSubmit={this.wallPost.bind(this)}>
+                <input type="text" ref="wallInput" className="wallMessage" placeholder="Skriv ett inlägg i gästboken" />
+              </form> : 
+            relationship.isBlocked ? 
+              <h3>Du är blockad av denna användare</h3> : 
+            <h3>Du har blockat denna användare</h3>
           }
           {posts && posts.map(post => <WallPost key={post._id} {...post} removable={this.authedUser._id === user._id || this.authedUser._id === post.from._id || this.authedUser.admin} onDelete={this.deleteWallPost.bind(this, post._id)} />)}
         </div>

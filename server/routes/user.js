@@ -6,6 +6,7 @@ const multer = require('multer')
 const fs = require('fs')
 const router = express.Router()
 const db = require('../models')
+const getBlockage = require('../getBlockage')
 
 const upload = multer({
   dest: 'uploads/',
@@ -93,12 +94,20 @@ router.use(function(req, res, next) {
 })
 
 router.post('/wallpost', function(req, res) {
-  new db.WallPost({
-    text: req.body.text,
-    to: req.body.userId,
-    from: req.session.uid
-  }).save(function(err, doc) {
-    res.send(doc)
+  getBlockage(req.session.uid, req.body.userId).then(function(relationship) {
+    if (!relationship) {
+      new db.WallPost({
+        text: req.body.text,
+        to: req.body.userId,
+        from: req.session.uid
+      }).save(function(err, doc) {
+        res.send(doc)
+      })
+    } else {
+      res.status(500).send({err: 'Blockad'})
+    }
+  }).catch(function(err) {
+    res.send({err: err.toString()})
   })
 })
 
@@ -133,7 +142,6 @@ router.post('/block', function(req, res) {
     new: true
   }).exec().then(function(doc) {
     res.status(200).send()
-    console.log('block inserted', doc)
   }).catch(function(err) {
     res.status(500).send()
   })
@@ -148,7 +156,6 @@ router.delete('/block/:userId', function(req, res) {
     target: b.userId
   }).exec().then(function(doc) {
     res.status(200).send()
-    console.log('block removed', doc)
   }).catch(function(err) {
     res.status(500).send()
   })
@@ -156,30 +163,10 @@ router.delete('/block/:userId', function(req, res) {
 
 router.get('/profile/:userId', function(req, res) {
   const b = req.params
-  db.Block.find({$or: [
-    {from: b.userId, target: req.session.uid},
-    {target: b.userId, from: req.session.uid}
-  ]}, function(err, docs) {
-    var isBlocked, hasBlocked;
-    for(let i = 0; i < docs.length; i++) {
-      const block = docs[i]
-      if (block.from == req.session.uid)
-        hasBlocked = true
-      if (block.target == req.session.uid)
-        isBlocked = true
-    }
-    res.send({ isBlocked, hasBlocked })
-  })
-
-  db.Block.findOne({
-    from: req.session.uid,
-    target: b.userId
-  }).exec().then(function(doc) {
-    res.send({
-      hasBlocked: doc
-    })
+  getBlockage(req.session.uid, b.userId).then(function(relationship) {
+    res.send(relationship)
   }).catch(function(err) {
-    res.status(500).send({err: err.toString()})
+    res.send({err: err.toString()})
   })
 })
 
