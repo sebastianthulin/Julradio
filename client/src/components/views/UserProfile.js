@@ -24,9 +24,6 @@ class WallPost extends React.Component {
 
 class ProfileOptions extends React.Component {
 
-  componentWillMount() {
-  }
-
   onBlock() {
     const {user, getRelationship} = this.props
     User.block(user._id, getRelationship)

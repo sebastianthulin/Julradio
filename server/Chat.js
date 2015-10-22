@@ -4,6 +4,7 @@ const db = require('./models')
 const io = require('../server').io
 
 const Notification = require('./Notification')
+const getBlockage = require('./getBlockage')
 
 module.exports = function(socket) {
   const uid = socket.request.session.uid
@@ -78,10 +79,18 @@ module.exports = function(socket) {
     if (opts.conversationId) {
       sendMessage(opts.conversationId, opts.text)
     } else if (opts.userId) {
-      getConversationId(opts.userId).then(function(conversationId) {
-        sendMessage(conversationId, opts.text)
+      getBlockage(uid, opts.userId).then(function(relationship) {
+        if (!relationship) {
+          getConversationId(opts.userId).then(function(conversationId) {
+            sendMessage(conversationId, opts.text)
+          }).catch(function(err) {
+            console.log('@chat:message handler', err)
+          })
+        } else {
+          // Är blockad eller har blockat
+        }
       }).catch(function(err) {
-        console.log('@chat:message handler', err)
+        console.log('@chat:message relationship handler', err)
       })
     }
   })
