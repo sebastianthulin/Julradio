@@ -22,11 +22,48 @@ class WallPost extends React.Component {
   }
 }
 
+class ProfileOptions extends React.Component {
+
+  componentWillMount() {
+
+  }
+
+  onBlock() {
+    const {user, getRelationship} = this.props
+    User.block(user._id, getRelationship)
+  }
+
+  onUnBlock() {
+    const {user, getRelationship} = this.props
+    User.unBlock(user._id, getRelationship)
+  }
+
+  render() {
+    const {user, relationship} = this.props
+    return (
+      <div className="profOptions">
+        <Link to={`/messages/${user.username}`} className="profButton">Skicka Meddelande</Link>
+        {relationship.hasBlocked ? <div onClick={this.onUnBlock.bind(this)} className="profButton">Avblockera</div> : <div onClick={this.onBlock.bind(this)} className="profButton">Blocka</div>}
+      </div>
+    )
+  }
+}
+
 class UserProfile extends React.Component {
   componentWillMount() {
     this.authedUser = User.get() || {}
-    this.state = {}
+    this.state = {
+      relationship: {}
+    }
     this.setUser(this.props.params.username)
+  }
+
+  getRelationship() {
+    // Hämtar info om profilens relation till din användare:
+    // isBlocked, hasBlocked etc.
+
+    const { user } = this.state
+    User.getProfile(user._id, (relationship) => {console.log(relationship); this.setState({ relationship })})
   }
 
   componentWillReceiveProps(props) {
@@ -41,6 +78,7 @@ class UserProfile extends React.Component {
   handleUser(user) {
     this.setState({ user })
     this.getWallPosts(user._id)
+    this.getRelationship()
   }
 
   getWallPosts(userId) {
@@ -72,14 +110,14 @@ class UserProfile extends React.Component {
   }
 
   render() {
-    const { user, posts } = this.state
+    const { user, posts, relationship } = this.state
     if (!user) return null
 
     return (
       <div className="row">
         <div className="profileBox">
           <ProfilePicture {...user.picture} />
-          {this.authedUser._id !== user._id && <Link to={`/messages/${user.username}`} className="profPM">Skicka Meddelande</Link>}
+          {this.authedUser._id !== user._id && <ProfileOptions user={user} relationship={relationship} getRelationship={this.getRelationship.bind(this)}/>}
           <div className="profName">{user.username}</div>
           {user.title && <div className="title">{user.title}</div>}
           <div className="profAge">{user.location && user.location + ','} {user.gender} 20 år</div>
@@ -88,9 +126,11 @@ class UserProfile extends React.Component {
         </div>
 
         <div className="wall">
-          <form onSubmit={this.wallPost.bind(this)}>
-            <input type="text" ref="wallInput" className="wallMessage" placeholder="Skriv ett inlägg i gästboken" />
-          </form>
+          {relationship.isBlocked ? <h3>Du är blockad av denna användare.</h3> : 
+            <form onSubmit={this.wallPost.bind(this)}>
+              <input type="text" ref="wallInput" className="wallMessage" placeholder="Skriv ett inlägg i gästboken" />
+            </form>
+          }
           {posts && posts.map(post => <WallPost key={post._id} {...post} removable={this.authedUser._id === user._id || this.authedUser._id === post.from._id || this.authedUser.admin} onDelete={this.deleteWallPost.bind(this, post._id)} />)}
         </div>
       </div>

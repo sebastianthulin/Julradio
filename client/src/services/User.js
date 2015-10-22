@@ -10,6 +10,26 @@ User.set = function(user) {
   User.emit('doc', user)
 }
 
+User.getProfile = function(userId, callback) {
+  return new Promise(function(resolve, reject) {
+    request.get('/api/user/profile/' + userId).then(function({ body: bans }) {
+      callback(bans)
+    }, reject)
+  })
+}
+
+User.block = function(userId, callback) {
+  return new Promise(function(resolve, reject) {
+    request.post('/api/user/block', {userId}).then(callback, reject)
+  })
+}
+
+User.unBlock = function(userId, callback) {
+  return new Promise(function(resolve, reject) {
+    request.del('/api/user/block/' + userId).then(callback, reject)
+  })
+}
+
 User.wallPost = function(userId, text) {
   return new Promise(function(resolve, reject) {
     request.post('/api/user/wallpost', { userId, text }).then(resolve, reject)

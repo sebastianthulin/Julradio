@@ -119,6 +119,70 @@ router.delete('/wallpost/:id', function(req, res) {
   })
 })
 
+router.post('/block', function(req, res) {
+  // block a user
+  const b = req.body
+  db.Block.findOneAndUpdate({
+    from: req.session.uid,
+    target: b.userId
+  }, {
+    from: req.session.uid,
+    target: b.userId
+  }, {
+    upsert: true,
+    new: true
+  }).exec().then(function(doc) {
+    res.status(200).send()
+    console.log('block inserted', doc)
+  }).catch(function(err) {
+    res.status(500).send()
+  })
+
+})
+
+router.delete('/block/:userId', function(req, res) {
+  // unblock a user
+  const b = req.params
+  db.Block.findOneAndRemove({
+    from: req.session.uid,
+    target: b.userId
+  }).exec().then(function(doc) {
+    res.status(200).send()
+    console.log('block removed', doc)
+  }).catch(function(err) {
+    res.status(500).send()
+  })
+})
+
+router.get('/profile/:userId', function(req, res) {
+  const b = req.params
+  db.Block.find({$or: [
+    {from: b.userId, target: req.session.uid},
+    {target: b.userId, from: req.session.uid}
+  ]}, function(err, docs) {
+    var isBlocked, hasBlocked;
+    for(let i = 0; i < docs.length; i++) {
+      const block = docs[i]
+      if (block.from == req.session.uid)
+        hasBlocked = true
+      if (block.target == req.session.uid)
+        isBlocked = true
+    }
+    res.send({ isBlocked, hasBlocked })
+  })
+
+  db.Block.findOne({
+    from: req.session.uid,
+    target: b.userId
+  }).exec().then(function(doc) {
+    res.send({
+      hasBlocked: doc
+    })
+  }).catch(function(err) {
+    res.status(500).send({err: err.toString()})
+  })
+})
+
 router.put('/field', function(req, res) {
   const b = req.body
   const allow = ['realname', 'gender', 'location', 'description']

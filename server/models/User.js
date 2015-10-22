@@ -49,6 +49,7 @@ function sha256(str) {
 
 schema.methods.signUp = function(opts, callback) {
   this.username = opts.username
+  this.usernameLower = opts.username.toLowerCase()
   this.email = opts.email
   this.setPassword(opts.password)
 
