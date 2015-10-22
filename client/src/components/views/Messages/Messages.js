@@ -43,8 +43,8 @@ class Messages extends React.Component {
 
   renderWhatever() {
     return (
-      <div>
-        no convo selected
+      <div style={{padding: 20}}>
+        Ingen konversation vald
       </div>
     )
   }
