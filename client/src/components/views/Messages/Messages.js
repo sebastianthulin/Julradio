@@ -2,6 +2,7 @@ const React = require('react')
 const cx = require('classnames')
 const { Link } = require('react-router')
 const ChatStore = require('../../../stores/ChatStore')
+const NotificationStore = require('../../../stores/NotificationStore')
 const User = require('../../../services/User')
 const Message = require('./Message')
 const Conversation = require('./Conversation')
@@ -10,6 +11,7 @@ class Messages extends React.Component {
   componentWillMount() {
     this.unsub = ChatStore.subscribe(state => this.setState(state))
     ChatStore.select(this.props.params.user)
+    NotificationStore.subscribe('message', unseen => this.setState({ unseen }))
   }
 
   componentWillReceiveProps(props) {
@@ -68,12 +70,19 @@ class Messages extends React.Component {
   }
 
   render() {
-    const { threads, selectedThreadId, targetUser } = this.state
+    const { threads, selectedThreadId, targetUser, unseen } = this.state
     const selected = ChatStore.getConversationId()
     return (
       <div id="messenger">
         <div className="conversations">
-          {threads.map(thread => <Conversation key={thread._id} selected={selected === thread._id} {...thread} />)}
+          {threads.map(thread => (
+            <Conversation
+              key={thread._id}
+              selected={selected === thread._id}
+              unseen={unseen.indexOf(thread._id) > -1}
+              {...thread}
+            />
+          ))}
         </div>
         <div className="chat">
           {targetUser ? this.renderChat() : this.renderWhatever()}

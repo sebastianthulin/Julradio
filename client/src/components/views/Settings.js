@@ -85,8 +85,8 @@ class Settings extends React.Component {
 
   renderConfirmation() {
     return (
-      <form onSubmit={this.saveFields.bind(this)}>
-        <label className="ani">
+      <form onSubmit={this.saveFields.bind(this)} className="ani">
+        <label>
           <div className="label">Nuvarande lösenord</div>
           <input type="password" ref="auth" />
         </label>
@@ -102,7 +102,7 @@ class Settings extends React.Component {
     const { user, changes } = this.state
     return (
       <div id="settings">
-        <h1>Profil inställningar</h1>
+        <h1>Profilinställningar</h1>
         <div>
           <label>
             <div className="label">Email</div>

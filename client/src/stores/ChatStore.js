@@ -3,6 +3,7 @@ const request = require('superagent')
 const socket = require('../services/socket')
 const User = require('../services/User')
 const UserStore = require('./UserStore')
+const NotificationStore = require('./NotificationStore')
 const ChatStore = new EventEmitter
 const threadsById = {}
 const threadsByUserId = {}
@@ -24,6 +25,7 @@ ChatStore.select = function(username) {
     }
 
     const thread = threadsByUserId[user._id]
+    thread && NotificationStore.clear('message', thread._id)
     state.targetUser = user
     updateMessages()
 
@@ -119,6 +121,10 @@ socket.on('chat:conversation', function(conv) {
   insertConversation(conv)
   updateThreads()
   push()
+})
+
+NotificationStore.on('message', function(conversationId) {
+  return ChatStore.getConversationId() !== conversationId
 })
 
 request.get('/api/chat').then(function({ body: conversations }) {

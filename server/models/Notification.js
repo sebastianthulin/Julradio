@@ -8,12 +8,8 @@ const schema = new Schema({
     type: Schema.ObjectId,
     ref: 'users'
   },
-  type: {
-    type: String
-  },
-  id: {
-    type: Schema.ObjectId
-  },
+  type: String,
+  value: Schema.ObjectId,
   date: {
     type: Date,
     default: Date.now

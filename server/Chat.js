@@ -2,8 +2,7 @@
 
 const db = require('./models')
 const io = require('../server').io
-
-const Notification = require('./Notification')
+const Notify = require('./Notify')
 const getBlockage = require('./getBlockage')
 
 module.exports = function(socket) {
@@ -64,7 +63,11 @@ module.exports = function(socket) {
       conversation.save()
       conversation.users.forEach(function(userId) {
         io.to(userId).emit('chat:message', message)
-        Notification('message', userId, message)
+        Notify({
+          userId,
+          type: 'message',
+          value: conversationId
+        })
       })
     }).catch(function(err) {
       console.log('@sendMessage', err)
@@ -76,22 +79,19 @@ module.exports = function(socket) {
       return
     }
 
-    if (opts.conversationId) {
-      sendMessage(opts.conversationId, opts.text)
-    } else if (opts.userId) {
-      getBlockage(uid, opts.userId).then(function(relationship) {
-        if (!relationship) {
-          getConversationId(opts.userId).then(function(conversationId) {
-            sendMessage(conversationId, opts.text)
-          }).catch(function(err) {
-            console.log('@chat:message handler', err)
-          })
-        } else {
-          // Är blockad eller har blockat
-        }
-      }).catch(function(err) {
-        console.log('@chat:message relationship handler', err)
-      })
-    }
+    getBlockage(uid, opts.userId).then(function(relationship) {
+      if (relationship) {
+        return
+      }
+      if (opts.conversationId) {
+        sendMessage(opts.conversationId, opts.text)
+      } else if (opts.userId) {
+        getConversationId(opts.userId).then(function(conversationId) {
+          sendMessage(conversationId, opts.text)
+        }).catch(function(err) {
+          console.log('@chat:message handler', err)
+        })
+      }
+    })
   })
 }
