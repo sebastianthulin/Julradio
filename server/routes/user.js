@@ -215,50 +215,51 @@ router.post('/profilepicture', function(req, res) {
     })
 
     gm(req.file.path)
-    .size(function(err, value) {
-      if (err) {
-        fs.unlink(req.file.path)
-        return res.status(500).send({err: 'INVALID_IMAGE'})
-      }
-
-      var newWidth, newHeight
-      const width = value.width
-      const height = value.height
-      const aspect = width / height
-      const newSize = Math.min(Math.max(width, height), 500) 
-
-      newWidth = newHeight = newSize
-      if (width > height) {
-        newWidth = Math.round(newWidth * aspect)
-      } else {
-        newHeight = Math.round(newHeight / aspect)
-      }
-      gm(req.file.path)
-      .resize(newWidth, newHeight, '!')
-      .crop(newSize, newSize, (newWidth - newSize) / 2, (newHeight - newSize) / 2)
-      .setFormat('jpg')
-      .write('public/i/' + picture._id + '.jpg', function(err) {
-        fs.unlink(req.file.path)
+    .autoOrient()
+    .noProfile() // remove exif
+    .write(req.file.path, function(err) {
+      gm(req.file.path).size(function(err, value) {
         if (err) {
-          console.log('@/profilepicture handler a', err)
-          return res.status(500).send({err: 'UNKNOWN_ERROR'})
+          fs.unlink(req.file.path)
+          return res.status(500).send({err: 'INVALID_IMAGE'})
         }
+        var newWidth, newHeight
+        const width = value.width
+        const height = value.height
+        const aspect = width / height
+        const newSize = Math.min(Math.max(width, height), 500)
 
-        picture.save().then(function() {
-          return db.User.findByIdAndUpdate(userId, {
-            picture: picture._id
-          }, {
-            new: true
-          }).select('-hash').populate('picture').exec()
-        }).then(function(user) {
-          res.send(user)
-        }, function(err) {
-          console.log('@/profilepicture handler b', err)
-          res.status(500).send({err: 'UNKNOWN_ERROR'})
+        newWidth = newHeight = newSize
+        if (width > height) {
+          newWidth = Math.round(newWidth * aspect)
+        } else {
+          newHeight = Math.round(newHeight / aspect)
+        }
+        this.resize(newWidth, newHeight, '!')
+        .crop(newSize, newSize, (newWidth - newSize) / 2, (newHeight - newSize) / 2)
+        .setFormat('jpg')
+        .write('public/i/' + picture._id + '.jpg', function(err) {
+          fs.unlink(req.file.path)
+          if (err) {
+            console.log('@/profilepicture handler a', err)
+            return res.status(500).send({err: 'UNKNOWN_ERROR'})
+          }
+          picture.save().then(function() {
+            return db.User.findByIdAndUpdate(userId, {
+              picture: picture._id
+            }, {
+              new: true
+            }).select('-hash').populate('picture').exec()
+          }).then(function(user) {
+            res.send(user)
+          }, function(err) {
+            console.log('@/profilepicture handler b', err)
+            res.status(500).send({err: 'UNKNOWN_ERROR'})
+          })
         })
       })
-
     })
+
   })
 })
 
