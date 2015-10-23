@@ -9,8 +9,11 @@ module.exports = function(user1, user2) {
       {from: user1, target: user2},
       {target: user1, from: user2}
     ]}, function(err, docs) {
-      if (docs.length === 0)
+      if (err) {
+        return reject(err)
+      } else if (docs.length === 0) {
         return resolve(null)
+      }
       
       var isBlocked, hasBlocked;
       for(let i = 0; i < docs.length; i++) {

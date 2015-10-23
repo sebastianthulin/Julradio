@@ -22,12 +22,10 @@ module.exports = function(socket) {
   }
 
   function getConversationId(userId) {
-    var users
     return db.User.findById(userId).exec().then(function(user) {
       if (!user || user._id.toString() === uid.toString()) {
         throw new Error('invalid user')
       }
-      users = [uid, user._id]
       return db.Conversation.findOne({$and: [
         {users: uid},
         {users: user._id}
@@ -36,7 +34,7 @@ module.exports = function(socket) {
       if (conversation) {
         return conversation
       } else {
-        return createConversation(users)
+        return createConversation([uid, userId])
       }
     }).then(function(conversation) {
       return conversation._id
@@ -44,7 +42,7 @@ module.exports = function(socket) {
   }
 
   function sendMessage(conversationId, text) {
-    db.Conversation.findById(conversationId).exec().then(function(conversation) {
+    return db.Conversation.findById(conversationId).exec().then(function(conversation) {
       if (!conversation) {
         throw new Error('conversation not found')
       } else if (conversation.users.indexOf(uid) === -1) {
@@ -69,8 +67,6 @@ module.exports = function(socket) {
           value: conversationId
         })
       })
-    }).catch(function(err) {
-      console.log('@sendMessage', err)
     })
   }
 
@@ -81,17 +77,13 @@ module.exports = function(socket) {
 
     getBlockage(uid, opts.userId).then(function(relationship) {
       if (relationship) {
-        return
+        throw new Error('blocked')
       }
-      if (opts.conversationId) {
-        sendMessage(opts.conversationId, opts.text)
-      } else if (opts.userId) {
-        getConversationId(opts.userId).then(function(conversationId) {
-          sendMessage(conversationId, opts.text)
-        }).catch(function(err) {
-          console.log('@chat:message handler', err)
-        })
-      }
+      return opts.conversationId || getConversationId(opts.userId)
+    }).then(function(conversationId) {
+      return sendMessage(conversationId, opts.text)
+    }).catch(function(err) {
+      console.log('@chat:message handler', err)
     })
   })
 }

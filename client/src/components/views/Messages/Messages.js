@@ -14,30 +14,43 @@ class Messages extends React.Component {
     NotificationStore.subscribe('message', unseen => this.setState({ unseen }))
   }
 
+  componentDidMount() {
+    this.scrollToBottom()
+  }
+
   componentWillReceiveProps(props) {
     ChatStore.select(props.params.user)
   }
 
-  componentWillUpdate() {
-    const node = this.refs.messages
-    this.doScroll = node && node.scrollHeight - node.clientHeight - node.scrollTop < 100
+  componentWillUpdate(props) {
+    if (this.props.params.user !== props.params.user) {
+      this.doScroll = true
+    } else {
+      const node = this.refs.messages
+      this.doScroll = node && node.scrollHeight - node.clientHeight - node.scrollTop < 100
+    }
   }
 
   componentDidUpdate() {
-    const node = this.refs.messages
-    if (node && this.doScroll) {
-      node.scrollTop = node.scrollHeight
-    }
+    this.doScroll && this.scrollToBottom()
   }
 
   componentWillUnmount() {
     this.unsub()
+    ChatStore.deselect()
+  }
+
+  scrollToBottom() {
+    const node = this.refs.messages
+    if (node) {
+      node.scrollTop = node.scrollHeight
+    }
   }
 
   sendMessage(ev) {
     ev.preventDefault()
-    var text = this.refs.input.value.trim()
-    if (text) {
+    const text = this.refs.input.value.trim()
+    if (text && text.length <= 200) {
       ChatStore.sendMessage(text)
     }
     this.refs.input.value = ''
@@ -68,7 +81,7 @@ class Messages extends React.Component {
           {messages.map(message => <Message key={message._id} right={userId === message.user} message={message} />)}
         </div>
         <form onSubmit={this.sendMessage.bind(this)}>
-          <input type="text" placeholder="Skriv ett meddelande..." ref="input" />
+          <input type="text" placeholder="Skriv ett meddelande..." ref="input" maxLength={200} />
         </form>
       </div>
     )

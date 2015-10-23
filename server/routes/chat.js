@@ -29,9 +29,9 @@ router.get('/', function(req, res) {
 })
 
 router.get('/:id/:offset', function(req, res) {
-  const offset = req.params.offset || 0
-  console.log(offset)
-  db.Message.find({conversation: req.params.id}).sort({date: -1}).skip(offset).limit(20).exec().then(function(messages) {
+  const offset = req.params.offset
+  const conversation = req.params.id
+  db.Message.find({ conversation }).sort('-_id').skip(offset).limit(50).exec().then(function(messages) {
     res.send(messages)
   }, function(err) {
     console.log(err)

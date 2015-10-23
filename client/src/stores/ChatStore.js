@@ -16,8 +16,7 @@ const state = {
   loaded: false,
   targetUser: null,
   messages: [],
-  threads: [],
-  offset: 0
+  threads: []
 }
 
 ChatStore.select = function(username) {
@@ -46,6 +45,7 @@ ChatStore.select = function(username) {
       }
       updateMessages()
       thread.loaded = true
+      thread.offset = 0
     }, function(err) {
       console.log('Couldn\'t select conversation', err)
     })
@@ -55,18 +55,16 @@ ChatStore.select = function(username) {
 ChatStore.load = function() {
   const convoId = ChatStore.getConversationId()
   const messageIds = messageIdsByThreadId[convoId]
-  state.offset += 20
-  request.get(`/api/chat/${convoId}/${state.offset}`).then(function({ body: messages }) {
-
+  const conv = threadsById[convoId]
+  conv.offset += 50
+  request.get(`/api/chat/${convoId}/${conv.offset}`).then(function({ body: messages }) {
     var i = messages.length
     while (i--) {
       var msg = messages[i]
       messageIds.push(msg._id)
       messagesById[msg._id] = msg
     }
-
     messageIds.sort((a, b) => new Date(messagesById[a].date) - new Date(messagesById[b].date))
-
     updateMessages()
   }, function(err) {
     console.log('Couldn\'t select conversation', err)
@@ -74,7 +72,6 @@ ChatStore.load = function() {
 }
 
 ChatStore.deselect = function() {
-  state.offset = 0
   state.messages = []
   state.targetUser = null
   push()
@@ -84,7 +81,7 @@ ChatStore.sendMessage = function(text) {
   socket.emit('chat:message', {
     text,
     conversationId: ChatStore.getConversationId(),
-    userId: state.targetUser && state.targetUser._id
+    userId: state.targetUser._id
   })
 }
 
@@ -121,7 +118,8 @@ function insertConversation(conv) {
     lastMessage: conv.lastMessage,
     loaded: false,
     unread: false,
-    updatedAt: conv.updatedAt
+    updatedAt: conv.updatedAt,
+    offset: 0
   }
   UserStore.insert(conversation.user)
   threadsById[conversation._id] = conversation
@@ -134,9 +132,10 @@ socket.on('chat:message', function(message) {
   messagesById[message._id] = message
   messageIdsByThreadId[chatId] = messageIdsByThreadId[chatId] || []
   messageIdsByThreadId[chatId].push(message._id)
-  threadsById[chatId] = threadsById[chatId] || {}
-  threadsById[chatId].lastMessage = message
-  threadsById[chatId].updatedAt = Date.now()
+  const conv = threadsById[chatId] = threadsById[chatId] || {}
+  conv.lastMessage = message
+  conv.updatedAt = Date.now()
+  conv.offset++
   updateThreads()
   updateMessages()
 })
@@ -155,11 +154,14 @@ NotificationStore.on('message', function(conversationId) {
   return false
 })
 
+document.addEventListener('focus', function() {
+  NotificationStore.clear('message', ChatStore.getConversationId())
+})
+
 request.get('/api/chat').then(function({ body: conversations }) {
   conversations.forEach(insertConversation)
   state.loaded = true
   updateThreads()
-  // push()
   ChatStore.emit('ready')
 }, function(err) {
   console.log('could not load messages')
