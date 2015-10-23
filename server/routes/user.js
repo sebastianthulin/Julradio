@@ -7,21 +7,12 @@ const fs = require('fs')
 const router = express.Router()
 const db = require('../models')
 const getBlockage = require('../getBlockage')
+const gm = require('gm')
 
 const upload = multer({
   dest: 'uploads/',
   limits: {
-    fileSize: 2000000
-  },
-  fileFilter: function(req, file, cb) {
-    const isImage = file.mimetype.split('/')[0] === 'image'
-    const extension = '.' + file.originalname.split('.').pop().toLowerCase()
-    file.extension = extension
-    if (isImage) {
-      cb(null, true)
-    } else {
-      cb(new Error('NOT_AN_IMAGE'))
-    }
+    fileSize: 8000000
   }
 }).single('avatar')
 
@@ -215,32 +206,58 @@ router.post('/profilepicture', function(req, res) {
   const userId = req.session.uid
   upload(req, res, function(err) {
     if (err) {
+      fs.unlink(req.file.path)
       return res.status(500).send({err: 'INVALID_IMAGE'})
     }
-
     const picture = new db.Picture({
-      extension: req.file.extension,
+      extension: '.jpg',
       user: userId
     })
 
-    fs.rename(req.file.path, 'public/i/' + picture._id + picture.extension, function(err) {
+    gm(req.file.path)
+    .size(function(err, value) {
       if (err) {
-        console.log('@/profilepicture handler a', err)
-        return res.status(500).send({err: 'UNKNOWN_ERROR'})
+        fs.unlink(req.file.path)
+        return res.status(500).send({err: 'INVALID_IMAGE'})
       }
 
-      picture.save().then(function() {
-        return db.User.findByIdAndUpdate(userId, {
-          picture: picture._id
-        }, {
-          new: true
-        }).select('-hash').populate('picture').exec()
-      }).then(function(user) {
-        res.send(user)
-      }, function(err) {
-        console.log('@/profilepicture handler b', err)
-        res.status(500).send({err: 'UNKNOWN_ERROR'})
+      var newWidth, newHeight
+      const width = value.width
+      const height = value.height
+      const aspect = width / height
+      const newSize = Math.min(Math.max(width, height), 500) 
+
+      newWidth = newHeight = newSize
+      if (width > height) {
+        newWidth = Math.round(newWidth * aspect)
+      } else {
+        newHeight = Math.round(newHeight / aspect)
+      }
+      gm(req.file.path)
+      .resize(newWidth, newHeight, '!')
+      .crop(newSize, newSize, (newWidth - newSize) / 2, (newHeight - newSize) / 2)
+      .setFormat('jpg')
+      .write('public/i/' + picture._id + '.jpg', function(err) {
+        fs.unlink(req.file.path)
+        if (err) {
+          console.log('@/profilepicture handler a', err)
+          return res.status(500).send({err: 'UNKNOWN_ERROR'})
+        }
+
+        picture.save().then(function() {
+          return db.User.findByIdAndUpdate(userId, {
+            picture: picture._id
+          }, {
+            new: true
+          }).select('-hash').populate('picture').exec()
+        }).then(function(user) {
+          res.send(user)
+        }, function(err) {
+          console.log('@/profilepicture handler b', err)
+          res.status(500).send({err: 'UNKNOWN_ERROR'})
+        })
       })
+
     })
   })
 })
