@@ -26,7 +26,6 @@ class Front extends React.Component {
         </div>
         <div className="one-third column">
           {schedule && <Schedule {...schedule} />}
-          {requests.length > 0 && <span className="hashtagJulradio">#julradio</span>}
           <div className="compose" onClick={Modal.open.bind(null, 'RequestSong')}>
             Skriv en önskning...
           </div>
