@@ -5,7 +5,8 @@ var express     = require('express'),
     server      = require('http').Server(app),
     io          = require('socket.io')(server),
     session     = require('express-session'),
-    RedisStore  = require('connect-redis')(session)
+    RedisStore  = require('connect-redis')(session),
+    ioRedis     = require('socket.io-redis')
 
 var sessionMiddleware = session({
   secret: 'omgdisawesome',
@@ -24,9 +25,12 @@ app.use(sessionMiddleware)
 app.use(require('body-parser').json())
 app.use(require('./server/routes'))
 
+io.adapter(ioRedis({
+  host: 'localhost',
+  port: 6379
+}))
 io.use((socket, next) => sessionMiddleware(socket.request, {}, next))
-io.on('connection', require('./server/TweetStream'))
-io.on('connection', require('./server/RadioStream'))
+io.on('connection', require('./server/broadcast'))
 io.on('connection', require('./server/Chat'))
 
-server.listen(8080, () => console.log('server started on port 8080'))
+server.listen(8080, () => console.log('Server started on port 8080'))

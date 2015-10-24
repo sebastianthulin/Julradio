@@ -2,27 +2,25 @@
 
 const radio = require('radio-stream')
 const config = require('../config')
-const io = require('../server').io
 const db = require('./models')
 
-var history = []
+const stream = new radio.ReadStream(config.shoutCastUrl)
 var playing = {}
+var history = []
 
 db.Song.find().sort('-_id').limit(30).exec(function(err, docs) {
   history = docs.reverse()
+  process.send({ history })
 })
 
-const stream = new radio.ReadStream(config.shoutCastUrl)
-
-stream.on('connect', () => console.log('connected to radio'))
+stream.on('connect', () => console.log('Connected to SHOUTcast server'))
 stream.on('error', err => console.log(err))
-stream.on('close', function() {
-  console.log('___________RADIO CONNECTION CLOSED___________')
-})
+stream.on('close', process.exit)
 
 stream.on('metadata', function(data) {
   const title = radio.parseMetadata(data).StreamTitle
   const song = { title, date: Date.now() }
+
   if (!title || title === playing.title) {
     return
   }
@@ -33,7 +31,8 @@ stream.on('metadata', function(data) {
   }
 
   playing = song
-  io.emit('metadata', { playing })
+
+  process.send({ playing, history })
 
   db.Song.findOne().sort('-_id').exec(function(err, doc) {
     if (!doc || (doc && doc.title !== title)) {
@@ -41,5 +40,3 @@ stream.on('metadata', function(data) {
     }
   })
 })
-
-module.exports = socket => socket.emit('metadata', { playing, history })

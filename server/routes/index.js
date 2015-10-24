@@ -21,7 +21,7 @@ router.use(function(req, res, next) {
     next()
   })
 }, function(req, res, next) {
-  console.log(req.ip, req.method, req.url, req.user ? req.user.username : '')
+  // console.log(req.ip, req.method, req.url, req.user ? req.user.username : '')
   next()
 })
 

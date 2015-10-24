@@ -1,8 +1,12 @@
-var React = require('react')
+const React = require('react')
 
 class Tweet extends React.Component {
+  shouldComponentUpdate() {
+    return false
+  }
+
   render() {
-    var { tweet } = this.props
+    const { tweet } = this.props
     return (
       <div className="tweet">
         <img src={tweet.userimage} />
@@ -15,9 +19,10 @@ class Tweet extends React.Component {
 
 class TwitterFeed extends React.Component {
   render() {
+    const { tweets } = this.props
     return (
       <div className="tweets">
-        {this.props.tweets.map(tweet => <Tweet key={tweet.id} tweet={tweet} />)}
+        {tweets.map(tweet => <Tweet key={tweet.id} tweet={tweet} />)}
       </div>
     )
   }

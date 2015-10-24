@@ -7,6 +7,7 @@ const getBlockage = require('./getBlockage')
 
 module.exports = function(socket) {
   const uid = socket.request.session.uid
+  console.log('Socket connection on worker ' + process.pid)
   if (!uid) return
 
   socket.join(uid)

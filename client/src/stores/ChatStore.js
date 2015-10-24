@@ -25,49 +25,43 @@ ChatStore.select = function(username) {
       return ChatStore.deselect()
     }
 
-    const thread = threadsByUserId[user._id]
-    thread && NotificationStore.clear('message', thread._id)
+    const conversation = threadsByUserId[user._id]
+    conversation && NotificationStore.clear('message', conversation._id)
     state.targetUser = user
     updateMessages()
 
-    if (!thread || thread.loaded) {
-      return
+    if (conversation && !conversation.loaded) {
+      ChatStore.load()
     }
-
-    request.get(`/api/chat/${thread._id}/0`).then(function({ body: messages }) {
-      messages.sort((a, b) => new Date(b.date) - new Date(a.date))
-      const messageIds = messageIdsByThreadId[thread._id] = []
-      var i = messages.length
-      while (i--) {
-        var msg = messages[i]
-        messageIds.push(msg._id)
-        messagesById[msg._id] = msg
-      }
-      updateMessages()
-      thread.loaded = true
-      thread.offset = 0
-    }, function(err) {
-      console.log('Couldn\'t select conversation', err)
-    })
   })
 }
 
 ChatStore.load = function() {
-  const convoId = ChatStore.getConversationId()
-  const messageIds = messageIdsByThreadId[convoId]
-  const conv = threadsById[convoId]
-  conv.offset += 50
-  request.get(`/api/chat/${convoId}/${conv.offset}`).then(function({ body: messages }) {
+  const chatId = ChatStore.getConversationId()
+  const conversation = threadsById[chatId]
+  var messageIds
+
+  if (conversation.loaded) {
+    messageIds = messageIdsByThreadId[chatId]
+    conversation.offset += 50
+  } else {
+    messageIds = messageIdsByThreadId[chatId] = []
+    conversation.offset = 0
+  }
+
+  request.get(`/api/chat/${chatId}/${conversation.offset}`).then(function({ body: messages }) {
     var i = messages.length
     while (i--) {
-      var msg = messages[i]
-      messageIds.push(msg._id)
-      messagesById[msg._id] = msg
+      var message = messages[i]
+      message.date = new Date(message.date)
+      messageIds.push(message._id)
+      messagesById[message._id] = message
     }
-    messageIds.sort((a, b) => new Date(messagesById[a].date) - new Date(messagesById[b].date))
+    conversation.loaded = true
+    messageIds.sort((a, b) => messagesById[a].date - messagesById[b].date)
     updateMessages()
   }, function(err) {
-    console.log('Couldn\'t select conversation', err)
+    console.log('Couldn\'t load conversation', err)
   })
 }
 
@@ -80,8 +74,8 @@ ChatStore.deselect = function() {
 ChatStore.sendMessage = function(text) {
   socket.emit('chat:message', {
     text,
-    conversationId: ChatStore.getConversationId(),
-    userId: state.targetUser._id
+    userId: state.targetUser._id,
+    conversationId: ChatStore.getConversationId()
   })
 }
 
@@ -101,7 +95,7 @@ const push = () => ChatStore.emit('state', state)
 
 function updateThreads() {
   state.threads = threadIds.map(id => threadsById[id])
-  state.threads.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+  state.threads.sort((a, b) => b.updatedAt - a.updatedAt)
 }
 
 function updateMessages() {
@@ -118,7 +112,7 @@ function insertConversation(conv) {
     lastMessage: conv.lastMessage,
     loaded: false,
     unread: false,
-    updatedAt: conv.updatedAt,
+    updatedAt: new Date(conv.updatedAt),
     offset: 0
   }
   UserStore.insert(conversation.user)
@@ -129,13 +123,14 @@ function insertConversation(conv) {
 
 socket.on('chat:message', function(message) {
   const chatId = message.conversation
+  message.date = new Date(message.date)
   messagesById[message._id] = message
   messageIdsByThreadId[chatId] = messageIdsByThreadId[chatId] || []
   messageIdsByThreadId[chatId].push(message._id)
-  const conv = threadsById[chatId] = threadsById[chatId] || {}
-  conv.lastMessage = message
-  conv.updatedAt = Date.now()
-  conv.offset++
+  const conversation = threadsById[chatId] = threadsById[chatId] || {}
+  conversation.lastMessage = message
+  conversation.updatedAt = message.date
+  conversation.loaded && conversation.offset++
   updateThreads()
   updateMessages()
 })

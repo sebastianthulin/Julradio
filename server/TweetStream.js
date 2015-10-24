@@ -1,10 +1,10 @@
 'use strict';
 
+const Twitter = require('node-tweet-stream')
 const config = require('../config')
-const io = require('../server').io
-const tweets = []
 
-const tw = require('node-tweet-stream')(config.twitterTokens)
+const tw = new Twitter(config.twitterTokens)
+var tweets = []
 
 tw.track(config.track)
 
@@ -18,11 +18,11 @@ tw.on('tweet', function(data) {
     userimage: data.user.profile_image_url
   }
 
-  io.emit('tweet', tweet)
   tweets.unshift(tweet)
+
   if (tweets.length === 51) {
     tweets.splice(50, 1)
   }
-})
 
-module.exports = socket => socket.emit('tweets', tweets)
+  process.send({ tweet, tweets })
+})
