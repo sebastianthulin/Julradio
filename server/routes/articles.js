@@ -23,7 +23,7 @@ router.use(function(req, res, next) {
     if (user && user.admin) {
       next()
     } else {
-      res.sendStatus(404)
+      res.sendStatus(500)
     }
   })
 })
@@ -36,8 +36,8 @@ router.post('/', function(req, res) {
     user: req.session.uid || 1
   }).save().then(function(article) {
     res.send(article)
-  }, function(err) {
-    // ...
+  }, function() {
+    res.sendStatus(500)
   })
 })
 
@@ -48,18 +48,18 @@ router.put('/:id', function(req, res) {
     title: b.title,
     content: b.content
   }).exec().then(function() {
-    res.send(true)
+    res.sendStatus(200)
   }, function(err) {
-    res.send(false)
+    res.sendStatus(500)
   })
 })
 
 router.delete('/:id', function(req, res) {
   const id = req.params.id
   db.Article.findByIdAndRemove(id).exec().then(function() {
-    res.send(true)
+    res.sendStatus(200)
   }, function(err) {
-    // ...
+    res.sendStatus(500)
   })
 })
 

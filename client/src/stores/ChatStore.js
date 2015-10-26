@@ -123,11 +123,11 @@ function insertConversation(conv) {
 
 socket.on('chat:message', function(message) {
   const chatId = message.conversation
-  message.date = new Date(message.date)
-  messagesById[message._id] = message
-  messageIdsByThreadId[chatId] = messageIdsByThreadId[chatId] || []
-  messageIdsByThreadId[chatId].push(message._id)
+  const messageIds = messageIdsByThreadId[chatId]
   const conversation = threadsById[chatId] = threadsById[chatId] || {}
+  message.date = new Date(message.date)
+  messageIds && messageIds.push(message._id)
+  messagesById[message._id] = message
   conversation.lastMessage = message
   conversation.updatedAt = message.date
   conversation.loaded && conversation.offset++

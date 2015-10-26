@@ -10,11 +10,9 @@ process.on('message', function(message) {
     history = message.data.history
     if (message.data.playing) {
       playing = message.data.playing
-      io.emit('metadata', { playing })
     }
   } else if (message.service === 'TweetStream') {
-    tweets = message.data.tweets
-    io.emit('tweet', message.data.tweet)
+    tweets = message.data
   }
 })
 

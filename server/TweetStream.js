@@ -1,7 +1,13 @@
 'use strict';
 
+const io = require('socket.io')()
 const Twitter = require('node-tweet-stream')
 const config = require('../config')
+
+io.adapter(require('socket.io-redis')({
+  host: 'localhost',
+  port: 6379
+}))
 
 const tw = new Twitter(config.twitterTokens)
 var tweets = []
@@ -24,5 +30,6 @@ tw.on('tweet', function(data) {
     tweets.splice(50, 1)
   }
 
-  process.send({ tweet, tweets })
+  process.send(tweets)
+  io.emit('tweet', tweet)
 })

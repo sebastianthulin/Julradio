@@ -5,8 +5,7 @@ var express     = require('express'),
     server      = require('http').Server(app),
     io          = require('socket.io')(server),
     session     = require('express-session'),
-    RedisStore  = require('connect-redis')(session),
-    ioRedis     = require('socket.io-redis')
+    RedisStore  = require('connect-redis')(session)
 
 var sessionMiddleware = session({
   secret: 'omgdisawesome',
@@ -25,7 +24,7 @@ app.use(sessionMiddleware)
 app.use(require('body-parser').json())
 app.use(require('./server/routes'))
 
-io.adapter(ioRedis({
+io.adapter(require('socket.io-redis')({
   host: 'localhost',
   port: 6379
 }))

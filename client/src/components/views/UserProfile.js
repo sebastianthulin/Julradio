@@ -11,7 +11,7 @@ class WallPost extends React.Component {
     return (
       <div className="wallPost">
         <div className="wallPostAuthor">
-          {user.picture && <ProfilePicture {...user.picture} />}
+          <ProfilePicture {...user.picture} />
           <Link to={'/@' + user.username} className="wallPostAuthorName">{user.username}</Link>
           <TimeSince className="wallPostAuthorTime" date={date} />
         </div>
@@ -23,7 +23,6 @@ class WallPost extends React.Component {
 }
 
 class ProfileOptions extends React.Component {
-
   onBlock() {
     const {user, getRelationship} = this.props
     User.block(user._id, getRelationship)

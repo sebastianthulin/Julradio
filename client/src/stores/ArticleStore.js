@@ -7,9 +7,9 @@ var articles = []
 var schedule
 
 ArticleStore.create = function(opts, callback) {
-  request.post('/api/articles', opts, function(err, res) {
+  request.post('/api/articles', opts).then(function({ body }) {
     ArticleStore.get()
-    callback(res.body)
+    callback(body)
   })
 }
 
