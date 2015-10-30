@@ -17,7 +17,7 @@ class LogIn extends React.Component {
 
   render() {
     return (
-      <div className="modal">
+      <div className="LogIn Modal">
         <header>
           Logga in
         </header>

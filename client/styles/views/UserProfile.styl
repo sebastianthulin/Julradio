@@ -1,9 +1,105 @@
-.wall
+#UserProfile
+  header
+    width: 100%;
+    text-align: center;
+    padding 50px 0px
+    .ProfilePicture
+      width 150px
+      height 150px
+      margin 0 auto
+
+    .title
+      color #FF0    
+
+    .username, .age, .description
+      width 100%
+      display: table;
+      
+    .username
+      margin-top: 10px;
+      font-size: 25px;
+      font-weight: 100;
+      font-family: Lobster;
+      line-height: 30px;
+
+    .age
+      font-size 14px
+      color rgba(255,255,255,0.5)
+
+    .description
+      color rgba(255,255,255,0.7)
+      font-size 14px
+
+#ProfileOptions
+  position absolute
+  margin-top 165px
+  .action
+    margin-bottom 10px
+    color #FFF
+    display block
+    width 150px
+    border-radius 3px
+    background rgba(0,0,0,0.2)
+    height 27px
+    line-height 30px
+    text-align center
+    font-size 12px
+    cursor pointer
+
+#Wall
   width 580px
   margin auto
   padding 20px
-  
-  .removeDisPlsNow
+  input
+    width 100%
+    border-radius 5px
+    background white
+    padding 14px 10px 10px 14px
+    color #333
+    font-size 12px
+
+.WallPost
+  background rgba(0,0,0,0.15)
+  border-radius 5px
+  width 540px
+  margin-top 10px
+  display table
+  padding 10px
+  position relative
+  .author
+    height 50px
+    width 520px
+    float right
+    padding-bottom 5px
+    border-bottom 1px solid rgba(255,255,255,0.1)
+    display table
+
+  .ProfilePicture
+    width 40px
+    height 40px
+    margin-right 10px
+    float left
+    margin-bottom 10px
+    
+  .user
+    color #FFF
+    text-decoration none
+    &:hover
+      border-bottom 1px solid
+    
+  .time-since
+    font-size 10px
+    color rgba(255,255,255,0.5)
+    margin-top -5px
+    display block
+
+  .text
+    font-size 13px
+    color white
+    display table
+    padding 10px 5px 0px 5px
+    
+  .delete
     position absolute
     right 0px
     top 0px
@@ -15,108 +111,3 @@
     cursor pointer
     &:hover
       opacity 0.5
-  
-  .wallMessage
-    width 100%
-    border-radius 5px
-    background white
-    padding 14px 10px 10px 14px
-    color #333
-    font-size 12px
-    
-  .wallPostText
-    font-size 13px
-    color white
-    display table
-    padding 10px 5px 0px 5px
-    
-  .wallPost
-    background rgba(0,0,0,0.15)
-    border-radius 5px
-    width 540px
-    margin-top 10px
-    display table
-    padding 10px
-    position relative
-    
-    .wallPostAuthor
-      height 50px
-      width 520px
-      float right
-      padding-bottom 5px
-      border-bottom 1px solid rgba(255,255,255,0.1)
-      display table
-      
-      .profile-picture,
-      .profile-picture-placeholder
-        width 40px
-        height 40px
-        margin-right 10px
-        float left
-        margin-bottom 10px
-        
-      .wallPostAuthorName
-        color #FFF
-        text-decoration none
-        &:hover
-          border-bottom 1px solid
-        
-      .wallPostAuthorTime
-        font-size 10px
-        color rgba(255,255,255,0.5)
-        margin-top -5px
-        display block
-
-.profileBox
-  width: 100%;
-  text-align: center;
-  padding 50px 0px
-  
-  .title
-    color #FF0
-  
-  .profile-picture,
-  .profile-picture-placeholder
-    width 150px
-    height 150px
-    margin 0 auto
-  .profOptions
-      position absolute
-      margin-top 165px
-    .profButton
-      margin-bottom 10px
-      color #FFF
-      display block
-      width 150px
-      border-radius 3px
-      background rgba(0,0,0,0.2)
-      height 27px
-      line-height 30px
-      text-align center
-      font-size 12px
-      cursor pointer
-    
-  .profName, .profAge, .profText
-    width 100%
-    display: table;
-    
-  .profName
-    margin-top: 10px;
-    font-size: 25px;
-    font-weight: 100;
-    font-family: Lobster;
-    line-height: 30px;
-    
-  
-  .profAge
-    font-size 14px
-    color rgba(255,255,255,0.5)
-    
-  .profText
-    color rgba(255,255,255,0.7)
-    font-size 14px
-    
-    .profTextBox
-      width 500px
-      float left
-    

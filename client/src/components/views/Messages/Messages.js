@@ -60,9 +60,9 @@ class Messages extends React.Component {
     ChatStore.load(this.props.params.user)
   }
 
-  renderWhatever() {
+  renderInitialScreen() {
     return (
-      <div style={{padding: 20}}>
+      <div className="initial">
         Ingen konversation vald
       </div>
     )
@@ -88,11 +88,17 @@ class Messages extends React.Component {
   }
 
   render() {
-    const { threads, selectedThreadId, targetUser, unseen } = this.state
     const selected = ChatStore.getConversationId()
+    const {
+      threads,
+      selectedThreadId,
+      targetUser,
+      unseen
+    } = this.state
+
     return (
-      <div id="messenger">
-        <div className="conversations">
+      <div id="Messages">
+        <div className="conversation-list">
           {threads.map(thread => (
             <Conversation
               key={thread._id}
@@ -103,7 +109,7 @@ class Messages extends React.Component {
           ))}
         </div>
         <div className="chat">
-          {targetUser ? this.renderChat() : this.renderWhatever()}
+          {targetUser ? this.renderChat() : this.renderInitialScreen()}
         </div>
       </div>
     )

@@ -6,12 +6,11 @@ class ManageCrew extends React.Component {
     UserStore.getCrew(crew => this.setState({ crew }))
   }
 
-  
   // To move the position of an element in an array:
   // #array.splice(newIndex, 0, #array.splice(oldIndex, 1)[0])
   moveUp(user) {
     const { crew } = this.state
-    var index = crew.indexOf(user)
+    const index = crew.indexOf(user)
     if (index > 0) {
       crew.splice(index - 1, 0, crew.splice(index, 1)[0])
       this.setState({ crew })
@@ -20,7 +19,7 @@ class ManageCrew extends React.Component {
 
   moveDown(user) {
     const { crew } = this.state
-    var index = crew.indexOf(user)
+    const index = crew.indexOf(user)
     crew.splice(index + 1, 0, crew.splice(index, 1)[0])
     this.setState({ crew })
   }

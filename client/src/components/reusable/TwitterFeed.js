@@ -8,7 +8,7 @@ class Tweet extends React.Component {
   render() {
     const { tweet } = this.props
     return (
-      <div className="tweet">
+      <div className="Tweet">
         <img src={tweet.userimage} />
         <a target="_blank" href={'http://twitter.com/' + tweet.username}>{tweet.username}</a>
         <p className="text">{tweet.text}</p>
@@ -21,7 +21,7 @@ class TwitterFeed extends React.Component {
   render() {
     const { tweets } = this.props
     return (
-      <div className="tweets">
+      <div className="TwitterFeed">
         {tweets.map(tweet => <Tweet key={tweet.id} tweet={tweet} />)}
       </div>
     )

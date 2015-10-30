@@ -27,7 +27,7 @@ class VolumeSlider extends React.Component {
   render() {
     const { volume } = this.state
     return (
-      <div className="volume-slider" ref="slider" onMouseDown={this.initDrag.bind(this)}>
+      <div id="VolumeSlider" ref="slider" onMouseDown={this.initDrag.bind(this)}>
         <div className="volume" style={{width: volume * 100 + '%'}} />
         <div className="handle" />
       </div>

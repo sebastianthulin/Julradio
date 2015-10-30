@@ -43,7 +43,7 @@ class Sidebar extends React.Component {
   render() {
     const { user, onair } = this.state
     return (
-      <div id="sidebar">
+      <div id="Sidebar">
         <Snowfall
           active={onair}
           count={500}

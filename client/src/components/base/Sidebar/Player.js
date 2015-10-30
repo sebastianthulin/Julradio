@@ -14,7 +14,7 @@ class Player extends React.Component {
   render() {
     const { playing, currentlyPlaying, history } = this.state || {}
     return (
-      <div id="player">
+      <div id="Player">
         <img src="/images/berkleyill.jpg" />
         <div div className="title-controls">
           {currentlyPlaying.title}

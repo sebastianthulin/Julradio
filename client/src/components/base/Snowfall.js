@@ -75,13 +75,13 @@ class Snowfall extends React.Component {
   }
 
   resize() {
-    var { canvas } = this
+    const { canvas } = this
     canvas.width = this.getWidth()
     canvas.height = this.getHeight()
   }
 
   tick() {
-    var { canvas, ctx } = this
+    const { canvas, ctx } = this
     requestAnimationFrame(this.tick.bind(this))
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = '#FFF'
@@ -102,7 +102,7 @@ class Snowfall extends React.Component {
   }
 
   render() {
-    return <canvas id="snowfall" ref="canvas" />
+    return <canvas id="Snowfall" ref="canvas" />
   }
 }
 

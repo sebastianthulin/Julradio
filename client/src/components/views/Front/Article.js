@@ -4,7 +4,7 @@ const TimeSince = require('../../reusable/TimeSince')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 
 const Article = ({ article, article: { user } }) => (
-  <div className="article">
+  <div className="Article">
     <h2>{article.title}</h2>
     <div className="header">
       {user.picture && <ProfilePicture {...user.picture} />}

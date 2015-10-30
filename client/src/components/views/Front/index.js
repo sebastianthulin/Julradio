@@ -20,7 +20,7 @@ class Front extends React.Component {
   render() {
     const { articles, schedule, requests } = this.state
     return (
-      <div id="front" className="row">
+      <div id="Front" className="row">
         <div className="two-thirds column">
           {articles.map(article => <Article key={article._id} article={article} />)}
         </div>

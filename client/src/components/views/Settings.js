@@ -21,12 +21,12 @@ class Settings extends React.Component {
   }
 
   check() {
+    var changes = []
     const values = {
       email: this.refs.email.value,
       password: this.refs.password.value
     }
 
-    var changes = []
     for (var i in values) {
       if (values[i] !== this.initialValues[i]) {
         changes.push({
@@ -84,6 +84,7 @@ class Settings extends React.Component {
   }
 
   renderConfirmation() {
+    const { changes } = this.state
     return (
       <form onSubmit={this.saveFields.bind(this)} className="ani">
         <label>
@@ -91,7 +92,7 @@ class Settings extends React.Component {
           <input type="password" ref="auth" />
         </label>
         <div className="confirmation">
-          <p>{'För att ändra din ' + this.state.changes + ' så måste du skriva in ditt nuvarande lösenord.'}</p>
+          <p>{`För att ändra din ${changes} så måste du skriva in ditt nuvarande lösenord.`}</p>
           <button>Save</button>
         </div>
       </form>
@@ -101,7 +102,7 @@ class Settings extends React.Component {
   render() {
     const { user, changes } = this.state
     return (
-      <div id="settings">
+      <div id="Settings">
         <h1>Profilinställningar</h1>
         <div>
           <label>
@@ -154,7 +155,7 @@ class Settings extends React.Component {
             <textarea
               defaultValue={user.description}
               name="description"
-              placeholder="— (500 tecken limit)"
+              placeholder="— (500 tecken högst)"
               maxLength={500}
               onChange={this.save.bind(this)}
             />
@@ -166,9 +167,6 @@ class Settings extends React.Component {
               onChange={this.setAvatar.bind(this)}
             />
           </label>
-          <div className="confirmation">
-            <p>Högst 2mb, helst en kvadrat</p>
-          </div>
         </div>
       </div>
     )

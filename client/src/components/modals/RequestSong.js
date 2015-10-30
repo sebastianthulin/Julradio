@@ -35,7 +35,7 @@ class RequestSong extends React.Component {
 
   render() {
     return (
-      <div className="modal">
+      <div className="RequestSong Modal">
         <header>Önska en låt</header>
         <main>
           <label>Ditt namn</label>

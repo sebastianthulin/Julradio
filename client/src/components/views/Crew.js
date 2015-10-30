@@ -3,8 +3,8 @@ const { Link } = require('react-router')
 const UserStore = require('../../stores/UserStore')
 const ProfilePicture = require('../reusable/ProfilePicture')
 
-const Member = ({ id, username, realname, title, description, picture }) => (
-  <div className="crew-member">
+const CrewMember = ({ id, username, realname, title, description, picture }) => (
+  <div className="CrewMember">
     <header>
       {picture && <ProfilePicture {...picture} />}
       <div className="meta">
@@ -26,8 +26,8 @@ class Crew extends React.Component {
   render() {
     const { crew } = this.state
     return (
-      <div id="crew">
-        {crew.map(user => <Member key={user.username} {...user} />)}
+      <div id="Crew">
+        {crew.map(user => <CrewMember key={user.username} {...user} />)}
       </div>
     )
   }}

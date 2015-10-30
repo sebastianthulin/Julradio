@@ -1,4 +1,4 @@
-#sidebar
+#Sidebar
   position fixed
   z-index 1
   top 0
@@ -41,8 +41,7 @@
       color #FFF
 
   .user
-    .profile-picture,
-    .profile-picture-placeholder
+    .ProfilePicture
       width 140px
       height 140px
       margin-bottom 10px
@@ -95,7 +94,7 @@
       color #FFF
       transition none
     
-  #player
+  #Player
     position absolute
     bottom 0
     left 0
@@ -118,26 +117,26 @@
         justify-content space-between
         i
           font-size 24px
-        .volume-slider
-          width 160px
-          height 6px
-          border-radius 3px
-          background rgba(255, 255, 255, 0.27)
-          text-align left
-          overflow hidden
-          cursor pointer
-          transition opacity .4s
-          .volume
-            display inline-block
-            vertical-align top
-            height 100%
-            background #DD1616
-          .handle
-            position absolute
-            display inline-block
-            margin-top -3px
-            margin-left -6px
-            width 12px
-            height 12px
-            border-radius 50%
-            background #FFF
+  #VolumeSlider
+    width 160px
+    height 6px
+    border-radius 3px
+    background rgba(255, 255, 255, 0.27)
+    text-align left
+    overflow hidden
+    cursor pointer
+    transition opacity .4s
+    .volume
+      display inline-block
+      vertical-align top
+      height 100%
+      background #DD1616
+    .handle
+      position absolute
+      display inline-block
+      margin-top -3px
+      margin-left -6px
+      width 12px
+      height 12px
+      border-radius 50%
+      background #FFF

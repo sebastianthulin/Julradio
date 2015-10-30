@@ -32,7 +32,7 @@ class ModalContainer extends React.Component {
   render() {
     const { Modal } = this.state
     return !Modal ? null : (
-      <div id="modal-container" ref="container">
+      <div id="ModalContainer" ref="container">
         <Modal />
       </div>
     )

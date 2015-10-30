@@ -1,10 +1,19 @@
 const React = require('react')
 const cx = require('classnames')
 
-const Message = ({ message, right }) => (
-  <div className={cx('message', right ? 'right' : 'left')}>
-    {message.text}
-  </div>
-)
+class Message extends React.Component {
+  shouldComponentUpdate() {
+    return false
+  }
+
+  render() {
+    const { message, right } = this.props
+    return (
+      <div className={cx('Message', right ? 'right' : 'left')}>
+        {message.text}
+      </div>
+    )
+  }
+}
 
 module.exports = Message

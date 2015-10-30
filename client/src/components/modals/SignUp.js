@@ -18,7 +18,7 @@ class SignUp extends React.Component {
 
   render() {
     return (
-      <div className="modal">
+      <div className="SignUp Modal">
         <header>
           Registrera dig
         </header>

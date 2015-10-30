@@ -16,9 +16,8 @@ module.exports = function(user1, user2) {
       } else if (docs.length === 0) {
         resolve(null)
       } else {
-        var isBlocked = hasBlocked = false
-        for (let i = 0; i < docs.length; i++) {
-          const block = docs[i]
+        var isBlocked = false, hasBlocked = false
+        for (let block of docs) {
           if (block.from == user1) {
             hasBlocked = true
           }

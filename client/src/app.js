@@ -53,7 +53,7 @@ class App extends React.Component {
   render() {
     const { SIDEBAR_OPEN } = this.state.UI
     return (
-      <div id="app" className={cx({'sidebar-visible': SIDEBAR_OPEN})}>
+      <div id="App" className={cx({'sidebar-visible': SIDEBAR_OPEN})}>
         <MobileHeader />
         <Sidebar />
         <div id="site" onClick={this.closeSidebar.bind(this)}>
