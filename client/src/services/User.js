@@ -1,5 +1,6 @@
 const { EventEmitter } = require('events')
-const request = require('superagent')
+const Promise = require('bluebird')
+const request = require('../services/request')
 const UserStore = require('../stores/UserStore')
 const User = new EventEmitter
 var doc = null
@@ -31,17 +32,11 @@ User.unBlock = function(userId, callback) {
 }
 
 User.wallPost = function(userId, text) {
-  return new Promise(function(resolve, reject) {
-    request.post('/api/user/wallpost', { userId, text }).then(resolve, reject)
-  })
+  return request.post('/api/user/wallpost', { userId, text })
 }
 
 User.deleteWallPost = function(postId) {
-  return new Promise(function(resolve, reject) {
-    request.del('/api/user/wallpost/' + postId).then(function(res) {
-      resolve(res)
-    }, (res) => reject(res))
-  })
+  return request.del('/api/user/wallpost/' + postId)
 }
 
 User.updateField = function(opts) {
@@ -49,7 +44,7 @@ User.updateField = function(opts) {
     request.put('/api/user/field', opts).then(function({ body: user }) {
       User.set(user)
       resolve(user)
-    }, reject)
+    }).catch(reject)
   })
 }
 
@@ -58,7 +53,7 @@ User.updateSettings = function(opts) {
     request.put('/api/user/settings', opts).then(function({ body: user }) {
       User.set(user)
       resolve(user)
-    }, function({ response }) {
+    }).catch(function({ response }) {
       reject(response.body.err)
     })
   })
@@ -71,7 +66,7 @@ User.setAvatar = function(file) {
     request.post('/api/user/profilepicture').send(formData).then(function({ body: user }) {
       User.set(user)
       resolve(user)
-    }, function({ response }) {
+    }).catch(function({ response }) {
       reject(response.body.err)
     })
   })
@@ -79,9 +74,9 @@ User.setAvatar = function(file) {
 
 User.logIn = function(creds, callback) {
   return new Promise(function(resolve, reject) {
-    request.post('/api/user/login', creds).then(function({ body: user }) {
+    request.post('/api/user/login', creds).then(function() {
       location.reload()
-    }, function({ response }) {
+    }).catch(function({ response }) {
       reject(response.body.err)
     })
   })
@@ -89,7 +84,7 @@ User.logIn = function(creds, callback) {
 
 User.signUp = function(form, callback) {
   return new Promise(function(resolve, reject) {
-    request.post('/api/user/signup', form).then(function({ body: user }) {
+    request.post('/api/user/signup', form).then(function() {
       location.reload()
     }, function({ response }) {
       reject(response.body.err)

@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events')
-const request = require('superagent')
+const request = require('../services/request')
 const UserStore = new EventEmitter
 const usersByName = {}
 const wallPostsByUserId = {}
@@ -53,16 +53,11 @@ UserStore.getAll = function(callback) {
 }
 
 UserStore.updateUserSettings = function(userId, opts) {
-  return new Promise(function(resolve, reject) {
-    request.put(`/api/user/${userId}`, opts)
-      .then(resolve, ({ response }) => reject(response.body.err))
-  })
+  return request.put(`/api/user/${userId}`, opts)
 }
 
 UserStore.updateCrew = function(userIds) {
-  return new Promise(function(resolve, reject) {
-    request.put('/api/crew', userIds).then(resolve, reject)
-  })
+  return request.put('/api/crew', userIds)
 }
 
 module.exports = UserStore

@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
-const request = require('superagent')
 const socket = require('../services/socket')
+const request = require('../services/request')
 const RequestStore = new EventEmitter
 
 var requests = []
@@ -18,15 +18,12 @@ socket.on('tweet', function(tweet) {
   RequestStore.emit('tweets', requests)
 })
 
-
 RequestStore.request = function(opts) {
   return request.post('/api/request', opts)
 }
 
 RequestStore.getRequests = function() {
-  return new Promise(function(resolve, reject) {
-    request.get('/api/request').then(({ body }) => resolve(body), reject)
-  })
+  return request.get('/api/request')
 }
 
 RequestStore.subscribe = function(handler) {

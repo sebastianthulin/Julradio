@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
-const request = require('superagent')
 const socket = require('../services/socket')
+const request = require('../services/request')
 const User = require('../services/User')
 const Sound = require('../services/Sound')
 const UserStore = require('./UserStore')
@@ -60,7 +60,7 @@ ChatStore.load = function() {
     conversation.loaded = true
     messageIds.sort((a, b) => messagesById[a].date - messagesById[b].date)
     updateMessages()
-  }, function(err) {
+  }).catch(function(err) {
     console.log('Couldn\'t load conversation', err)
   })
 }
@@ -157,7 +157,7 @@ request.get('/api/chat').then(function({ body: conversations }) {
   state.loaded = true
   updateThreads()
   ChatStore.emit('ready')
-}, function(err) {
+}).catch(function(err) {
   console.log('could not load messages')
 })
 

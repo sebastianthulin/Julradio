@@ -18,7 +18,7 @@ class ManageRequests extends React.Component {
   }
 
   refresh(requests) {
-    RequestStore.getRequests().then(requests => this.setState({ requests }))
+    RequestStore.getRequests().then(({ body: requests }) => this.setState({ requests }))
   }
 
   render() {

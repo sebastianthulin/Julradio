@@ -21,6 +21,8 @@ const dependencies = [
   'superagent',
   'classnames',
   'marked',
+  'bluebird',
+  'superagent-promise',
   'history/lib/createBrowserHistory'
 ]
 

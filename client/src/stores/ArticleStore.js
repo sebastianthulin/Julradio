@@ -1,8 +1,8 @@
 const { EventEmitter } = require('events')
-const request = require('superagent')
 const marked = require('marked')
-const socket = require('../services/socket')
+const request = require('../services/request')
 const ArticleStore = new EventEmitter
+
 var articles = []
 var schedule
 
@@ -14,27 +14,27 @@ ArticleStore.create = function(opts, callback) {
 }
 
 ArticleStore.update = function(id, opts) {
-  request.put('/api/articles/' + id, opts, () => ArticleStore.get())
+  request.put('/api/articles/' + id, opts).then(ArticleStore.get)
 }
 
 ArticleStore.delete = function(id) {
-  request.del('/api/articles/' + id, () => ArticleStore.get())
+  request.del('/api/articles/' + id).then(ArticleStore.get)
 }
 
 ArticleStore.get = function(callback) {
-  callback && callback(articles)
-  request.get('/api/articles', function(err, { body }) {
+  typeof callback === 'function' && callback(articles)
+  request.get('/api/articles').then(function({ body }) {
     articles = body
     articles.sort((a, b) => new Date(b.date) - new Date(a.date))
     articles.forEach(article => article.marked = marked(article.content))
-    callback && callback(articles)
+    typeof callback === 'function' && callback(articles)
     ArticleStore.emit('articles', articles)
   })
 }
 
 ArticleStore.getSchedule = function(callback, returnCache) {
   returnCache && schedule && callback(schedule)
-  request.get('/api/schedule', function(err, { body }) {
+  request.get('/api/schedule').then(function({ body }) {
     schedule = body
     schedule.marked = marked(schedule.text)
     callback(schedule)

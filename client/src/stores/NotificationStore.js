@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
-const request = require('superagent')
 const socket = require('../services/socket')
+const request = require('../services/request')
 const NotificationStore = new EventEmitter
 const handlersByType = {}
 
@@ -58,7 +58,7 @@ request.get('/api/notification').then(function({ body: notifications }) {
     }
   }
   emitList.forEach(type => NotificationStore.emit(type, state[type].slice()))
-}, function(err) {
+}).catch(function(err) {
   console.log('could not load notifications')
 })
 
