@@ -12,7 +12,7 @@ const Article = ({ article, article: { user } }) => (
       <br />
       <TimeSince className="timestamp" date={article.date} />
     </div>
-    <div className="markdown-body" dangerouslySetInnerHTML={{__html: article.marked}} />
+    <div className="markdownBody" dangerouslySetInnerHTML={{__html: article.marked}} />
   </div>
 )
 

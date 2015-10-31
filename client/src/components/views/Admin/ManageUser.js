@@ -19,7 +19,7 @@ class ManageUser extends React.Component {
   render() {
     const { user, user: { picture } } = this.props
     return (
-      <div className="one-half column">
+      <div className="oneHalf column">
         <div>
           <h6>Användarnamn</h6>
           <input type="text" defaultValue={user.username} ref="username" />

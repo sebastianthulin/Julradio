@@ -27,7 +27,7 @@ class Sidebar extends React.Component {
         </Link>
       </div>
     ) : (
-      <div className="login-area">
+      <div className="loginArea">
         <button onClick={Modal.open.bind(null, 'LogIn')} style={{marginBottom: 10}}>
           Logga in
           <i className="fa fa-heart" />
@@ -60,12 +60,12 @@ class Sidebar extends React.Component {
           {this.renderUser()}
           {user && divider}
           {user && <Link to="/messages">
-            <button className="user-action">
+            <button className="userAction">
               <SVG.Messenger />
               Meddelanden
             </button>
           </Link>}
-          {user && <button className="user-action">
+          {user && <button className="userAction">
             <SVG.Fire />
             Träffa
           </button>}

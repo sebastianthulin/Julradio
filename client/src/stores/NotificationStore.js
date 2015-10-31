@@ -49,9 +49,9 @@ socket.on('notification:new', function({ type, value }) {
 })
 
 request.get('/api/notification').then(function({ body: notifications }) {
-  var emitList = []
-  for (var i = 0; i < notifications.length; i++) {
-    var { type, value } = notifications[i]
+  const emitList = []
+  for (let i = 0; i < notifications.length; i++) {
+    const { type, value } = notifications[i]
     state[type].push(value)
     if (emitList.indexOf(type) === -1) {
       emitList.push(type)
@@ -59,7 +59,7 @@ request.get('/api/notification').then(function({ body: notifications }) {
   }
   emitList.forEach(type => NotificationStore.emit(type, state[type].slice()))
 }, function(err) {
-  console.log('could not load messages')
+  console.log('could not load notifications')
 })
 
 module.exports = NotificationStore

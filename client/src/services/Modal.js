@@ -1,13 +1,13 @@
-var { EventEmitter } = require('events')
-var Modal = new EventEmitter
+const { EventEmitter } = require('events')
+const Modal = new EventEmitter
 
 Modal.open = function(name) {
-  document.body.classList.add('no-scroll')
+  document.body.classList.add('noScroll')
   Modal.emit('change', name)
 }
 
 Modal.close = function() {
-  document.body.classList.remove('no-scroll')
+  document.body.classList.remove('noScroll')
   Modal.emit('change', null)
 }
 

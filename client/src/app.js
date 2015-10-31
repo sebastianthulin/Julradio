@@ -41,7 +41,7 @@ class App extends React.Component {
   handleUI(UI) {
     this.setState({ UI })
     const { SIDEBAR_OPEN } = UI
-    document.body.classList[SIDEBAR_OPEN ? 'add' : 'remove']('no-scroll')
+    document.body.classList[SIDEBAR_OPEN ? 'add' : 'remove']('noScroll')
   }
 
   closeSidebar() {
@@ -53,7 +53,7 @@ class App extends React.Component {
   render() {
     const { SIDEBAR_OPEN } = this.state.UI
     return (
-      <div id="App" className={cx({'sidebar-visible': SIDEBAR_OPEN})}>
+      <div id="App" className={cx({sidebarVisible: SIDEBAR_OPEN})}>
         <MobileHeader />
         <Sidebar />
         <div id="site" onClick={this.closeSidebar.bind(this)}>

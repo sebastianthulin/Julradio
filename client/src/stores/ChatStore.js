@@ -111,7 +111,6 @@ function insertConversation(conv) {
     user: conv.users.filter(user => user._id !== uid)[0],
     lastMessage: conv.lastMessage,
     loaded: false,
-    unread: false,
     updatedAt: new Date(conv.updatedAt),
     offset: 0
   }

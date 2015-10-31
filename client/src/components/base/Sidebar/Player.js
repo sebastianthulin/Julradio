@@ -12,11 +12,11 @@ class Player extends React.Component {
   }
 
   render() {
-    const { playing, currentlyPlaying, history } = this.state || {}
+    const { playing, currentlyPlaying, history } = this.state
     return (
       <div id="Player">
         <img src="/images/berkleyill.jpg" />
-        <div div className="title-controls">
+        <div div className="titleControls">
           {currentlyPlaying.title}
           <div className="controls">
             <i className={playing ? 'fa fa-pause' : 'fa fa-play'} onClick={RadioStore.toggle} />

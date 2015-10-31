@@ -21,10 +21,10 @@ class Front extends React.Component {
     const { articles, schedule, requests } = this.state
     return (
       <div id="Front" className="row">
-        <div className="two-thirds column">
+        <div className="twoThirds column">
           {articles.map(article => <Article key={article._id} article={article} />)}
         </div>
-        <div className="one-third column">
+        <div className="oneThird column">
           {schedule && <Schedule {...schedule} />}
           <div className="compose" onClick={Modal.open.bind(null, 'RequestSong')}>
             Skriv en önskning...

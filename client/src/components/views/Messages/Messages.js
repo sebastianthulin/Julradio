@@ -76,7 +76,7 @@ class Messages extends React.Component {
         <div className="user">
           <Link to={`/@${targetUser.username}`}>{targetUser.username}</Link>
         </div>
-        <div className="message-container" ref="messages">
+        <div className="messageContainer" ref="messages">
           <button onClick={this.loadMore.bind(this)}>More</button>
           {messages.map(message => <Message key={message._id} right={userId === message.user} message={message} />)}
         </div>
@@ -98,7 +98,7 @@ class Messages extends React.Component {
 
     return (
       <div id="Messages">
-        <div className="conversation-list">
+        <div className="conversationList">
           {threads.map(thread => (
             <Conversation
               key={thread._id}

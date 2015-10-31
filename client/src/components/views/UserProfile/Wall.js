@@ -27,7 +27,7 @@ class WallPost extends React.Component {
         <div className="author">
           <ProfilePicture {...user.picture} />
           <Link to={'/@' + user.username} className="user">{user.username}</Link>
-          <TimeSince className="time-since" date={date} />
+          <TimeSince className="timeSince" date={date} />
         </div>
         <div className="text">{text}</div>
         {removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
