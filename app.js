@@ -5,8 +5,8 @@ const childProcess = require('child_process')
 const os = require('os')
 
 function fork(service) {
-  console.log('Forking ' + service)
-  const child = childProcess.fork('server/' + service)
+  console.log(`Forking ${service}`)
+  const child = childProcess.fork(`server/${service}`)
 
   child.on('message', function(data) {
     for (let id in cluster.workers) {
@@ -15,7 +15,7 @@ function fork(service) {
   })
 
   child.on('exit', function() {
-    console.log(service + ' exited')
+    console.log(`${service} exited`)
     setTimeout(() => fork(service), 1000)
   })
 }
@@ -25,18 +25,18 @@ if (cluster.isMaster) {
     ? os.cpus().length
     : 2
 
-  console.log('Master cluster setting up ' + numWorkers + ' workers...')
+  console.log(`Master cluster setting up ${numWorkers} workers...`)
 
   for (let i = 0; i < numWorkers; i++) {
     cluster.fork()
   }
 
   cluster.on('online', function(worker) {
-    console.log('Worker ' + worker.process.pid + ' is online')
+    console.log(`Worker ${worker.process.pid} is online`)
   })
 
   cluster.on('exit', function(worker, code, signal) {
-    console.log('Worker ' + worker.process.pid + ' died with code: ' + code + ', and signal: ' + signal)
+    console.log(`Worker ${worker.process.pid} died with code: ${code} and signal: ${signal}`)
     console.log('Starting a new worker')
     cluster.fork()
   })

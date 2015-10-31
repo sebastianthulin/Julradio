@@ -47,6 +47,12 @@ class Wall extends React.Component {
   }
 
   renderForm() {
+    if (this.props.relationship) {
+      return this.props.relationship.isBlocked
+        ? <h3>Du är blockad av denna användare</h3>
+        : <h3>Du har blockat denna användare</h3>
+    }
+
     return (
       <form onSubmit={this.submitWallPost.bind(this)}>
         <input type="text" ref="input" placeholder="Skriv ett inlägg i gästboken" />
@@ -58,16 +64,13 @@ class Wall extends React.Component {
     const {
       user,
       authedUser,
-      relationship,
       posts,
       onDelete
     } = this.props
 
     return (
       <div id="Wall">
-        {!relationship && this.renderForm()}
-        {relationship && relationship.isBlocked && <h3>Du är blockad av denna användare</h3>}
-        {relationship && relationship.hasBlocked && <h3>Du har blockat denna användare</h3>}
+        {this.renderForm()}
         {posts && posts.map(post => <WallPost
           key={post._id}
           removable={authedUser._id === user._id || authedUser._id === post.from._id || authedUser.admin}

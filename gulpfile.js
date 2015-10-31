@@ -27,7 +27,9 @@ const dependencies = [
 gulp.task('js', function() {
   return browserify('./client/src/app', {debug: !production})
     .external(dependencies)
-    .transform(babelify)
+    .transform(babelify.configure({
+      presets: ['es2015', 'react']
+    }))
     .bundle()
     .on('error', function(err) {
       console.log(err.toString())

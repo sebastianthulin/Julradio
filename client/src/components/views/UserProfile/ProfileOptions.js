@@ -1,5 +1,6 @@
 const React = require('react')
 const { Link } = require('react-router')
+const User = require('../../../services/User')
 
 class ProfileOptions extends React.Component {
   onBlock() {

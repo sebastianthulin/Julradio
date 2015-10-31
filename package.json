@@ -28,6 +28,8 @@
     "superagent": "^1.4.0"
   },
   "devDependencies": {
+    "babel-preset-es2015": "^6.0.12",
+    "babel-preset-react": "^6.0.12",
     "babelify": "^7.0.2",
     "browserify": "^12.0.1",
     "gulp": "^3.9.0",
