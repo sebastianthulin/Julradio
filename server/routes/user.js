@@ -1,13 +1,13 @@
 'use strict';
 
-const crypto = require('crypto')
 const express = require('express')
+const mongoose = require('mongoose')
 const multer = require('multer')
 const gm = require('gm')
 const fs = require('fs')
 const router = express.Router()
 const db = require('../models')
-const getBlockage = require('../getBlockage')
+const getBlockage = require('../services/getBlockage')
 
 const upload = multer({
   dest: 'uploads/',
@@ -16,33 +16,90 @@ const upload = multer({
   }
 }).single('avatar')
 
+function getUserDoc(userId) {
+  return db.User.findById(userId).select('-hash').populate('picture').lean().exec()
+}
+
+function getWallPosts(userId) {
+  return new Promise(function(resolve, reject) {
+    db.WallPost.find({
+      to: userId
+    }).populate({
+      path: 'from',
+      select: '-hash'
+    }).exec().then(function(posts) {
+      db.WallPost.populate(posts, {
+        path: 'from.picture',
+        model: 'pictures'
+      }, function(err, posts) {
+        err ? reject(err) : resolve(posts)
+      })
+    }, reject)
+  })
+}
+
 router.get('/logout', function(req, res) {
   req.session.uid = null
   res.redirect('/')
 })
 
 router.get('/byname/:username', function(req, res) {
-  const username = typeof req.params.username === 'string' && req.params.username.toLowerCase()
-  db.User.findOne({usernameLower: username}).select('-hash').populate('picture').lean().exec(function(err, user) {
+  const usernameLower = String(req.params.username).toLowerCase()
+  db.User.findOne({ usernameLower }).select('-hash').populate('picture').lean().exec(function(err, user) {
     user ? res.send(user) : res.sendStatus(200)
   })
 })
 
-router.get('/wallposts/:userId', function(req, res) {
-  db.WallPost.find({
-    to: req.params.userId
-  }).populate({
-    path: 'from',
-    select: '-hash'
-  }).exec().then(function(posts) {
-    db.WallPost.populate(posts, {
-      path: 'from.picture',
-      model: 'pictures'
-    }, function(err, posts) {
-      res.send(posts)
-    })
-  }, function(err) {
-    res.send([])
+router.get('/profile', function getUser(req, res) {
+  const userId = req.query.userId
+  const usernameLower = String(req.query.username).toLowerCase()
+  const allowed = ['profile', 'block', 'wallposts']
+  const query = String(req.query.query).split(' ').filter(function(name) {
+    const i = allowed.indexOf(name)
+    if (i > -1) {
+      allowed.splice(i, 1)
+      return true
+    }
+    return false
+  })
+
+  new Promise(function(resolve, reject) {
+    if (userId) {
+      mongoose.Types.ObjectId.isValid(userId)
+        ? resolve(userId)
+        : reject(new Error('incorrect userId'))
+
+    } else {
+      db.User.findOne({ usernameLower }).select('_id').exec().then(function(doc) {
+        doc
+          ? resolve(doc._id)
+          : reject(new Error('user not found'))
+      })
+    }
+  }).then(function(userId) {
+    const promises = []
+    for (let i = 0; i < query.length; i++) {
+      switch (query[i]) {
+        case 'profile':
+          promises.push(getUserDoc(userId)); break
+        case 'block':
+          promises.push(getBlockage(req.session.uid, userId)); break
+        case 'wallposts':
+          promises.push(getWallPosts(userId)); break
+      }
+    }
+
+    return Promise.all(promises)
+  }).then(function(data) {
+    const result = {}
+    var i = query.length
+    while (i--) {
+      result[query[i]] = data[i]
+    }
+    res.send(result)
+  }).catch(function(err) {
+    console.log(err)
+    res.sendStatus(500)
   })
 })
 
@@ -132,32 +189,22 @@ router.post('/block', function(req, res) {
     upsert: true,
     new: true
   }).exec().then(function(doc) {
-    res.status(200).send()
+    res.sendStatus(200)
   }).catch(function(err) {
-    res.status(500).send()
+    res.sendStatus(500)
   })
 
 })
 
 router.delete('/block/:userId', function(req, res) {
   // unblock a user
-  const b = req.params
   db.Block.findOneAndRemove({
     from: req.session.uid,
     target: b.userId
   }).exec().then(function(doc) {
-    res.status(200).send()
+    res.sendStatus(200)
   }).catch(function(err) {
-    res.status(500).send()
-  })
-})
-
-router.get('/profile/:userId', function(req, res) {
-  const b = req.params
-  getBlockage(req.session.uid, b.userId).then(function(relationship) {
-    res.send(relationship)
-  }).catch(function(err) {
-    res.send({err: err.toString()})
+    res.sendStatus(500)
   })
 })
 

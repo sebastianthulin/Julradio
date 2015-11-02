@@ -1,7 +1,7 @@
 'use strict';
 
-const db = require('./models')
-const io = require('../server').io
+const db = require('../models')
+const io = require('../../server').io
 
 function Notify(opts) {
   db.Notification.findOneAndUpdate({

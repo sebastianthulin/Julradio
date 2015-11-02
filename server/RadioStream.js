@@ -1,16 +1,14 @@
 'use strict';
 
-const io = require('socket.io')()
+const io = require('socket.io-emitter')({
+  host: '127.0.0.1',
+  port: 6379
+})
 const radio = require('radio-stream')
 const config = require('../config')
 const db = require('./models')
-
-io.adapter(require('socket.io-redis')({
-  host: 'localhost',
-  port: 6379
-}))
-
 const stream = new radio.ReadStream(config.shoutCastUrl)
+
 var playing = {}
 var history = []
 

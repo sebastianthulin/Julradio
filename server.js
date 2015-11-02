@@ -29,7 +29,6 @@ io.adapter(require('socket.io-redis')({
   port: 6379
 }))
 io.use((socket, next) => sessionMiddleware(socket.request, {}, next))
-io.on('connection', require('./server/broadcast'))
-io.on('connection', require('./server/Chat'))
+io.on('connection', require('./server/sockets'))
 
 server.listen(8080, () => console.log('Server started on port 8080'))

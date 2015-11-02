@@ -1,15 +1,13 @@
 'use strict';
 
-const io = require('socket.io')()
+const io = require('socket.io-emitter')({
+  host: '127.0.0.1',
+  port: 6379
+})
 const Twitter = require('node-tweet-stream')
 const config = require('../config')
-
-io.adapter(require('socket.io-redis')({
-  host: 'localhost',
-  port: 6379
-}))
-
 const tw = new Twitter(config.twitterTokens)
+
 var tweets = []
 
 tw.track(config.track)

@@ -1,6 +1,5 @@
 'use strict';
 
-const io = require('../server').io
 var playing = {}
 var history = []
 var tweets = []

@@ -1,4 +1,5 @@
 const { EventEmitter } = require('events')
+const Promise = require('bluebird')
 const request = require('../services/request')
 const UserStore = new EventEmitter
 const usersByName = {}
@@ -7,6 +8,28 @@ var crew
 
 UserStore.insert = function(user) {
   usersByName[user.username] = user
+}
+
+UserStore.get = function(username, query) {
+  return new Promise(function(resolve, reject) {
+    request.get('/api/user/profile', {
+      query,
+      username,
+      userId: (usersByName[username] || {})._id
+    }).then(function({ body }) {
+      if (body.profile) {
+        UserStore.insert(body.profile)
+      }
+      if (body.wallposts) {
+        body.wallposts.sort((a, b) => new Date(b.date) - new Date(a.date))
+        body.wallposts.forEach(({ from: user }) => UserStore.insert(user))
+      }
+      resolve(body)
+    }).catch(function(err) {
+      console.log(err)
+      reject(err)
+    })
+  })
 }
 
 UserStore.getByUsername = function(username, callback) {
@@ -28,21 +51,6 @@ UserStore.getCrew = function(callback) {
     crew = body
     crew.forEach(UserStore.insert)
     callback(crew)
-  })
-}
-
-UserStore.getWallPosts = function(userId, callback) {
-  if (!userId) {
-    return callback(null)
-  }
-  if (wallPostsByUserId[userId]) {
-    callback(wallPostsByUserId[userId])
-  }
-  request.get(`/api/user/wallposts/${userId}`).then(function({ body: posts }) {
-    posts.sort((a, b) => new Date(b.date) - new Date(a.date))
-    posts.forEach(({ from: user }) => UserStore.insert(user))
-    wallPostsByUserId[userId] = posts
-    callback(posts)
   })
 }
 

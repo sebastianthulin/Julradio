@@ -1,8 +1,8 @@
 'use strict';
 
-const db = require('./models')
+const db = require('../models')
 
-module.exports = function(user1, user2) {
+function getBlockage(user1, user2) {
   return new Promise(function(resolve, reject) {
     db.Block.find({$or: [{
       from: user1,
@@ -30,3 +30,5 @@ module.exports = function(user1, user2) {
     })
   })
 }
+
+module.exports = getBlockage

@@ -1,4 +1,5 @@
 const React = require('react')
+const { Link } = require('react-router')
 const UserStore = require('../../../stores/UserStore')
 
 class ManageUser extends React.Component {
@@ -39,7 +40,7 @@ class ManageUser extends React.Component {
           <input type="checkbox" defaultChecked={user.banned} ref="banned" />
         </div>
         <button onClick={this.save.bind(this)}>Spara ändringar</button>
-        <button>Banna</button>
+        <Link to={`/@${user.username}`}>Visa profil</Link>
       </div>
     )
   }
