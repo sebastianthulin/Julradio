@@ -200,7 +200,7 @@ router.delete('/block/:userId', function(req, res) {
   // unblock a user
   db.Block.findOneAndRemove({
     from: req.session.uid,
-    target: b.userId
+    target: req.params.userId
   }).exec().then(function(doc) {
     res.sendStatus(200)
   }).catch(function(err) {

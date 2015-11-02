@@ -40,7 +40,7 @@ function sendMessage(from, conversationId, text) {
     if (!conversation) {
       throw new Error('conversation not found')
     } else if (conversation.users.indexOf(from) === -1) {
-      throw new Error('not authorised')
+      throw new Error('unauthorised')
     }
 
     const message = new db.Message({
@@ -65,16 +65,15 @@ function sendMessage(from, conversationId, text) {
 }
 
 function chatHandler(socket) {
-  const uid = socket.request.session.uid
   socket.on('chat:message', function(opts) {
     if (typeof opts !== 'object' || !opts.text) return
-    getBlockage(uid, opts.userId).then(function(relationship) {
+    getBlockage(socket.uid, opts.userId).then(function(relationship) {
       if (relationship) {
         throw new Error('blocked')
       }
-      return opts.conversationId || getConversationId(uid, opts.userId)
+      return opts.conversationId || getConversationId(socket.uid, opts.userId)
     }).then(function(conversationId) {
-      return sendMessage(uid, conversationId, opts.text)
+      return sendMessage(socket.uid, conversationId, opts.text)
     }).catch(function(err) {
       console.log('@chat:message handler', err)
     })

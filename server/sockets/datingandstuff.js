@@ -11,12 +11,11 @@ function getRandomUser(callback) {
 }
 
 function datingandstuff(socket) {
-  const uid = socket.request.session.uid
   socket.on('meet:random', function handler(fn) {
     if (typeof fn !== 'function') return
     getRandomUser().then(function(user) {
       console.log(user)
-      if (user._id == uid) {
+      if (user._id == socket.uid) {
         handler(fn)
       } else {
         fn(user)

@@ -5,11 +5,11 @@ const chat = require('./chat')
 const datingandstuff = require('./datingandstuff')
 
 module.exports = function(socket) {
-  const uid = socket.request.session.uid
+  socket.uid = socket.request.session.uid
   console.log('Socket connection on worker ' + process.pid)
   broadcast(socket)
-  if (uid) {
-    socket.join(uid)
+  if (socket.uid) {
+    socket.join(socket.uid)
     chat(socket)
     datingandstuff(socket)
   }

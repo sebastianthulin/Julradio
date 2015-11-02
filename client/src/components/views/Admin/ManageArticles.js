@@ -52,6 +52,9 @@ class ManageArticles extends React.Component {
         <button onClick={this.create.bind(this)}>Skapa ny</button>
         {creatingNew && <ManageArticle article={{}} history={history} />}
         {!creatingNew && selected && <ManageArticle key={selected._id} article={selected} history={history} />}
+        <span>
+          Här kan <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">markdown</a> användas.
+        </span>
       </div>
     )
   }

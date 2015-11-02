@@ -22,7 +22,7 @@ const Crew = require('./components/views/Crew')
 const Admin = require('./components/views/Admin')
 const ManageArticles = require('./components/views/Admin/ManageArticles')
 const ManageUsers = require('./components/views/Admin/ManageUsers')
-const ManageSchedule = require('./components/views/Admin/ManageSchedule')
+const ManageReservations = require('./components/views/Admin/ManageReservations')
 const ManageCrew = require('./components/views/Admin/ManageCrew')
 const ManageRequests = require('./components/views/Admin/ManageRequests')
 
@@ -89,7 +89,7 @@ const routes = (
     <Route path="admin" component={Admin} onEnter={requireAdminAuth}>
       <Route path="articles(/:id)" component={ManageArticles} />
       <Route path="users(/:username)" component={ManageUsers} />
-      <Route path="schedule" component={ManageSchedule} />
+      <Route path="reservations" component={ManageReservations} />
       <Route path="crew" component={ManageCrew} />
       <Route path="requests" component={ManageRequests} />
     </Route>
