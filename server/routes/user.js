@@ -210,7 +210,7 @@ router.delete('/block/:userId', function(req, res) {
 
 router.put('/field', function(req, res) {
   const b = req.body
-  const allow = ['realname', 'gender', 'location', 'description']
+  const allow = ['name', 'gender', 'location', 'description']
   if (allow.indexOf(b.field) > -1) {
     db.User.findByIdAndUpdate(req.session.uid, {
       [b.field]: b.value

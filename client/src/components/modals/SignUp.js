@@ -9,7 +9,7 @@ class SignUp extends React.Component {
       username: this.refs.username.value,
       email: this.refs.email.value,
       password: this.refs.password.value
-    }).catch(this.handleError.bind(this))
+    }, this.handleError.bind(this))
   }
 
   handleError(err) {

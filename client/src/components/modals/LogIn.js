@@ -8,7 +8,7 @@ class LogIn extends React.Component {
     User.logIn({
       username: this.refs.username.value,
       password: this.refs.password.value
-    }).catch(this.handleError.bind(this))
+    }, this.handleError.bind(this))
   }
 
   handleError(err) {

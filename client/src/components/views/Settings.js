@@ -128,8 +128,8 @@ class Settings extends React.Component {
             <div className="label">IRL namn</div>
             <input
               type="text"
-              defaultValue={user.realname}
-              name="realname"
+              defaultValue={user.name}
+              name="name"
               onChange={this.save.bind(this)}
             />
           </label>
@@ -137,8 +137,8 @@ class Settings extends React.Component {
             <div className="label">Kön</div>
             <select defaultValue={user.gender} name="gender" onChange={this.save.bind(this)}>
               <option value="">Välj</option>
-              <option value="male">Pojke</option>
-              <option value="female">Flicka</option>
+              <option value="MALE">Pojke</option>
+              <option value="FEMALE">Flicka</option>
             </select>
           </label>
           <label>
@@ -148,6 +148,13 @@ class Settings extends React.Component {
               defaultValue={user.location}
               name="location"
               onChange={this.save.bind(this)}
+            />
+          </label>
+          <label>
+            <div className="label">Födelsedag</div>
+            <input
+              type="text"
+              name="birth"
             />
           </label>
           <label>

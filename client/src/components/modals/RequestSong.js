@@ -14,9 +14,13 @@ class RequestSong extends React.Component {
   setHref(ev) {
     const node = ev.currentTarget
     const fields = this.getFields()
-    const query = encodeURIComponent('Jag vill höra "' + fields.song + '". ' + fields.text + ' #julradio')
+    const string = `Jag vill höra "${fields.song}". ${fields.text} #julradio`
 
-    node.href = 'https://twitter.com/intent/tweet?text=' + query
+    if (string.length > 140) {
+      return alert('För lång text. Önska direkt istället.')
+    }
+
+    node.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(string)
     setTimeout(() => node.href = '')
 
     if (!fields.song) {
@@ -43,7 +47,7 @@ class RequestSong extends React.Component {
           <label>Låt</label>
           <input type="text" ref="song" />
           <label>Text</label>
-          <textarea ref="text" />
+          <textarea ref="text" maxLength={250} />
           <div className="submit">
             <button style={{marginRight: 10}} onClick={this.requestSong.bind(this)}>Skicka önskning</button>
             <a target="_blank" onClick={this.setHref.bind(this)}>

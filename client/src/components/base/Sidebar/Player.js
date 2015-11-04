@@ -15,7 +15,7 @@ class Player extends React.Component {
       <div id="Player">
         <img src="/images/berkleyill.jpg" />
         <div div className="titleControls">
-          <Link href="/history" className="songTitle">{currentlyPlaying.title}</Link>
+          <Link to="/history" className="songTitle">{currentlyPlaying.title}</Link>
           <div className="controls">
             <i className={playing ? 'fa fa-pause' : 'fa fa-play'} onClick={RadioStore.toggle} />
             <VolumeSlider />

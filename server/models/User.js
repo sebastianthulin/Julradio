@@ -3,6 +3,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const crypto = require('crypto')
+const config = require('../../config')
 
 const schema = new Schema({
   username: {
@@ -15,7 +16,8 @@ const schema = new Schema({
   },
   email: String,
   hash: String,
-  realname: String,
+  name: String,
+  birth: Date,
   description: String,
   gender: String,
   location: String,
@@ -39,13 +41,13 @@ const schema = new Schema({
   }
 })
 
-function sha256(str) {
-  if (typeof str !== 'string') {
-    return null
-  } else {
-    return crypto.createHash('sha256').update(str).digest('hex')
-  }
-}
+const sha1 = str => typeof str === 'string'
+  ? crypto.createHash('sha1').update(str).digest('hex')
+  : null
+
+const sha256 = str => typeof str === 'string'
+  ? crypto.createHash('sha256').update(str).digest('hex')
+  : null
 
 schema.methods.signUp = function(opts, callback) {
   this.username = opts.username
@@ -61,7 +63,14 @@ schema.methods.signUp = function(opts, callback) {
 }
 
 schema.methods.auth = function(password) {
-  return sha256(password) === this.hash
+  if (sha256(password) === this.hash) {
+    return true
+  } else if (sha1(password) === this.hash) {
+    this.hash = sha256(password)
+    return true
+  } else {
+    return false
+  }
 }
 
 schema.methods.setPassword = function(password) {
@@ -69,7 +78,7 @@ schema.methods.setPassword = function(password) {
     this.invalidate('password', 'INVALID_FORMAT')
   } else if (password.length === 0) {
     this.invalidate('password', 'PASSWORD_EMPTY')
-  } else if (password.length < 3) { // Sätt denna på 6
+  } else if (password.length < config.passwordMinLength) {
     this.invalidate('password', 'PASSWORD_TOO_SHORT')
   } else {
     this.hash = sha256(password)

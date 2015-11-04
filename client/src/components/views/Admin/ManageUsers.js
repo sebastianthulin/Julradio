@@ -13,10 +13,11 @@ const User = ({ username, admin, banned }) => (
 
 class ManageUsers extends React.Component {
   componentWillMount() {
+    this.state = {limit: 20}
     this.setUser(this.props.params.username)
     UserStore.getAll(users => {
-      this.users = users
-      this.reduce(users)
+      this.userList = users
+      this.setState({ users })
     })
   }
 
@@ -30,17 +31,30 @@ class ManageUsers extends React.Component {
 
   filter(ev) {
     const query = ev.target.value.toLowerCase()
-    const users = this.users.filter(user => user.username.toLowerCase().indexOf(query) > -1)
-    this.reduce(users)
+    const users = this.userList.filter(user => user.username.toLowerCase().indexOf(query) > -1)
+    this.setState({
+      users,
+      limit: 20
+    })
   }
 
-  reduce(users) {
-    users = users.slice(0, 10)
-    this.setState({ users })
+  showMore() {
+    this.setState({
+      limit: this.state.limit + 20
+    })
   }
 
   render() {
-    const { users, selectedUser } = this.state || {}
+    const { users, selectedUser, limit } = this.state
+    const userNodes = []
+
+    for (let i = 0; i < limit; i++) {
+      const user = (users || {})[i]
+      if (user) {
+        userNodes.push(<User key={user._id} {...user} />)
+      }
+    }
+
     return (
       <div>
         <div className="oneHalf column">
@@ -53,10 +67,11 @@ class ManageUsers extends React.Component {
                 <th>Admin</th>
                 <th>Bannad</th>
               </tr>
-              {users && users.map(user => <User key={user._id} {...user} />)}
+              {userNodes}
             </tbody>
           </table>
-          {users && this.users.length + ' användare'}
+          <button onClick={this.showMore.bind(this)}>Visa fler</button>
+          {users && this.userList.length + ' användare'}
           {!users && 'Laddar...'}
         </div>
         {selectedUser && <ManageUser key={selectedUser._id} user={selectedUser} />}

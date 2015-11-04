@@ -3,12 +3,12 @@ const { Link } = require('react-router')
 const UserStore = require('../../stores/UserStore')
 const ProfilePicture = require('../reusable/ProfilePicture')
 
-const CrewMember = ({ id, username, realname, title, description, picture }) => (
+const CrewMember = ({ id, username, name, title, description, picture }) => (
   <div className="CrewMember">
     <header>
       {picture && <ProfilePicture {...picture} />}
       <div className="meta">
-        <div className="realname">{realname}</div>
+        <div className="name">{name}</div>
         {title && <div className="title">{title}</div>}
         <div className="username"><Link to={`/@${username}`}>@{username}</Link></div>
       </div>

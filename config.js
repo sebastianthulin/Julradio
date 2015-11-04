@@ -10,7 +10,8 @@ const config = {
       token: '2883350073-h7mL232SNhxSvwSEHWqsJkDnbjyilPxFZq1Rj7z',
       token_secret: 'H56tmbnfMPSk9Xm6HVwvgJstHRdFehugVoOEHZIPwbGZj'
     },
-    track: 'javascript'
+    track: 'javascript',
+    passwordMinLength: 3
   },
   test: {
 
@@ -24,7 +25,8 @@ const config = {
       token: '2883350073-h7mL232SNhxSvwSEHWqsJkDnbjyilPxFZq1Rj7z',
       token_secret: 'H56tmbnfMPSk9Xm6HVwvgJstHRdFehugVoOEHZIPwbGZj'
     },
-    track: 'julradio'
+    track: 'julradio',
+    passwordMinLength: 6
   }
 }
 

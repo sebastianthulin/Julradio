@@ -60,23 +60,19 @@ User.setAvatar = function(file) {
   })
 }
 
-User.logIn = function(creds, callback) {
-  return new Promise(function(resolve, reject) {
-    request.post('/api/user/login', creds).then(function() {
-      location.reload()
-    }).catch(function({ response }) {
-      reject(response.body.err)
-    })
+User.logIn = function(creds, errHandler) {
+  request.post('/api/user/login', creds).then(function() {
+    location.reload()
+  }).catch(function({ response }) {
+    errHandler(response.body.err)
   })
 }
 
-User.signUp = function(form, callback) {
-  return new Promise(function(resolve, reject) {
-    request.post('/api/user/signup', form).then(function() {
-      location.reload()
-    }, function({ response }) {
-      reject(response.body.err)
-    })
+User.signUp = function(form, errHandler) {
+  request.post('/api/user/signup', form).then(function() {
+    location.reload()
+  }, function({ response }) {
+    errHandler(response.body.err)
   })
 }
 

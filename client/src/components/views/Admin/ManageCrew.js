@@ -1,4 +1,5 @@
 const React = require('react')
+const { Link } = require('react-router')
 const UserStore = require('../../../stores/UserStore')
 
 class ManageCrew extends React.Component {
@@ -58,7 +59,7 @@ class ManageCrew extends React.Component {
   renderUser(user) {
     return (
       <tr key={user._id}>
-        <td>{user.username}</td>
+        <td><Link to={`/@${user.username}`}>{user.username}</Link></td>
         <td><button onClick={this.moveUp.bind(this, user)}>Flytta upp</button></td>
         <td><button onClick={this.moveDown.bind(this, user)}>Flytta ner</button></td>
         <td><button onClick={this.remove.bind(this, user)}>Ta bort</button></td>
