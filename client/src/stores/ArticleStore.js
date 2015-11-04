@@ -4,7 +4,6 @@ const request = require('../services/request')
 const ArticleStore = new EventEmitter
 
 var articles = []
-var schedule
 
 ArticleStore.create = function(opts, callback) {
   request.post('/api/articles', opts).then(function({ body }) {
@@ -30,19 +29,6 @@ ArticleStore.get = function(callback) {
     typeof callback === 'function' && callback(articles)
     ArticleStore.emit('articles', articles)
   })
-}
-
-ArticleStore.getSchedule = function(callback, returnCache) {
-  returnCache && schedule && callback(schedule)
-  request.get('/api/schedule').then(function({ body }) {
-    schedule = body
-    schedule.marked = marked(schedule.text)
-    callback(schedule)
-  })
-}
-
-ArticleStore.saveSchedule = function(text) {
-  return request.put('/api/schedule', { text })
 }
 
 ArticleStore.subscribe = function(handler) {

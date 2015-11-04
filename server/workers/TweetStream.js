@@ -5,7 +5,7 @@ const io = require('socket.io-emitter')({
   port: 6379
 })
 const Twitter = require('node-tweet-stream')
-const config = require('../config')
+const config = require('../../config')
 const tw = new Twitter(config.twitterTokens)
 
 var tweets = []

@@ -72,7 +72,7 @@ function requireAuth(nextState, replaceState) {
 }
 
 function requireAdminAuth(nextState, replaceState) {
-  if (!(User.get() || {}).admin) {
+  if (!User.isAnything()) {
     replaceState({nextPathname: nextState.location.pathname}, '/')
   }
 }

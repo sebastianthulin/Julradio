@@ -8,7 +8,10 @@ const schema = new Schema({
     type: Schema.ObjectId,
     ref: 'users'
   },
-  description: String,
+  description: {
+    type: String,
+    required: true
+  },
   startDate: Date,
   endDate: Date
 })

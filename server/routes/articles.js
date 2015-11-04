@@ -20,7 +20,7 @@ router.get('/', function(req, res) {
 
 router.use(function(req, res, next) {
   db.User.findById(req.session.uid).exec().then(function(user) {
-    if (user && user.admin) {
+    if (user && user.roles.writer) {
       next()
     } else {
       res.sendStatus(500)

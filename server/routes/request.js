@@ -18,18 +18,8 @@ router.post('/', function(req, res) {
   })
 })
 
-// deny
-router.delete('/:id', function(req, res) {
-
-})
-
-// accept
-router.put('/:id', function(req, res) {
-
-})
-
 router.use(function(req, res, next) {
-  if (req.user && req.user.admin) {
+  if (req.user && req.user.roles.radioHost) {
     next()
   } else {
     res.sendStatus(500)
@@ -40,6 +30,16 @@ router.get('/', function(req, res) {
   db.Request.find(function(err, docs) {
     res.send(docs)
   })
+})
+
+// accept
+router.put('/:id', function(req, res) {
+
+})
+
+// deny
+router.delete('/:id', function(req, res) {
+
 })
 
 module.exports = router

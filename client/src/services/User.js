@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 const request = require('../services/request')
 const UserStore = require('../stores/UserStore')
 const User = new EventEmitter
+
 var doc = null
 
 User.set = function(user) {
@@ -89,6 +90,12 @@ User.subscribe = function(handler) {
 }
 
 User.get = () => doc
+User.isWriter = () => !!getRoles().writer
+User.isRadioHost = () => !!getRoles().radioHost
+User.isAdmin = () => !!getRoles().admin
+User.isAnything = () => User.isWriter() || User.isRadioHost() || User.isAdmin()
+
+const getRoles = () => (User.get() || {}).roles || {}
 
 window.__USER__ && User.set(window.__USER__)
 

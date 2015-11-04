@@ -1,5 +1,6 @@
 const React = require('react')
 const { Link } = require('react-router')
+const User = require('../../../services/User')
 const TimeSince = require('../../reusable/TimeSince')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 
@@ -73,7 +74,7 @@ class Wall extends React.Component {
         {this.renderForm()}
         {posts && posts.map(post => <WallPost
           key={post._id}
-          removable={authedUser._id === user._id || authedUser._id === post.from._id || authedUser.admin}
+          removable={authedUser._id === user._id || authedUser._id === post.from._id || User.isAdmin()}
           onDelete={onDelete}
           {...post}
         />)}

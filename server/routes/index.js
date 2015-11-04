@@ -30,7 +30,8 @@ router.use('/api/articles', require('./articles'))
 router.use('/api/chat', require('./chat'))
 router.use('/api/request', require('./request'))
 router.use('/api/notification', require('./notification'))
-router.use('/api', require('./misq'))
+router.use('/api/reservations', require('./reservations'))
+router.use('/api/crew', require('./crew'))
 
 router.post('/reloadclients', function(req, res) {
   io.emit('reload')

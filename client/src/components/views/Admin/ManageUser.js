@@ -8,6 +8,8 @@ class ManageUser extends React.Component {
       username: this.refs.username.value,
       title: this.refs.title.value,
       admin: this.refs.admin.checked,
+      writer: this.refs.writer.checked,
+      radioHost: this.refs.radioHost.checked,
       banned: this.refs.banned.checked
     }).then(function() {
       alert('Ändringar sparade.')
@@ -32,8 +34,13 @@ class ManageUser extends React.Component {
         {picture && <img src={'/i/' + picture._id + picture.extension} width="100" />}
         {picture && <button>Ta bort bild</button>}
         <div>
-          <h6>Admin</h6>
-          <input type="checkbox" defaultChecked={user.admin} ref="admin" />
+          <h6>Roller</h6>
+          Admin
+          <input type="checkbox" defaultChecked={user.roles.admin} ref="admin" />
+          Skribent
+          <input type="checkbox" defaultChecked={user.roles.writer} ref="writer" />
+          Radiopratare
+          <input type="checkbox" defaultChecked={user.roles.radioHost} ref="radioHost" />
         </div>
         <div>
           <h6>Bannad</h6>

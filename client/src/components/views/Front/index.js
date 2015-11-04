@@ -8,7 +8,6 @@ const Schedule = require('./Schedule')
 
 class Front extends React.Component {
   componentWillMount() {
-    ArticleStore.getSchedule(schedule => this.setState({ schedule }), true)
     ArticleStore.get(articles => this.setState({ articles }))
     this.unsubscribe = RequestStore.subscribe(requests => this.setState({ requests }))
   }
@@ -18,14 +17,14 @@ class Front extends React.Component {
   }
 
   render() {
-    const { articles, schedule, requests } = this.state
+    const { articles, requests } = this.state
     return (
       <div id="Front" className="row">
         <div className="twoThirds column">
           {articles.map(article => <Article key={article._id} article={article} />)}
         </div>
         <div className="oneThird column">
-          {schedule && <Schedule {...schedule} />}
+          <Schedule />
           <div className="compose" onClick={Modal.open.bind(null, 'RequestSong')}>
             Skriv en önskning...
           </div>

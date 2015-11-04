@@ -6,9 +6,7 @@ const crypto = require('crypto')
 const config = require('../../config')
 
 const schema = new Schema({
-  username: {
-    type: String,
-  },
+  username: String,
   usernameLower: {
     type: String,
     lowercase: true,
@@ -27,9 +25,19 @@ const schema = new Schema({
     type: Schema.ObjectId,
     ref: 'pictures'
   },
-  admin: {
-    type: Boolean,
-    default: true
+  roles: {
+    writer: {
+      type: Boolean,
+      default: false
+    },
+    radioHost: {
+      type: Boolean,
+      default: false
+    },
+    admin: {
+      type: Boolean,
+      default: false
+    }
   },
   lastVisit: {
     type: Date,

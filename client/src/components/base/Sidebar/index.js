@@ -72,7 +72,7 @@ class Sidebar extends React.Component {
           {user && divider}
           <div className="shortcuts">
             <a href="https://webchat.quakenet.org/?channels=julradio&nick=" target="_new">IRC</a>
-            {user && user.admin && <Link to="/admin/articles">Admin</Link>}
+            {User.isAnything() && <Link to="/admin/articles">Admin</Link>}
             {user && <Link to="/settings">Inställningar</Link>}
             <Link to="/crew">Medarbetare</Link>
             {user && <a onClick={User.logOut}>Logga ut</a>}

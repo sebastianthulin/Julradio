@@ -134,7 +134,7 @@ router.post('/login', function(req, res) {
 })
 
 router.use(function(req, res, next) {
-  if (req.session.uid) {
+  if (req.user) {
     next()
   } else {
     res.status(500).send({err: 'not signed in'})
@@ -164,7 +164,7 @@ router.delete('/wallpost/:id', function(req, res) {
   db.WallPost.findOne({
     _id: b.id
   }).exec().then(function(post) {
-    if (req.user.admin || req.session.uid == post.from || req.session.uid == post.to) {
+    if (req.user.roles.admin || req.session.uid == post.from || req.session.uid == post.to) {
       post.remove().then(function() {
         res.sendStatus(200)
       })
@@ -193,7 +193,6 @@ router.post('/block', function(req, res) {
   }).catch(function(err) {
     res.sendStatus(500)
   })
-
 })
 
 router.delete('/block/:userId', function(req, res) {
@@ -313,17 +312,15 @@ router.post('/profilepicture', function(req, res) {
 })
 
 router.use(function(req, res, next) {
-  db.User.findById(req.session.uid).exec().then(function(user) {
-    if (user && user.admin) {
-      next()
-    } else {
-      res.sendStatus(500)
-    }
-  })
+  if (req.user && req.user.roles.admin) {
+    next()
+  } else {
+    res.sendStatus(500)
+  }
 })
 
 router.get('/all', function(req, res) {
-  db.User.find().select('username admin banned').exec(function(err, users) {
+  db.User.find().select('username roles banned').exec(function(err, users) {
     res.send(users)
   })
 })
@@ -334,8 +331,12 @@ router.put('/:userId', function(req, res) {
     username: b.username,
     usernameLower: b.username.toLowerCase(),
     title: b.title,
-    admin: b.admin,
-    banned: b.banned
+    banned: b.banned,
+    roles: {
+      admin: b.admin,
+      writer: b.admin || b.writer,
+      radioHost: b.admin || b.radioHost
+    }
   }).exec().then(function() {
     res.sendStatus(200)
   }, function(err) {

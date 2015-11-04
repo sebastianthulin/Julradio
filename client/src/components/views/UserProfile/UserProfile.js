@@ -43,7 +43,6 @@ class UserProfile extends React.Component {
           <ProfilePicture {...user.picture} />
           {authedUser._id && authedUser._id !== user._id && <ProfileOptions
             user={user}
-            authedUser={authedUser}
             relationship={relationship}
             onQuery={onQuery}
           />}

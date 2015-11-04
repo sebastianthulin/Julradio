@@ -3,10 +3,12 @@
 const cluster = require('cluster')
 const childProcess = require('child_process')
 const os = require('os')
+const forks = {}
 
 function fork(service) {
   console.log(`Forking ${service}`)
-  const child = childProcess.fork(`server/${service}`)
+  const child = childProcess.fork(`server/workers/${service}`)
+  forks[service] = child
 
   child.on('message', function(data) {
     for (let id in cluster.workers) {
@@ -31,6 +33,10 @@ if (cluster.isMaster) {
     cluster.fork()
   }
 
+  cluster.on('message', function(data) {
+    forks[data.service].send(data.data)
+  })
+
   cluster.on('online', function(worker) {
     console.log(`Worker ${worker.process.pid} is online`)
   })
@@ -41,8 +47,9 @@ if (cluster.isMaster) {
     cluster.fork()
   })
 
-  fork('RadioStream')
-  fork('TweetStream')
-} else {
+  ;(['RadioStream', 'TweetStream', 'Reservations']).forEach(fork)
+}
+
+if (cluster.isWorker) {
   require('./server')
 }

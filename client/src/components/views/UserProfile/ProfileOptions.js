@@ -16,14 +16,14 @@ class ProfileOptions extends React.Component {
   }
 
   render() {
-    const { user, authedUser, relationship } = this.props
+    const { user, relationship } = this.props
     return (
       <div id="ProfileOptions">
         <Link to={`/messages/${user.username}`} className="action">Skicka Meddelande</Link>
         {!relationship || !relationship.hasBlocked
           ? <div onClick={this.onBlock.bind(this)} className="action">Blocka</div>
           : <div onClick={this.onUnBlock.bind(this)} className="action">Avblockera</div>}
-        {authedUser.admin && <Link to={`/admin/users/${user.username}`} className="action">Hantera användare</Link>}
+        {User.isAdmin() && <Link to={`/admin/users/${user.username}`} className="action">Hantera användare</Link>}
       </div>
     )
   }

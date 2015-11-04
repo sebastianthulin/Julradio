@@ -3,6 +3,7 @@
 var playing = {}
 var history = []
 var tweets = []
+var reservations = []
 
 process.on('message', function(message) {
   if (message.service === 'RadioStream') {
@@ -12,9 +13,12 @@ process.on('message', function(message) {
     }
   } else if (message.service === 'TweetStream') {
     tweets = message.data
+  } else if (message.service === 'Reservations') {
+    reservations = message.data
   }
 })
 
 module.exports = socket => socket
   .emit('metadata', { playing, history })
   .emit('tweets', tweets)
+  .emit('reservations', reservations)

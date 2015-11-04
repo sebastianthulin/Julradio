@@ -5,8 +5,8 @@ const io = require('socket.io-emitter')({
   port: 6379
 })
 const radio = require('radio-stream')
-const config = require('../config')
-const db = require('./models')
+const config = require('../../config')
+const db = require('../models')
 const stream = new radio.ReadStream(config.shoutCastUrl)
 
 var playing = {}
