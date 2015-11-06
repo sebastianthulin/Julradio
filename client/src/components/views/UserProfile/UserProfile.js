@@ -2,6 +2,7 @@ const React = require('react')
 const { Link } = require('react-router')
 const User = require('../../../services/User')
 const ProfilePicture = require('../../reusable/ProfilePicture')
+const TimeSince = require('../../reusable/TimeSince')
 const Wall = require('./Wall')
 const ProfileOptions = require('./ProfileOptions')
 
@@ -50,7 +51,7 @@ class UserProfile extends React.Component {
           {user.title && <div className="title">{user.title}</div>}
           <div className="age">{user.location && user.location + ','} {user.gender} 20 år</div>
           <div className="description">{user.description}</div>
-          <div>{'Joined ' + user.date}</div>
+          <div>Medlem i <TimeSince date={user.date} short={true} /></div>
         </header>
         <Wall
           user={user}

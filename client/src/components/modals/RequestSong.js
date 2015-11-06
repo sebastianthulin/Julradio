@@ -17,7 +17,7 @@ class RequestSong extends React.Component {
     const string = `Jag vill höra "${fields.song}". ${fields.text} #julradio`
 
     if (string.length > 140) {
-      return alert('För lång text. Önska direkt istället.')
+      return alert('För långt för Twitter. Önska direkt istället.')
     }
 
     node.href = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(string)
@@ -29,7 +29,13 @@ class RequestSong extends React.Component {
   }
 
   requestSong() {
-    RequestStore.request(this.getFields()).then(() => {
+    const fields = this.getFields()
+
+    if (fields.text.length > 250) {
+      return alert('För lång text. Högst 250 tecken.')
+    }
+
+    RequestStore.request(fields).then(() => {
       Modal.close()
       alert('done.')
     }, () => {

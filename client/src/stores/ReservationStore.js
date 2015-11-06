@@ -18,10 +18,13 @@ ReservationStore.delete = function(id) {
 }
 
 ReservationStore.handleReservations = function(data) {
+  const today = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
   reservations = data
   reservations.forEach(res => {
     res.startDate = new Date(res.startDate)
     res.endDate = new Date(res.endDate)
+    res.today = res.startDate.getDate() === today
+    res.tomorrow = res.startDate.getDate() === today + 1
   })
   ReservationStore.emit('data', reservations)
 }

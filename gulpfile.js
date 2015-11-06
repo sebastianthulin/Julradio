@@ -23,6 +23,7 @@ const dependencies = [
   'marked',
   'bluebird',
   'superagent-promise',
+  'dateformat',
   'history/lib/createBrowserHistory'
 ]
 

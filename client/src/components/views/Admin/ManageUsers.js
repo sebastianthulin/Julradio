@@ -57,24 +57,26 @@ class ManageUsers extends React.Component {
 
     return (
       <div>
-        <div className="oneHalf column">
-          <h3>Konton</h3>
-          <input type="text" placeholder="Sök..." onChange={this.filter.bind(this)} />
-          <table>
-            <tbody>
-              <tr>
-                <th>Användarnamn</th>
-                <th>Admin</th>
-                <th>Bannad</th>
-              </tr>
-              {userNodes}
-            </tbody>
-          </table>
-          <button onClick={this.showMore.bind(this)}>Visa fler</button>
-          {users && this.userList.length + ' användare'}
-          {!users && 'Laddar...'}
+        <h3>Konton</h3>
+        <div className="row">
+          <div className="oneHalf column">
+            <input type="text" placeholder="Sök..." onChange={this.filter.bind(this)} />
+            <table>
+              <tbody>
+                <tr>
+                  <th>Användarnamn</th>
+                  <th>Admin</th>
+                  <th>Bannad</th>
+                </tr>
+                {userNodes}
+              </tbody>
+            </table>
+            <button onClick={this.showMore.bind(this)}>Visa fler</button>
+            {users && this.userList.length + ' användare'}
+            {!users && 'Laddar...'}
+          </div>
+          {selectedUser && <ManageUser key={selectedUser._id} user={selectedUser} />}
         </div>
-        {selectedUser && <ManageUser key={selectedUser._id} user={selectedUser} />}
       </div>
     )
   }

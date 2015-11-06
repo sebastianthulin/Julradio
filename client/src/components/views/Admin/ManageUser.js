@@ -23,31 +23,41 @@ class ManageUser extends React.Component {
     const { user, user: { picture } } = this.props
     return (
       <div className="oneHalf column">
-        <div>
-          <h6>Användarnamn</h6>
-          <input type="text" defaultValue={user.username} ref="username" />
-        </div>
-        <div>
-          <h6>Titel</h6>
-          <input type="text" defaultValue={user.title} ref="title" />
-        </div>
+        <label className="setting">
+          <div className="label">Användarnamn</div>
+          <input
+            type="text"
+            defaultValue={user.username}
+            ref="username"
+          />
+        </label>
+        <label className="setting">
+          <div className="label">Titel</div>
+          <input
+            type="text"
+            defaultValue={user.title}
+            ref="title"
+          />
+        </label>
         {picture && <img src={'/i/' + picture._id + picture.extension} width="100" />}
         {picture && <button>Ta bort bild</button>}
-        <div>
-          <h6>Roller</h6>
-          Admin
-          <input type="checkbox" defaultChecked={user.roles.admin} ref="admin" />
-          Skribent
-          <input type="checkbox" defaultChecked={user.roles.writer} ref="writer" />
-          Radiopratare
-          <input type="checkbox" defaultChecked={user.roles.radioHost} ref="radioHost" />
-        </div>
-        <div>
-          <h6>Bannad</h6>
+        <label className="setting">
+          <div className="label">Roller</div>
+          <div>
+            Admin
+            <input type="checkbox" defaultChecked={user.roles.admin} ref="admin" />
+            Skribent
+            <input type="checkbox" defaultChecked={user.roles.writer} ref="writer" />
+            Radiopratare
+            <input type="checkbox" defaultChecked={user.roles.radioHost} ref="radioHost" />
+          </div>
+        </label>
+        <label className="setting">
+          <div className="label">Bannad</div>
           <input type="checkbox" defaultChecked={user.banned} ref="banned" />
-        </div>
-        <button onClick={this.save.bind(this)}>Spara ändringar</button>
-        <Link to={`/@${user.username}`}>Visa profil</Link>
+        </label>
+        <button className="btn" onClick={this.save.bind(this)}>Spara ändringar</button>
+        <Link to={`/@${user.username}`} style={{marginLeft: 10}}>Visa profil</Link>
       </div>
     )
   }

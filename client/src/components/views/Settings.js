@@ -87,13 +87,13 @@ class Settings extends React.Component {
     const { changes } = this.state
     return (
       <form onSubmit={this.saveFields.bind(this)} className="ani">
-        <label>
+        <label className="setting">
           <div className="label">Nuvarande lösenord</div>
           <input type="password" ref="auth" />
         </label>
         <div className="confirmation">
           <p>{`För att ändra din ${changes} så måste du skriva in ditt nuvarande lösenord.`}</p>
-          <button>Save</button>
+          <button className="btn">Save</button>
         </div>
       </form>
     )
@@ -105,7 +105,7 @@ class Settings extends React.Component {
       <div id="Settings">
         <h1>Profilinställningar</h1>
         <div>
-          <label>
+          <label className="setting">
             <div className="label">Email</div>
             <input
               type="text"
@@ -114,7 +114,7 @@ class Settings extends React.Component {
               onChange={this.check.bind(this)}
             />
           </label>
-          <label>
+          <label className="setting">
             <div className="label">Lösenord</div>
             <input
               type="password"
@@ -124,7 +124,7 @@ class Settings extends React.Component {
             />
           </label>
           {changes && this.renderConfirmation()}
-          <label>
+          <label className="setting">
             <div className="label">IRL namn</div>
             <input
               type="text"
@@ -133,7 +133,7 @@ class Settings extends React.Component {
               onChange={this.save.bind(this)}
             />
           </label>
-          <label>
+          <label className="setting">
             <div className="label">Kön</div>
             <select defaultValue={user.gender} name="gender" onChange={this.save.bind(this)}>
               <option value="">Välj</option>
@@ -141,7 +141,7 @@ class Settings extends React.Component {
               <option value="FEMALE">Flicka</option>
             </select>
           </label>
-          <label>
+          <label className="setting">
             <div className="label">Bor</div>
             <input
               type="text"
@@ -150,14 +150,14 @@ class Settings extends React.Component {
               onChange={this.save.bind(this)}
             />
           </label>
-          <label>
+          <label className="setting">
             <div className="label">Födelsedag</div>
             <input
               type="text"
               name="birth"
             />
           </label>
-          <label>
+          <label className="setting">
             <div className="label">Personlig beskrivning</div>
             <textarea
               defaultValue={user.description}
@@ -167,7 +167,7 @@ class Settings extends React.Component {
               onChange={this.save.bind(this)}
             />
           </label>
-          <label>
+          <label className="setting">
             <div className="label">Profilbild</div>
             <input
               type="file"

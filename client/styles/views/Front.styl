@@ -1,44 +1,57 @@
-#Front
-  #Schedule
-    margin-bottom 20px
-    text-align center
-    background rgba(230, 103, 103, 0.11)
+.Article
+  margin-bottom 30px
+  padding-bottom 30px
+  border-bottom 2px solid rgba(255, 255, 255, 0.6)
+  .header
+    height 70px
+    line-height 38px
+    img
+      float left
+      width 50px
+      height 50px
+      margin-right 10px
+    .user
+      color #FFF
+      &:hover
+        border-bottom 1px solid
+    .TimeSince
+      color rgba(255,255,255,0.53)
+      font-size 11px
+      margin-top -9px
+      display block
+      line-height 10px
+
+#Schedule
+  margin-bottom 20px
+  text-align center
+  border-radius 5px
+  overflow hidden
+  section
     padding 20px 0
-    border-radius 5px
-    :last-child
-      margin-bottom 0
+    &.fst
+      background rgba(245, 55, 55, 0.2)
+    &.snd
+      background rgba(230, 103, 103, 0.11)
 
-    h3
-      font-size 33px
-      margin-bottom 0
+  header
+    width 110px
+    margin 0 auto
+    padding-bottom 5px
+    font-size 22px
+    font-weight 600
+    border-bottom 2px solid #FFF
 
-    p
-      //
+.Reservation
+  margin-top 20px
+  padding 0 10px
+  font-weight 400
+  line-height 1.4
+  a:hover
+    border-bottom 1px solid
+  .description
+    color rgba(255, 255, 255, 0.6)
 
-  .Article
-    margin-bottom 30px
-    padding-bottom 30px
-    border-bottom 2px solid rgba(255, 255, 255, 0.6)
-    .header
-      height 70px
-      line-height 38px
-      img
-        float left
-        width 50px
-        height 50px
-        margin-right 10px
-      .user
-        color #FFF
-        text-decoration none
-        &:hover
-          border-bottom 1px solid
-      .timestamp
-        color rgba(255,255,255,0.53)
-        font-size 11px
-        margin-top -9px
-        display block
-        line-height 10px
-
+#Front
   .compose
     position relative
     margin-bottom 10px

@@ -90,12 +90,11 @@ User.subscribe = function(handler) {
 }
 
 User.get = () => doc
-User.isWriter = () => !!getRoles().writer
-User.isRadioHost = () => !!getRoles().radioHost
-User.isAdmin = () => !!getRoles().admin
+User.is = role => !!((User.get() || {}).roles || {})[role]
+User.isWriter = () => User.is('writer')
+User.isRadioHost = () => User.is('radioHost')
+User.isAdmin = () => User.is('admin')
 User.isAnything = () => User.isWriter() || User.isRadioHost() || User.isAdmin()
-
-const getRoles = () => (User.get() || {}).roles || {}
 
 window.__USER__ && User.set(window.__USER__)
 

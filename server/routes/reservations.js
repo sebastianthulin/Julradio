@@ -13,15 +13,32 @@ router.use(function(req, res, next) {
 
 router.post('/', function(req, res) {
   const b = req.body
+  const year = new Date().getFullYear()
+  const startTime = String(b.startTime).split(':')
+  const endTime = String(b.endTime).split(':')
+  const startDate = new Date(year, b.month, b.day, startTime[0], startTime[1])
+  const endDate = new Date(year, b.month, b.day, endTime[0], endTime[1])
+
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    return res.status(500).send({err: 'INVALID_DATE'})
+  } else if (Date.now() > startDate) {
+    return res.status(500).send({err: 'TOO_EARLY'})
+  }
+
+  if (startDate > endDate) {
+    endDate.setDate(endDate.getDate() + 1)
+  }
+
   process.send({
     service: 'Reservations',
     data: {
       type: 'create',
+      id: req.params.id,
       opts: {
+        startDate,
+        endDate,
         userId: req.user._id,
-        description: b.description,
-        startDate: b.startDate,
-        endDate: b.endDate
+        description: b.description
       }
     }
   })

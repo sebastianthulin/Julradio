@@ -1,21 +1,25 @@
 const React = require('react')
 
 const chronos = [{
-  suffix: 'sekund sedan',
-  suffix2: 'sekunder sedan',
+  suffix: 'sekund',
+  suffix2: 'sekunder',
   millis: 1000
 }, {
-  suffix: 'minut sedan',
-  suffix2: 'minuter sedan',
+  suffix: 'minut',
+  suffix2: 'minuter',
   millis: 1000 * 60
 }, {
-  suffix: 'timme sedan',
-  suffix2: 'timmar sedan',
+  suffix: 'timme',
+  suffix2: 'timmar',
   millis: 1000 * 60 * 60
 }, {
-  suffix: 'dag sedan',
-  suffix2: 'dagar sedan',
+  suffix: 'dag',
+  suffix2: 'dagar',
   millis: 1000 * 60 * 60 * 24
+}, {
+  suffix: 'år',
+  suffix2: 'år',
+  millis: 1000 * 60 * 60 * 24 * 365
 }]
 
 class TimeSince extends React.Component {
@@ -34,27 +38,36 @@ class TimeSince extends React.Component {
 
   setTicker() {
     clearInterval(this.interval)
-    this.date = new Date(this.props.date).getTime()
+    this.date = Date.parse(this.props.date)
     this.tick()
     this.interval = setInterval(this.tick.bind(this), 1000)
   }
 
   tick() {
-    var timeSince = Date.now() + window.__TIMEDIFFERENCE__ - this.date
-    var i = chronos.length
+    const timeSince = Date.now() + window.__TIMEDIFFERENCE__ - this.date
+    let i = chronos.length
     while (i--) {
-      var chrono = chronos[i]
-      var result = ~~(timeSince / chrono.millis)
-      if (result >= 1) {
-        return this.setState({
-          time: result + ' ' + (result === 1 ? chrono.suffix : chrono.suffix2)
-        })
+      const chrono = chronos[i]
+      const time = ~~(timeSince / chrono.millis)
+      if (time >= 1) {
+        const suffix = time === 1 ? chrono.suffix : chrono.suffix2
+        return this.setState({ time, suffix })
       }
     }
+    this.setState({ time: 1, suffix: chronos[0].suffix })
   }
 
   render() {
-    return <span {...this.props}>{this.state.time}</span>
+    var children = this.state.time + ' ' + this.state.suffix
+    if (!this.props.short) {
+      children += ' sedan'
+    }
+
+    return <span
+      {...this.props}
+      className="TimeSince"
+      children={children}
+    />
   }
 }
 
