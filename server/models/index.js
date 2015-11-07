@@ -5,7 +5,7 @@ const redis = require('redis')
 const fs = require('fs')
 const config = require('../../config')
 
-mongoose.Promise = require('bluebird')
+mongoose.Promise = Promise
 mongoose.connect(config.mongodbUrl)
 
 exports.redis = redis.createClient()

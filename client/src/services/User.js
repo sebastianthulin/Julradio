@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events')
-const Promise = require('bluebird')
+const Promise = require('es6-promise').Promise
 const request = require('../services/request')
 const UserStore = require('../stores/UserStore')
 const User = new EventEmitter
@@ -12,41 +12,26 @@ User.set = function(user) {
   User.emit('doc', user)
 }
 
-User.block = function(userId) {
-  return request.post('/api/user/block', { userId })
-}
+User.block = userId => request.post('/api/user/block', { userId })
+User.unBlock = userId => request.del('/api/user/block/' + userId)
+User.wallPost = (userId, text) => request.post('/api/user/wallpost', { userId, text })
+User.deleteWallPost = postId => request.del('/api/user/wallpost/' + postId)
 
-User.unBlock = function(userId) {
-  return request.del('/api/user/block/' + userId)
-}
+User.updateField = opts => new Promise(function(resolve, reject) {
+  request.put('/api/user/field', opts).then(function({ body: user }) {
+    User.set(user)
+    resolve(user)
+  }).catch(reject)
+})
 
-User.wallPost = function(userId, text) {
-  return request.post('/api/user/wallpost', { userId, text })
-}
-
-User.deleteWallPost = function(postId) {
-  return request.del('/api/user/wallpost/' + postId)
-}
-
-User.updateField = function(opts) {
-  return new Promise(function(resolve, reject) {
-    request.put('/api/user/field', opts).then(function({ body: user }) {
-      User.set(user)
-      resolve(user)
-    }).catch(reject)
+User.updateSettings = opts => new Promise(function(resolve, reject) {
+  request.put('/api/user/settings', opts).then(function({ body: user }) {
+    User.set(user)
+    resolve(user)
+  }).catch(function({ response }) {
+    reject(response.body.err)
   })
-}
-
-User.updateSettings = function(opts) {
-  return new Promise(function(resolve, reject) {
-    request.put('/api/user/settings', opts).then(function({ body: user }) {
-      User.set(user)
-      resolve(user)
-    }).catch(function({ response }) {
-      reject(response.body.err)
-    })
-  })
-}
+})
 
 User.setAvatar = function(file) {
   const formData = new FormData

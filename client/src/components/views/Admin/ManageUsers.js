@@ -7,6 +7,8 @@ const User = ({ username, roles, banned }) => (
   <tr>
     <td><Link to={`/admin/users/${username}`}>{username}</Link></td>
     <td>{roles.admin.toString()}</td>
+    <td>{roles.writer.toString()}</td>
+    <td>{roles.radioHost.toString()}</td>
     <td>{(!!banned).toString()}</td>
   </tr>
 )
@@ -66,6 +68,8 @@ class ManageUsers extends React.Component {
                 <tr>
                   <th>Användarnamn</th>
                   <th>Admin</th>
+                  <th>Skribent</th>
+                  <th>Radiopratare</th>
                   <th>Bannad</th>
                 </tr>
                 {userNodes}

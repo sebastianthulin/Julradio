@@ -1,108 +1,97 @@
 const React = require('react')
+const { Link } = require('react-router')
+const cx = require('classnames')
 const dateFormat = require('dateformat')
 const ReservationStore = require('../../../stores/ReservationStore')
+const ManageReservation = require('./ManageReservation')
 
-class Reservation extends React.Component {
-  remove() {
-    ReservationStore.delete(this.props._id)
-  }
+const ReservationItem = ({ startDate, endDate, description, user, onClick, selected }) => (
+  <div className={cx('ReservationItem', { selected })} onClick={onClick}>
+    <div className="time-container">
+      <div className="time">{dateFormat(startDate, 'HH:MM')}</div>
+      <span>-</span>
+      <div className="time">{dateFormat(endDate, 'HH:MM')}</div>
+    </div>
+    <Link className="user" to={`/@${user.username}`}>{user.name}</Link>
+    <div className="description">{description}</div>
+  </div>
+)
 
-  render() {
-    const { startDate, endDate, description } = this.props
-    return (
-      <div>
-        {description}
-        <button onClick={this.remove.bind(this)}>Ta bort</button>
-      </div>
-    )
-  }
-}
-
-class ManageSchedule extends React.Component {
+class ManageReservations extends React.Component {
   componentWillMount() {
-    this.state = {}
-    this.unsubscribe = ReservationStore.subscribe(reservations => this.setState({ reservations }))
-    this.days = []
-    for (var i = 0; i < 7; i++) {
-      const time = Date.now() + window.__TIMEDIFFERENCE__ + i * 24 * 60 * 60 * 1000
-      this.days.push(time)
-    }
+    this.unsubscribe = ReservationStore.subscribe('reservations', this.handleReservations.bind(this))
   }
 
   componentWillUnmount() {
     this.unsubscribe()
   }
 
-  save() {
-    const date = new Date(Number(this.refs.date.value))
-    const opts = {
-      month: date.getMonth(),
-      day: date.getDate(),
-      startTime: this.refs.startTime.value,
-      endTime: this.refs.endTime.value,
-      description: this.refs.text.value
+  handleReservations(list) {
+    if (!list) return
+    this.list = list
+    const dates = []
+    const reservationsByDate = {}
+    for (var i = 0; i < list.length; i++) {
+      const res = list[i]
+      const date = dateFormat(res.startDate, 'dddd, mmmm d')
+      if (dates[dates.length - 1] !== date) {
+        dates.push(date)
+      }
+      reservationsByDate[date] = reservationsByDate[date] || []
+      reservationsByDate[date].push(res)
     }
+    this.setState({ dates, reservationsByDate })
+  }
 
-    if (!opts.description || !opts.startTime || !opts.endTime) {
-      return alert('Fyll i alla fält')
+  select(id) {
+    const prevId = (this.state.selected || {})._id
+    const reservation = this.list.filter(r => r._id === id)[0]
+    if (id === prevId) {
+      this.deselect()
+    } else {
+      this.setState({selected: reservation})
     }
+  }
 
-    ReservationStore.create(opts).then(() => {
-      this.refs.text.value = ''
-    }).catch(err => {
-      alert(err.response.body.err)
-    })
+  deselect() {
+    this.setState({selected: null})
+  }
+
+  renderDay(date) {
+    const reservations = this.state.reservationsByDate[date]
+    const selectedId = (this.state.selected || {})._id
+    return (
+      <div key={date} className="day">
+        <div className="date">{date}</div>
+        {reservations.map(r => <ReservationItem
+          key={r._id}
+          selected={r._id === selectedId}
+          onClick={this.select.bind(this, r._id)}
+          {...r}
+        />)}
+      </div>
+    )
   }
 
   render() {
-    const reservations = this.state.reservations || []
+    const { dates, selected } = this.state || {}
     return (
-      <div>
-        <h3>Bokningar</h3>
-        <div className="row">
-          <div className="oneHalf column">
-            <label className="setting">
-              <div className="label">Dag</div>
-              <select ref="date">
-                {this.days.map(d => <option
-                  key={d}
-                  value={d}
-                  children={dateFormat(d, 'dddd, mmmm d')}
-                />)}
-              </select>
-            </label>
-            <label className="setting">
-              <div className="label">Start tid</div>
-              <input
-                type="text"
-                placeholder="exempelvis 10:00"
-                ref="startTime"
-              />
-            </label>
-            <label className="setting">
-              <div className="label">Slut tid</div>
-              <input
-                type="text"
-                placeholder="exempelvis 13:30"
-                ref="endTime"
-              />
-            </label>
-            <label className="setting">
-              <div className="label">Text</div>
-              <input
-                type="text"
-                ref="text"
-              />
-            </label>
-            <button className="btn" onClick={this.save.bind(this)}>Lägg till</button>
-          </div>
-          <div className="oneHalf column">
-            {reservations.map(r => <Reservation key={r._id} {...r} />)}
-          </div>
+      <div id="ManageReservations" className="row">
+        <div className="oneHalf column">
+          <h3>Bokningar</h3>
+          {!selected && <ManageReservation />}
+          {selected && <ManageReservation
+            key={selected._id}
+            reservation={selected}
+            deselect={this.deselect.bind(this)}
+          />}
+        </div>
+        <div className="oneHalf column reservationList">
+          {dates && dates.map(this.renderDay.bind(this))}
         </div>
       </div>
     )
   }
 }
 
-module.exports = ManageSchedule
+module.exports = ManageReservations

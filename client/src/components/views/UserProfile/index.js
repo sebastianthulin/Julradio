@@ -12,15 +12,19 @@ class UserProfileContainer extends React.Component {
   }
 
   setUser(username) {
-    UserStore.get(username, 'profile block wallposts')
-      .then(body => this.setState(body))
-      .catch(console.log)
+    this.execute(username, 'profile block wallposts')
   }
 
   runQuery(query) {
-    UserStore.get(this.props.params.username, query)
-      .then(body => this.setState(body))
-      .catch(console.log)
+    this.execute(this.props.params.username, query)
+  }
+
+  execute(username, query) {
+    UserStore.get(username, query).then(body => {
+      if (this.props.params.username === username) {
+        this.setState(body)
+      }
+    }).catch(console.error)
   }
 
   render() {

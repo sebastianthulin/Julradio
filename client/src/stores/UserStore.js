@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events')
-const Promise = require('bluebird')
+const Promise = require('es6-promise').Promise
 const request = require('../services/request')
 const UserStore = new EventEmitter
 const usersByName = {}

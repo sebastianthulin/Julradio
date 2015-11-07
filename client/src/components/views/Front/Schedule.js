@@ -13,7 +13,7 @@ const Reservation = ({ startDate, endDate, description, user }) => (
 
 class Schedule extends React.Component {
   componentWillMount() {
-    this.unsubscribe = ReservationStore.subscribe(reservations => this.setState({ reservations }))
+    this.unsubscribe = ReservationStore.subscribe('reservations', reservations => this.setState({ reservations }))
   }
 
   componentWillUnmount() {
@@ -22,16 +22,24 @@ class Schedule extends React.Component {
 
   render() {
     const { reservations } = this.state || {}
-    return reservations ? (
+    const fn = r => <Reservation key={r._id} {...r} />
+    const today = (reservations || []).filter(r => r.today).map(fn)
+    const tomorrow = (reservations || []).filter(r => r.tomorrow).map(fn)
+
+    return reservations && reservations.length > 0 ? (
       <div id="Schedule">
-        <section className="fst">
-          <header>Idag</header>
-          {reservations.filter(r => r.today).map(r => <Reservation key={r._id} {...r} />)}
-        </section>
-        <section className="snd">
-          <header>Imorgon</header>
-          {reservations.filter(r => r.tomorrow).map(r => <Reservation key={r._id} {...r} />)}
-        </section>
+        {today.length > 0 && (
+          <section className="fst">
+            <header>Idag</header>
+            {today}
+          </section>
+        )}
+        {tomorrow.length > 0 && (
+          <section className="snd">
+            <header>Imorgon</header>
+            {tomorrow}
+          </section>
+        )}
       </div>
     ) : (
       <div className="somethingcool">

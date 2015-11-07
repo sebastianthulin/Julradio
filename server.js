@@ -1,13 +1,13 @@
 'use strict';
 
-var express     = require('express'),
-    app         = express(),
-    server      = require('http').Server(app),
-    io          = require('socket.io')(server),
-    session     = require('express-session'),
-    RedisStore  = require('connect-redis')(session)
+const express = require('express')
+const app = express()
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
+const session = require('express-session')
+const RedisStore = require('connect-redis')(session)
 
-var sessionMiddleware = session({
+const sessionMiddleware = session({
   secret: 'omgdisawesome',
   store: new RedisStore,
   resave: true,

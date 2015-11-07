@@ -3,39 +3,59 @@ const request = require('../services/request')
 const socket = require('../services/socket')
 const ReservationStore = new EventEmitter
 
-var reservations
-
-ReservationStore.create = function(opts) {
-  return request.post('/api/reservations', opts).end()
+const state = {
+  reservations: null,
+  onair: null
 }
 
-ReservationStore.update = function(id, opts) {
-  return request.put('/api/reservations/' + id, opts).end()
+function tick() {
+  const now = Date.now() + window.__TIMEDIFFERENCE__
+  let i = (state.reservations || []).length
+  while (i--) {
+    const r = state.reservations[i]
+    if (r.startDate < now && r.endDate > now) {
+      if (r !== state.onair) {
+        return setOnAir(r)
+      } else {
+        return
+      }
+    }
+  }
+  state.onair && setOnAir(null)
 }
 
-ReservationStore.delete = function(id) {
-  return request.del('/api/reservations/' + id).end()
+function setOnAir(reservation) {
+  console.log('selecting', reservation)
+  state.onair = reservation
+  ReservationStore.emit('onair', reservation)
 }
 
-ReservationStore.handleReservations = function(data) {
+ReservationStore.create = opts => request.post('/api/reservations', opts).end()
+ReservationStore.update = (id, opts) => request.put('/api/reservations/' + id, opts).end()
+ReservationStore.delete = id => request.del('/api/reservations/' + id).end()
+
+ReservationStore.handleReservations = function(reservations) {
   const today = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
-  reservations = data
   reservations.forEach(res => {
     res.startDate = new Date(res.startDate)
     res.endDate = new Date(res.endDate)
     res.today = res.startDate.getDate() === today
     res.tomorrow = res.startDate.getDate() === today + 1
   })
-  ReservationStore.emit('data', reservations)
+  state.reservations = reservations
+  tick()
+  ReservationStore.emit('reservations', reservations)
 }
 
-ReservationStore.subscribe = function(handler) {
-  handler(reservations)
-  ReservationStore.on('data', handler)
+ReservationStore.subscribe = function(event, handler) {
+  handler(state[event])
+  ReservationStore.on(event, handler)
   return function unsubscribe() {
-    ReservationStore.removeListener('data', handler)
+    ReservationStore.removeListener(event, handler)
   }
 }
+
+setInterval(tick, 1000)
 
 socket.on('reservations', ReservationStore.handleReservations)
 

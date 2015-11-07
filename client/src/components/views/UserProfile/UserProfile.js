@@ -24,8 +24,8 @@ class UserProfile extends React.Component {
     const userId = this.props.user._id
     User.deleteWallPost(id).then(() => {
       this.props.onQuery('wallposts')
-    }).catch(err => {
-      alert('Något gick fel', err)
+    }).catch(() => {
+      alert('Något gick fel')
     })
   }
 

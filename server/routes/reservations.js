@@ -3,15 +3,7 @@
 const express = require('express')
 const router = express.Router()
 
-router.use(function(req, res, next) {
-  if (req.user && req.user.roles.radioHost) {
-    next()
-  } else {
-    res.sendStatus(500)
-  }
-})
-
-router.post('/', function(req, res) {
+function generateData(req, res, next) {
   const b = req.body
   const year = new Date().getFullYear()
   const startTime = String(b.startTime).split(':')
@@ -29,34 +21,42 @@ router.post('/', function(req, res) {
     endDate.setDate(endDate.getDate() + 1)
   }
 
+  req.reservation = {
+    startDate,
+    endDate,
+    userId: req.user._id,
+    description: b.description
+  }
+
+  next()
+}
+
+router.use(function(req, res, next) {
+  if (req.user && req.user.roles.radioHost) {
+    next()
+  } else {
+    res.sendStatus(500)
+  }
+})
+
+router.post('/', generateData, function(req, res) {
   process.send({
     service: 'Reservations',
     data: {
       type: 'create',
-      id: req.params.id,
-      opts: {
-        startDate,
-        endDate,
-        userId: req.user._id,
-        description: b.description
-      }
+      opts: req.reservation
     }
   })
   res.sendStatus(200)
 })
 
-router.put('/:id', function(req, res) {
-  const b = req.body
+router.put('/:id', generateData, function(req, res) {
   process.send({
     service: 'Reservations',
     data: {
       type: 'edit',
       id: req.params.id,
-      opts: {
-        description: b.description,
-        startDate: b.startDate,
-        endDate: b.endDate
-      }
+      opts: req.reservation
     }
   })
   res.sendStatus(200)

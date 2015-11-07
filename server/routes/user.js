@@ -68,37 +68,28 @@ router.get('/profile', function getUser(req, res) {
       mongoose.Types.ObjectId.isValid(userId)
         ? resolve(userId)
         : reject(new Error('incorrect userId'))
-
     } else {
-      db.User.findOne({ usernameLower }).select('_id').exec().then(function(doc) {
-        doc
-          ? resolve(doc._id)
-          : reject(new Error('user not found'))
-      })
+      db.User.findOne({ usernameLower }).select('_id').exec().then(doc => doc
+        ? resolve(doc._id)
+        : reject(new Error('user not found'))
+      )
     }
   }).then(function(userId) {
-    const promises = []
-    for (let i = 0; i < query.length; i++) {
-      switch (query[i]) {
-        case 'profile':
-          promises.push(getUserDoc(userId)); break
-        case 'block':
-          promises.push(getBlockage(req.session.uid, userId)); break
-        case 'wallposts':
-          promises.push(getWallPosts(userId)); break
+    return Promise.all(query.map(function(type) {
+      switch (type) {
+        case 'profile': return getUserDoc(userId)
+        case 'block': return getBlockage(req.session.uid, userId)
+        case 'wallposts': return getWallPosts(userId)
       }
-    }
-
-    return Promise.all(promises)
+    }))
   }).then(function(data) {
-    const result = {}
-    var i = query.length
-    while (i--) {
-      result[query[i]] = data[i]
-    }
+    const result = query.reduce(function(prev, type, i) {
+      prev[type] = data[i]
+      return prev
+    }, {})
     res.send(result)
   }).catch(function(err) {
-    console.log(err)
+    console.error(err)
     res.sendStatus(500)
   })
 })
@@ -143,19 +134,18 @@ router.use(function(req, res, next) {
 
 router.post('/wallpost', function(req, res) {
   getBlockage(req.session.uid, req.body.userId).then(function(relationship) {
-    if (!relationship) {
-      new db.WallPost({
-        text: req.body.text,
-        to: req.body.userId,
-        from: req.session.uid
-      }).save(function(err, doc) {
-        res.send(doc)
-      })
-    } else {
-      res.status(500).send({err: 'Blockad'})
+    if (relationship) {
+      throw new Error()
     }
+    return new db.WallPost({
+      text: req.body.text,
+      to: req.body.userId,
+      from: req.session.uid
+    }).save()
+  }).then(function(doc) {
+    res.send(doc)
   }).catch(function(err) {
-    res.send({err: err.toString()})
+    res.sendStatus(500)
   })
 })
 
@@ -218,7 +208,7 @@ router.put('/field', function(req, res) {
     }).select('-hash').populate('picture').exec().then(function(user) {
       res.send(user)
     }).catch(function(err) {
-      console.log('@/field handler', err)
+      console.error('@/field handler', err)
       res.sendStatus(500)
     })
   } else {
@@ -243,7 +233,7 @@ router.put('/settings', function(req, res) {
     delete user.hash
     res.send(user)
   }).catch(function(err) {
-    console.log(err)
+    console.error(err)
     res.status(500).send({err: err.toString()})
   })
 })
@@ -289,7 +279,7 @@ router.post('/profilepicture', function(req, res) {
             .write('public/i/' + picture._id + '.jpg', function(err) {
               fs.unlink(req.file.path)
               if (err) {
-                console.log('@/profilepicture handler a', err)
+                console.error('@/profilepicture handler a', err)
                 return res.status(500).send({err: 'UNKNOWN_ERROR'})
               }
               picture.save().then(function() {
@@ -301,7 +291,7 @@ router.post('/profilepicture', function(req, res) {
               }).then(function(user) {
                 res.send(user)
               }, function(err) {
-                console.log('@/profilepicture handler b', err)
+                console.error('@/profilepicture handler b', err)
                 res.status(500).send({err: 'UNKNOWN_ERROR'})
               })
             })

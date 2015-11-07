@@ -21,13 +21,22 @@ process.on('message', function(data) {
 })
 
 function update(items) {
-  db.Reservation.find().sort('-_id').limit(30).populate({path: 'user', select: '-hash'}).exec().then(function(docs) {
-    reservations = docs
-      .filter(res => res.endDate.getTime() > Date.now() - 1000000000)
-      .sort((a, b) => a.startDate - b.startDate)
-
-    process.send(reservations)
-    io.emit('reservations', reservations)
+  const d = new Date()
+  const date = new Date(d.getFullYear(), d.getMonth(), d.getDate())
+  db.Reservation.find({
+    startDate: {$gte: date}
+  }).populate({
+    path: 'user',
+    select: '-hash'
+  }).exec().then(function(docs) {
+    db.Reservation.populate(docs, {
+      path: 'user.picture',
+      model: 'pictures'
+    }, function(err, docs) {
+      reservations = docs.sort((a, b) => a.startDate - b.startDate)
+      process.send(reservations)
+      io.emit('reservations', reservations)
+    })
   })
 }
 
@@ -41,7 +50,11 @@ function createReservation(opts) {
 }
 
 function editReservation(id, opts) {
-
+  db.Reservation.findByIdAndUpdate(id, {
+    description: opts.description,
+    startDate: opts.startDate,
+    endDate: opts.endDate
+  }).exec().then(update).catch(console.error)
 }
 
 function removeReservation(id) {
