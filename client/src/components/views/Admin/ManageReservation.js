@@ -114,10 +114,18 @@ class ManageReservation extends React.Component {
             defaultValue={this.defaultVal.description}
           />
         </label>
-        <button className="btn" style={{float: 'right'}} onClick={this.save.bind(this)}>
-          {isNew ? 'Skapa' : 'Spara ändringar'}
-        </button>
-        {!isNew && <button className="btn" style={{float: 'right', marginRight: 10}} onClick={this.delete.bind(this)}>Ta bort</button>}
+        <button
+          children={isNew ? 'Skapa' : 'Spara ändringar'}
+          className="btn"
+          style={{float: 'right'}}
+          onClick={this.save.bind(this)}
+        />
+        {!isNew && <button
+          children="Ta bort"
+          className="btn"
+          style={{float: 'right', marginRight: 10}}
+          onClick={this.delete.bind(this)}
+        />}
       </div>
     )
   }

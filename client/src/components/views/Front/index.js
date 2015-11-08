@@ -3,7 +3,7 @@ const Modal = require('../../../services/Modal')
 const RequestStore = require('../../../stores/RequestStore')
 const ArticleStore = require('../../../stores/ArticleStore')
 const TwitterFeed = require('../../reusable/TwitterFeed')
-const Article = require('./Article')
+const Article = require('../../reusable/Article')
 const Schedule = require('./Schedule')
 
 class Front extends React.Component {

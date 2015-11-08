@@ -25,7 +25,7 @@ ArticleStore.get = function(callback) {
   request.get('/api/articles').then(function({ body }) {
     articles = body
     articles.sort((a, b) => new Date(b.date) - new Date(a.date))
-    articles.forEach(article => article.marked = marked(article.content))
+    articles.forEach(article => article.__html = marked(article.content))
     typeof callback === 'function' && callback(articles)
     ArticleStore.emit('articles', articles)
   })

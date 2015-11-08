@@ -27,7 +27,7 @@ function update(items) {
     startDate: {$gte: date}
   }).populate({
     path: 'user',
-    select: '-hash'
+    select: '-hash -email'
   }).exec().then(function(docs) {
     db.Reservation.populate(docs, {
       path: 'user.picture',

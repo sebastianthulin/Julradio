@@ -7,7 +7,7 @@ const db = require('../models')
 router.get('/', function(req, res) {
   db.Article.find().populate({
     path: 'user',
-    select: '-hash'
+    select: '-hash -email'
   }).exec().then(function(articles) {
     db.Article.populate(articles, {
       path: 'user.picture',

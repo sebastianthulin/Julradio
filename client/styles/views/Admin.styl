@@ -9,7 +9,7 @@
       width calc(100% / 6)
       padding 20px 0
       text-align center
-      color color rgba(255, 255, 255, 0.5)
+      color rgba(255, 255, 255, 0.5)
       transition color .2s
       &.active
         color #FFF
@@ -17,35 +17,18 @@
         color #FFF
         transition none
 
-  a
-    color rgba(255, 255, 255, 0.5)
-
   .request
     border 1px solid
     width 50%
     padding 10px
-    
-#ManageArticles
-  input, textarea, button, select
-    margin-bottom 5px
-    padding 10px
-    color #000
-    background #FFF
-    border none
-    border-radius 3px
 
+#ManageArticle
   textarea
     width 100%
-    height 400px
-    resize vertical
+    min-height 300px
+  .Article
+    border-bottom none
 
-  button
-    width auto
-    padding 5px 10px
-
-  select
-    height 34px
-    
 #ManageReservations
   .day
     margin-bottom 40px
@@ -91,3 +74,4 @@
     background rgba(255, 255, 255, 0.09)
   &.selected
     background rgba(255, 255, 255, 0.12)
+    transition background .2s

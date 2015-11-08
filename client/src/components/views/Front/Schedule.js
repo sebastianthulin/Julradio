@@ -7,7 +7,9 @@ const Reservation = ({ startDate, endDate, description, user }) => (
   <div className="Reservation">
     <div className="user"><Link to={`/@${user.username}`}>{user.name}</Link></div>
     <div className="description">{description}</div>
-    <div className="time">{`${dateFormat(startDate, 'HH:MM')} - ${dateFormat(endDate, 'HH:MM')}`}</div>
+    <div className="time">
+      {dateFormat(startDate, 'HH:MM') + ' - ' + dateFormat(endDate, 'HH:MM')}
+    </div>
   </div>
 )
 

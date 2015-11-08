@@ -67,6 +67,26 @@ a
   left 0
   z-index -1
 
+input:not(.clean),
+select:not(.clean),
+textarea:not(.clean)
+  padding 14px 0
+  font-size 16px
+  color #FFF
+  border solid rgba(255, 255, 255, 0.2)
+  border-width 0 0 2px 0
+  background none
+  transition border-color .2s
+  &:focus
+    border-color rgba(255, 255, 255, 0.6)
+    transition none
+
+textarea:not(.clean)
+  min-height 125px
+  padding 14px
+  border-width 2px
+  resize vertical
+
 .setting
   display flex
   margin-bottom 20px
@@ -75,25 +95,8 @@ a
     width 130px
     font-size 14px
     color rgba(255, 255, 255, 0.4)
-
   input, select, textarea
     width calc(100% - 130px)
-    padding 14px 0
-    font-size 16px
-    color #FFF
-    border solid rgba(255, 255, 255, 0.2)
-    border-width 0 0 2px 0
-    background none
-    transition border-color .2s
-    &:focus
-      border-color rgba(255, 255, 255, 0.6)
-      transition none
-
-  textarea
-    min-height 125px
-    padding 14px
-    border-width 2px
-    resize vertical
 
 .btn
   height 50px

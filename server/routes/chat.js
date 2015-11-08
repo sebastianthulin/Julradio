@@ -17,7 +17,7 @@ router.get('/', function(req, res) {
     users: req.session.uid
   }).populate({
     path: 'users lastMessage',
-    select: '-hash'
+    select: '-hash -email'
   }).exec().then(function(conversations) {
     db.Conversation.populate(conversations, {
       path: 'users.picture',

@@ -13,19 +13,15 @@ function tick() {
   let i = (state.reservations || []).length
   while (i--) {
     const r = state.reservations[i]
-    if (r.startDate < now && r.endDate > now) {
-      if (r !== state.onair) {
-        return setOnAir(r)
-      } else {
-        return
-      }
+    if (now > r.startDate && now < r.endDate) {
+      state.onair !== r && setOnAir(r)
+      return
     }
   }
   state.onair && setOnAir(null)
 }
 
 function setOnAir(reservation) {
-  console.log('selecting', reservation)
   state.onair = reservation
   ReservationStore.emit('onair', reservation)
 }

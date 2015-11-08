@@ -17,7 +17,7 @@ const upload = multer({
 }).single('avatar')
 
 function getUserDoc(userId) {
-  return db.User.findById(userId).select('-hash').populate('picture').lean().exec()
+  return db.User.findById(userId).select('-hash -email').populate('picture').lean().exec()
 }
 
 function getWallPosts(userId) {
@@ -26,7 +26,7 @@ function getWallPosts(userId) {
       to: userId
     }).populate({
       path: 'from',
-      select: '-hash'
+      select: '-hash -email'
     }).exec().then(function(posts) {
       db.WallPost.populate(posts, {
         path: 'from.picture',
@@ -45,7 +45,7 @@ router.get('/logout', function(req, res) {
 
 router.get('/byname/:username', function(req, res) {
   const usernameLower = String(req.params.username).toLowerCase()
-  db.User.findOne({ usernameLower }).select('-hash').populate('picture').lean().exec(function(err, user) {
+  db.User.findOne({ usernameLower }).select('-hash -email').populate('picture').lean().exec(function(err, user) {
     user ? res.send(user) : res.sendStatus(200)
   })
 })
