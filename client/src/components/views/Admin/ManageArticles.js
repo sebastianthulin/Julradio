@@ -37,8 +37,10 @@ class ManageArticles extends React.Component {
 
   renderArticle(article) {
     return (
-      <Link className="articleHeaderAdmin" to={`/admin/articles/${article._id}`} key={article._id}>
-        {article.title}
+      <Link className="articleHeaderBox" to={`/admin/articles/${article._id}`} key={article._id}>
+        <span className="articleHeader">{article.title}</span>
+        <span className="articleAuthor">Oliver Johansson</span>
+        <span className="articleTime">2015-12-02</span>
       </Link>
     )
   }
