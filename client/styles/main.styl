@@ -77,7 +77,8 @@ a
   z-index -1
 
 option
-  color #333 !important
+  color #333
+  background #FFF
 
 input:not(.clean),
 select:not(.clean),
@@ -94,6 +95,9 @@ textarea:not(.clean)
   &:focus
     border-color rgba(255, 255, 255, 0.6)
     transition none
+    
+select:not(.clean)
+  vendor(appearance, none)
 
 textarea:not(.clean)
   min-height 125px
