@@ -7,8 +7,13 @@ const Article = require('../../reusable/Article')
 
 class ManageArticle extends React.Component {
   componentWillMount() {
-    this.id = this.props.article._id
-    const copy = Object.assign({}, this.props.article)
+    const { article } = this.props
+    const copy = {}
+    this.id = article._id
+
+    for (var i in article) {
+      copy[i] = article[i]
+    }
     if (!copy._id) {
       copy.content = ''
       copy.user = User.get()
@@ -40,11 +45,18 @@ class ManageArticle extends React.Component {
   }
 
   update() {
-    const copy = Object.assign({}, this.state.copy)
+    const copy = {}
+    for (var i in this.state.copy) {
+      copy[i] = this.state.copy[i]
+    }
     copy.title = this.refs.title.value
     copy.content = this.refs.content.value
     copy.__html = marked(copy.content)
     this.setState({ copy })
+  }
+
+  cancel() {
+    this.props.history.pushState(null, '/admin/articles')
   }
 
   render() {
@@ -52,7 +64,6 @@ class ManageArticle extends React.Component {
     const { article } = this.props
     return (
       <div id="ManageArticle">
-        <Link to={'/admin/articles'}>Gå tillbaka</Link>
         <div className="row">
           <div className="oneHalf column">
             <label className="setting">
@@ -70,8 +81,23 @@ class ManageArticle extends React.Component {
               onChange={this.update.bind(this)}
             />
             <div style={{margin: '10px 0'}}>
-              <button className="btn" onClick={this.save.bind(this)}>Spara</button>
-              {this.id && <button className="btn" style={{marginLeft: 10}} onClick={this.delete.bind(this)}>Ta Bort</button>}
+              <button
+                className="btn"
+                onClick={this.save.bind(this)}
+                children="Spara"
+              />
+              {this.id && <button
+                className="btn"
+                style={{marginLeft: 10}}
+                onClick={this.delete.bind(this)}
+                children="Ta Bort"
+              />}
+              <button
+                className="btn"
+                style={{marginLeft: 10}}
+                onClick={this.cancel.bind(this)}
+                children="Avbryt"
+              />
             </div>
             <div>
               Här kan <a href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet" target="_blank">markdown</a> användas.

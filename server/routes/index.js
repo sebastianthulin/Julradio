@@ -6,6 +6,8 @@ const db = require('../models')
 const io = require('../../server').io
 
 router.use(function(req, res, next) {
+  res.setHeader('Expires', '-1')
+  res.setHeader('Cache-Control', 'must-revalidate, private')
   const uid = req.session.uid
   if (!uid) return next()
   db.User.findById(uid).select('-hash').populate('picture').lean().exec().then(function(user) {
