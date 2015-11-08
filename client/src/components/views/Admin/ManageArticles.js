@@ -37,7 +37,7 @@ class ManageArticles extends React.Component {
 
   renderArticle(article) {
     return (
-      <Link style={{display: 'block'}} to={`/admin/articles/${article._id}`} key={article._id}>
+      <Link className="articleHeaderAdmin" to={`/admin/articles/${article._id}`} key={article._id}>
         {article.title}
       </Link>
     )
@@ -54,6 +54,7 @@ class ManageArticles extends React.Component {
       <div>
         <h3>Nyheter</h3>
         {articles.map(this.renderArticle.bind(this))}
+        <br/>
         <button className="btn" onClick={this.create.bind(this)}>Skapa ny</button>
       </div>
     )

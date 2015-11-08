@@ -52,7 +52,7 @@ class ManageArticle extends React.Component {
     const { article } = this.props
     return (
       <div id="ManageArticle">
-        <Link to={'/admin/articles'}>Gå tillbaka</Link>
+        <Link className="goback" to={'/admin/articles'}>Gå tillbaka</Link>
         <div className="row">
           <div className="oneHalf column">
             <label className="setting">

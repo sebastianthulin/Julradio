@@ -75,7 +75,8 @@ class ManageUsers extends React.Component {
                 {userNodes}
               </tbody>
             </table>
-            <button onClick={this.showMore.bind(this)}>Visa fler</button>
+            <br />
+            <button className="btn" onClick={this.showMore.bind(this)}>Visa fler</button>
             {users && this.userList.length + ' användare'}
             {!users && 'Laddar...'}
           </div>
