@@ -9,7 +9,7 @@ const Article = ({ article, article: { user } }) => (
     <header>
       {user.picture && <ProfilePicture {...user.picture} />}
       <div className="user">
-        <Link to={`/@${user.username}`}>{user.username}</Link>
+        <Link to={`/@${user.username}`}>{user.name}</Link>
         <TimeSince date={article.date} />
       </div>
     </header>

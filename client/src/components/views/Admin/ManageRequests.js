@@ -1,9 +1,11 @@
 const React = require('react')
 const RequestStore = require('../../../stores/RequestStore')
 
-const Request = request => (
-  <div className="request">
-    {request.text}
+const Request = ({ name, song, text }) => (
+  <div className="Request">
+    <div className="name">{name}</div>
+    <div className="song">{song}</div>
+    <div className="text">{text}</div>
     <button>Accept</button>
     <button>Deny</button>
   </div>

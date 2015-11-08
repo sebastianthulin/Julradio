@@ -19,6 +19,7 @@ const UserProfile = require('./components/views/UserProfile')
 const Settings = require('./components/views/Settings')
 const Messages = require('./components/views/Messages')
 const Crew = require('./components/views/Crew')
+const History = require('./components/views/History')
 const Admin = require('./components/views/Admin')
 const ManageArticles = require('./components/views/Admin/ManageArticles')
 const ManageUsers = require('./components/views/Admin/ManageUsers')
@@ -82,6 +83,7 @@ const routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Front} />
     <Route path="crew" component={Crew} />
+    <Route path="history" component={History} />
     <Route path="messages" component={Messages} onEnter={requireAuth} />
     <Route path="messages/:user" component={Messages} onEnter={requireAuth} />
     <Route path="@:username" component={UserProfile} />
