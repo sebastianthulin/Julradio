@@ -84,7 +84,8 @@ class ManageCrew extends React.Component {
           <input type="text" ref="input" placeholder="Lägg till (skriv in användarnamn)" />
         </form>
         {!crew && 'Vänta...'}
-        <button onClick={this.save.bind(this)}>Spara</button>
+        <br />
+        <button className="btn" onClick={this.save.bind(this)}>Spara</button>
       </div>
     )
   }

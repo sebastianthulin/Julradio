@@ -27,7 +27,7 @@ class ManageRequests extends React.Component {
     const { requests } = this.state
     return (
       <div>
-        <button onClick={this.refresh.bind(this)}>Refresh</button>
+        <button className="btn" onClick={this.refresh.bind(this)}>Refresh</button>
         {requests.map(request => <Request key={request._id} {...request} />)}
       </div>
     )
