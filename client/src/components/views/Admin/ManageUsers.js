@@ -62,7 +62,7 @@ class ManageUsers extends React.Component {
         <h3>Konton</h3>
         <div className="row">
           <div className="oneHalf column">
-            <input type="text" placeholder="Sök..." onChange={this.filter.bind(this)} />
+            <input className="goodSearch" type="text" placeholder="Sök..." onChange={this.filter.bind(this)} />
             <table>
               <tbody>
                 <tr>

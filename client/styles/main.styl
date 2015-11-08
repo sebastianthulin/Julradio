@@ -22,10 +22,14 @@ a
   color #FFF
   text-decoration none
   
-.veryBeautifulLine
-  width 800px
-  height 1px
-  background rgba(255,255,255,0.1)
+.goodSearch
+  width 500px !important
+  background white !important
+  padding 10px !important
+  border-radius 5px !important
+  color #333 !important
+  border 0px !important
+  margin-bottom 10px !important
 
 #App.sidebarVisible
   #site:after
@@ -72,6 +76,9 @@ a
   left 0
   z-index -1
 
+option
+  color #333 !important
+
 input:not(.clean),
 select:not(.clean),
 textarea:not(.clean)
@@ -82,6 +89,7 @@ textarea:not(.clean)
   border-width 0 0 2px 0
   background none
   transition border-color .2s
+  border-radius 0px
   &:focus
     border-color rgba(255, 255, 255, 0.6)
     transition none
