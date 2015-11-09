@@ -25,7 +25,7 @@ function fork(service) {
 if (cluster.isMaster) {
   const numWorkers = process.env.NODE_ENV === 'production'
     ? os.cpus().length
-    : 2
+    : 1
 
   console.log(`Master cluster setting up ${numWorkers} workers...`)
 

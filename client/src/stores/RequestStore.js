@@ -22,8 +22,20 @@ RequestStore.request = function(opts) {
   return request.post('/api/request', opts)
 }
 
+RequestStore.accept = function(id) {
+  return request.put('/api/request/' + id)
+}
+
+RequestStore.deny = function(id) {
+  return request.del('/api/request/' + id)
+}
+
 RequestStore.getRequests = function() {
   return request.get('/api/request')
+}
+
+RequestStore.getGranted = function() {
+  return request.get('/api/request/granted')
 }
 
 RequestStore.subscribe = function(handler) {

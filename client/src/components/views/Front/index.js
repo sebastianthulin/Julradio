@@ -2,7 +2,7 @@ const React = require('react')
 const Modal = require('../../../services/Modal')
 const RequestStore = require('../../../stores/RequestStore')
 const ArticleStore = require('../../../stores/ArticleStore')
-const TwitterFeed = require('../../reusable/TwitterFeed')
+const Feed = require('../../reusable/Feed')
 const Article = require('../../reusable/Article')
 const Schedule = require('./Schedule')
 
@@ -29,7 +29,7 @@ class Front extends React.Component {
             Skriv en önskning...
           </div>
           <span className="informer">Godkända önskningar och tweets med #julradio</span>
-          <TwitterFeed tweets={requests} />
+          <Feed tweets={requests} />
         </div>
       </div>
     )

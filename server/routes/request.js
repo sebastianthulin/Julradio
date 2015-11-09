@@ -27,19 +27,30 @@ router.use(function(req, res, next) {
 })
 
 router.get('/', function(req, res) {
-  db.Request.find(function(err, docs) {
+  db.Request.find({granted: null}, function(err, docs) {
+    res.send(docs)
+  })
+})
+
+router.get('/granted', function(req, res) {
+  db.Request.find({granted: true}).limit(100).exec(function(err, docs) {
     res.send(docs)
   })
 })
 
 // accept
 router.put('/:id', function(req, res) {
-
+  db.Request.findById(req.params.id, function(err, doc) {
+    doc.granted = true
+    doc.save(() => res.sendStatus(200))
+  })
 })
 
 // deny
 router.delete('/:id', function(req, res) {
-
+  db.Request.remove({_id: req.params.id}, function(err, doc) {
+    res.sendStatus(200)
+  })
 })
 
 module.exports = router

@@ -72,10 +72,18 @@
     color #FFF
     background none
     transition opacity .2s
+    position relative
     &:hover
       opacity 0.6
       transition none
-
+    .notification
+      color red
+      position absolute
+      left 50%
+      top 25%
+      transform translate(-50%, -50%)
+      font-size 13px
+      font-weight bold
     svg
       display block
       width 32px

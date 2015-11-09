@@ -4,6 +4,7 @@ const cx = require('classnames')
 const Modal = require('../../../services/Modal')
 const User = require('../../../services/User')
 const RadioStore = require('../../../stores/RadioStore')
+const NotificationStore = require('../../../stores/NotificationStore')
 const Player = require('./Player')
 const Snowfall = require('../Snowfall')
 const ProfilePicture = require('../../reusable/ProfilePicture')
@@ -15,6 +16,7 @@ class Sidebar extends React.Component {
   componentWillMount() {
     User.subscribe(user => this.setState({ user }))
     RadioStore.subscribe('onair', onair => this.setState({ onair }))
+    NotificationStore.subscribe('message', unseenMessages => this.setState({ unseenMessages }))
   }
 
   renderUser() {
@@ -41,7 +43,7 @@ class Sidebar extends React.Component {
   }
 
   render() {
-    const { user, onair } = this.state
+    const { user, onair, unseenMessages } = this.state
     return (
       <div id="Sidebar">
         <Snowfall
@@ -62,6 +64,7 @@ class Sidebar extends React.Component {
           {user && <Link to="/messages">
             <button className="userAction">
               <SVG.Messenger />
+              { unseenMessages.length > 0 && <div className="notification">{ unseenMessages.length.toString() }</div> }
               Meddelanden
             </button>
           </Link>}

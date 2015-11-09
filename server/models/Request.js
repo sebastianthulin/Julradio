@@ -16,8 +16,7 @@ const schema = new Schema({
     type: String,
     required: true
   },
-  accepted: Boolean,
-  denied: Boolean,
+  granted: Boolean,
   date: {
     type: Date,
     default: Date.now

@@ -17,15 +17,15 @@ class Tweet extends React.Component {
   }
 }
 
-class TwitterFeed extends React.Component {
+class Feed extends React.Component {
   render() {
     const { tweets } = this.props
     return (
-      <div className="TwitterFeed">
+      <div className="Feed">
         {tweets.map(tweet => <Tweet key={tweet.id} tweet={tweet} />)}
       </div>
     )
   }
 }
 
-module.exports = TwitterFeed
+module.exports = Feed
