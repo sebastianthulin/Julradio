@@ -23,7 +23,7 @@ stream.on('close', process.exit)
 
 stream.on('metadata', function(data) {
   const title = radio.parseMetadata(data).StreamTitle
-  const song = { title, date: Date.now() }
+  const song = new db.Song({ title })
 
   if (!title || title === playing.title) {
     return
@@ -41,7 +41,7 @@ stream.on('metadata', function(data) {
 
   db.Song.findOne().sort('-_id').exec(function(err, doc) {
     if (!doc || (doc && doc.title !== title)) {
-      new db.Song({ title }).save()
+      song.save()
     }
   })
 })

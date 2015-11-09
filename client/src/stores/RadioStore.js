@@ -49,7 +49,7 @@ socket.on('metadata', function({ playing, history }) {
   if (history) {
     state.history = history
   } else {
-    state.history = state.history.slice(state.history.length > 29 && 30)
+    state.history.length === 30 && state.history.splice(0, 1)
     state.history.push(playing)
   }
   state.currentlyPlaying = playing
