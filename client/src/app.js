@@ -27,6 +27,7 @@ const ManageUsers = require('./components/views/Admin/ManageUsers')
 const ManageReservations = require('./components/views/Admin/ManageReservations')
 const ManageCrew = require('./components/views/Admin/ManageCrew')
 const ManageRequests = require('./components/views/Admin/ManageRequests')
+const Article = require('./components/views/Article')
 
 // Config
 marked.setOptions({
@@ -88,6 +89,7 @@ const routes = (
     <Route path="history" component={History} />
     <Route path="messages" component={Messages} onEnter={requireAuth} />
     <Route path="messages/:user" component={Messages} onEnter={requireAuth} />
+    <Route path="article/:id" component={Article} />
     <Route path="@:username" component={UserProfile} />
     <Route path="settings" component={Settings} onEnter={requireAuth} />
     <Route path="admin" component={Admin} onEnter={requireAdminAuth}>

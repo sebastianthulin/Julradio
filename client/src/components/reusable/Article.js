@@ -10,7 +10,7 @@ const Article = ({ article, article: { user } }) => (
       <ProfilePicture {...user.picture} />
       <div className="user">
         <Link to={`/@${user.username}`}>{user.name}</Link>
-        <TimeSince date={article.date} />
+        <Link to={`/article/${article._id}`}><TimeSince date={article.date} /></Link>
       </div>
     </header>
     <div className="markdownBody" dangerouslySetInnerHTML={article} />

@@ -28,6 +28,7 @@ router.use(function(req, res, next) {
 })
 
 router.use('/api/user', require('./user'))
+router.use('/api/article', require('./article'))
 router.use('/api/articles', require('./articles'))
 router.use('/api/chat', require('./chat'))
 router.use('/api/request', require('./request'))

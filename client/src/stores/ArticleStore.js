@@ -31,6 +31,13 @@ ArticleStore.get = function(callback) {
   })
 }
 
+ArticleStore.getOne = function(id, callback) {
+  request.get('/api/article/' + id).then(function({ body }) {
+    body.article.__html = marked(body.article.content)
+    callback(body)
+  })
+}
+
 ArticleStore.subscribe = function(handler) {
   handler(articles)
   ArticleStore.on('articles', handler)

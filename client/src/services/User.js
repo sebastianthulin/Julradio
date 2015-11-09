@@ -46,6 +46,10 @@ User.setAvatar = function(file) {
   })
 }
 
+User.comment = function(articleId, comment, callback) {
+  request.post('/api/article/' + articleId + '/comment/', {comment}).then(callback)
+}
+
 User.logIn = function(creds, errHandler) {
   request.post('/api/user/login', creds).then(function() {
     location.reload()
