@@ -1,65 +1,29 @@
 const { EventEmitter } = require('events')
-const socket = require('../services/socket')
-const request = require('../services/request')
 const NotificationStore = new EventEmitter
-const handlersByType = {}
 
-const state = {
-  message: [],
-  wallPost: []
+const state = []
+
+NotificationStore.insert = function({ type, value }) {
+  const notification = {
+    key: Math.random(),
+    type,
+    value,
+    visible: true
+  }
+  state.push(notification)
+  NotificationStore.emit('change', state.slice())
+  setTimeout(function() {
+    state.splice(state.indexOf(notification), 1)
+    NotificationStore.emit('change', state.slice())
+  }, 5000)
 }
 
-NotificationStore.on = function(type, handler) {
-  handlersByType[type] = handler
-}
-
-NotificationStore.subscribe = function(type, handler) {
-  handler(state[type].slice())
-  NotificationStore.addListener(type, handler)
+NotificationStore.subscribe = function(handler) {
+  handler(state.slice())
+  NotificationStore.on('change', handler)
   return function unsubscribe() {
-    NotificationStore.removeListener(type, handler)
+    NotificationStore.removeListener('change', handler)
   }
 }
-
-NotificationStore.clear = function(type, value) {
-  const notifications = state[type]
-  const i = notifications.indexOf(value)
-  if (i > -1) {
-    notifications.splice(i, 1)
-    NotificationStore.emit(type, notifications.slice())
-    NotificationStore.remove(type, value)
-  }
-}
-
-NotificationStore.remove = function(type, value) {
-  request.post('/api/notification', { type, value }).end()
-}
-
-socket.on('notification:new', function({ type, value }) {
-  const notifications = state[type]
-  const notSeen = handlersByType[type](value)
-  if (notSeen) {
-    if (notifications.indexOf(value) === -1) {
-      notifications.push(value)
-    }
-    NotificationStore.emit(type, notifications.slice())
-  } else {
-    NotificationStore.remove(type, value)
-  }
-})
-
-request.get('/api/notification').then(function({ body: notifications }) {
-  const emitList = []
-  for (let i = 0; i < notifications.length; i++) {
-    const { type, value } = notifications[i]
-    state[type].push(value)
-    if (emitList.indexOf(type) === -1) {
-      emitList.push(type)
-    }
-  }
-  emitList.forEach(type => NotificationStore.emit(type, state[type].slice()))
-}).catch(function(err) {
-  console.log('could not load notifications')
-})
 
 module.exports = NotificationStore

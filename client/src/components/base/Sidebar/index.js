@@ -4,7 +4,7 @@ const cx = require('classnames')
 const Modal = require('../../../services/Modal')
 const User = require('../../../services/User')
 const RadioStore = require('../../../stores/RadioStore')
-const NotificationStore = require('../../../stores/NotificationStore')
+const ShitStore = require('../../../stores/ShitStore')
 const Player = require('./Player')
 const Snowfall = require('../Snowfall')
 const ProfilePicture = require('../../reusable/ProfilePicture')
@@ -16,7 +16,7 @@ class Sidebar extends React.Component {
   componentWillMount() {
     User.subscribe(user => this.setState({ user }))
     RadioStore.subscribe('onair', onair => this.setState({ onair }))
-    NotificationStore.subscribe('message', unseenMessages => this.setState({ unseenMessages }))
+    ShitStore.subscribe('message', unseenMessages => this.setState({ unseenMessages }))
   }
 
   renderUser() {

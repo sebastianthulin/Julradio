@@ -12,6 +12,7 @@ const UIStore = require('./stores/UIStore')
 const Sidebar = require('./components/base/Sidebar')
 const MobileHeader = require('./components/base/MobileHeader')
 const ModalContainer = require('./components/base/ModalContainer')
+const NotificationContainer = require('./components/base/NotificationContainer')
 
 // Views
 const Front = require('./components/views/Front')
@@ -61,6 +62,7 @@ class App extends React.Component {
           {this.props.children}
         </div>
         <ModalContainer />
+        <NotificationContainer />
       </div>
     )
   }

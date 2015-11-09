@@ -1,10 +1,11 @@
 const React = require('react')
 
 class Notification extends React.Component {
-
   render() {
+    const { type, value, visible } = this.props
     return (
-      <div id="Notification">
+      <div className="Notification">
+        {type}
       </div>
     )
   }

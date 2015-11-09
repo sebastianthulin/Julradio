@@ -4,7 +4,7 @@ const request = require('../services/request')
 const User = require('../services/User')
 const Sound = require('../services/Sound')
 const UserStore = require('./UserStore')
-const NotificationStore = require('./NotificationStore')
+const ShitStore = require('./ShitStore')
 const ChatStore = new EventEmitter
 const threadsById = {}
 const threadsByUserId = {}
@@ -26,7 +26,7 @@ ChatStore.select = function(username) {
     }
 
     const conversation = threadsByUserId[user._id]
-    conversation && NotificationStore.clear('message', conversation._id)
+    conversation && ShitStore.clear('message', conversation._id)
     state.targetUser = user
     updateMessages()
 
@@ -140,7 +140,7 @@ socket.on('chat:conversation', function(conv) {
   push()
 })
 
-NotificationStore.on('message', function(conversationId) {
+ShitStore.on('message', function(conversationId) {
   if (ChatStore.getConversationId() !== conversationId || !document.hasFocus()) {
     Sound.play('bells')
     return true
@@ -149,7 +149,7 @@ NotificationStore.on('message', function(conversationId) {
 })
 
 document.addEventListener('focus', function() {
-  NotificationStore.clear('message', ChatStore.getConversationId())
+  ShitStore.clear('message', ChatStore.getConversationId())
 })
 
 request.get('/api/chat').then(function({ body: conversations }) {

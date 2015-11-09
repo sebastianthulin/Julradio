@@ -1,5 +1,4 @@
 #Admin
-  
   th, td
     width 150px
     text-align left
@@ -39,7 +38,6 @@
     margin-top -20px
     margin-bottom 20px
     border-bottom 1px solid rgba(255,255,255,0.2)
-    
     a
       float left
       width calc(100% / 6)
@@ -107,119 +105,43 @@
     background rgba(255, 255, 255, 0.12)
     transition background .2s
 
-above(width)
-  @media all and (min-width: width)
-    {block}
+
+.requestContainer
+  +above(568px)
+    display flex
+    vendor(flex-wrap, wrap)
 
 .Request
-  padding 45px 55px 30px
   position relative
-  min-height 300px
-  cursor pointer
+  padding 20px
+  height 300px
   text-align center
-  display flex
-  flex-direction column
-  -webkit-box-direction normal
-  -webkit-box-orient vertical
-  -webkit-justify-content center
-  justify-content center
-  color #fff
-  border-bottom 3px solid rgba(0, 0, 0, 0.12)
-  background #f00
   border-radius 4px
-  &.tournament
-    background #819EBF    // #869DB6
-
-  // Grid item "border"
-  &::before
-    position absolute
-    content ''
-    top 0px
-    right 55px
-    bottom 0px
-    left 55px
-    border-bottom 1px solid rgba(74, 74, 74, 0.075)
-
-  h2
-    margin 0
-    font-size 1.875em
-    text-align center
-    -webkit-flex 1
-    flex 1
-    display flex
-    -webkit-align-items center
-    align-items center
-    -webkit-justify-content center
-    justify-content center
-    width 100%
-    font-size 23px
-
-  .loader
-    height 1px
-    width 40%
-    margin 1em auto
-    position relative
-    background rgba(255, 255, 255, 0.2)
-
-  .category
-    margin 0
-    position relative
-    font-size 0.95em
-    font-style italic
-    font-family serif
-    text-align center
-    display block
-
-  .meta
-    font-size 0.765em
-    text-align left
-    color rgba(255, 255, 255, 0.54)
-
-    i
-      margin-right 4px
-
-    img
-      display block
-      border-radius 50%
-      margin 2em auto
-      width 40px
-
-    .number-seats, .blind-cost
-      display block
-      float left
-
-    .blind-cost
-      text-align right
-      float right
-
-
-// Viewport sizes based on column number
-+above(600px)
-  .Request
-    padding 45px 45px 30px
-
-+above(568px)
-  .grid
-    display flex
-    flex-wrap wrap
+  background rgba(204, 78, 78, 0.23)
 
   // 2 columns
-  .Request
+  +above(568px)
     width calc(50% - 10px)
-    margin 5px
-    &::before
-      top 5px
-      right 5px
-      bottom 5px
-      left 5px
-      border 1px solid rgba(74, 74, 74, 0.075)
-      transition opacity 0.3s
+    margin 5px  
 
-    &:hover::before
-      border 3px solid darken(#f00, 3)
-      
-// 3 - 6 columns
-for i in (3..6)
-  +above(300px * i + 300px)
-    .Request
+  // 3 - 6 columns
+  for i in (3..6)
+    +above(300px * i + 300px)
       width 'calc(100% / %s - 10px)' % i
+      
+  .actions
+    position absolute
+    left 0
+    right 0
+    bottom 0
+    border-radius 2px
+    overflow hidden
+    button
+      width 50%
+      background rgba(0, 0, 0, 0.06)
+      color rgba(203, 115, 115, 0.76)
+      padding 5px 0
+      font-weight 400
+      font-size 16px
+      &:first-child
+        border-right 1px solid rgba(255, 255, 255, 0.14)
