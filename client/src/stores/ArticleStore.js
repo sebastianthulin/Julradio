@@ -42,6 +42,7 @@ ArticleStore.getOne = function(id, callback) {
   }
   request.get('/api/article/' + id).then(function({ body }) {
     body.article.__html = marked(body.article.content)
+    articleById[body.article._id] = body.article
     callback(body)
   })
 }

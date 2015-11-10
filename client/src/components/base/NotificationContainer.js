@@ -10,40 +10,22 @@ class NotificationContainer extends React.Component {
     this.state = {
       list: []
     }
-    NotificationStore.subscribe(this.handleList.bind(this))
-  }
-
-  handleList(list) {
-    for(let i = 0; i < list.length; i++)
-      list[i].targetY = i
-    this.setState({ list })
-    if (!list.length) 
-      return
-    !this.animationTick && this.animateNotifications()
-    setTimeout(this.stopAnimation.bind(this), list.length * 5000)
+    NotificationStore.subscribe(list => this.setState({ list }))
   }
 
   onHeight(notification, height) {
-    notification.y = -height
     notification.height = height
+    this.setPositions()
   }
 
-  componentWillUnmount() {
-    this.stopAnimation()
-  }
-
-  stopAnimation() {
-    this.animationTick = cancelAnimationFrame(this.animationTick)
-  }
-
-  animateNotifications() {
+  setPositions() {
     const { list } = this.state
-    this.animationTick = requestAnimationFrame(this.animateNotifications.bind(this))
-    for(let i = 0; i < list.length; i++) {
-      const item = list[i]
-      item.y += (item.targetY * (item.height + notificationMargin) - item.y) * animationSpeed // approach target destination
+    let offsetTop = 0
+    for (let i = 0; i < list.length; i++) {
+      list[i].y = offsetTop
+      offsetTop += list[i].height + notificationMargin
     }
-    this.forceUpdate()
+    this.setState({ list })
   }
 
   render() {

@@ -12,7 +12,7 @@ class Comment extends React.Component {
     return (
       <div className="ArticleComment">
         <ProfilePicture id={comment.user.picture} />
-        <Link to={'/'} className="commentUser">{comment.user.username}</Link>
+        <Link to={'/@' + comment.user.username} className="commentUser">{comment.user.username}</Link>
         <TimeSince date={comment.date} />
         <div className="commentText">{comment.text}</div>
       </div>

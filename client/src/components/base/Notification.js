@@ -10,10 +10,9 @@ const settings = {
 }
 
 class Notification extends React.Component {
-
   componentDidMount() {
     const { onHeight } = this.props
-    onHeight(this.refs.container.clientHeight)
+    onHeight(this.refs.notification.clientHeight)
   }
 
   getMessage() {
@@ -28,11 +27,11 @@ class Notification extends React.Component {
   render() {
     const { err, from, y } = this.props
     const style = {
-      transform: 'translateY(' + ~~y + 'px)'
+      transform: `translateY(${y}px)`
     }
     return (
-      <div ref="container" style={style} className={cx('Notification', { err })}>
-        <ProfilePicture id={from.picture}/>
+      <div ref="notification" style={style} className={cx('Notification', { err })}>
+        {from && <ProfilePicture id={from.picture}/>}
         {this.getMessage()}
       </div>
     )

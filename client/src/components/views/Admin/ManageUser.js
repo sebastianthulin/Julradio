@@ -20,7 +20,7 @@ class ManageUser extends React.Component {
   }
 
   render() {
-    const { user, user: { picture } } = this.props
+    const { user } = this.props
     return (
       <div className="oneHalf column">
         <label className="setting">
@@ -39,8 +39,8 @@ class ManageUser extends React.Component {
             ref="title"
           />
         </label>
-        {picture && <img src={'/i/' + picture._id + picture.extension} width="100" />}
-        {picture && <button>Ta bort bild</button>}
+        {user.picture && <img src={'/picture/' + user.picture} width="100" />}
+        {user.picture && <button>Ta bort bild</button>}
         <label className="setting">
           <div className="label">Roller</div>
           <div>

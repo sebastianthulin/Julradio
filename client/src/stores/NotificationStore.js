@@ -11,7 +11,8 @@ NotificationStore.insert = function({ type, from, value, err }) {
     from,
     value,
     err,
-    key: id
+    key: id,
+    y: -80
   }
   state.unshift(notification)
   NotificationStore.emit('change', state.slice())

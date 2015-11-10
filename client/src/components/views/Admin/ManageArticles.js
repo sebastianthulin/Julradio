@@ -2,8 +2,20 @@ const React = require('react')
 const { Link } = require('react-router')
 const ArticleStore = require('../../../stores/ArticleStore')
 const ManageArticle = require('./ManageArticle')
+const TimeSince = require('../../reusable/TimeSince')
 
 class ManageArticles extends React.Component {
+  noti(which) {
+    const err = which === 2
+    const store = require('../../../stores/NotificationStore')
+    const user = require('../../../services/User').get()
+    store.insert({
+      err,
+      type: 'message',
+      from: err ? null : user
+    })
+  }
+
   componentWillMount() {
     this.state = {}
     this.unsubscribe = ArticleStore.subscribe(this.handleArticles.bind(this))
@@ -40,7 +52,7 @@ class ManageArticles extends React.Component {
       <Link className="articleHeaderBox" to={`/admin/articles/${article._id}`} key={article._id}>
         <span className="articleHeader">{article.title}</span>
         <span className="articleAuthor">{article.user.name}</span>
-        <span className="articleTime">{article.date.substr(0, 10)}</span>
+        <span className="articleTime"><TimeSince date={article.date} /></span>
       </Link>
     )
   }
@@ -58,6 +70,8 @@ class ManageArticles extends React.Component {
         {articles.map(this.renderArticle.bind(this))}
         <br/>
         <button className="btn" onClick={this.create.bind(this)}>Skapa ny</button>
+        <button className="btn" onClick={this.noti.bind(this, 1)}>Notify</button>
+        <button className="btn" onClick={this.noti.bind(this, 2)}>Error notify</button>
       </div>
     )
   }

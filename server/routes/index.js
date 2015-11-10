@@ -4,6 +4,7 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 const io = require('../../server').io
+const pictureRoutes = {}
 
 router.use(function(req, res, next) {
   res.setHeader('Expires', '-1')
@@ -28,8 +29,13 @@ router.use(function(req, res, next) {
 })
 
 router.get('/picture/:id', function(req, res) {
-  db.Picture.findById(req.params.id).exec().then(function(doc) {
-    res.redirect('/i/' + doc._id + doc.extension)
+  const id = req.params.id
+  if (pictureRoutes[id]) {
+    return res.redirect(pictureRoutes[id])
+  }
+  db.Picture.findById(id).exec().then(function(doc) {
+    pictureRoutes[id] = '/i/' + doc._id + doc.extension
+    res.redirect(pictureRoutes[id])
   }).catch(function() {
     res.sendStatus(404)
   })
