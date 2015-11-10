@@ -1,4 +1,5 @@
 const React = require('react')
+const { Link } = require('react-router')
 const Modal = require('../../../services/Modal')
 const RequestStore = require('../../../stores/RequestStore')
 const ArticleStore = require('../../../stores/ArticleStore')
@@ -21,7 +22,12 @@ class Front extends React.Component {
     return (
       <div id="Front" className="row">
         <div className="twoThirds column">
-          {articles.map(article => <Article key={article._id} article={article} />)}
+          {articles.map(article => (
+            <div className="article" key={article._id}>
+              <Article article={article} />
+              <Link to={`/article/${article._id}`}>Gå till artikeln och kommentera...</Link>
+            </div>
+          ))}
         </div>
         <div className="oneThird column">
           <Schedule />

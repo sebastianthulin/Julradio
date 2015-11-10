@@ -1,5 +1,6 @@
 const React = require('react')
 const User = require('../../services/User')
+const NotificationStore = require('../../stores/NotificationStore')
 
 class Settings extends React.Component {
   componentWillMount() {
@@ -67,14 +68,19 @@ class Settings extends React.Component {
 
   save2(opts) {
     User.updateField(opts).then(() => {
-      console.log('saved.')
+      NotificationStore.insert({
+        type: 'setting',
+        value: opts.field
+      })
     }).catch(this.handleError.bind(this))
   }
 
   setAvatar(ev) {
     const file = ev.target.files[0]
     User.setAvatar(file).then(() => {
-      alert('profilbild uppdaterad.')
+      NotificationStore.insert({
+        type: 'profilepicture'
+      })
     }).catch(this.handleError.bind(this))
   }
 

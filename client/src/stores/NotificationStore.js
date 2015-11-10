@@ -3,19 +3,28 @@ const NotificationStore = new EventEmitter
 
 const state = []
 
-NotificationStore.insert = function({ type, value }) {
+NotificationStore.insert = function({ type, value, err }) {
+  const id = Math.random()
   const notification = {
-    key: Math.random(),
+    id,
     type,
     value,
-    visible: true
+    err,
+    key: id
   }
-  state.push(notification)
+  state.unshift(notification)
   NotificationStore.emit('change', state.slice())
-  setTimeout(function() {
-    state.splice(state.indexOf(notification), 1)
-    NotificationStore.emit('change', state.slice())
-  }, 5000)
+  setTimeout(NotificationStore.clear.bind(null, id), 5000)
+}
+
+NotificationStore.clear = function(id) {
+  let i = state.length
+  while (i--) {
+    if (state[i].id === id) {
+      state.splice(i, 1)
+    }
+  }
+  NotificationStore.emit('change', state.slice())
 }
 
 NotificationStore.subscribe = function(handler) {

@@ -9,7 +9,7 @@ const schema = new Schema({
     required: true,
     trim: true
   },
-  from: {
+  user: {
     type: Schema.ObjectId,
     ref: 'users'
   },

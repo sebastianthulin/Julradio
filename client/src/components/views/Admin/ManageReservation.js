@@ -117,13 +117,13 @@ class ManageReservation extends React.Component {
         <button
           children={isNew ? 'Skapa' : 'Spara ändringar'}
           className="btn"
-          style={{float: 'right'}}
+          style={{float: 'right', marginRight: 0}}
           onClick={this.save.bind(this)}
         />
         {!isNew && <button
           children="Ta bort"
           className="btn"
-          style={{float: 'right', marginRight: 10}}
+          style={{float: 'right'}}
           onClick={this.delete.bind(this)}
         />}
       </div>

@@ -5,10 +5,10 @@ const Article = require('../reusable/Article')
 
 class Comment extends React.Component {
   render() {
-    const {comment} = this.props
+    const { comment } = this.props
     return (
       <div className="ArticleComment">
-      {comment.text}
+        {comment.text}
       </div>
     )
   }

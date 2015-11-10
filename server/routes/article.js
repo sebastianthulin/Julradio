@@ -20,13 +20,21 @@ router.get('/:id', function(req, res) {
   })
 })
 
+router.use(function(req, res, next) {
+  if (req.user) {
+    next()
+  } else {
+    res.status(500).send({err: 'not signed in'})
+  }
+})
+
 router.post('/:id/comment', function(req, res) {
   const b = req.body
   const articleId = req.params.id
   new db.ArticleComment({
     text: b.comment,
-    article: articleId,
-    user: req.session.uid || 1
+    user: req.user._id,
+    article: articleId
   }).save().then(function(comment) {
     res.send(comment)
   }, function() {
