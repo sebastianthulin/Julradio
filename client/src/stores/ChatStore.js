@@ -1,3 +1,4 @@
+
 const { EventEmitter } = require('events')
 const socket = require('../services/socket')
 const request = require('../services/request')
@@ -5,6 +6,7 @@ const User = require('../services/User')
 const Sound = require('../services/Sound')
 const UserStore = require('./UserStore')
 const ShitStore = require('./ShitStore')
+const NotificationStore = require('./NotificationStore')
 const ChatStore = new EventEmitter
 const threadsById = {}
 const threadsByUserId = {}
@@ -76,6 +78,11 @@ ChatStore.sendMessage = function(text) {
     text,
     userId: state.targetUser._id,
     conversationId: ChatStore.getConversationId()
+  }, function(err) {
+    NotificationStore.insert({
+      err,
+      type: 'message'
+    })
   })
 }
 

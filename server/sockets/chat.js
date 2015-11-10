@@ -66,7 +66,7 @@ function sendMessage(from, conversationId, text) {
 }
 
 function chatHandler(socket) {
-  socket.on('chat:message', function(opts) {
+  socket.on('chat:message', function(opts, errHandler) {
     if (typeof opts !== 'object' || !opts.text) return
     getBlockage(socket.uid, opts.userId).then(function(relationship) {
       if (relationship) {
@@ -76,7 +76,7 @@ function chatHandler(socket) {
     }).then(function(conversationId) {
       return sendMessage(socket.uid, conversationId, opts.text)
     }).catch(function(err) {
-      console.log('@chat:message handler', err)
+      errHandler && errHandler(err)
     })
   })
 }
