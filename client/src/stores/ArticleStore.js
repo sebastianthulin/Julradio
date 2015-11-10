@@ -4,6 +4,7 @@ const request = require('../services/request')
 const ArticleStore = new EventEmitter
 
 var articles = []
+var articleById = {}
 
 ArticleStore.create = function(opts, callback) {
   request.post('/api/articles', opts).then(function({ body }) {
@@ -24,14 +25,21 @@ ArticleStore.get = function(callback) {
   typeof callback === 'function' && callback(articles)
   request.get('/api/articles').then(function({ body }) {
     articles = body
-    articles.sort((a, b) => new Date(b.date) - new Date(a.date))
-    articles.forEach(article => article.__html = marked(article.content))
+    articles.forEach(article => {
+      article.date = new Date(article.date)
+      article.__html = marked(article.content)
+      articleById[article._id] = article
+    })
+    articles.sort((a, b) => b.date - a.date)
     typeof callback === 'function' && callback(articles)
     ArticleStore.emit('articles', articles)
   })
 }
 
 ArticleStore.getOne = function(id, callback) {
+  if (articleById[id]) {
+    callback({article: articleById[id]})
+  }
   request.get('/api/article/' + id).then(function({ body }) {
     body.article.__html = marked(body.article.content)
     callback(body)

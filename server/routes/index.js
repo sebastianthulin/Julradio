@@ -10,7 +10,7 @@ router.use(function(req, res, next) {
   res.setHeader('Cache-Control', 'must-revalidate, private')
   const uid = req.session.uid
   if (!uid) return next()
-  db.User.findById(uid).select('-hash').populate('picture').lean().exec().then(function(user) {
+  db.User.findById(uid).select('-hash').lean().exec().then(function(user) {
     if (!user || (user && user.banned)) {
       // Disauth user
       throw new Error()
@@ -25,6 +25,14 @@ router.use(function(req, res, next) {
 }, function(req, res, next) {
   // console.log(req.ip, req.method, req.url, req.user ? req.user.username : '')
   next()
+})
+
+router.get('/picture/:id', function(req, res) {
+  db.Picture.findById(req.params.id).exec().then(function(doc) {
+    res.redirect('/i/' + doc._id + doc.extension)
+  }).catch(function() {
+    res.sendStatus(404)
+  })
 })
 
 router.use('/api/user', require('./user'))

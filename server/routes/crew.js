@@ -8,7 +8,7 @@ const db = require('../models')
 function sendCrew(req, res) {
   db.redis.get('crew', function(err, crewList) {
     crewList = JSON.parse(crewList) || []
-    db.User.find({_id: {$in: crewList}}).select('-hash -email').populate('picture').exec(function(err, docs) {
+    db.User.find({_id: {$in: crewList}}).select('-hash -email').exec(function(err, docs) {
       const crew = {}
       for (let doc of docs) {
         crew[doc._id] = doc

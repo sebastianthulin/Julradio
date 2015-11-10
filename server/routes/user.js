@@ -17,25 +17,16 @@ const upload = multer({
 }).single('avatar')
 
 function getUserDoc(userId) {
-  return db.User.findById(userId).select('-hash -email').populate('picture').lean().exec()
+  return db.User.findById(userId).select('-hash -email').lean().exec()
 }
 
 function getWallPosts(userId) {
-  return new Promise(function(resolve, reject) {
-    db.WallPost.find({
-      to: userId
-    }).populate({
-      path: 'from',
-      select: '-hash -email'
-    }).exec().then(function(posts) {
-      db.WallPost.populate(posts, {
-        path: 'from.picture',
-        model: 'pictures'
-      }, function(err, posts) {
-        err ? reject(err) : resolve(posts)
-      })
-    }, reject)
-  })
+  return db.WallPost.find({
+    to: userId
+  }).populate({
+    path: 'from',
+    select: '-hash -email'
+  }).exec()
 }
 
 router.get('/logout', function(req, res) {
@@ -45,7 +36,7 @@ router.get('/logout', function(req, res) {
 
 router.get('/byname/:username', function(req, res) {
   const usernameLower = String(req.params.username).toLowerCase()
-  db.User.findOne({ usernameLower }).select('-hash -email').populate('picture').lean().exec(function(err, user) {
+  db.User.findOne({ usernameLower }).select('-hash -email').lean().exec(function(err, user) {
     user ? res.send(user) : res.sendStatus(200)
   })
 })
@@ -205,7 +196,7 @@ router.put('/field', function(req, res) {
       [b.field]: b.value
     }, {
       new: true
-    }).select('-hash').populate('picture').exec().then(function(user) {
+    }).select('-hash').exec().then(function(user) {
       res.send(user)
     }).catch(function(err) {
       console.error('@/field handler', err)
@@ -218,7 +209,7 @@ router.put('/field', function(req, res) {
 
 router.put('/settings', function(req, res) {
   const b = req.body
-  db.User.findById(req.session.uid).populate('picture').exec().then(function(user) {
+  db.User.findById(req.session.uid).exec().then(function(user) {
     if (!user.auth(b.auth)) {
       throw new Error('INCORRECT_PASSWORD')
     }
@@ -287,7 +278,7 @@ router.post('/profilepicture', function(req, res) {
                   picture: picture._id
                 }, {
                   new: true
-                }).select('-hash').populate('picture').exec()
+                }).select('-hash').exec()
               }).then(function(user) {
                 res.send(user)
               }, function(err) {

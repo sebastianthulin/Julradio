@@ -6,7 +6,7 @@ const ProfilePicture = require('../reusable/ProfilePicture')
 const CrewMember = ({ id, username, name, title, description, picture }) => (
   <div className="CrewMember">
     <header>
-      {picture && <ProfilePicture {...picture} />}
+      <ProfilePicture id={picture} />
       <div className="meta">
         <div className="name">{name}</div>
         {title && <div className="title">{title}</div>}

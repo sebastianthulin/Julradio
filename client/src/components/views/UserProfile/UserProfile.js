@@ -41,7 +41,7 @@ class UserProfile extends React.Component {
     return (
       <div id="UserProfile">
         <header>
-          <ProfilePicture {...user.picture} />
+          <ProfilePicture id={user.picture} />
           {authedUser._id && authedUser._id !== user._id && <ProfileOptions
             user={user}
             relationship={relationship}

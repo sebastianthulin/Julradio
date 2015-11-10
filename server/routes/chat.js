@@ -19,12 +19,7 @@ router.get('/', function(req, res) {
     path: 'users lastMessage',
     select: '-hash -email'
   }).exec().then(function(conversations) {
-    db.Conversation.populate(conversations, {
-      path: 'users.picture',
-      model: 'pictures'
-    }, function(err, conversations) {
-      res.send(conversations)
-    })
+    res.send(conversations)
   })
 })
 

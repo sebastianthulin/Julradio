@@ -26,7 +26,7 @@ class WallPost extends React.Component {
     return (
       <div className="WallPost">
         <div className="author">
-          <ProfilePicture {...user.picture} />
+          <ProfilePicture id={user.picture} />
           <Link to={'/@' + user.username} className="user">{user.username}</Link>
           <TimeSince date={date} />
         </div>

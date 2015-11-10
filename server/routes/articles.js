@@ -9,12 +9,7 @@ router.get('/', function(req, res) {
     path: 'user',
     select: '-hash -email'
   }).exec().then(function(articles) {
-    db.Article.populate(articles, {
-      path: 'user.picture',
-      model: 'pictures'
-    }, function(err, articles) {
-      res.send(articles)
-    })
+    res.send(articles)
   })
 })
 

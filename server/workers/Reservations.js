@@ -29,14 +29,9 @@ function update(items) {
     path: 'user',
     select: '-hash -email'
   }).exec().then(function(docs) {
-    db.Reservation.populate(docs, {
-      path: 'user.picture',
-      model: 'pictures'
-    }, function(err, docs) {
-      reservations = docs.sort((a, b) => a.startDate - b.startDate)
-      process.send(reservations)
-      io.emit('reservations', reservations)
-    })
+    reservations = docs.sort((a, b) => a.startDate - b.startDate)
+    process.send(reservations)
+    io.emit('reservations', reservations)
   })
 }
 

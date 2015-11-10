@@ -1,9 +1,9 @@
 const React = require('react')
 
-const ProfilePicture = ({ _id, extension }) => _id ? (
+const ProfilePicture = ({ id }) => id ? (
   <img
     className="ProfilePicture"
-    src={'/i/' + _id + extension}
+    src={'/picture/' + id}
     alt="Profilbild"
   />
 ) : (

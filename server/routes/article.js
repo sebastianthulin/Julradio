@@ -9,13 +9,8 @@ router.get('/:id', function(req, res) {
     path: 'user',
     select: '-hash -email'
   }).exec(function(err, article) {
-    db.Article.populate(article, {
-      path: 'user.picture',
-      model: 'pictures'
-    }, function(err, article) {
-      db.ArticleComment.find({article}).exec().then(function(comments) {
-        res.send({article, comments})
-      })
+    db.ArticleComment.find({ article }).populate({path: 'user', select: '-hash'}).exec().then(function(comments) {
+      res.send({ article, comments })
     })
   })
 })
