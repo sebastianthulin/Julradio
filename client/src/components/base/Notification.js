@@ -1,4 +1,5 @@
 const React = require('react')
+const ProfilePicture = require('../reusable/ProfilePicture')
 const cx = require('classnames')
 
 const settings = {
@@ -19,9 +20,13 @@ class Notification extends React.Component {
   }
 
   render() {
-    const { err } = this.props
+    const { err, from, y } = this.props
+    const style = {
+      transform: 'translateY(' + ~~y + 'px)'
+    }
     return (
-      <div className={cx('Notification', { err })}>
+      <div style={style} className={cx('Notification', { err })}>
+        <ProfilePicture id={from.picture}/>
         {this.getMessage()}
       </div>
     )

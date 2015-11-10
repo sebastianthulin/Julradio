@@ -3,14 +3,16 @@ const NotificationStore = new EventEmitter
 
 const state = []
 
-NotificationStore.insert = function({ type, value, err }) {
+NotificationStore.insert = function({ type, from, value, err }) {
   const id = Math.random()
   const notification = {
     id,
     type,
+    from,
     value,
     err,
-    key: id
+    key: id,
+    y: -80
   }
   state.unshift(notification)
   NotificationStore.emit('change', state.slice())

@@ -57,6 +57,7 @@ function sendMessage(from, conversationId, text) {
       io.to(userId).emit('chat:message', message)
       Notify({
         userId,
+        from,
         type: 'message',
         value: conversationId
       })
