@@ -10,6 +10,12 @@ const settings = {
 }
 
 class Notification extends React.Component {
+
+  componentDidMount() {
+    const { onHeight } = this.props
+    onHeight(this.refs.container.clientHeight)
+  }
+
   getMessage() {
     const { type, value, err } = this.props
     switch (type) {
@@ -25,7 +31,7 @@ class Notification extends React.Component {
       transform: 'translateY(' + ~~y + 'px)'
     }
     return (
-      <div style={style} className={cx('Notification', { err })}>
+      <div ref="container" style={style} className={cx('Notification', { err })}>
         <ProfilePicture id={from.picture}/>
         {this.getMessage()}
       </div>
