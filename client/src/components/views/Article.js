@@ -8,7 +8,12 @@ class Comment extends React.Component {
     const { comment } = this.props
     return (
       <div className="ArticleComment">
-        {comment.text}
+        <div className="comment">
+          <div className="commentPic"></div>
+          <div className="commentUser">Oliver Johansson</div>
+          <div className="commentTime">2015-11-15</div>
+          <div className="commentText">{comment.text}</div>
+        </div>
       </div>
     )
   }
@@ -36,9 +41,12 @@ class ArticleView extends React.Component {
       <div id="ArticleView">
         {article && <Article key={article._id} article={article} />}
         <form onSubmit={this.comment.bind(this)}>
-          <input type="text" ref="comment" placeholder="Kommentera" />
+          <input className="commentsInput" type="text" ref="comment" placeholder="Kommentera" />
         </form>
-        {comments && comments.map(comment => <Comment key={comment._id} comment={comment} />)}
+
+        
+          {comments && comments.map(comment => <Comment key={comment._id} comment={comment} />)}
+        
       </div>
     )
   }

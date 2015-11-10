@@ -25,7 +25,7 @@ class Front extends React.Component {
           {articles.map(article => (
             <div className="article" key={article._id}>
               <Article article={article} />
-              <Link to={`/article/${article._id}`}>Gå till artikeln och kommentera...</Link>
+              <Link to={`/article/${article._id}`} className="kommenterapls">Kommentera <i className="fa fa-comment-o"/></Link>
             </div>
           ))}
         </div>
