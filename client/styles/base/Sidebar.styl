@@ -121,9 +121,9 @@
     height 80px
     width 100%
     background rgba(0, 0, 0, 0.26)
-    overflow hidden
     .songTitle
       white-space nowrap
+      overflow hidden
     img
       width 80px
       height 100%
@@ -136,31 +136,52 @@
       padding 14px
       .controls
         display flex
-        align-items center
-        justify-content space-between
+        //align-items center
+        //justify-content space-between
+        .host
+          font-weight bold
+        .item
+          margin-right 12px
+          width 20px
         i
           font-size 24px
-
-  #VolumeSlider
-    width calc(100% - 34px)
-    height 6px
-    border-radius 3px
-    background rgba(255, 255, 255, 0.27)
-    text-align left
-    overflow hidden
-    cursor pointer
-    transition opacity .4s
-    .volume
-      display inline-block
-      vertical-align top
-      height 100%
-      background #DD1616
-    .handle
-      position absolute
-      display inline-block
-      margin-top -3px
-      margin-left -6px
-      width 12px
-      height 12px
-      border-radius 50%
-      background #FFF
+          cursor pointer
+          width 100%
+        .volumeControl
+          position relative
+          &:hover #VolumeSlider, #VolumeSlider.adjusting
+            visibility visible
+            opacity 1
+            transition-delay 0s
+          #VolumeSlider
+            visibility hidden
+            opacity 0
+            transition visibility .5s, opacity .25s ease
+            transition-delay .5s
+            position absolute
+            left 0px
+            right 0px
+            bottom 32px
+            height 100px
+            width 8px
+            background #FFF
+            border-radius 10px
+            margin 0 auto
+            cursor pointer
+            .volume
+              position absolute
+              pointer-events none
+              display inline-block
+              width 100%
+              background #DD1616
+              border-radius 10px
+              bottom 0
+            .handle
+              position absolute
+              display inline-block
+              margin-top -8px
+              margin-left -2.5px
+              width 12px
+              height 12px
+              border-radius 50%
+              background #FFF
