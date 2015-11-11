@@ -87,7 +87,7 @@ const routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Front} />
     <Route path="article/:id" component={ArticleView} />
-    <Route path="user/reset/:id" component={ResetPassword} />
+    <Route path="forgot/:id" component={ResetPassword} />
     <Route path="crew" component={Crew} />
     <Route path="history" component={History} />
     <Route path="messages" component={Messages} onEnter={requireAuth} />

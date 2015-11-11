@@ -12,7 +12,10 @@ const schema = new Schema({
     lowercase: true,
     unique: true
   },
-  email: String,
+  email: {
+    type: String,
+    lowercase: true
+  },
   hash: String,
   name: String,
   birth: Date,

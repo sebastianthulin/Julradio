@@ -42,6 +42,7 @@ router.get('/picture/:id', function(req, res) {
 })
 
 router.use('/api/user', require('./user'))
+router.use('/api/forgot', require('./forgot'))
 router.use('/api/article', require('./article'))
 router.use('/api/articles', require('./articles'))
 router.use('/api/chat', require('./chat'))

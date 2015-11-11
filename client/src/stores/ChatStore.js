@@ -37,7 +37,7 @@ ChatStore.select = function(username) {
   })
 }
 
-ChatStore.load = function() {
+ChatStore.load = function(callback) {
   const chatId = ChatStore.getConversationId()
   const conversation = threadsById[chatId]
   let messageIds
@@ -60,6 +60,7 @@ ChatStore.load = function() {
     }
     conversation.loaded = true
     messageIds.sort((a, b) => messagesById[a].date - messagesById[b].date)
+    callback && callback()
     updateMessages()
   }).catch(function(err) {
     console.log('Couldn\'t load conversation', err)

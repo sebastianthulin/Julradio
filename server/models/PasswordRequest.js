@@ -15,7 +15,7 @@ const schema = new Schema({
   validTo: {
     type: Date,
     default: function() {
-      return Date.now() + 1000 * 60 * 24
+      return Date.now() + 1000 * 60 * 30
     }
   }
 })

@@ -22,17 +22,26 @@ class Messages extends React.Component {
     ChatStore.select(props.params.user)
   }
 
-  componentWillUpdate(props) {
-    if (this.props.params.user !== props.params.user) {
+  componentWillUpdate(props, state) {
+    const node = this.refs.messages
+    if (this.fixScroll) {
+      this.scrollHeight = node.scrollHeight
+    } else if (this.props.params.user !== props.params.user) {
       this.doScroll = true
     } else {
-      const node = this.refs.messages
       this.doScroll = node && node.scrollHeight - node.clientHeight - node.scrollTop < 100
     }
   }
 
   componentDidUpdate() {
-    this.doScroll && this.scrollToBottom()
+    const node = this.refs.messages
+    if (this.fixScroll) {
+      const growth = node.scrollHeight - this.scrollHeight
+      node.scrollTop += growth
+      this.fixScroll = false
+    } else if (this.doScroll) {
+      this.scrollToBottom()
+    }
   }
 
   componentWillUnmount() {
@@ -56,8 +65,10 @@ class Messages extends React.Component {
     this.refs.input.value = ''
   }
 
-  loadMore() {
-    ChatStore.load(this.props.params.user)
+  loadMore(ev) {
+    if (ev.target.scrollTop === 0) {
+      ChatStore.load(() => this.fixScroll = true)
+    }
   }
 
   renderInitialScreen() {
@@ -76,8 +87,7 @@ class Messages extends React.Component {
         <div className="user">
           <Link to={`/@${targetUser.username}`}>{targetUser.username}</Link>
         </div>
-        <div className="messageContainer" ref="messages">
-          <button onClick={this.loadMore.bind(this)}>More</button>
+        <div className="messageContainer" ref="messages" onScroll={this.loadMore.bind(this)}>
           {messages.map(message => <Message key={message._id} right={userId === message.user} message={message} />)}
         </div>
         <form onSubmit={this.sendMessage.bind(this)}>

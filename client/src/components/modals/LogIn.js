@@ -48,8 +48,8 @@ class LogIn extends React.Component {
           Logga in
         </header>
         <main>
-          {
-            !forgotPassword ? <form onSubmit={this.handleSubmit.bind(this)}>
+          {!forgotPassword ? (
+            <form onSubmit={this.handleSubmit.bind(this)}>
               <label>Användarnamn</label>
               <input type="text" ref="username" />
               <label>Password <span onClick={this.forgotPassword.bind(this)} className="forgotPassword">(Glömt?)</span></label>
@@ -57,15 +57,16 @@ class LogIn extends React.Component {
               <div className="submit">
                 <button>Logga in</button>
               </div>
-            </form> :
+            </form>
+          ) : (
             <form onSubmit={this.handleForgot.bind(this)}>
               <label>Email</label>
-              <input ref="forgotEmail" type="text" />
+              <input key={1} type="text" ref="forgotEmail" />
               <div className="submit">
                 <button>Begär nytt lösenord</button>
               </div>
             </form>
-          }
+          )}
         </main>
       </div>
     )
