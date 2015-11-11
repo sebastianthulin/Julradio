@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events')
-const Promise = require('es6-promise').Promise
+const { Promise } = require('es6-promise')
 const request = require('../services/request')
 const UserStore = require('../stores/UserStore')
 const User = new EventEmitter
@@ -17,15 +17,17 @@ User.unBlock = userId => request.del('/api/user/block/' + userId)
 User.wallPost = (userId, text) => request.post('/api/user/wallpost', { userId, text })
 User.deleteWallPost = postId => request.del('/api/user/wallpost/' + postId)
 
-User.updateField = opts => new Promise(function(resolve, reject) {
-  request.put('/api/user/field', opts).then(function({ body: user }) {
+User.update = opts => new Promise(function(resolve, reject) {
+  request.put('/api/user/settings', opts).then(function({ body: user }) {
     User.set(user)
     resolve(user)
-  }).catch(reject)
+  }).catch(function({ response }) {
+    reject(response.body.err)
+  })
 })
 
-User.updateSettings = opts => new Promise(function(resolve, reject) {
-  request.put('/api/user/settings', opts).then(function({ body: user }) {
+User.update2 = opts => new Promise(function(resolve, reject) {
+  request.put('/api/user/settings2', opts).then(function({ body: user }) {
     User.set(user)
     resolve(user)
   }).catch(function({ response }) {

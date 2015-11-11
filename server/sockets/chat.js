@@ -76,7 +76,8 @@ function chatHandler(socket) {
     }).then(function(conversationId) {
       return sendMessage(socket.uid, conversationId, opts.text)
     }).catch(function(err) {
-      errHandler && errHandler(err)
+      console.error('@chatHandler', err)
+      errHandler && errHandler()
     })
   })
 }

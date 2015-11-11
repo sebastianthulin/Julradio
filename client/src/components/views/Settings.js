@@ -2,6 +2,26 @@ const React = require('react')
 const User = require('../../services/User')
 const NotificationStore = require('../../stores/NotificationStore')
 
+const months = [
+  'Januari',
+  'Februari',
+  'Mars',
+  'April',
+  'Maj',
+  'Juni',
+  'Juli',
+  'Augusti',
+  'September',
+  'Oktober',
+  'November',
+  'December'
+]
+
+const days = []
+for (let i = 1; i <= 31; i++) {
+  days.push(i)
+}
+
 class Settings extends React.Component {
   componentWillMount() {
     this.timeouts = {}
@@ -46,7 +66,7 @@ class Settings extends React.Component {
 
   saveFields(ev) {
     ev.preventDefault()
-    User.updateSettings({
+    User.update2({
       email: this.refs.email.value,
       password: this.refs.password.value,
       auth: this.refs.auth.value
@@ -60,19 +80,20 @@ class Settings extends React.Component {
   }
 
   save(ev) {
-    const field = ev.target.name
-    const value = ev.target.value
-    clearTimeout(this.timeouts[field])
-    this.timeouts[field] = setTimeout(this.save2.bind(this, { field, value }), 500)
-  }
-
-  save2(opts) {
-    User.updateField(opts).then(() => {
-      NotificationStore.insert({
-        type: 'setting',
-        value: opts.field
-      })
-    }).catch(this.handleError.bind(this))
+    User.update({
+      name: this.refs.name.value,
+      gender: this.refs.gender.value,
+      location: this.refs.location.value,
+      description: this.refs.description.value,
+      year: Number(this.refs.year.value),
+      month: Number(this.refs.month.value),
+      day: Number(this.refs.day.value)
+    }).then(() => {
+      NotificationStore.insert({type: 'settings'})
+    }).catch(err => {
+      console.log(err)
+      NotificationStore.error({type: 'settings', value: err})
+    })
   }
 
   setAvatar(ev) {
@@ -99,7 +120,7 @@ class Settings extends React.Component {
         </label>
         <div className="confirmation">
           <p>{`För att ändra din ${changes} så måste du skriva in ditt nuvarande lösenord.`}</p>
-          <button className="btn">Save</button>
+          <button className="btn">Spara</button>
         </div>
       </form>
     )
@@ -107,6 +128,7 @@ class Settings extends React.Component {
 
   render() {
     const { user, changes } = this.state
+    const dob = new Date(user.birth)
     return (
       <div id="Settings">
         <h1>Profilinställningar</h1>
@@ -131,17 +153,16 @@ class Settings extends React.Component {
           </label>
           {changes && this.renderConfirmation()}
           <label className="setting">
-            <div className="label">IRL namn</div>
+            <div className="label">Namn</div>
             <input
               type="text"
               defaultValue={user.name}
-              name="name"
-              onChange={this.save.bind(this)}
+              ref="name"
             />
           </label>
           <label className="setting">
             <div className="label">Kön</div>
-            <select defaultValue={user.gender} name="gender" onChange={this.save.bind(this)}>
+            <select defaultValue={user.gender} ref="gender">
               <option value="">Välj</option>
               <option value="MALE">Pojke</option>
               <option value="FEMALE">Flicka</option>
@@ -152,25 +173,33 @@ class Settings extends React.Component {
             <input
               type="text"
               defaultValue={user.location}
-              name="location"
-              onChange={this.save.bind(this)}
+              ref="location"
             />
           </label>
           <label className="setting">
             <div className="label">Födelsedag</div>
-            <input
-              type="text"
-              name="birth"
-            />
+            <div>
+              <input
+                type="text"
+                defaultValue={dob.getFullYear()}
+                ref="year"
+                style={{width: '33%'}}
+              />
+              <select ref="month" defaultValue={dob.getMonth()} style={{width: '33%'}}>
+                {months.map((m, i) => <option key={i} value={i}>{m}</option>)}
+              </select>
+              <select ref="day" defaultValue={dob.getDate()} style={{width: '33%'}}>
+                {days.map(d => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
           </label>
           <label className="setting">
             <div className="label">Personlig beskrivning</div>
             <textarea
               defaultValue={user.description}
-              name="description"
+              ref="description"
               placeholder="— (500 tecken högst)"
               maxLength={500}
-              onChange={this.save.bind(this)}
             />
           </label>
           <label className="setting">
@@ -180,6 +209,12 @@ class Settings extends React.Component {
               onChange={this.setAvatar.bind(this)}
             />
           </label>
+          <button
+            children="Spara"
+            className="btn"
+            style={{float: 'right', marginRight: 0}}
+            onClick={this.save.bind(this)}
+          />
         </div>
       </div>
     )

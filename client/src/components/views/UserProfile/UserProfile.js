@@ -49,7 +49,9 @@ class UserProfile extends React.Component {
           />}
           <div className="username">{user.username}</div>
           {user.title && <div className="title">{user.title}</div>}
-          <div className="age">{user.location && user.location + ','} {user.gender} 20 år</div>
+          <div className="age">{user.age && user.age + ' år'}</div>
+          {user.location}
+          {user.gender}
           <div className="description">{user.description}</div>
           <div>Medlem i <TimeSince date={user.date} short={true} /></div>
         </header>

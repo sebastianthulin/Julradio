@@ -10,10 +10,9 @@ class ManageArticles extends React.Component {
     const store = require('../../../stores/NotificationStore')
     const user = require('../../../services/User').get()
     store.insert({
-      err,
       type: 'message',
       from: err ? null : user
-    })
+    }, err)
   }
 
   componentWillMount() {

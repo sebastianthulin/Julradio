@@ -2,13 +2,6 @@ const React = require('react')
 const ProfilePicture = require('../reusable/ProfilePicture')
 const cx = require('classnames')
 
-const settings = {
-  name: 'Namn',
-  gender: 'Kön',
-  location: 'Bor',
-  description: 'Personlig beskrivning'
-}
-
 class Notification extends React.Component {
   componentDidMount() {
     const { onHeight } = this.props
@@ -16,12 +9,17 @@ class Notification extends React.Component {
   }
 
   getMessage() {
-    const { type, value, err } = this.props
+    const { type, value } = this.props
     switch (type) {
-      case 'setting': return settings[value] + ' sparat'
+      case 'settings': return 'Profilinställningar uppdaterade'
       case 'profilepicture': return 'Profilbild uppdaterad'
       default: return type
     }
+  }
+
+  getErrorMessage() {
+    const { type, value } = this.props
+    return type
   }
 
   render() {
@@ -30,9 +28,9 @@ class Notification extends React.Component {
       transform: `translateY(${y}px)`
     }
     return (
-      <div ref="notification" style={style} className={cx('Notification', { err })}>
-        {from && <ProfilePicture id={from.picture}/>}
-        {this.getMessage()}
+      <div ref="notification" className={cx('Notification', { err })} style={style}>
+        {from && <ProfilePicture id={from.picture} />}
+        {err ? this.getErrorMessage() : this.getMessage()}
       </div>
     )
   }

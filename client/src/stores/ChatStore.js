@@ -1,4 +1,3 @@
-
 const { EventEmitter } = require('events')
 const socket = require('../services/socket')
 const request = require('../services/request')
@@ -41,7 +40,7 @@ ChatStore.select = function(username) {
 ChatStore.load = function() {
   const chatId = ChatStore.getConversationId()
   const conversation = threadsById[chatId]
-  var messageIds
+  let messageIds
 
   if (conversation.loaded) {
     messageIds = messageIdsByThreadId[chatId]
@@ -52,9 +51,9 @@ ChatStore.load = function() {
   }
 
   request.get(`/api/chat/${chatId}/${conversation.offset}`).then(function({ body: messages }) {
-    var i = messages.length
+    let i = messages.length
     while (i--) {
-      var message = messages[i]
+      const message = messages[i]
       message.date = new Date(message.date)
       messageIds.push(message._id)
       messagesById[message._id] = message
@@ -78,11 +77,8 @@ ChatStore.sendMessage = function(text) {
     text,
     userId: state.targetUser._id,
     conversationId: ChatStore.getConversationId()
-  }, function(err) {
-    NotificationStore.insert({
-      err,
-      type: 'message'
-    })
+  }, function() {
+    NotificationStore.error({type: 'message'})
   })
 }
 

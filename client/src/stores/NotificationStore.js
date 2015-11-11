@@ -3,7 +3,7 @@ const NotificationStore = new EventEmitter
 
 const state = []
 
-NotificationStore.insert = function({ type, from, value, err }) {
+NotificationStore.insert = function({ type, from, value }, err) {
   const id = Math.random()
   const notification = {
     id,
@@ -18,6 +18,8 @@ NotificationStore.insert = function({ type, from, value, err }) {
   NotificationStore.emit('change', state.slice())
   setTimeout(NotificationStore.clear.bind(null, id), 5000)
 }
+
+NotificationStore.error = opts => NotificationStore.insert(opts, true)
 
 NotificationStore.clear = function(id) {
   let i = state.length

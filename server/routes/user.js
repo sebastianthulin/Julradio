@@ -258,7 +258,35 @@ router.put('/field', function(req, res) {
   }
 })
 
+const fieldTypes = [{
+  name: 'name',
+  type: 'string'
+}, {
+  name: 'gender',
+
+}]
 router.put('/settings', function(req, res) {
+  const b = req.body
+  if (['MALE', 'FEMALE'].indexOf(b.gender) === -1) {
+    // ...
+  }
+  db.User.findByIdAndUpdate(req.user._id, {
+    name: b.name,
+    gender: b.gender,
+    location: b.location,
+    description: b.description,
+    birth: new Date(b.year, b.month, b.day)
+  }, {
+    new: true
+  }).select('-hash').exec().then(function(user) {
+    res.send(user)
+  }).catch(function(err) {
+    console.error('@/settings handler', err)
+    res.sendStatus(500)
+  })
+})
+
+router.put('/settings2', function(req, res) {
   const b = req.body
   db.User.findById(req.session.uid).exec().then(function(user) {
     if (!user.auth(b.auth)) {
@@ -275,7 +303,7 @@ router.put('/settings', function(req, res) {
     delete user.hash
     res.send(user)
   }).catch(function(err) {
-    console.error(err)
+    console.error('@/settings2 handler', err)
     res.status(500).send({err: err.toString()})
   })
 })
