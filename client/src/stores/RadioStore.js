@@ -31,6 +31,10 @@ Radio.toggle = function() {
   audio.paused ? Radio.play() : Radio.pause()
 }
 
+Radio.toggleMute = function() {
+  Radio.setVolume(audio.volume > 0 ? 0 : 1)
+}
+
 Radio.setVolume = function(vol) {
   vol = vol > 1 ? 1 : vol < 0 ? 0 : vol
   audio.volume = state.volume = localStorage.volume = vol

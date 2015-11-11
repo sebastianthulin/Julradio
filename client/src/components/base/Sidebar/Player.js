@@ -13,8 +13,7 @@ class Player extends React.Component {
   }
 
   toggleMute() {
-    const { volume } = this.state
-    RadioStore.setVolume( volume ? 0: 1 )
+    RadioStore.toggleMute()
   }
 
   render() {
