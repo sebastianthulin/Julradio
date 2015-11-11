@@ -8,8 +8,20 @@
   background rgba(130, 9, 9, 0.75)
   transform translateX(-300px)
   transition transform .4s
+  @media (max-height: 700px)
+    .main
+      padding 20px 0 !important
+    .ProfilePicture
+      display none
+    .logo
+      a
+        font-size 32px !important
+      hr
+        display none
+
   +desktop()
     transform none
+
   .main
     display flex
     flex-direction column

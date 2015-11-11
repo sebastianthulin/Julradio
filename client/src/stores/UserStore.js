@@ -7,6 +7,9 @@ const wallPostsByUserId = {}
 var crew
 
 UserStore.insert = function(user) {
+  if (user.birth) {
+    user.birth = new Date(user.birth)
+  }
   const s = Date.now() - Date.parse(user.birth)
   const age = s / (1000 * 60 * 60 * 24 * 365)
   user.age = isNaN(age) ? false : ~~age

@@ -85,9 +85,9 @@ class Settings extends React.Component {
       gender: this.refs.gender.value,
       location: this.refs.location.value,
       description: this.refs.description.value,
-      year: Number(this.refs.year.value),
-      month: Number(this.refs.month.value),
-      day: Number(this.refs.day.value)
+      year: parseInt(this.refs.year.value),
+      month: parseInt(this.refs.month.value),
+      day: parseInt(this.refs.day.value)
     }).then(() => {
       NotificationStore.insert({type: 'settings'})
     }).catch(err => {
@@ -128,7 +128,6 @@ class Settings extends React.Component {
 
   render() {
     const { user, changes } = this.state
-    const dob = new Date(user.birth)
     return (
       <div id="Settings">
         <h1>Profilinställningar</h1>
@@ -181,15 +180,19 @@ class Settings extends React.Component {
             <div>
               <input
                 type="text"
-                defaultValue={dob.getFullYear()}
+                defaultValue={user.birth && user.birth.getFullYear()}
                 ref="year"
+                placeholder="År"
+                maxLength={4}
                 style={{width: '33%'}}
               />
-              <select ref="month" defaultValue={dob.getMonth()} style={{width: '33%'}}>
-                {months.map((m, i) => <option key={i} value={i}>{m}</option>)}
+              <select ref="month" defaultValue={user.birth && user.birth.getMonth()} style={{width: '33%'}}>
+                <option value="">Månad</option>
+                {months.map((m, i) => <option key={i} value={i} children={m} />)}
               </select>
-              <select ref="day" defaultValue={dob.getDate()} style={{width: '33%'}}>
-                {days.map(d => <option key={d} value={d}>{d}</option>)}
+              <select ref="day" defaultValue={user.birth && user.birth.getDate()} style={{width: '33%'}}>
+                <option value="">Dag</option>
+                {days.map(d => <option key={d} value={d} children={d} />)}
               </select>
             </div>
           </label>
