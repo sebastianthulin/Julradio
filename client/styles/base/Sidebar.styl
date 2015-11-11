@@ -152,12 +152,13 @@
           &:hover #VolumeSlider, #VolumeSlider.adjusting
             visibility visible
             opacity 1
+            transition none
             transition-delay 0s
           #VolumeSlider
             visibility hidden
             opacity 0
-            transition visibility .5s, opacity .25s ease
-            transition-delay .5s
+            transition visibility .25s, opacity .25s ease
+            transition-delay .2s
             position absolute
             left 0px
             right 0px
