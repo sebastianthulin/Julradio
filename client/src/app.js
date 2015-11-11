@@ -17,6 +17,7 @@ const NotificationContainer = require('./components/base/NotificationContainer')
 // Views
 const Front = require('./components/views/Front')
 const ArticleView = require('./components/views/ArticleView')
+const ResetPassword = require('./components/views/ResetPassword')
 const UserProfile = require('./components/views/UserProfile')
 const Settings = require('./components/views/Settings')
 const Messages = require('./components/views/Messages')
@@ -86,6 +87,7 @@ const routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Front} />
     <Route path="article/:id" component={ArticleView} />
+    <Route path="user/reset/:id" component={ResetPassword} />
     <Route path="crew" component={Crew} />
     <Route path="history" component={History} />
     <Route path="messages" component={Messages} onEnter={requireAuth} />

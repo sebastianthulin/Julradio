@@ -50,6 +50,24 @@ User.comment = function(articleId, comment, callback) {
   request.post('/api/article/' + articleId + '/comment/', {comment}).then(callback)
 }
 
+User.forgotPassword = function(form) {
+  return new Promise(function(resolve, reject) {
+    request.post('/api/user/forgot', form).then(function() {
+      resolve()
+    }, function({ response }) {
+      reject(response.body.err)
+    })
+  })
+}
+
+User.newPassword = function(form, errHandler) {
+  request.post('/api/user/newpassword', form).then(function() {
+    location.href = '/'
+  }, function({ response }) {
+    errHandler(response.body.err)
+  })
+}
+
 User.logIn = function(creds, errHandler) {
   request.post('/api/user/login', creds).then(function() {
     location.reload()

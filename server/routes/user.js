@@ -8,6 +8,7 @@ const fs = require('fs')
 const router = express.Router()
 const db = require('../models')
 const getBlockage = require('../services/getBlockage')
+const Mailer = require('../services/Mailer')
 
 const upload = multer({
   dest: 'uploads/',
@@ -82,6 +83,56 @@ router.get('/profile', function getUser(req, res) {
   }).catch(function(err) {
     console.error(err)
     res.sendStatus(500)
+  })
+})
+
+router.post('/forgot', function(req, res) {
+  const email = req.body.email
+  db.User.findOne({ email }).exec().then(function(user) {
+    if (!user)
+      return res.status(500).send({err: 'NOUSER'})
+    db.PasswordRequest.findOneAndRemove({ user }).exec().then(function(doc) {
+      new db.PasswordRequest({ user }).save().then(function(request) {
+        const resetURL = 'http://prettygood.website:8080/user/reset/' + request._id
+        Mailer.sendMail({
+          from: 'Julradio Admin <grovciabatta@gmail.com>',
+          to: email,
+          subject: 'Återställ lösenord',
+          text: 'Klicka här för att återställa ditt lösenord..',
+          html: 'Klicka <a href="' + resetURL + '">här</a> för att återställa ditt lösenord<br/><a href="' + resetURL + '">' + resetURL + '</a>'
+        }, function(err, info){
+          if (err) {
+            res.status(500).send({err: err.toString()})
+          } else {
+            res.sendStatus(200)
+          }
+        })
+      })
+    })
+  })
+})
+
+router.get('/reset/:request', function(req, res) {
+  db.PasswordRequest.findById(req.params.request).exec().then(function(request) {
+    res.send(request)
+  })
+})
+
+router.post('/newpassword', function(req, res) {
+  const b = req.body
+  db.PasswordRequest.findById(b.request).exec().then(function(request) {
+    if (!request)
+      res.status(500).send({err: 'NOREQUEST'})
+    db.User.findById(request.user).exec().then(function(user) {
+      user.setPassword(b.password)
+      user.lastVisit = Date.now()
+      user.save()
+      req.session.uid = user.id
+      request.remove()
+      res.send({user})
+    })
+  }, function(err) {
+    res.status(500).send({err: err.toString()})
   })
 })
 
