@@ -26,9 +26,9 @@ router.use(function(req, res, next) {
 router.post('/', function(req, res) {
   const b = req.body
   new db.Article({
+    user: b.userless ? undefined : req.user._id,
     title: b.title,
-    content: b.content,
-    user: req.session.uid || 1
+    content: b.content
   }).save().then(function(article) {
     res.send(article)
   }, function() {

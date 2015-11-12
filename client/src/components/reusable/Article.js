@@ -3,13 +3,14 @@ const { Link } = require('react-router')
 const TimeSince = require('./TimeSince')
 const ProfilePicture = require('./ProfilePicture')
 
-const Article = ({ article, article: { user } }) => (
+const Article = ({ article, article: { user, userless } }) => (
   <div className="Article">
     <h2>{article.title}</h2>
     <header>
-      <ProfilePicture id={user.picture} />
+      <ProfilePicture id={userless ? null : user.picture} />
       <div className="user">
-        <Link to={`/@${user.username}`}>{user.name}</Link>
+        {!userless && <Link to={`/@${user.username}`}>{user.name}</Link>}
+        {userless && <span>Julradio</span>}
         <TimeSince date={article.date} />
       </div>
     </header>

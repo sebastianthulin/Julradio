@@ -22,17 +22,20 @@ class ManageArticle extends React.Component {
     this.state = { copy }
   }
 
-  save() {
-    const opts = {
+  getOpts() {
+    return {
       title: this.refs.title.value,
-      content: this.refs.content.value
+      content: this.refs.content.value,
+      userless: this.refs.userless && this.refs.userless.checked
     }
+  }
 
+  save() {
     if (this.id) {
-      return ArticleStore.update(this.id, opts)
+      return ArticleStore.update(this.id, this.getOpts())
     }
 
-    ArticleStore.create(opts, article => {
+    ArticleStore.create(this.getOpts(), article => {
       this.props.history.pushState(null, `/admin/articles/${article._id}`)
     })
   }
@@ -45,12 +48,14 @@ class ManageArticle extends React.Component {
   }
 
   update() {
-    const copy = {}
-    for (var i in this.state.copy) {
-      copy[i] = this.state.copy[i]
+    const copy = this.getOpts()
+    const old = this.state.copy
+    if (this.id) {
+      copy.userless = old.userless
     }
-    copy.title = this.refs.title.value
-    copy.content = this.refs.content.value
+    copy._id = old._id
+    copy.date = old.date
+    copy.user = old.user
     copy.__html = marked(copy.content)
     this.setState({ copy })
   }
@@ -75,6 +80,16 @@ class ManageArticle extends React.Component {
                 onChange={this.update.bind(this)}
               />
             </label>
+            {!this.id && (
+              <div>
+                <span>Posta som Julradio</span>
+                <input
+                  type="checkbox"
+                  ref="userless"
+                  onChange={this.update.bind(this)}
+                />
+              </div>
+            )}
             <textarea
               ref="content"
               value={copy.content}

@@ -49,7 +49,9 @@ class ManageArticles extends React.Component {
     return (
       <Link className="manageArticle" to={`/admin/articles/${article._id}`} key={article._id}>
         <span className="title">{article.title}</span>
-        <span className="author">{article.user.name}</span>
+        <span className="author">
+          {article.user ? article.user.name : 'Julradio'}
+        </span>
         <TimeSince date={article.date} />
       </Link>
     )
