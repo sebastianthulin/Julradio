@@ -8,7 +8,6 @@ const fs = require('fs')
 const router = express.Router()
 const db = require('../models')
 const getBlockage = require('../services/getBlockage')
-const Mailer = require('../services/Mailer')
 
 const upload = multer({
   dest: 'uploads/',

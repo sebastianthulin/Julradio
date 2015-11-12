@@ -3,6 +3,7 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../models')
+const mail = require('../services/mail')
 
 router.post('/', function(req, res) {
   const email = req.body.email
@@ -10,7 +11,7 @@ router.post('/', function(req, res) {
 
   db.User.findOne({ email }).exec().then(function(doc) {
     if (!doc) {
-      return res.status(500).send({err: 'NOUSER'})
+      throw new Error('NOUSER')
     }
     user = doc
     return db.PasswordRequest.findOneAndRemove({ user }).exec()
@@ -27,15 +28,15 @@ router.post('/', function(req, res) {
       from: 'Julradio Admin <grovciabatta@gmail.com>',
       to: email,
       subject: 'Återställ lösenord',
-      html,
-      text: 'Klicka här för att återställa ditt lösenord..'
+      html
     }, function(err, info) {
       if (err) {
-        res.status(500).send({err: err.toString()})
-      } else {
-        res.sendStatus(200)
+        throw new Error('UNKNOWN')
       }
+      res.sendStatus(200)
     })
+  }).catch(function(err) {
+    res.status(500).send({err: err.toString()})
   })
 })
 

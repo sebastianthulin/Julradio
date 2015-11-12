@@ -1,16 +1,18 @@
 const React = require('react')
-const Modal = require('../../services/Modal')
+const cx = require('classnames')
+const ModalService = require('../../services/Modal')
 
 const modals = {
   LogIn: require('../modals/LogIn'),
   SignUp: require('../modals/SignUp'),
-  RequestSong: require('../modals/RequestSong')
+  RequestSong: require('../modals/RequestSong'),
+  ForgotPassword: require('../modals/ForgotPassword')
 }
 
 class ModalContainer extends React.Component {
   componentWillMount() {
     this.state = {}
-    Modal.on('change', this.handleModal.bind(this))
+    ModalService.on('change', this.handleModal.bind(this))
   }
 
   handleModal(name) {
@@ -25,15 +27,16 @@ class ModalContainer extends React.Component {
 
   handleClick(ev) {
     if (this.refs.container === ev.target) {
-      Modal.close()
+      ModalService.close()
     }
   }
 
   render() {
     const { Modal } = this.state
-    return !Modal ? null : (
-      <div id="ModalContainer" ref="container">
-        <Modal />
+    const visible = !!Modal
+    return (
+      <div ref="container" id="ModalContainer" className={cx({ visible })}>
+        {Modal && <Modal />}
       </div>
     )
   }

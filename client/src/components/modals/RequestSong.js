@@ -1,6 +1,7 @@
 const React = require('react')
-const Modal = require('../../services/Modal')
+const ModalService = require('../../services/Modal')
 const RequestStore = require('../../stores/RequestStore')
+const Modal = require('./Modal')
 
 class RequestSong extends React.Component {
   getFields() {
@@ -36,7 +37,7 @@ class RequestSong extends React.Component {
     }
 
     RequestStore.request(fields).then(() => {
-      Modal.close()
+      ModalService.close()
       alert('done.')
     }, () => {
       alert('något gick fel.')
@@ -45,7 +46,7 @@ class RequestSong extends React.Component {
 
   render() {
     return (
-      <div className="RequestSong Modal">
+      <Modal className="RequestSong">
         <header>Önska en låt</header>
         <main>
           <label>Ditt namn</label>
@@ -54,14 +55,12 @@ class RequestSong extends React.Component {
           <input type="text" ref="song" />
           <label>Text</label>
           <textarea ref="text" maxLength={250} />
-          <div className="submit">
-            <button style={{marginRight: 10}} onClick={this.requestSong.bind(this)}>Skicka önskning</button>
-            <a target="_blank" onClick={this.setHref.bind(this)}>
-              <button>Önska via twitter</button>
-            </a>
-          </div>
+          <button style={{width: '48%', float: 'left'}} onClick={this.requestSong.bind(this)}>Skicka önskning</button>
+          <a target="_blank" onClick={this.setHref.bind(this)}>
+            <button style={{width: '48%', float: 'right'}}>Önska via twitter</button>
+          </a>
         </main>
-      </div>
+      </Modal>
     )
   }
 }

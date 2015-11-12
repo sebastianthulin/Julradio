@@ -1,6 +1,6 @@
 const React = require('react')
-const Modal = require('../../services/Modal')
 const User = require('../../services/User')
+const Modal = require('./Modal')
 
 class SignUp extends React.Component {
   handleSubmit(ev) {
@@ -18,7 +18,7 @@ class SignUp extends React.Component {
 
   render() {
     return (
-      <div className="SignUp Modal">
+      <Modal className="SignUp">
         <header>
           Registrera dig
         </header>
@@ -30,12 +30,10 @@ class SignUp extends React.Component {
             <input ref="email" type="email" />
             <label>Lösenord</label>
             <input ref="password" type="password" />
-            <div className="submit">
-              <button>Registrera dig</button>
-            </div>
+            <button>Registrera dig</button>
           </form>
         </main>
-      </div>
+      </Modal>
     )
   }
 }
