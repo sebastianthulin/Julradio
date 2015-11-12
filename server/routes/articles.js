@@ -18,7 +18,7 @@ router.use(function(req, res, next) {
     if (user && user.roles.writer) {
       next()
     } else {
-      res.sendStatus(500)
+      next(new Error('UNAUTHORISED'))
     }
   })
 })
@@ -44,7 +44,7 @@ router.put('/:id', function(req, res) {
     content: b.content
   }).exec().then(function() {
     res.sendStatus(200)
-  }, function(err) {
+  }, function() {
     res.sendStatus(500)
   })
 })
@@ -53,7 +53,7 @@ router.delete('/:id', function(req, res) {
   const id = req.params.id
   db.Article.findByIdAndRemove(id).exec().then(function() {
     res.sendStatus(200)
-  }, function(err) {
+  }, function() {
     res.sendStatus(500)
   })
 })

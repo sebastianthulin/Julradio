@@ -8,7 +8,7 @@ router.use(function(req, res, next) {
   if (req.session.uid) {
     next()
   } else {
-    res.status(500).send({err: 'not signed in'})
+    next(new Error('NOT_SIGNED_IN'))
   }
 })
 

@@ -5,13 +5,13 @@ const router = express.Router()
 const db = require('../models')
 const mail = require('../services/mail')
 
-router.post('/', function(req, res) {
+router.post('/', function(req, res, next) {
   const email = req.body.email
   var user
 
   db.User.findOne({ email }).exec().then(function(doc) {
-    if (!doc) {
-      throw new Error('NOUSER')
+    if (!email || !doc) {
+      throw new Error('INVALID_EMAIL')
     }
     user = doc
     return db.PasswordRequest.findOneAndRemove({ user }).exec()
@@ -24,37 +24,35 @@ router.post('/', function(req, res) {
       <p>Hej! Du (eller någon annan) har begärt en lösenordsåterställning på ditt konto. Om du inte har begärt detta kan du ignorera mailet. Annars tryck <a href="${resetURL}">här</a></p>
       <p>God Jul!</p>`
 
-    Mailer.sendMail({
+    mail.sendMail({
       from: 'Julradio Admin <grovciabatta@gmail.com>',
       to: email,
       subject: 'Återställ lösenord',
       html
     }, function(err, info) {
       if (err) {
-        throw new Error('UNKNOWN')
+        throw new Error('UNKNOWN_ERROR')
       }
       res.sendStatus(200)
     })
-  }).catch(function(err) {
-    res.status(500).send({err: err.toString()})
-  })
+  }).catch(next)
 })
 
 router.param('requestId', function(req, res, next, id) {
   db.PasswordRequest.findById(id).exec().then(function(request) {
     if (!request || Date.now() > request.validTo) {
-      throw new Error()
+      throw ''
     }
     req.passwordRequest = request
     next()
   }).catch(() => {
-    res.status(500).send({err: 'INVALID'})
+    next(new Error('INVALID_REQUEST_ID'))
   })
 })
 
 router.get('/:requestId', (req, res) => res.send(req.passwordRequest))
 
-router.post('/:requestId', function(req, res) {
+router.post('/:requestId', function(req, res, next) {
   const b = req.body
   const request = req.passwordRequest
   db.User.findById(request.user).exec().then(function(user) {
@@ -65,9 +63,7 @@ router.post('/:requestId', function(req, res) {
     req.session.uid = user.id
     request.remove()
     res.sendStatus(200)
-  }).catch(function(err) {
-    res.status(500).send({err: err.toString()})
-  })
+  }).catch(next)
 })
 
 module.exports = router

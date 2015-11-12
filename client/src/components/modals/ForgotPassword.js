@@ -7,7 +7,7 @@ class ForgotPassword extends React.Component {
   handleForgot(ev) {
     ev.preventDefault()
     User.forgotPassword({
-      email: this.refs.forgotEmail.value
+      email: this.refs.email.value
     }).then(() => {
       ModalService.close()
       alert('Instruktioner har nu skickats till din email')
@@ -25,7 +25,7 @@ class ForgotPassword extends React.Component {
         <main>
           <form onSubmit={this.handleForgot.bind(this)}>
             <label>Email</label>
-            <input key={1} type="text" ref="forgotEmail" />
+            <input type="text" ref="email" />
             <div className="submit">
               <button>Begär nytt lösenord</button>
             </div>

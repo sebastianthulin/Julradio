@@ -9,7 +9,10 @@ router.get('/:id', function(req, res) {
     path: 'user',
     select: '-hash -email'
   }).exec(function(err, article) {
-    db.ArticleComment.find({ article }).populate({path: 'user', select: '-hash'}).exec().then(function(comments) {
+    db.ArticleComment.find({ article }).populate({
+      path: 'user',
+      select: '-hash -email'
+    }).exec().then(function(comments) {
       res.send({ article, comments })
     })
   })
@@ -19,7 +22,7 @@ router.use(function(req, res, next) {
   if (req.user) {
     next()
   } else {
-    res.status(500).send({err: 'not signed in'})
+    next(new Error('NOT_SIGNED_IN'))
   }
 })
 

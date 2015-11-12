@@ -85,41 +85,39 @@ router.get('/profile', function getUser(req, res) {
   })
 })
 
-router.post('/signup', function(req, res) {
+router.post('/signup', function(req, res, next) {
   new db.User().signUp(req.body).then(function(user) {
     delete user.hash
     req.session.uid = user.id
     res.send({ user })
-  }, function(err) {
-    res.status(500).send({err: err.toString()})
-  })
+  }).catch(next)
 })
 
-router.post('/login', function(req, res) {
+router.post('/login', function(req, res, next) {
   const username = typeof req.body.username === 'string' && req.body.username.toLowerCase()
   db.User.findOne({usernameLower: username}).exec().then(function(user) {
     if (user) {
       if (user.banned) {
-        res.status(500).send({err: 'BANNED'})
+        throw new Error('USER_BANNED')
       } else if (user.auth(req.body.password)) {
         user.lastVisit = Date.now()
         user.save()
         req.session.uid = user.id
         res.send({ user })
       } else {
-        res.status(500).send({err: 'INCORRECT_PASSWORD'})
+        throw new Error('INCORRECT_PASSWORD')
       }
     } else {
-      res.status(500).send({err: 'USER_NOT_FOUND'})
+      throw new Error('USER_NOT_FOUND')
     }
-  })
+  }).catch(next)
 })
 
 router.use(function(req, res, next) {
   if (req.user) {
     next()
   } else {
-    res.status(500).send({err: 'not signed in'})
+    next(new Error('NOT_SIGNED_IN'))
   }
 })
 
@@ -140,7 +138,7 @@ router.post('/wallpost', function(req, res) {
   })
 })
 
-router.delete('/wallpost/:id', function(req, res) {
+router.delete('/wallpost/:id', function(req, res, next) {
   const b = req.params
   db.WallPost.findOne({
     _id: b.id
@@ -150,11 +148,9 @@ router.delete('/wallpost/:id', function(req, res) {
         res.sendStatus(200)
       })
     } else {
-      req.status(500).send({err: 'Du kan inte ta bort detta inlägg'})
+      throw new Error('UNAUTHORISED')
     }
-  }, function(err) {
-    res.status(500).send({err: err.toString()})
-  })
+  }).catch(next)
 })
 
 router.post('/block', function(req, res) {
@@ -169,9 +165,9 @@ router.post('/block', function(req, res) {
   }, {
     upsert: true,
     new: true
-  }).exec().then(function(doc) {
+  }).exec().then(function() {
     res.sendStatus(200)
-  }).catch(function(err) {
+  }).catch(function() {
     res.sendStatus(500)
   })
 })
@@ -181,33 +177,14 @@ router.delete('/block/:userId', function(req, res) {
   db.Block.findOneAndRemove({
     from: req.session.uid,
     target: req.params.userId
-  }).exec().then(function(doc) {
+  }).exec().then(function() {
     res.sendStatus(200)
-  }).catch(function(err) {
+  }).catch(function() {
     res.sendStatus(500)
   })
 })
 
-router.put('/field', function(req, res) {
-  const b = req.body
-  const allow = ['name', 'gender', 'location', 'description']
-  if (allow.indexOf(b.field) > -1) {
-    db.User.findByIdAndUpdate(req.session.uid, {
-      [b.field]: b.value
-    }, {
-      new: true
-    }).select('-hash').exec().then(function(user) {
-      res.send(user)
-    }).catch(function(err) {
-      console.error('@/field handler', err)
-      res.sendStatus(500)
-    })
-  } else {
-    res.sendStatus(500)
-  }
-})
-
-router.put('/settings', function(req, res) {
+router.put('/settings', function(req, res, next) {
   const b = req.body
   if (['MALE', 'FEMALE'].indexOf(b.gender) === -1) {
     // ...
@@ -229,21 +206,20 @@ router.put('/settings', function(req, res) {
     birth
   }, {
     new: true
-  }).select('-hash').exec().then(function(user) {
-    res.send(user)
-  }).catch(function(err) {
-    console.error('@/settings handler', err)
-    res.sendStatus(500)
-  })
+  }).select('-hash')
+    .exec()
+    .then(res.send.bind(res))
+    .catch(next)
 })
 
-router.put('/settings2', function(req, res) {
+router.put('/settings2', function(req, res, next) {
   const b = req.body
   db.User.findById(req.session.uid).exec().then(function(user) {
     if (!user.auth(b.auth)) {
       throw new Error('INCORRECT_PASSWORD')
     }
-    if (b.email) {
+    if (b.email !== user.email) {
+      // validate this
       user.email = b.email
     }
     if (b.password) {
@@ -253,17 +229,14 @@ router.put('/settings2', function(req, res) {
   }).then(function(user) {
     delete user.hash
     res.send(user)
-  }).catch(function(err) {
-    console.error('@/settings2 handler', err)
-    res.status(500).send({err: err.toString()})
-  })
+  }).catch(next)
 })
 
-router.post('/profilepicture', function(req, res) {
+router.post('/profilepicture', function(req, res, next) {
   const userId = req.session.uid
   upload(req, res, function(err) {
     if (err) {
-      return res.status(500).send({err: 'INVALID_IMAGE'})
+      return next(new Error('INVALID_IMAGE'))
     }
 
     const picture = new db.Picture({
@@ -278,7 +251,7 @@ router.post('/profilepicture', function(req, res) {
         gm(req.file.path).size(function(err, value) {
           if (err) {
             fs.unlink(req.file.path)
-            return res.status(500).send({err: 'INVALID_IMAGE'})
+            return next(new Error('INVALID_IMAGE'))
           }
 
           var newWidth, newHeight
@@ -301,7 +274,7 @@ router.post('/profilepicture', function(req, res) {
               fs.unlink(req.file.path)
               if (err) {
                 console.error('@/profilepicture handler a', err)
-                return res.status(500).send({err: 'UNKNOWN_ERROR'})
+                return next(new Error('UNKNOWN_ERROR'))
               }
               picture.save().then(function() {
                 return db.User.findByIdAndUpdate(userId, {
@@ -313,7 +286,7 @@ router.post('/profilepicture', function(req, res) {
                 res.send(user)
               }, function(err) {
                 console.error('@/profilepicture handler b', err)
-                res.status(500).send({err: 'UNKNOWN_ERROR'})
+                next(new Error('UNKNOWN_ERROR'))
               })
             })
         })
@@ -326,7 +299,7 @@ router.use(function(req, res, next) {
   if (req.user && req.user.roles.admin) {
     next()
   } else {
-    res.sendStatus(500)
+    next(new Error('UNAUTHORISED'))
   }
 })
 

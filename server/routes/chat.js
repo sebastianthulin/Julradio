@@ -8,7 +8,7 @@ router.use(function(req, res, next) {
   if (req.session.uid) {
     next()
   } else {
-    res.status(500).send({err: 'not signed in'})
+    next(new Error('NOT_SIGNED_IN'))
   }
 })
 
@@ -29,7 +29,7 @@ router.get('/:id/:offset', function(req, res) {
   db.Message.find({ conversation }).sort('-_id').skip(offset).limit(50).exec().then(function(messages) {
     res.send(messages)
   }, function(err) {
-    console.log(err)
+    console.error(err)
   })
 })
 

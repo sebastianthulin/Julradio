@@ -22,7 +22,7 @@ User.update = opts => new Promise(function(resolve, reject) {
     User.set(user)
     resolve(user)
   }).catch(function({ response }) {
-    reject(response.body.err)
+    reject(response.body.error)
   })
 })
 
@@ -31,7 +31,7 @@ User.update2 = opts => new Promise(function(resolve, reject) {
     User.set(user)
     resolve(user)
   }).catch(function({ response }) {
-    reject(response.body.err)
+    reject(response.body.error)
   })
 })
 
@@ -43,13 +43,13 @@ User.setAvatar = function(file) {
       User.set(user)
       resolve(user)
     }).catch(function({ response }) {
-      reject(response.body.err)
+      reject(response.body.error)
     })
   })
 }
 
 User.comment = function(articleId, comment, callback) {
-  request.post('/api/article/' + articleId + '/comment/', {comment}).then(callback)
+  request.post('/api/article/' + articleId + '/comment/', { comment }).then(callback)
 }
 
 User.forgotPassword = function(form) {
@@ -57,16 +57,16 @@ User.forgotPassword = function(form) {
     request.post('/api/forgot', form).then(function() {
       resolve()
     }, function({ response }) {
-      reject(response.body.err)
+      reject(response.body.error[0])
     })
   })
 }
 
 User.newPassword = function(id, password, errHandler) {
   request.post('/api/forgot/' + id, { password }).then(function() {
-    location.href = '/'
+    location.reload()
   }, function({ response }) {
-    errHandler(response.body.err)
+    errHandler(response.body.error[0])
   })
 }
 
@@ -74,7 +74,7 @@ User.logIn = function(creds, errHandler) {
   request.post('/api/user/login', creds).then(function() {
     location.reload()
   }).catch(function({ response }) {
-    errHandler(response.body.err)
+    errHandler(response.body.error[0])
   })
 }
 
@@ -82,7 +82,7 @@ User.signUp = function(form, errHandler) {
   request.post('/api/user/signup', form).then(function() {
     location.reload()
   }, function({ response }) {
-    errHandler(response.body.err)
+    errHandler(response.body.error)
   })
 }
 

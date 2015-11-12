@@ -23,6 +23,7 @@ app.use(express.static('./public'))
 app.use(sessionMiddleware)
 app.use(require('body-parser').json())
 app.use(require('./server/routes'))
+app.use(require('./server/errorHandler'))
 
 io.adapter(require('socket.io-redis')({
   host: 'localhost',

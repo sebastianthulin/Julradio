@@ -19,7 +19,7 @@ router.use(function(req, res, next) {
 
     req.user = user
     next()
-  }).catch(function(err) {
+  }).catch(function() {
     req.session.uid = undefined
     next()
   })
