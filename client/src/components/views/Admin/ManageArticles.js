@@ -5,6 +5,7 @@ const ManageArticle = require('./ManageArticle')
 const TimeSince = require('../../reusable/TimeSince')
 
 class ManageArticles extends React.Component {
+  noti(err) {
     const store = require('../../../stores/NotificationStore')
     const user = require('../../../services/User').get()
     store.insert({
@@ -46,11 +47,16 @@ class ManageArticles extends React.Component {
 
   renderArticle(article) {
     return (
+      <Link className="manageArticle" to={`/admin/articles/${article._id}`} key={article._id}>
+        <span className="title">{article.title}</span>
+        <span className="author">{article.user.name}</span>
+        <TimeSince date={article.date} />
       </Link>
     )
   }
 
   render() {
+    const { articles, creatingNew, selected } = this.state
     const { history } = this.props
     return creatingNew ? (
       <ManageArticle article={{}} history={history} />
@@ -62,6 +68,8 @@ class ManageArticles extends React.Component {
         {articles.map(this.renderArticle.bind(this))}
         <br/>
         <button className="btn" onClick={this.create.bind(this)}>Skapa ny</button>
+        <button className="btn" onClick={this.noti.bind(null, false)}>Notify</button>
+        <button className="btn" onClick={this.noti.bind(null, true)}>Error notify</button>
       </div>
     )
   }
