@@ -54,7 +54,7 @@ class Sidebar extends React.Component {
           minSpeed={0.5}
           maxSpeed={2}
         />
-        <div className={cx('main', {abandoned: !user})}>
+        <div className={cx('inner', {abandoned: !user})}>
           <div className="logo">
             <Link to="/">Julradio</Link>
             <hr />
@@ -80,8 +80,8 @@ class Sidebar extends React.Component {
             <Link to="/crew">Medarbetare</Link>
             {user && <a onClick={User.logOut}>Logga ut</a>}
           </div>
+          <Player />
         </div>
-        <Player />
       </div>
     )
   }

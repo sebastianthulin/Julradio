@@ -23,21 +23,26 @@ class Player extends React.Component {
     if (program) {
       picture = program.picture || program.user && program.user.picture
     }
+
     return (
       <div id="Player">
-        {picture && <img src={`/picture/${picture}`} />}
-        <div div className="titleControls">
-          <div className="controls">
-            <div className="item">
-              <i className={playing ? 'fa fa-pause' : 'fa fa-play'} onClick={RadioStore.toggle} />
+        {program && <div className="program">{program.description}</div>}
+        <div className="main">
+          {picture && <img src={`/picture/${picture}`} />}
+          <div div className="titleControls">
+            <div className="controls">
+              <div className="item">
+                <i className={playing ? 'fa fa-pause' : 'fa fa-play'} onClick={RadioStore.toggle} />
+              </div>
+              <div className="item volumeControl">
+                <i onClick={this.toggleMute.bind(this)} className={volume == 0 ? 'fa fa-volume-off' : 'fa fa-volume-up'} />
+                <VolumeSlider />
+              </div>
+              {program && <Link className="host" to={'/@' + program.user.username} children={program.user.name} />}
+              {!program && <div className="host">Ingen värd</div>}
             </div>
-            <div className="item volumeControl">
-              <i onClick={this.toggleMute.bind(this)} className={volume == 0 ? 'fa fa-volume-off' : 'fa fa-volume-up'} />
-              <VolumeSlider />
-            </div>
-            <div className="host">{program ? program.user.name : 'Ingen värd'}</div>
+            <Link to="/history" className="songTitle">{currentlyPlaying.title}</Link>
           </div>
-          <Link to="/history" className="songTitle">{currentlyPlaying.title}</Link>
         </div>
       </div>
     )

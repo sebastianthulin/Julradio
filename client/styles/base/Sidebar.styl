@@ -9,28 +9,28 @@
   transform translateX(-300px)
   transition transform .4s
   @media (max-height: 700px)
-    .main
-      padding 20px 0 !important
-    .ProfilePicture
+    .inner
+      padding-top 20px !important
+    .ProfilePicture, hr
       display none
-    .logo
-      a
-        font-size 32px !important
-      hr
-        display none
+    .logo a
+      font-size 32px !important
 
   +desktop()
     transform none
 
-  .main
+  .inner
     display flex
     flex-direction column
     align-items center
     justify-content space-between
-    height calc(100% - 80px)
-    padding 30px 0
+    height 100%
+    padding-top 30px
     &.abandoned
       display block
+      #Player
+        position absolute
+        bottom 0
 
   .divider
     height 1px
@@ -114,75 +114,82 @@
       color #FFF
       transition none
 
-  #Player
-    position absolute
-    bottom 0
-    left 0
-    height 80px
-    width 100%
-    background rgba(0, 0, 0, 0.26)
-    .songTitle
-      white-space nowrap
-      overflow hidden
-    img
-      width 80px
-      height 100%
-      float left
-    .titleControls
+#Player
+  width 100%
+  .program
+    padding 10px
+    text-align center
+    background rgba(23, 8, 8, 0.1)
+
+#Player .main
+  height 80px
+  width 100%
+  background rgba(0, 0, 0, 0.26)
+  .songTitle
+    white-space nowrap
+    overflow hidden
+  img
+    width 80px
+    height 100%
+    float left
+  .titleControls
+    display flex
+    flex-direction column
+    justify-content space-between
+    height 100%
+    padding 14px
+    .controls
       display flex
-      flex-direction column
-      justify-content space-between
-      height 100%
-      padding 14px
-      .controls
-        display flex
-        //align-items center
-        //justify-content space-between
-        .host
-          font-weight bold
-        .item
-          margin-right 12px
-          width 20px
-        i
-          font-size 24px
-          cursor pointer
-          width 100%
-        .volumeControl
-          position relative
-          &:hover #VolumeSlider, #VolumeSlider.adjusting
-            visibility visible
-            opacity 1
-            transition none
-            transition-delay 0s
-          #VolumeSlider
-            visibility hidden
-            opacity 0
-            transition visibility .25s, opacity .25s ease
-            transition-delay .2s
-            position absolute
-            left 0px
-            right 0px
-            bottom 32px
-            height 100px
-            width 8px
-            background #FFF
-            border-radius 10px
-            margin 0 auto
-            cursor pointer
-            .volume
-              position absolute
-              pointer-events none
-              display inline-block
-              width 100%
-              background #DD1616
-              border-radius 10px
-              bottom 0
-            .handle
-              position absolute
-              display inline-block
-              margin-top -8px
-              margin-left -2.5px
-              width 12px
-              height 12px
-              border-radius 50%
-              background #FFF
+      //align-items center
+      //justify-content space-between
+      a.host
+        font-weight 400
+        &:hover
+          border-bottom 1px solid
+      .item
+        margin-right 12px
+        width 20px
+      i
+        font-size 24px
+        cursor pointer
+        width 100%
+      .volumeControl
+        position relative
+        &:hover #VolumeSlider, #VolumeSlider.adjusting
+          visibility visible
+          opacity 1
+          transition none
+          transition-delay 0s
+
+#VolumeSlider
+  visibility hidden
+  opacity 0
+  transition visibility .25s, opacity .25s ease
+  transition-delay .2s
+  position absolute
+  left 0px
+  right 0px
+  bottom 32px
+  height 100px
+  width 8px
+  background #FFF
+  border-radius 10px
+  margin 0 auto
+  cursor pointer
+  .volume
+    position absolute
+    pointer-events none
+    display inline-block
+    width 100%
+    background #DD1616
+    border-radius 10px
+    bottom 0
+  .handle
+    position absolute
+    display inline-block
+    margin-top -8px
+    margin-left -2.5px
+    width 12px
+    height 12px
+    border-radius 50%
+    background #FFF

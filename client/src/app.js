@@ -29,6 +29,7 @@ const ManageUsers = require('./components/views/Admin/ManageUsers')
 const ManageReservations = require('./components/views/Admin/ManageReservations')
 const ManageCrew = require('./components/views/Admin/ManageCrew')
 const ManageRequests = require('./components/views/Admin/ManageRequests')
+const NotFound = require('./components/views/NotFound')
 
 // Config
 marked.setOptions({
@@ -101,6 +102,7 @@ const routes = (
       <Route path="crew" component={ManageCrew} />
       <Route path="requests" component={ManageRequests} />
     </Route>
+    <Route path="*" component={NotFound} />
   </Route>
 )
 

@@ -4,23 +4,21 @@ const RadioStore = require('../../../stores/RadioStore')
 
 class VolumeSlider extends React.Component {
   componentWillMount() {
-    this.setState({ adjusting: false })
     RadioStore.subscribe('volume', volume => this.setState({ volume }))
   }
 
   initDrag(ev) {
-    const self = this
     ev.preventDefault()
     this.handleDrag(ev)
     const handleDrag = this.handleDrag.bind(this)
-    const endDrag = function() {
+    const endDrag = () => {
       document.removeEventListener('mousemove', handleDrag)
       document.removeEventListener('mouseup', endDrag)
-      self.setState({ adjusting: false })
+      this.setState({adjusting: false})
     }
     document.addEventListener('mousemove', handleDrag)
     document.addEventListener('mouseup', endDrag)
-    this.setState({ adjusting: true })
+    this.setState({adjusting: true})
   }
 
   handleDrag(ev) {

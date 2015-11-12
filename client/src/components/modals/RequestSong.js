@@ -58,7 +58,7 @@ class RequestSong extends React.Component {
           <textarea ref="text" maxLength={250} />
           <button style={{width: '48%', float: 'left'}} onClick={this.requestSong.bind(this)}>Skicka önskning</button>
           <a target="_blank" onClick={this.setHref.bind(this)}>
-            <button style={{width: '48%', float: 'right'}}>Önska via twitter</button>
+            <button style={{width: '48%', float: 'right'}}>Önska via Twitter</button>
           </a>
         </main>
       </Modal>
