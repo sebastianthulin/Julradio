@@ -61,15 +61,9 @@ const sha256 = str => typeof str === 'string'
   : null
 
 schema.methods.signUp = function(opts, callback) {
-  this.username = opts.username
-  this.usernameLower = opts.username.toLowerCase()
   this.email = opts.email
+  this.setUsername(opts.username)
   this.setPassword(opts.password)
-
-  if (mongoose.Types.ObjectId.isValid(this.username)) {
-    this.invalidate('username', 'INVALID_FORMAT')
-  }
-
   return this.save()
 }
 
@@ -86,7 +80,7 @@ schema.methods.auth = function(password) {
 
 schema.methods.setPassword = function(password) {
   if (typeof password !== 'string') {
-    this.invalidate('password', 'INVALID_FORMAT')
+    this.invalidate('password', 'STOP_HAXING_PLZ')
   } else if (password.length === 0) {
     this.invalidate('password', 'PASSWORD_EMPTY')
   } else if (password.length < config.passwordMinLength) {
@@ -96,6 +90,23 @@ schema.methods.setPassword = function(password) {
     return true
   }
   return false
+}
+
+schema.methods.setUsername = function(username) {
+  if (typeof username !== 'string') {
+    this.invalidate('username', 'STOP_HAXING_PLZ')
+  } else if (!/^\w+$/.test(username)) {
+    this.invalidate('username', 'INVALID_FORMAT')
+  } else if (mongoose.Types.ObjectId.isValid(this.username)) {
+    this.invalidate('username', 'INVALID_FORMAT')
+  } else if (username.length < 3) {
+    this.invalidate('username', 'USERNAME_TOO_SHORT')
+  } else if (username.length > 25) {
+    this.invalidate('username', 'USERNAME_TOO_LONG')
+  } else {
+    this.username = username
+    this.usernameLower = username.toLowerCase()
+  }
 }
 
 module.exports = mongoose.model('users', schema)
