@@ -1,10 +1,15 @@
 const { EventEmitter } = require('events')
 const { Promise } = require('es6-promise')
 const request = require('../services/request')
+const NotificationStore = require('../stores/NotificationStore')
 const UserStore = require('../stores/UserStore')
 const User = new EventEmitter
 
 var doc = null
+
+function errorHandler(type, value) {
+  NotificationStore.error({ type, value })
+}
 
 User.set = function(user) {
   doc = user
@@ -43,6 +48,7 @@ User.setAvatar = function(file) {
       User.set(user)
       resolve(user)
     }).catch(function({ response }) {
+      errorHandler('avatar', response.body.error[0])
       reject(response.body.error)
     })
   })
@@ -57,6 +63,7 @@ User.forgotPassword = function(form) {
     request.post('/api/forgot', form).then(function() {
       resolve()
     }, function({ response }) {
+      errorHandler('forgotpassword', response.body.error[0])
       reject(response.body.error[0])
     })
   })
@@ -66,6 +73,7 @@ User.newPassword = function(id, password, errHandler) {
   request.post('/api/forgot/' + id, { password }).then(function() {
     location.reload()
   }, function({ response }) {
+    errorHandler('newpassword', response.body.error[0])
     errHandler(response.body.error[0])
   })
 }
@@ -74,7 +82,8 @@ User.logIn = function(creds, errHandler) {
   request.post('/api/user/login', creds).then(function() {
     location.reload()
   }).catch(function({ response }) {
-    errHandler(response.body.error[0])
+    errorHandler('login', response.body.error[0])
+    errHandler && errHandler(response.body.error[0])
   })
 }
 
@@ -82,7 +91,8 @@ User.signUp = function(form, errHandler) {
   request.post('/api/user/signup', form).then(function() {
     location.reload()
   }, function({ response }) {
-    errHandler(response.body.error)
+    errorHandler('signup', response.body.error[0])
+    errHandler && errHandler(response.body.error[0])
   })
 }
 

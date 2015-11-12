@@ -11,8 +11,6 @@ class ForgotPassword extends React.Component {
     }).then(() => {
       ModalService.close()
       alert('Instruktioner har nu skickats till din email')
-    }).catch(function(err) {
-      alert(err)
     })
   }
 

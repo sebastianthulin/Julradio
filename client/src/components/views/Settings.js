@@ -75,7 +75,7 @@ class Settings extends React.Component {
       this.setState({changes: null})
       this.refs.password.value = ''
     }).catch(err => {
-      alert(err)
+      NotificationStore.error({type: 'settings', value: err})
     })
   }
 
@@ -91,7 +91,6 @@ class Settings extends React.Component {
     }).then(() => {
       NotificationStore.insert({type: 'settings'})
     }).catch(err => {
-      console.log(err)
       NotificationStore.error({type: 'settings', value: err})
     })
   }
@@ -102,12 +101,7 @@ class Settings extends React.Component {
       NotificationStore.insert({
         type: 'profilepicture'
       })
-    }).catch(this.handleError.bind(this))
-  }
-
-  handleError(err) {
-    console.log(err)
-    alert('gick inte att spara')
+    })
   }
 
   renderConfirmation() {

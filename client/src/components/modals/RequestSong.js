@@ -1,6 +1,7 @@
 const React = require('react')
 const ModalService = require('../../services/Modal')
 const RequestStore = require('../../stores/RequestStore')
+const NotificationStore = require('../../stores/NotificationStore')
 const Modal = require('./Modal')
 
 class RequestSong extends React.Component {
@@ -38,9 +39,9 @@ class RequestSong extends React.Component {
 
     RequestStore.request(fields).then(() => {
       ModalService.close()
-      alert('done.')
-    }, () => {
-      alert('något gick fel.')
+      NotificationStore.insert({type: 'requestsong'})
+    }, (err) => {
+      NotificationStore.error({type: 'requestsong', value: 'INVALID_FORM'})
     })
   }
 

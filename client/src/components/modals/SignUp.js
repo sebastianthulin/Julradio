@@ -9,13 +9,9 @@ class SignUp extends React.Component {
       username: this.refs.username.value,
       email: this.refs.email.value,
       password: this.refs.password.value
-    }, this.handleError.bind(this))
+    })
   }
-
-  handleError(err) {
-    alert(err)
-  }
-
+  
   render() {
     return (
       <Modal className="SignUp">

@@ -1,4 +1,5 @@
 const React = require('react')
+const errors = require('../../errors')
 const ProfilePicture = require('../reusable/ProfilePicture')
 const cx = require('classnames')
 
@@ -9,17 +10,19 @@ class Notification extends React.Component {
   }
 
   getMessage() {
-    const { type, value } = this.props
+    const { type, value, from } = this.props
     switch (type) {
       case 'settings': return 'Profilinställningar uppdaterade'
       case 'profilepicture': return 'Profilbild uppdaterad'
+      case 'message': return 'Nytt meddelande från ' + from.username
+      case 'requestsong': return 'Din önskning har skickats'
       default: return type
     }
   }
 
   getErrorMessage() {
     const { type, value } = this.props
-    return type
+    return errors[value]
   }
 
   render() {
