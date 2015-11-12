@@ -14,7 +14,10 @@ const schema = new Schema({
   },
   email: {
     type: String,
-    lowercase: true
+    lowercase: true,
+    index: true, 
+    unique: true, 
+    sparse: true
   },
   hash: String,
   name: String,
@@ -61,7 +64,7 @@ const sha256 = str => typeof str === 'string'
   : null
 
 schema.methods.signUp = function(opts, callback) {
-  this.email = opts.email
+  this.setEmail(opts.email)
   this.setUsername(opts.username)
   this.setPassword(opts.password)
   return this.save()
@@ -90,6 +93,22 @@ schema.methods.setPassword = function(password) {
     return true
   }
   return false
+}
+
+schema.methods.setEmail = function(email) {
+  if (typeof email !== 'string') {
+    this.invalidate('email', 'STOP_HAXING_PLZ')
+  } else if (email.length === 0) {
+    return true
+  }
+
+  if (email.length > 254) {
+    this.invalidate('email', 'EMAIL_INVALID')
+  } else if (!/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i.test(email)) {
+    this.invalidate('email', 'EMAIL_INVALID')
+  } else {
+    this.email = email
+  }
 }
 
 schema.methods.setUsername = function(username) {

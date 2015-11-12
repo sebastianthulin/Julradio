@@ -80,6 +80,7 @@ class Settings extends React.Component {
   }
 
   save(ev) {
+    const avatar = this.refs.avatar.files[0]
     User.update({
       name: this.refs.name.value,
       gender: this.refs.gender.value,
@@ -89,6 +90,11 @@ class Settings extends React.Component {
       month: parseInt(this.refs.month.value),
       day: parseInt(this.refs.day.value)
     }).then(() => {
+      avatar && User.setAvatar(avatar).then(() => {
+        NotificationStore.insert({
+          type: 'profilepicture'
+        })
+      })
       NotificationStore.insert({type: 'settings'})
     }).catch(err => {
       NotificationStore.error({type: 'settings', value: err})
@@ -97,10 +103,8 @@ class Settings extends React.Component {
 
   setAvatar(ev) {
     const file = ev.target.files[0]
-    User.setAvatar(file).then(() => {
-      NotificationStore.insert({
-        type: 'profilepicture'
-      })
+    this.setState({
+      avatarPreview: URL.createObjectURL(file)
     })
   }
 
@@ -121,7 +125,10 @@ class Settings extends React.Component {
   }
 
   render() {
-    const { user, changes } = this.state
+    const { user, changes, avatarPreview } = this.state
+    const previewStyle = {}
+    if (avatarPreview)
+      previewStyle.backgroundImage = 'url(' + (avatarPreview ? avatarPreview : user.picture ? '/picture/' + user.picture : '') + ')'
     return (
       <div id="Settings">
         <h1>Profilinställningar</h1>
@@ -200,9 +207,13 @@ class Settings extends React.Component {
             />
           </label>
           <label className="setting">
-            <div className="label">Profilbild</div>
+            <div className="label">
+              <div className="ProfilePicture avatarPreview" style={previewStyle} />
+              Profilbild
+            </div>
             <input
               type="file"
+              ref="avatar"
               onChange={this.setAvatar.bind(this)}
             />
           </label>
