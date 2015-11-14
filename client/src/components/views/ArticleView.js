@@ -32,7 +32,7 @@ class ArticleView extends React.Component {
       <div id="ArticleView">
         {article && <Article key={article._id} article={article} />}
         <form onSubmit={this.comment.bind(this)}>
-          <input className="commentsInput clean" type="text" ref="comment" placeholder="Kommentera" />
+          <input className="commentsInput clean" type="text" ref="comment" maxlength="500" placeholder="Kommentera (500 tecken högst)" />
         </form>
         {comments && <Comments comments={comments} onDelete={this.commentRemovedHandler.bind(this)} />}
       </div>

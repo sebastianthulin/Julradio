@@ -38,7 +38,7 @@ class UserProfile extends React.Component {
 
     return (
       <form onSubmit={this.submitWallPost.bind(this)}>
-        <input type="text" ref="input" placeholder="Skriv ett inlägg i gästboken" />
+        <input type="text" ref="input" placeholder="Skriv ett inlägg i gästboken (500 tecken högst)" />
       </form>
     )
   }

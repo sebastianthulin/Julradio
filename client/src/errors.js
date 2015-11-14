@@ -8,11 +8,17 @@ exports = module.exports = {
 
   // Signup errors
   DUPLICATE: 'Användarnamnet används',
-  INVALID_FORMAT: 'only \\w',
+  INVALID_FORMAT: 'Ditt Användarnamn får bara innehålla bokstäver, siffror & understreck',
   USERNAME_TOO_SHORT: 'Ditt användarnamn måste vara minst 3 tecken',
   USERNAME_TOO_LONG: 'Ditt användarnamn får högst innehålla 25 tecken',
   PASSWORD_EMPTY: 'Ange ett lösenord',
-  PASSWORD_TOO_SHORT: 'Ditt lösenord måste vara minst 6 tecken'
+  PASSWORD_TOO_SHORT: 'Ditt lösenord måste vara minst 6 tecken',
+
+  // Settings errors
+  NAME_TOO_LONG: 'För långt namn',
+  LOCATION_TOO_LONG: 'För lång boplats',
+  DESCRIPTION_TOO_LONG: 'För lång personlig beskrivning',
+  INVALID_BIRTH: 'Ogiltig födelsedag'
 }
 
 ;([

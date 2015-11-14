@@ -137,6 +137,7 @@ class Settings extends React.Component {
             <div className="label">Email</div>
             <input
               type="text"
+              maxLength={254}
               defaultValue={user.email}
               ref="email"
               onChange={this.check.bind(this)}
@@ -156,6 +157,7 @@ class Settings extends React.Component {
             <div className="label">Namn</div>
             <input
               type="text"
+              maxLength={50}
               defaultValue={user.name}
               ref="name"
             />
@@ -172,6 +174,7 @@ class Settings extends React.Component {
             <div className="label">Bor</div>
             <input
               type="text"
+              maxLength={50}
               defaultValue={user.location}
               ref="location"
             />
@@ -214,6 +217,7 @@ class Settings extends React.Component {
             <input
               type="file"
               ref="avatar"
+              accept="image/*"
               onChange={this.setAvatar.bind(this)}
             />
           </label>

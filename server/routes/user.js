@@ -154,16 +154,28 @@ router.delete('/block/:userId', function(req, res) {
 
 router.put('/settings', function(req, res, next) {
   const b = req.body
-  if (['MALE', 'FEMALE'].indexOf(b.gender) === -1) {
-    // ...
+
+  if (['', 'MALE', 'FEMALE'].indexOf(b.gender) === -1) {
+    throw new Error('INVALID_GENDER')
+  }
+  if (b.name.length > 50) {
+    throw new Error('NAME_TOO_LONG')
+  }
+  if (b.location.length > 50) {
+    throw new Error('LOCATION_TOO_LONG')
+  }
+  if (b.description.length > 500) {
+    throw new Error('DESCRIPTION_TOO_LONG')
   }
   
-  var birth = new Date(b.year, b.month, b.day)
-  const y1900 = new Date(1900, 0, 0)
-  const yNowMinusTen = new Date(new Date().getFullYear() - 10, 0, 0)
+  if (b.year && b.month && b.day) {
+    var birth = new Date(b.year, b.month, b.day)
+    const y1900 = new Date(1900, 0, 0)
+    const yNowMinusTen = new Date(new Date().getFullYear() - 10, 0, 0)
 
-  if (!(birth > y1900 && birth < yNowMinusTen)) {
-    birth = undefined
+    if (!(birth > y1900 && birth < yNowMinusTen)) {
+      throw new Error('INVALID_BIRTH')
+    }
   }
 
   db.User.findByIdAndUpdate(req.user._id, {
