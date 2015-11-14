@@ -42,7 +42,7 @@ router.get('/picture/:id', function(req, res) {
 })
 
 router.use('/api/user', require('./user'))
-router.use('/api/forgot', require('./forgot'))
+router.use('/api/comment', require('./comment'))
 router.use('/api/article', require('./article'))
 router.use('/api/articles', require('./articles'))
 router.use('/api/chat', require('./chat'))
@@ -50,6 +50,7 @@ router.use('/api/request', require('./request'))
 router.use('/api/notification', require('./notification'))
 router.use('/api/reservations', require('./reservations'))
 router.use('/api/crew', require('./crew'))
+router.use('/api/forgot', require('./forgot'))
 
 router.post('/reloadclients', function(req, res) {
   io.emit('reload')

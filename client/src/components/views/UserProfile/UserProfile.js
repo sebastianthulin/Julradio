@@ -3,7 +3,7 @@ const { Link } = require('react-router')
 const User = require('../../../services/User')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const TimeSince = require('../../reusable/TimeSince')
-const Wall = require('./Wall')
+const Comments = require('../../reusable/Comments')
 const ProfileOptions = require('./ProfileOptions')
 
 class UserProfile extends React.Component {
@@ -11,22 +11,36 @@ class UserProfile extends React.Component {
     this.authedUser = User.get() || {}
   }
 
-  submitWallPost(text) {
-    const userId = this.props.user._id
-    User.wallPost(userId, text).then(() => {
-      this.props.onQuery('wallposts')
-    }).catch(err => {
-      alert('något gick fel.', err)
-    })
+  submitWallPost(ev) {
+    ev.preventDefault()
+    const text = this.refs.input.value.trim()
+    const { user, onQuery } = this.props
+    this.refs.input.value = ''
+    if (text) {
+      User.wallPost(user._id, text).then(() => {
+        onQuery('wallposts')
+      }).catch(err => {
+        alert('något gick fel.', err)
+      })
+    }
   }
 
-  deleteWallPost(id) {
-    const userId = this.props.user._id
-    User.deleteWallPost(id).then(() => {
-      this.props.onQuery('wallposts')
-    }).catch(() => {
-      alert('Något gick fel')
-    })
+  commentRemovedHandler() {
+    this.props.onQuery('wallposts')
+  }
+
+  renderForm() {
+    if (this.props.relationship) {
+      return this.props.relationship.isBlocked
+        ? <h3>Du är blockad av denna användare</h3>
+        : <h3>Du har blockat denna användare</h3>
+    }
+
+    return (
+      <form onSubmit={this.submitWallPost.bind(this)}>
+        <input type="text" ref="input" placeholder="Skriv ett inlägg i gästboken" />
+      </form>
+    )
   }
 
   render() {
@@ -55,14 +69,10 @@ class UserProfile extends React.Component {
           <div className="description">{user.description}</div>
           <div>Medlem i <TimeSince date={user.date} short={true} /></div>
         </header>
-        <Wall
-          user={user}
-          authedUser={authedUser}
-          relationship={relationship}
-          posts={posts}
-          onSubmit={this.submitWallPost.bind(this)}
-          onDelete={this.deleteWallPost.bind(this)}
-        />
+        <div className="wall">
+          {this.renderForm()}
+          {posts && <Comments comments={posts} onDelete={this.commentRemovedHandler.bind(this)} />}
+        </div>
       </div>
     )
   }

@@ -15,7 +15,8 @@ function errorHandler(err, req, res, next) {
     }
   } else if (err instanceof Error) {
     error.push(err.message)
-  } else {
+  }
+  if (error.length === 0) {
     console.error('UNHANDLED ERROR:', err)
   }
   res.status(500).send({ error })

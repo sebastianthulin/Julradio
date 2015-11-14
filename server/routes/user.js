@@ -21,10 +21,10 @@ function getUserDoc(userId) {
 }
 
 function getWallPosts(userId) {
-  return db.WallPost.find({
-    to: userId
+  return db.Comment.find({
+    targetUser: userId
   }).populate({
-    path: 'from',
+    path: 'user',
     select: '-hash -email'
   }).exec()
 }
@@ -121,38 +121,6 @@ router.use(function(req, res, next) {
   }
 })
 
-router.post('/wallpost', function(req, res) {
-  getBlockage(req.session.uid, req.body.userId).then(function(relationship) {
-    if (relationship) {
-      throw new Error()
-    }
-    return new db.WallPost({
-      text: req.body.text,
-      to: req.body.userId,
-      from: req.session.uid
-    }).save()
-  }).then(function(doc) {
-    res.send(doc)
-  }).catch(function(err) {
-    res.sendStatus(500)
-  })
-})
-
-router.delete('/wallpost/:id', function(req, res, next) {
-  const b = req.params
-  db.WallPost.findOne({
-    _id: b.id
-  }).exec().then(function(post) {
-    if (req.user.roles.admin || req.session.uid == post.from || req.session.uid == post.to) {
-      post.remove().then(function() {
-        res.sendStatus(200)
-      })
-    } else {
-      throw new Error('UNAUTHORISED')
-    }
-  }).catch(next)
-})
-
 router.post('/block', function(req, res) {
   // block a user
   const b = req.body
@@ -219,8 +187,7 @@ router.put('/settings2', function(req, res, next) {
       throw new Error('INCORRECT_PASSWORD')
     }
     if (b.email !== user.email) {
-      // validate this
-      user.email = b.email
+      user.setEmail(b.email)
     }
     if (b.password) {
       user.setPassword(b.password)

@@ -28,7 +28,7 @@ UserStore.get = function(username, query) {
       }
       if (body.wallposts) {
         body.wallposts.sort((a, b) => new Date(b.date) - new Date(a.date))
-        body.wallposts.forEach(({ from: user }) => UserStore.insert(user))
+        body.wallposts.forEach(({ user }) => UserStore.insert(user))
       }
       resolve(body)
     }).catch(function(err) {

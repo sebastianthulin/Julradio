@@ -9,18 +9,32 @@ const schema = new Schema({
     required: true,
     trim: true
   },
-  from: {
+  user: {
     type: Schema.ObjectId,
     ref: 'users'
   },
-  to: {
+
+  // If set, this user can have the comment removed
+  owner: {
     type: Schema.ObjectId,
     ref: 'users'
   },
   date: {
     type: Date,
     default: Date.now
+  },
+
+
+  // A comment should have one of the following:
+  wall: Boolean,
+  article: {
+    type: Schema.ObjectId,
+    ref: 'articles'
+  },
+  targetUser: {
+    type: Schema.ObjectId,
+    ref: 'users'
   }
 })
 
-module.exports = mongoose.model('wallposts', schema)
+module.exports = mongoose.model('comments', schema)

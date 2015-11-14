@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const Comment = require('./Comment')
 
 const schema = new Schema({
   title: {
@@ -19,7 +20,17 @@ const schema = new Schema({
   date: {
     type: Date,
     default: Date.now
+  },
+  numComments: {
+    type: Number,
+    default: 0
   }
 })
 
-module.exports = mongoose.model('articles', schema)
+schema.statics.updateCommentCount = function(articleId) {
+  return Comment.count({article: articleId}).exec().then(function(numComments) {
+    return Article.findByIdAndUpdate(articleId, { numComments }).exec()
+  })
+}
+
+const Article = module.exports = mongoose.model('articles', schema)

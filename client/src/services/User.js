@@ -19,8 +19,10 @@ User.set = function(user) {
 
 User.block = userId => request.post('/api/user/block', { userId })
 User.unBlock = userId => request.del('/api/user/block/' + userId)
-User.wallPost = (userId, text) => request.post('/api/user/wallpost', { userId, text })
-User.deleteWallPost = postId => request.del('/api/user/wallpost/' + postId)
+
+User.wallPost = (userId, text) => request.post('/api/comment/wallpost', { userId, text })
+User.articleComment = (articleId, text) => request.post('/api/comment/articlecomment', { articleId, text })
+User.deleteComment = commentId => request.del('/api/comment/' + commentId)
 
 User.update = opts => new Promise(function(resolve, reject) {
   request.put('/api/user/settings', opts).then(function({ body: user }) {
@@ -52,10 +54,6 @@ User.setAvatar = function(file) {
       reject(response.body.error)
     })
   })
-}
-
-User.comment = function(articleId, comment, callback) {
-  request.post('/api/article/' + articleId + '/comment/', { comment }).then(callback)
 }
 
 User.forgotPassword = function(form) {
