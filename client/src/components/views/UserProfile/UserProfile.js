@@ -82,7 +82,7 @@ class UserProfile extends React.Component {
             onQuery={onQuery}
           />}
           <div className="name">{user.name ? user.name : '@' + user.username}</div>
-          <div className="identity">{user.name ? '@' + user.username : ''} {this.getIndentity()}</div>
+          <div className="identity">{(user.name ? '@' + user.username + ' ' : '') + this.getIndentity()}</div>
           {user.title && <span className="title">{user.title}</span>}
           <div className="description">{user.description}</div>
           <div>Medlem i <TimeSince date={user.date} short={true} /></div>
