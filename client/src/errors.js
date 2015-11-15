@@ -1,5 +1,7 @@
-exports = module.exports = {
+module.exports = {
   UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+
+  TEXT_TOO_LONG: 'Texten är för lång',
 
   // Signin errors
   INCORRECT_PASSWORD: 'Fel lösenord',
@@ -20,7 +22,3 @@ exports = module.exports = {
   DESCRIPTION_TOO_LONG: 'För lång personlig beskrivning',
   INVALID_BIRTH: 'Ogiltig födelsedag'
 }
-
-;([
-  'STOP_HAXING_PLZ'
-]).forEach(s => exports[s] = exports.UNKNOWN_ERROR)

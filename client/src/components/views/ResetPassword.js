@@ -20,11 +20,7 @@ class ResetPassword extends React.Component {
     ev.preventDefault()
     const { id } = this.props.params
     const password = this.refs.password.value
-    User.newPassword(id, password, this.handleError.bind(this))
-  }
-
-  handleError(err) {
-    alert(err)
+    User.newPassword(id, password)
   }
 
   render() {

@@ -7,7 +7,11 @@ const schema = new Schema({
   text: {
     type: String,
     required: true,
-    trim: true
+    trim: true,
+    validate: {
+      validator: str => str.length <= 500,
+      message: 'TEXT_TOO_LONG'
+    }
   },
   user: {
     type: Schema.ObjectId,

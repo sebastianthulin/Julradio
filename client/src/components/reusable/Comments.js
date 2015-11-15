@@ -49,7 +49,6 @@ class Comments extends React.Component {
   render() {
     const { user, admin } = this
     const { comments, onDelete } = this.props
-    console.log(comments)
     return (
       <div className="Comments">
         {comments.map(comment => <Comment

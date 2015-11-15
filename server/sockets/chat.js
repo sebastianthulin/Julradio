@@ -49,12 +49,16 @@ function sendMessage(from, conversationId, text) {
       conversation: conversationId
     })
 
-    message.save()
     conversation.lastMessage = message._id
     conversation.updatedAt = Date.now()
-    conversation.save()
-    conversation.users.forEach(function(userId) {
-      io.to(userId).emit('chat:message', message)
+
+    return Promise.all([
+      message.save(),
+      conversation.save()
+    ])
+  }).then(function(data) {
+    data[1].users.forEach(function(userId) {
+      io.to(userId).emit('chat:message', data[0])
       Notify({
         userId,
         from,

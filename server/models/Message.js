@@ -6,7 +6,12 @@ const Schema = mongoose.Schema
 const schema = new Schema({
   text: {
     type: String,
-    required: true
+    required: true,
+    trim: true,
+    validate: {
+      validator: str => str.length <= 200,
+      message: 'TEXT_TOO_LONG'
+    }
   },
   user: {
     type: Schema.ObjectId,

@@ -22,7 +22,7 @@ class Notification extends React.Component {
 
   getErrorMessage() {
     const { type, value } = this.props
-    return errors[value]
+    return errors[value] || errors.UNKNOWN_ERROR
   }
 
   render() {
@@ -30,6 +30,7 @@ class Notification extends React.Component {
     const style = {
       transform: `translateY(${y}px)`
     }
+
     return (
       <div ref="notification" className={cx('Notification', { err })} style={style}>
         {from && <ProfilePicture id={from.picture} />}

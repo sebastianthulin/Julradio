@@ -7,6 +7,23 @@ const User = new EventEmitter
 
 var doc = null
 
+function handleError(type, reject) {
+  return function({ response }) {
+    const error = response.body.error
+    reject && reject(error)
+    NotificationStore.error({
+      type,
+      value: error
+    })
+  }
+}
+
+function justok(resolve) {
+  return function({ body }) {
+    resolve(body)
+  }
+}
+
 function errorHandler(type, value) {
   NotificationStore.error({ type, value })
 }
@@ -19,27 +36,26 @@ User.set = function(user) {
 
 User.block = userId => request.post('/api/user/block', { userId })
 User.unBlock = userId => request.del('/api/user/block/' + userId)
-
-User.wallPost = (userId, text) => request.post('/api/comment/wallpost', { userId, text })
-User.articleComment = (articleId, text) => request.post('/api/comment/articlecomment', { articleId, text })
+User.wallPost = (userId, text) => User.comment('/api/comment/wallpost', { userId, text })
+User.articleComment = (articleId, text) => User.comment('/api/comment/articlecomment', { articleId, text })
 User.deleteComment = commentId => request.del('/api/comment/' + commentId)
+
+User.comment = (url, opts) =>
+  new Promise((a, b) =>
+    request.post(url, opts).then(justok(a)).catch(handleError('comment', b)))
 
 User.update = opts => new Promise(function(resolve, reject) {
   request.put('/api/user/settings', opts).then(function({ body: user }) {
     User.set(user)
     resolve(user)
-  }).catch(function({ response }) {
-    reject(response.body.error)
-  })
+  }).catch(handleError('settings', reject))
 })
 
 User.update2 = opts => new Promise(function(resolve, reject) {
   request.put('/api/user/settings2', opts).then(function({ body: user }) {
     User.set(user)
     resolve(user)
-  }).catch(function({ response }) {
-    reject(response.body.error)
-  })
+  }).catch(handleError('settings', reject))
 })
 
 User.setAvatar = function(file) {
@@ -49,48 +65,35 @@ User.setAvatar = function(file) {
     request.post('/api/user/profilepicture').send(formData).then(function({ body: user }) {
       User.set(user)
       resolve(user)
-    }).catch(function({ response }) {
-      errorHandler('avatar', response.body.error[0])
-      reject(response.body.error)
-    })
+    }).catch(handleError('avatar', reject))
   })
 }
 
-User.forgotPassword = function(form) {
+User.forgotPassword = form =>
+  new Promise((a, b) =>
+    request.post('/api/forgot', form).then(justok(a)).catch(handleError('forgotpassword', b)))
+
+User.newPassword = function(id, password) {
+  return new Promse(function(resolve, reject) {
+    request.post('/api/forgot/' + id, { password }).then(function() {
+      location.reload()
+    }).catch(handleError('newpassword', reject))
+  })
+}
+
+User.logIn = function(creds) {
   return new Promise(function(resolve, reject) {
-    request.post('/api/forgot', form).then(function() {
-      resolve()
-    }, function({ response }) {
-      errorHandler('forgotpassword', response.body.error[0])
-      reject(response.body.error[0])
-    })
+    request.post('/api/user/login', creds).then(function() {
+      location.reload()
+    }).catch(handleError('login', reject))
   })
 }
 
-User.newPassword = function(id, password, errHandler) {
-  request.post('/api/forgot/' + id, { password }).then(function() {
-    location.reload()
-  }, function({ response }) {
-    errorHandler('newpassword', response.body.error[0])
-    errHandler(response.body.error[0])
-  })
-}
-
-User.logIn = function(creds, errHandler) {
-  request.post('/api/user/login', creds).then(function() {
-    location.reload()
-  }).catch(function({ response }) {
-    errorHandler('login', response.body.error[0])
-    errHandler && errHandler(response.body.error[0])
-  })
-}
-
-User.signUp = function(form, errHandler) {
-  request.post('/api/user/signup', form).then(function() {
-    location.reload()
-  }, function({ response }) {
-    errorHandler('signup', response.body.error[0])
-    errHandler && errHandler(response.body.error[0])
+User.signUp = function(form) {
+  return new Promise(function(resolve, reject) {
+    request.post('/api/user/signup', form).then(function() {
+      location.reload()
+    }).catch(handleError('signup', reject))
   })
 }
 

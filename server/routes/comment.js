@@ -32,10 +32,9 @@ router.delete('/:id', function(req, res, next) {
   }).catch(next)
 })
 
-router.post('/articlecomment', function(req, res) {
+router.post('/articlecomment', function(req, res, next) {
   const articleId = req.body.articleId
   const text = req.body.text
-  console.log(articleId, text)
   db.Article.findById(articleId).then(function(article) {
     if (!article) throw ''
     return new db.Comment({
@@ -47,18 +46,16 @@ router.post('/articlecomment', function(req, res) {
   }).then(function(comment) {
     res.send(comment)
     db.Article.updateCommentCount(articleId)
-  }).catch(function() {
-    res.sendStatus(500)
-  })
+  }).catch(next)
 })
 
-router.post('/wallpost', function(req, res) {
+router.post('/wallpost', function(req, res, next) {
   const uid = req.user._id
   const target = req.body.userId
   const text = req.body.text
   getBlockage(uid, target).then(function(relationship) {
     if (relationship) {
-      throw new Error()
+      throw new Error('BLOCKAGE')
     }
     return new db.Comment({
       text,
@@ -66,11 +63,7 @@ router.post('/wallpost', function(req, res) {
       owner: target,
       targetUser: target
     }).save()
-  }).then(function(comment) {
-    res.send(comment)
-  }).catch(function(err) {
-    res.sendStatus(500)
-  })
+  }).then(res.send.bind(res)).catch(next)
 })
 
 module.exports = router
