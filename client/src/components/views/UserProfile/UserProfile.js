@@ -62,7 +62,12 @@ class UserProfile extends React.Component {
             onQuery={onQuery}
           />}
           {relationship && this.renderRelationship()}
-          <Comments type="user" target={user._id} block={!!relationship} />
+          <Comments
+            type="user"
+            target={user._id}
+            placeholder="Skriv ett inlägg i gästboken"
+            block={!!relationship}
+          />
         </main>
       </div>
     )

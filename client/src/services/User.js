@@ -1,9 +1,11 @@
 const { EventEmitter } = require('events')
 const { Promise } = require('es6-promise')
 const request = require('../services/request')
+const User = module.exports = new EventEmitter
+const ChatStore = require('../stores/ChatStore')
+const ShitStore = require('../stores/ShitStore')
 const NotificationStore = require('../stores/NotificationStore')
 const UserStore = require('../stores/UserStore')
-const User = new EventEmitter
 
 var doc = null
 
@@ -67,7 +69,7 @@ User.forgotPassword = form =>
     request.post('/api/forgot', form).then(justok(a)).catch(handleError('forgotpassword', b)))
 
 User.newPassword = function(id, password) {
-  return new Promse(function(resolve, reject) {
+  return new Promise(function(resolve, reject) {
     request.post('/api/forgot/' + id, { password }).then(function() {
       location.reload()
     }).catch(handleError('newpassword', reject))
@@ -109,6 +111,8 @@ User.isRadioHost = () => User.is('radioHost')
 User.isAdmin = () => User.is('admin')
 User.isAnything = () => User.isWriter() || User.isRadioHost() || User.isAdmin()
 
-window.__USER__ && User.set(window.__USER__)
-
-module.exports = User
+if (window.__USER__) {
+  User.set(window.__USER__)
+  ShitStore.fetch()
+  ChatStore.fetch()
+}

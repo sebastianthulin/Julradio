@@ -156,13 +156,13 @@ document.addEventListener('focus', function() {
   ShitStore.clear('message', ChatStore.getConversationId())
 })
 
-request.get('/api/chat').then(function({ body: conversations }) {
-  conversations.forEach(insertConversation)
-  state.loaded = true
-  updateThreads()
-  ChatStore.emit('ready')
-}).catch(function(err) {
-  console.log('could not load messages')
-})
+ChatStore.fetch = function() {
+  request.get('/api/chat').then(function({ body: conversations }) {
+    conversations.forEach(insertConversation)
+    state.loaded = true
+    updateThreads()
+    ChatStore.emit('ready')
+  }).catch(console.error)
+}
 
 module.exports = ChatStore

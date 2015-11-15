@@ -51,18 +51,19 @@ socket.on('notification:new', function(opts) {
   }
 })
 
-request.get('/api/notification').then(function({ body: notifications }) {
-  const emitList = []
-  for (let i = 0; i < notifications.length; i++) {
-    const { type, value } = notifications[i]
-    state[type].push(value)
-    if (emitList.indexOf(type) === -1) {
-      emitList.push(type)
+ShitStore.fetch = function() {
+  request.get('/api/notification').then(function({ body: notifications }) {
+    const emitList = []
+    for (let i = 0; i < notifications.length; i++) {
+      const { type, value } = notifications[i]
+      state[type].push(value)
+      if (emitList.indexOf(type) === -1) {
+        emitList.push(type)
+      }
     }
-  }
-  emitList.forEach(type => ShitStore.emit(type, state[type].slice()))
-}).catch(function(err) {
-  console.log('could not load notifications')
-})
+    emitList.forEach(type => ShitStore.emit(type, state[type].slice()))
+  }).catch(console.error)
+}
+
 
 module.exports = ShitStore

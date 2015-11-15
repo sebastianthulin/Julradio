@@ -84,12 +84,13 @@ class Comments extends React.Component {
   }
 
   renderForm() {
-    return this.props.block ? null : (
+    const { block, placeholder } = this.props
+    return block ? null : (
       <form className="mainForm" onSubmit={this.post.bind(this)}>
         <textarea
           type="text"
           ref="input"
-          placeholder="Skriv en kommentar"
+          placeholder={placeholder || 'Skriv en kommentar'}
           maxLength={1000}
         />
         <button className="btn">Skicka</button>

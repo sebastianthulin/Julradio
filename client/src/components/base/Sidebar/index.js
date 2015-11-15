@@ -62,17 +62,15 @@ class Sidebar extends React.Component {
           </div>
           {this.renderUser()}
           {user && divider}
-          {user && <Link to="/messages">
-            <button className="userAction">
-              <SVG.Messenger />
-              { unseenMessages.length > 0 && <div className="notification">{ unseenMessages.length.toString() }</div> }
-              Meddelanden
-            </button>
+          {user && <Link to="/messages" className="userAction">
+            <SVG.Messenger />
+            {unseenMessages.length > 0 && <div className="notification">{unseenMessages.length}</div>}
+            Meddelanden
           </Link>}
-          {user && <button className="userAction">
+          {user && <Link to="/cosycorner" className="userAction">
             <SVG.Fire />
-            Träffa
-          </button>}
+            Myshörnan
+          </Link>}
           {user && divider}
           <div className="shortcuts">
             <a href="https://webchat.quakenet.org/?channels=julradio&nick=" target="_new">IRC</a>

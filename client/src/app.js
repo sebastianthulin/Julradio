@@ -21,6 +21,7 @@ const ResetPassword = require('./components/views/ResetPassword')
 const UserProfile = require('./components/views/UserProfile')
 const Settings = require('./components/views/Settings')
 const Messages = require('./components/views/Messages')
+const CosyCorner = require('./components/views/CosyCorner')
 const Crew = require('./components/views/Crew')
 const History = require('./components/views/History')
 const Admin = require('./components/views/Admin')
@@ -91,8 +92,8 @@ const routes = (
     <Route path="forgot/:id" component={ResetPassword} />
     <Route path="crew" component={Crew} />
     <Route path="history" component={History} />
-    <Route path="messages" component={Messages} onEnter={requireAuth} />
-    <Route path="messages/:user" component={Messages} onEnter={requireAuth} />
+    <Route path="messages(/:user)" component={Messages} onEnter={requireAuth} />
+    <Route path="cosycorner" component={CosyCorner} />
     <Route path="@:username" component={UserProfile} />
     <Route path="settings" component={Settings} onEnter={requireAuth} />
     <Route path="admin" component={Admin} onEnter={requireAdminAuth}>

@@ -34,7 +34,7 @@ const schema = new Schema({
 
 
   // A comment should have one of the following:
-  wall: Boolean,
+  cosyCorner: Boolean,
   article: {
     type: Schema.ObjectId,
     ref: 'articles'

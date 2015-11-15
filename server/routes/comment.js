@@ -7,35 +7,9 @@ const getBlockage = require('../services/getBlockage')
 
 const types = {
   article: 'article',
-  user: 'targetUser'
+  user: 'targetUser',
+  cosycorner: 'cosyCorner'
 }
-
-router.use(function(req, res, next) {
-  if (req.user._id) {
-    next()
-  } else {
-    next(new Error('NOT_SIGNED_IN'))
-  }
-})
-
-router.delete('/:id', function(req, res, next) {
-  const commentId = req.params.id
-  const uid = req.session.uid
-  const isAdmin = req.user.roles.admin
-  db.Comment.findById(commentId).exec().then(function(comment) {
-    // se vad som händer ifall comment inte finns
-    if (isAdmin || uid == comment.user || uid == comment.owner) {
-      return comment.remove()
-    } else {
-      throw new Error('UNAUTHORISED')
-    }
-  }).then(function(comment) {
-    res.sendStatus(200)
-    if (comment.article) {
-      db.Article.updateCommentCount(comment.article)
-    }
-  }).catch(next)
-})
 
 router.get('/:type', function(req, res, next) {
   const type = types[req.params.type]
@@ -45,13 +19,21 @@ router.get('/:type', function(req, res, next) {
   }
 
   db.Comment.find({
-    [type]: target
+    [type]: target || true
   }).sort('-_id').populate({
     path: 'user',
     select: '-hash -email'
   }).exec().then(function(comments) {
     res.send(comments)
   }).catch(next)
+})
+
+router.use(function(req, res, next) {
+  if (req.user._id) {
+    next()
+  } else {
+    next(new Error('NOT_SIGNED_IN'))
+  }
 })
 
 router.post('/article', function(req, res, next) {
@@ -88,6 +70,16 @@ router.post('/user', function(req, res, next) {
   }).then(res.send.bind(res)).catch(next)
 })
 
+router.post('/cosycorner', function(req, res, next) {
+  new db.Comment({
+    text: req.body.text,
+    user: req.user._id,
+    cosyCorner: true
+  }).save()
+    .then(res.send.bind(res))
+    .catch(next)
+})
+
 router.post('/reply', function(req, res, next) {
   const uid = req.user._id
   const b = req.body
@@ -114,6 +106,25 @@ router.post('/reply', function(req, res, next) {
   }).then(function(comment) {
     res.send(comment)
   })
+})
+
+router.delete('/:id', function(req, res, next) {
+  const commentId = req.params.id
+  const uid = req.session.uid
+  const isAdmin = req.user.roles.admin
+  db.Comment.findById(commentId).exec().then(function(comment) {
+    // se vad som händer ifall comment inte finns
+    if (isAdmin || uid == comment.user || uid == comment.owner) {
+      return comment.remove()
+    } else {
+      throw new Error('UNAUTHORISED')
+    }
+  }).then(function(comment) {
+    res.sendStatus(200)
+    if (comment.article) {
+      db.Article.updateCommentCount(comment.article)
+    }
+  }).catch(next)
 })
 
 module.exports = router
