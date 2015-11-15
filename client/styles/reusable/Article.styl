@@ -3,7 +3,6 @@
   header
     display flex
     align-items center
-    height 50px
     margin-bottom 20px
     .ProfilePicture
       width 50px
@@ -12,13 +11,13 @@
     .user
       display flex
       flex-direction column
-      justify-content space-between
-      height 46px
+      .TimeSince
+        color rgba(255, 255, 255, 0.53)
       a
         display table
         color #FFF
+        margin-bottom -1px
+        border-bottom 1px solid transparent
+        hyphens()
         &:hover
-          border-bottom 1px solid
-
-    .TimeSince
-      color rgba(255, 255, 255, 0.53)
+          border-color inherit

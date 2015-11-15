@@ -9,7 +9,7 @@ const schema = new Schema({
     required: true,
     trim: true,
     validate: {
-      validator: str => str.length <= 500,
+      validator: str => str.length <= 1000,
       message: 'TEXT_TOO_LONG'
     }
   },

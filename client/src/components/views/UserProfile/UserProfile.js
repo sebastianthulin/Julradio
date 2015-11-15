@@ -55,13 +55,15 @@ class UserProfile extends React.Component {
           <div className="description">{user.description}</div>
           <div>Medlem i <TimeSince date={user.date} short={true} /></div>
         </header>
-        {authedUser._id && authedUser._id !== user._id && <ProfileOptions
-          user={user}
-          relationship={relationship}
-          onQuery={onQuery}
-        />}
-        {relationship && this.renderRelationship()}
-        <Comments type="user" target={user._id} block={!!relationship} />
+        <main>
+          {authedUser._id && authedUser._id !== user._id && <ProfileOptions
+            user={user}
+            relationship={relationship}
+            onQuery={onQuery}
+          />}
+          {relationship && this.renderRelationship()}
+          <Comments type="user" target={user._id} block={!!relationship} />
+        </main>
       </div>
     )
   }

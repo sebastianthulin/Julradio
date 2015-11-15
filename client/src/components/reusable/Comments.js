@@ -89,7 +89,8 @@ class Comments extends React.Component {
         <textarea
           type="text"
           ref="input"
-          placeholder="Skriv en kommentar (500 tecken högst)"
+          placeholder="Skriv en kommentar"
+          maxLength={1000}
         />
         <button className="btn">Skicka</button>
       </form>

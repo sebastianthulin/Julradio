@@ -7,17 +7,19 @@
   width 100%
   background rgba(140, 17, 17, 0.95)
   transition opacity .4s
-  
-  .openMenu
-    background none
-    color white
-    font-size 24px
-    padding 8px 16px
-
   +desktop()
     display none
-  button
+
+  .openMenu
     position absolute
+    top 0
+    left 0
+    height 100%
+    padding 0px 16px
+    font-size 24px
+    color #FFF
+    background none
+
   a.logo
     margin 0px auto
     font-family 'Lobster'
