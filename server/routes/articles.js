@@ -4,13 +4,18 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 
-router.get('/', function(req, res) {
+router.get('/', function(req, res, next) {
   db.Article.find().populate({
     path: 'user',
     select: '-hash -email'
-  }).exec().then(function(articles) {
-    res.send(articles)
-  })
+  }).exec().then(res.send.bind(res)).catch(next)
+})
+
+router.get('/:id', function(req, res, next) {
+  db.Article.findById(req.params.id).populate({
+    path: 'user',
+    select: '-hash -email'
+  }).exec().then(res.send.bind(res)).catch(next)
 })
 
 router.use(function(req, res, next) {

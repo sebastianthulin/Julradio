@@ -36,14 +36,6 @@ User.set = function(user) {
 
 User.block = userId => request.post('/api/user/block', { userId })
 User.unBlock = userId => request.del('/api/user/block/' + userId)
-User.wallPost = (userId, text) => User.comment('/api/comment/wallpost', { userId, text })
-User.reply = (replyTo, text) => User.comment('/api/comment/reply', { replyTo, text })
-User.articleComment = (articleId, text) => User.comment('/api/comment/articlecomment', { articleId, text })
-User.deleteComment = commentId => request.del('/api/comment/' + commentId)
-
-User.comment = (url, opts) =>
-  new Promise((a, b) =>
-    request.post(url, opts).then(justok(a)).catch(handleError('comment', b)))
 
 User.update = opts => new Promise(function(resolve, reject) {
   request.put('/api/user/settings', opts).then(function({ body: user }) {

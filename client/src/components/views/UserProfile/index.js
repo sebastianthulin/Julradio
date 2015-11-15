@@ -12,7 +12,7 @@ class UserProfileContainer extends React.Component {
   }
 
   setUser(username) {
-    this.execute(username, 'profile block wallposts')
+    this.execute(username, 'profile block')
   }
 
   runQuery(query) {

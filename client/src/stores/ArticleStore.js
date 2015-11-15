@@ -44,13 +44,13 @@ ArticleStore.get = function(callback) {
   })
 }
 
-ArticleStore.getOne = function(id, callback) {
+ArticleStore.getById = function(id, callback) {
   if (articleById[id]) {
-    callback({article: articleById[id]})
+    callback(articleById[id])
   }
-  request.get('/api/article/' + id).then(function({ body }) {
-    ArticleStore.transform(body.article)
-    callback(body)
+  request.get('/api/articles/' + id).then(function({ body: article }) {
+    ArticleStore.transform(article)
+    callback(article)
   })
 }
 

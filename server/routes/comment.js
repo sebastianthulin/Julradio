@@ -5,6 +5,11 @@ const router = express.Router()
 const db = require('../models')
 const getBlockage = require('../services/getBlockage')
 
+const types = {
+  article: 'article',
+  user: 'targetUser'
+}
+
 router.use(function(req, res, next) {
   if (req.user._id) {
     next()
@@ -32,8 +37,25 @@ router.delete('/:id', function(req, res, next) {
   }).catch(next)
 })
 
-router.post('/articlecomment', function(req, res, next) {
-  const articleId = req.body.articleId
+router.get('/:type', function(req, res, next) {
+  const type = types[req.params.type]
+  const target = req.query.target
+  if (!type) {
+    return next(new Error('INVALID_COMMENT_TYPE'))
+  }
+
+  db.Comment.find({
+    [type]: target
+  }).sort('-_id').populate({
+    path: 'user',
+    select: '-hash -email'
+  }).exec().then(function(comments) {
+    res.send(comments)
+  }).catch(next)
+})
+
+router.post('/article', function(req, res, next) {
+  const articleId = req.body.target
   const text = req.body.text
   db.Article.findById(articleId).then(function(article) {
     if (!article) throw ''
@@ -47,6 +69,23 @@ router.post('/articlecomment', function(req, res, next) {
     res.send(comment)
     db.Article.updateCommentCount(articleId)
   }).catch(next)
+})
+
+router.post('/user', function(req, res, next) {
+  const uid = req.user._id
+  const target = req.body.target
+  const text = req.body.text
+  getBlockage(uid, target).then(function(relationship) {
+    if (relationship) {
+      throw new Error('BLOCKAGE')
+    }
+    return new db.Comment({
+      text,
+      user: uid,
+      owner: target,
+      targetUser: target
+    }).save()
+  }).then(res.send.bind(res)).catch(next)
 })
 
 router.post('/reply', function(req, res, next) {
@@ -75,23 +114,6 @@ router.post('/reply', function(req, res, next) {
   }).then(function(comment) {
     res.send(comment)
   })
-})
-
-router.post('/wallpost', function(req, res, next) {
-  const uid = req.user._id
-  const target = req.body.userId
-  const text = req.body.text
-  getBlockage(uid, target).then(function(relationship) {
-    if (relationship) {
-      throw new Error('BLOCKAGE')
-    }
-    return new db.Comment({
-      text,
-      user: uid,
-      owner: target,
-      targetUser: target
-    }).save()
-  }).then(res.send.bind(res)).catch(next)
 })
 
 module.exports = router

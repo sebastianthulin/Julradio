@@ -1,6 +1,7 @@
 const React = require('react')
 const { Link } = require('react-router')
 const User = require('../../services/User')
+const CommentStore = require('../../stores/CommentStore')
 const ProfilePicture = require('./ProfilePicture')
 const TimeSince = require('./TimeSince')
 
@@ -8,16 +9,14 @@ class Comment extends React.Component {
   componentWillMount() {
     const { comment, user, admin } = this.props
     const userId = user && user._id
-    this.removable = admin || userId === comment.userId || userId === comment.owner
     this.isReply = comment.replyTo
+    this.removable = admin || userId === comment.user._id || userId === comment.owner
   }
 
   delete() {
     const { comment, onDelete } = this.props
     if (!confirm('Ta bort inlägg?')) return
-    User.deleteComment(comment._id).then(() => {
-      onDelete && onDelete()
-    }).catch(err => {
+    CommentStore.deleteComment(comment._id).then(onDelete).catch(err => {
       console.error(err)
       alert('Något gick fel')
     })
@@ -27,7 +26,7 @@ class Comment extends React.Component {
     ev.preventDefault()
     const { comment } = this.props
     const text = this.refs.reply.value
-    User.reply(comment._id, text).then(() => {
+    CommentStore.reply(comment._id, text).then(() => {
       // do stuff ig
     }).catch(err => {
       console.log(err)
@@ -47,11 +46,11 @@ class Comment extends React.Component {
           </div>
         </header>
         <div className="text">{comment.text}</div>
-        {
-          !this.isReply && <form onSubmit={this.reply.bind(this)}>
+        {!this.isReply && (
+          <form onSubmit={this.reply.bind(this)}>
             <input ref="reply" type="text" placeholder="Svara" />
           </form>
-        }
+        )}
         {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
       </div>
     )
@@ -62,17 +61,52 @@ class Comments extends React.Component {
   componentWillMount() {
     this.user = User.get()
     this.admin = User.isAdmin()
+    this.fetchComments()
+  }
+
+  fetchComments() {
+    const { type, target } = this.props
+    CommentStore.fetch({ type, target }, comments => this.setState({ comments }))
+  }
+
+  post(ev) {
+    ev.preventDefault()
+    const { type, target } = this.props
+    const text = this.refs.input.value.trim()
+    if (!text) return
+    CommentStore.post({ type, target }, text).then(() => {
+      this.refs.input.value = ''
+      this.fetchComments()
+    }).catch(err => {
+      console.error(err)
+      alert('något gick fel.')
+    })
+  }
+
+  renderForm() {
+    return this.props.block ? null : (
+      <form className="mainForm" onSubmit={this.post.bind(this)}>
+        <textarea
+          type="text"
+          ref="input"
+          placeholder="Skriv en kommentar (500 tecken högst)"
+        />
+        <button className="btn">Skicka</button>
+      </form>
+    )
   }
 
   render() {
     const { user, admin } = this
-    const { comments, onDelete } = this.props
+    const { comments } = this.state || {}
+    if (!comments) return null
     return (
       <div className="Comments">
+        {this.renderForm()}
         {comments.map(comment => <Comment
           key={comment._id}
           comment={comment}
-          onDelete={onDelete}
+          onDelete={this.fetchComments.bind(this)}
           user={user}
           admin={admin}
         />)}

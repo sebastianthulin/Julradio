@@ -1,10 +1,32 @@
 .Comments
-  //
+  .mainForm
+    margin-bottom 20px
+    textarea
+      width 100%
+      height 100px
+      margin-bottom 10px
+      padding 14px
+      font-size 14px
+      resize none
+      color #333
+      border-radius 3px
+      background #FFF
+
+    button
+      width 100%
+      padding 10px 0
+      color #FFF
+      border-radius 3px
+      background rgba(255, 255, 255, 0.19)
   
 .Comment
   position relative
-  border-bottom 1px solid rgba(255,255,255,0.2)
   padding 10px 0px
+  border-top 1px solid rgba(255,255,255,0.2)
+  form    // temp as hell
+    display none
+  &:hover form
+    display block
   header
     display flex
     align-items center
@@ -26,7 +48,6 @@
         color #FFF
         &:hover
           border-bottom 1px solid
-
 
   .text
     margin-left 60px

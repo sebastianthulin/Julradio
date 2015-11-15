@@ -20,15 +20,6 @@ function getUserDoc(userId) {
   return db.User.findById(userId).select('-hash -email').lean().exec()
 }
 
-function getWallPosts(userId) {
-  return db.Comment.find({
-    targetUser: userId
-  }).populate({
-    path: 'user',
-    select: '-hash -email'
-  }).exec()
-}
-
 router.get('/logout', function(req, res) {
   req.session.uid = null
   res.redirect('/')
@@ -44,7 +35,7 @@ router.get('/byname/:username', function(req, res) {
 router.get('/profile', function getUser(req, res) {
   const userId = req.query.userId
   const usernameLower = String(req.query.username).toLowerCase()
-  const allowed = ['profile', 'block', 'wallposts']
+  const allowed = ['profile', 'block']
   const query = String(req.query.query).split(' ').filter(function(name) {
     const i = allowed.indexOf(name)
     if (i > -1) {
@@ -70,7 +61,6 @@ router.get('/profile', function getUser(req, res) {
       switch (type) {
         case 'profile': return getUserDoc(userId)
         case 'block': return getBlockage(req.session.uid, userId)
-        case 'wallposts': return getWallPosts(userId)
       }
     }))
   }).then(function(data) {

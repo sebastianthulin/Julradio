@@ -1,6 +1,4 @@
 const React = require('react')
-const { Link } = require('react-router')
-const User = require('../../services/User')
 const ArticleStore = require('../../stores/ArticleStore')
 const Article = require('../reusable/Article')
 const Comments = require('../reusable/Comments')
@@ -8,35 +6,15 @@ const Comments = require('../reusable/Comments')
 class ArticleView extends React.Component {
   componentWillMount() {
     const { id } = this.props.params
-    ArticleStore.getOne(id, data => this.setState({ 
-      article: data.article,
-      comments: data.comments
-    }))
-  }
-
-  comment(ev) {
-    const { id } = this.props.params
-    ev.preventDefault()
-    User.articleComment(id, this.refs.comment.value).then(({ body: comment }) => {
-      this.refs.comment.value = ''
-      this.componentWillMount()
-    })
-  }
-
-  commentRemovedHandler() {
-    this.componentWillMount()
+    ArticleStore.getById(id, article => this.setState({ article }))
   }
 
   render() {
-    const { article, comments } = this.state || {}
+    const { article } = this.state || {}
     return (
       <div id="ArticleView">
         {article && <Article key={article._id} article={article} />}
-        <form onSubmit={this.comment.bind(this)}>
-          <textarea className="commentsInput clean" type="text" ref="comment" maxLength="500" placeholder="Kommentera (500 tecken högst)" /><br/>
-          <button className="btn">Skicka</button>
-        </form>
-        {comments && <Comments comments={comments} onDelete={this.commentRemovedHandler.bind(this)} />}
+        {article && <Comments type="article" target={article._id} />}
       </div>
     )
   }
