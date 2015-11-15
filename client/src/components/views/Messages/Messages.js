@@ -59,9 +59,7 @@ class Messages extends React.Component {
   sendMessage(ev) {
     ev.preventDefault()
     const text = this.refs.input.value.trim()
-    if (text && text.length <= 200) {
-      ChatStore.sendMessage(text)
-    }
+    text && ChatStore.sendMessage(text)
     this.refs.input.value = ''
   }
 

@@ -38,7 +38,8 @@ class UserProfile extends React.Component {
 
     return (
       <form onSubmit={this.submitWallPost.bind(this)}>
-        <input type="text" ref="input" placeholder="Skriv ett inlägg i gästboken (500 tecken högst)" />
+        <textarea className="profileComment" type="text" ref="input" placeholder="Skriv ett inlägg i gästboken (500 tecken högst)" />
+        <button className="btn">Skicka</button>
       </form>
     )
   }

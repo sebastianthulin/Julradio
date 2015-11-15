@@ -29,7 +29,7 @@
     .description
       color rgba(255,255,255,0.7)
       font-size 14px
-
+      vendor(hyphens, auto)
 #ProfileOptions
   position absolute
   margin-top 165px
@@ -49,11 +49,14 @@
 .wall
   width 580px
   margin 0 auto
-  input
-    width 100%
-    border-radius 5px
-    background white
-    padding 14px 10px 10px 14px
-    color #333
-    font-size 12px
+  > form
     margin-bottom 20px
+    textarea
+      width 100%
+      border-radius 3px
+      background white
+      padding 14px 10px 10px 14px
+      color #333
+      height 50px
+      font-size 14px
+      min-height 100px

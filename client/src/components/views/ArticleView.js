@@ -11,13 +11,14 @@ class ArticleView extends React.Component {
     ArticleStore.getOne(id, data => this.setState({ 
       article: data.article,
       comments: data.comments
-    })) 
+    }))
   }
 
   comment(ev) {
     const { id } = this.props.params
     ev.preventDefault()
     User.articleComment(id, this.refs.comment.value).then(({ body: comment }) => {
+      this.refs.comment.value = ''
       this.componentWillMount()
     })
   }
@@ -32,7 +33,8 @@ class ArticleView extends React.Component {
       <div id="ArticleView">
         {article && <Article key={article._id} article={article} />}
         <form onSubmit={this.comment.bind(this)}>
-          <input className="commentsInput clean" type="text" ref="comment" maxlength="500" placeholder="Kommentera (500 tecken högst)" />
+          <textarea className="commentsInput clean" type="text" ref="comment" maxLength="500" placeholder="Kommentera (500 tecken högst)" /><br/>
+          <button className="btn">Skicka</button>
         </form>
         {comments && <Comments comments={comments} onDelete={this.commentRemovedHandler.bind(this)} />}
       </div>
