@@ -26,10 +26,6 @@ function justok(resolve) {
   }
 }
 
-function errorHandler(type, value) {
-  NotificationStore.error({ type, value })
-}
-
 User.set = function(user) {
   doc = user
   UserStore.insert(user)

@@ -62,7 +62,7 @@ ShitStore.fetch = function() {
       }
     }
     emitList.forEach(type => ShitStore.emit(type, state[type].slice()))
-  }).catch(console.error)
+  }).catch(console.error.bind(console))
 }
 
 

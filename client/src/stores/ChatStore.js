@@ -136,6 +136,9 @@ socket.on('chat:message', function(message) {
   conversation.loaded && conversation.offset++
   updateThreads()
   updateMessages()
+  if (!messageIds && chatId === ChatStore.getConversationId()) {
+    ChatStore.load()
+  }
 })
 
 socket.on('chat:conversation', function(conv) {
@@ -162,7 +165,7 @@ ChatStore.fetch = function() {
     state.loaded = true
     updateThreads()
     ChatStore.emit('ready')
-  }).catch(console.error)
+  }).catch(console.error.bind(console))
 }
 
 module.exports = ChatStore

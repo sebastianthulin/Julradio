@@ -24,7 +24,7 @@ class UserProfileContainer extends React.Component {
       if (this.props.params.username === username) {
         this.setState(body)
       }
-    }).catch(console.error)
+    }).catch(console.error.bind(console))
   }
 
   render() {

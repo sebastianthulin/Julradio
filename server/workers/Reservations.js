@@ -41,7 +41,7 @@ function createReservation(opts) {
     description: opts.description,
     startDate: opts.startDate,
     endDate: opts.endDate
-  }).save().then(update).catch(console.error)
+  }).save().then(update).catch(console.error.bind(console))
 }
 
 function editReservation(id, opts) {
@@ -49,9 +49,9 @@ function editReservation(id, opts) {
     description: opts.description,
     startDate: opts.startDate,
     endDate: opts.endDate
-  }).exec().then(update).catch(console.error)
+  }).exec().then(update).catch(console.error.bind(console))
 }
 
 function removeReservation(id) {
-  db.Reservation.findByIdAndRemove(id).exec().then(update).catch(console.error)
+  db.Reservation.findByIdAndRemove(id).exec().then(update).catch(console.error.bind(console))
 }
