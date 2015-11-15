@@ -2,11 +2,11 @@ require('./services/LiveReload')
 const React = require('react')
 const ReactDOM = require('react-dom')
 const { Router, Route, IndexRoute } = require('react-router')
-const createBrowserHistory = require('history/lib/createBrowserHistory')
 const marked = require('marked')
 const cx = require('classnames')
 const User = require('./services/User')
 const UIStore = require('./stores/UIStore')
+const history = require('./services/history')
 
 // Site base components
 const Sidebar = require('./components/base/Sidebar')
@@ -84,7 +84,6 @@ function requireAdminAuth(nextState, replaceState) {
   }
 }
 
-const history = createBrowserHistory()
 const routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Front} />

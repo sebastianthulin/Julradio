@@ -1,4 +1,5 @@
 const React = require('react')
+const { Link } = require('react-router')
 const errors = require('../../errors')
 const ProfilePicture = require('../reusable/ProfilePicture')
 const cx = require('classnames')
@@ -25,18 +26,29 @@ class Notification extends React.Component {
     return errors[value] || errors.UNKNOWN_ERROR
   }
 
+  getURL() {
+    const { type, value, from } = this.props
+    switch (type) {
+      case 'message': return '/messages/' + from.username
+    }
+  }
+
   render() {
     const { err, from, y } = this.props
     const style = {
       transform: `translateY(${y}px)`
     }
 
-    return (
+    const url = this.getURL()
+
+    const notification = (
       <div ref="notification" className={cx('Notification', { err })} style={style}>
         {from && <ProfilePicture id={from.picture} />}
         {err ? this.getErrorMessage() : this.getMessage()}
       </div>
     )
+
+    return url ? <Link to={url} children={notification} /> : notification
   }
 }
 

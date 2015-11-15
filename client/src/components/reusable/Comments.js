@@ -1,6 +1,7 @@
 const React = require('react')
 const { Link } = require('react-router')
 const User = require('../../services/User')
+const history = require('../../services/history')
 const CommentStore = require('../../stores/CommentStore')
 const ProfilePicture = require('./ProfilePicture')
 const TimeSince = require('./TimeSince')
@@ -29,9 +30,16 @@ class Comment extends React.Component {
     CommentStore.reply(comment._id, text).then(() => {
       // do stuff ig
     }).catch(err => {
-      console.log(err)
+      console.error(err)
       alert('Något gick fel')
     })
+  }
+
+  handleClick(ev) {
+    ev.preventDefault()
+    if (ev.target.tagName === 'A') {
+      history.pushState(null, ev.target.pathname)
+    }
   }
 
   render() {
@@ -45,7 +53,11 @@ class Comment extends React.Component {
             <TimeSince date={comment.date} />
           </div>
         </header>
-        <div className="text">{comment.text}</div>
+        <div
+          className="text"
+          dangerouslySetInnerHTML={comment}
+          onClick={this.handleClick.bind(this)}
+        />
         {!this.isReply && (
           <form onSubmit={this.reply.bind(this)}>
             <input ref="reply" type="text" placeholder="Svara" />

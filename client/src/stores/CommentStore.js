@@ -1,9 +1,19 @@
 const { EventEmitter } = require('events')
 const { Promise } = require('es6-promise')
 const request = require('../services/request')
+const User = require('../services/User')
 const CommentStore = new EventEmitter
 
 const commentsByTargetId = {}
+
+function transform(comment) {
+  const username = (User.get() || {}).username
+  const reg = new RegExp(`@(${username})(?!\w+)`, 'ig')
+  const markup = comment.text
+    .replace(reg, '<a href="/@$1" class="highlight">@$1</a>')
+    .replace(/\n/g, '<br />')
+  comment.__html = markup
+}
 
 CommentStore.deleteComment = commentId => request.del('/api/comment/' + commentId)
 
@@ -26,6 +36,7 @@ CommentStore.reply = function(replyTo, text) {
 CommentStore.fetch = function({ type, target }, handler) {
   handler(commentsByTargetId[target])
   request.get('/api/comment/' + type, { target }).then(function({ body }) {
+    body.forEach(transform)
     commentsByTargetId[target] = body
     handler(body)
   })

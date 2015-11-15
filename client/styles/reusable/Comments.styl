@@ -45,7 +45,7 @@
         color #FFF
         margin-bottom -1px
         border-bottom 1px solid transparent
-        hyphens()
+        hardcoreHyphens()
         &:hover
           border-color inherit
 
@@ -54,6 +54,12 @@
     margin-top 10px
     font-size 14px
     hyphens()
+    a
+      color rgba(255, 255, 255, 0.7)
+      &.highlight
+        color #FF0
+      &:hover
+        border-bottom 1px solid
 
   .delete
     position absolute

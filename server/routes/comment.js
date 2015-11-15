@@ -40,7 +40,7 @@ router.post('/article', function(req, res, next) {
   const articleId = req.body.target
   const text = req.body.text
   db.Article.findById(articleId).then(function(article) {
-    if (!article) throw ''
+    if (!article) throw new Error('ARTICLE_NOT_FOUND')
     return new db.Comment({
       text,
       user: req.user._id,

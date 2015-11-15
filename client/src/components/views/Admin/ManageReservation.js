@@ -114,21 +114,6 @@ class ManageReservation extends React.Component {
             defaultValue={this.defaultVal.description}
           />
         </label>
-        <input type="checkbox" />Custom host
-        <label className="setting">
-          <div className="label">Namn</div>
-          <input
-            type="text"
-            ref="name"
-          />
-        </label>
-        <label className="setting">
-          <div className="label">Bild</div>
-          <input
-            type="file"
-            // onChange={this.setAvatar.bind(this)}
-          />
-        </label>
         <button
           children={isNew ? 'Skapa' : 'Spara ändringar'}
           className="btn"
