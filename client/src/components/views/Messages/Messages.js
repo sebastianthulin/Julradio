@@ -83,7 +83,9 @@ class Messages extends React.Component {
     return (
       <div>
         <div className="user">
-          <Link to={`/@${targetUser.username}`}>{targetUser.username}</Link>
+          <Link to={`/@${targetUser.username}`}>
+            {targetUser.name ? targetUser.name : targetUser.username}
+          </Link>
         </div>
         <div className="messageContainer" ref="messages" onScroll={this.loadMore.bind(this)}>
           {messages.map(message => <Message key={message._id} right={userId === message.user} message={message} />)}

@@ -6,6 +6,11 @@ const TimeSince = require('../../reusable/TimeSince')
 const Comments = require('../../reusable/Comments')
 const ProfileOptions = require('./ProfileOptions')
 
+const GENDERS = {
+  MALE: 'Pojke',
+  FEMALE: 'Flicka'
+}
+
 class UserProfile extends React.Component {
   componentWillMount() {
     this.authedUser = User.get() || {}
@@ -44,6 +49,20 @@ class UserProfile extends React.Component {
     )
   }
 
+  getIndentity() {
+    const { user } = this.props
+    const genderName = GENDERS[user.gender]
+    const location = user.location ? ', ' + user.location : ''
+    if (genderName) {
+      // ger P12 eller Pojke om ingen ålder
+      return (user.age ? genderName[0] : genderName) + (user.age ? user.age : '') + location
+    }
+    if (user.age) {
+      return user.age + ' år' + location
+    }
+    return user.location
+  }
+
   render() {
     const { authedUser } = this
     const {
@@ -62,11 +81,9 @@ class UserProfile extends React.Component {
             relationship={relationship}
             onQuery={onQuery}
           />}
-          <div className="username">{user.username}</div>
-          {user.title && <div className="title">{user.title}</div>}
-          <div className="age">{user.age && user.age + ' år'}</div>
-          {user.location && <div>{user.location}</div>}
-          {user.gender && <div>{user.gender}</div>}
+          <div className="name">{user.name ? user.name : '@' + user.username}</div>
+          <div className="identity">{user.name ? '@' + user.username : ''} {this.getIndentity()}</div>
+          {user.title && <span className="title">{user.title}</span>}
           <div className="description">{user.description}</div>
           <div>Medlem i <TimeSince date={user.date} short={true} /></div>
         </header>

@@ -25,7 +25,8 @@ class Sidebar extends React.Component {
       <div>
         <Link to={`/@${user.username}`} className="user">
           <ProfilePicture id={user.picture} />
-          {user.username}
+          {user.name ? user.name : '@' + user.username}
+          {user.name && <span className="handle">@{user.username}</span>}
         </Link>
       </div>
     ) : (
