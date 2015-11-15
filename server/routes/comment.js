@@ -49,6 +49,34 @@ router.post('/articlecomment', function(req, res, next) {
   }).catch(next)
 })
 
+router.post('/reply', function(req, res, next) {
+  const uid = req.user._id
+  const b = req.body
+  db.Comment.findById(b.replyTo).then(function(comment) {
+    if (!comment) {
+      throw new Error('NO_COMMENT')
+    }
+    if (comment.replyTo !== null) {
+      throw new Error('REPLY_TO_REPLY')
+    }
+    getBlockage(uid, comment.owner).then(function(relationship) {
+      if (relationship) {
+        throw new Error('BLOCKAGE')
+      }
+      return new db.Comment({
+        text: b.text,
+        user: uid,
+        owner: comment.owner,
+        replyTo: comment._id,
+        targetUser: comment.targetUser,
+        article: comment.article
+      }).save()
+    })
+  }).then(function(comment) {
+    res.send(comment)
+  })
+})
+
 router.post('/wallpost', function(req, res, next) {
   const uid = req.user._id
   const target = req.body.userId

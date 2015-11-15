@@ -17,6 +17,10 @@ const schema = new Schema({
     type: Schema.ObjectId,
     ref: 'users'
   },
+  replyTo: {
+    type: Schema.ObjectId,
+    ref: 'comments'
+  },
 
   // If set, this user can have the comment removed
   owner: {

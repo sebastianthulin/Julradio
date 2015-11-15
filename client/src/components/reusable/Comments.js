@@ -9,6 +9,7 @@ class Comment extends React.Component {
     const { comment, user, admin } = this.props
     const userId = user && user._id
     this.removable = admin || userId === comment.userId || userId === comment.owner
+    this.isReply = comment.replyTo
   }
 
   delete() {
@@ -18,6 +19,18 @@ class Comment extends React.Component {
       onDelete && onDelete()
     }).catch(err => {
       console.error(err)
+      alert('Något gick fel')
+    })
+  }
+
+  reply(ev) {
+    ev.preventDefault()
+    const { comment } = this.props
+    const text = this.refs.reply.value
+    User.reply(comment._id, text).then(() => {
+      // do stuff ig
+    }).catch(err => {
+      console.log(err)
       alert('Något gick fel')
     })
   }
@@ -34,6 +47,11 @@ class Comment extends React.Component {
           </div>
         </header>
         <div className="text">{comment.text}</div>
+        {
+          !this.isReply && <form onSubmit={this.reply.bind(this)}>
+            <input ref="reply" type="text" placeholder="Svara" />
+          </form>
+        }
         {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
       </div>
     )
