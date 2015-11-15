@@ -3,6 +3,9 @@
 const db = require('../models')
 
 function getBlockage(user1, user2) {
+  db.User.findById(user1).exec().then(function(user) {
+    console.log(user)
+  })
   return new Promise(function(resolve, reject) {
     db.Block.find({$or: [{
       from: user1,

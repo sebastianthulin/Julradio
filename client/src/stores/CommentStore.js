@@ -2,17 +2,30 @@ const { EventEmitter } = require('events')
 const { Promise } = require('es6-promise')
 const request = require('../services/request')
 const User = require('../services/User')
+const UserStore = require('./UserStore')
 const CommentStore = new EventEmitter
 
 const commentsByTargetId = {}
 
 function transform(comment) {
   const username = (User.get() || {}).username
-  const reg = new RegExp(`@(${username})(?!\w+)`, 'ig')
-  const markup = comment.text
-    .replace(reg, '<a href="/@$1" class="highlight">@$1</a>')
-    .replace(/\n/g, '<br />')
+  var markup = comment.text, matchesNotMe
+
+  if (username) {
+    // user signed in, match all mentions except for @${username}
+    const matchesMe = `@(${username})(?!\\\w+)`
+    matchesNotMe = `@((?!${username}(?!\\\w+))\\\w+)`
+    markup = markup.replace(new RegExp(matchesMe, 'ig'), '<a href="/@$1" class="highlight">@$1</a>')
+  } else {
+    // user not signed in, match all mentions
+    matchesNotMe = `@(\\\w+)(?!\\\w+)`
+  }
+  
   comment.__html = markup
+    .replace(/\n/g, '<br />')
+    .replace(new RegExp(matchesNotMe, 'ig'), '<a href="/@$1">@$1</a>')
+
+  UserStore.insert(comment.user)
 }
 
 CommentStore.deleteComment = commentId => request.del('/api/comment/' + commentId)
