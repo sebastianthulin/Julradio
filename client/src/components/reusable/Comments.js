@@ -43,8 +43,24 @@ class Comment extends React.Component {
     }
   }
 
+  renderReplies() {
+    const { replies, onDelete, user, admin } = this.props
+    return (
+      <div>
+        {replies.map(reply => <Comment
+          a={console.log('lol', reply)}
+          key={reply._id}
+          comment={reply}
+          onDelete={onDelete}
+          user={user}
+          admin={admin}
+        />)}
+      </div>
+    )
+  }
+
   render() {
-    const { comment } = this.props
+    const { comment, replies } = this.props
     return (
       <div className="Comment">
         <header>
@@ -66,6 +82,7 @@ class Comment extends React.Component {
           </form>
         )}
         {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
+        {replies && this.renderReplies()}
       </div>
     )
   }
@@ -119,9 +136,10 @@ class Comments extends React.Component {
     return (
       <div className="Comments">
         {this.renderForm()}
-        {comments.map(comment => <Comment
+        {comments.map(({ comment, replies }) => <Comment
           key={comment._id}
           comment={comment}
+          replies={replies}
           onDelete={this.fetchComments.bind(this)}
           user={user}
           admin={admin}

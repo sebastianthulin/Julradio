@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events')
-const { Promise } = require('es6-promise')
+// const { Promise } = require('es6-promise')
 const request = require('../services/request')
 const User = require('../services/User')
 const UserStore = require('./UserStore')
@@ -29,6 +29,14 @@ function transform(comment) {
   UserStore.insert(comment.user)
 }
 
+function buildState(targetId) {
+  if (!commentsByTargetId[targetId]) return
+  return commentsByTargetId[targetId].map(comment => ({
+    comment,
+    replies: repliesByCommentId[comment._id]
+  }))
+}
+
 CommentStore.deleteComment = commentId => request.del('/api/comment/' + commentId)
 
 CommentStore.post = function({ type, target }, text) {
@@ -49,16 +57,17 @@ CommentStore.reply = function(replyTo, text) {
 }
 
 CommentStore.fetch = function({ type, target }, handler) {
-  handler(commentsByTargetId[target])
+  handler(buildState(target))
   request.get('/api/comment/' + type, { target }).then(function({ body: { comments, replies } }) {
     replies.forEach(function(replies) {
       if (replies.length > 0) {
+        replies.forEach(transform)
         repliesByCommentId[replies[0].replyTo] = replies
       }
     })
     comments.forEach(transform)
     commentsByTargetId[target] = comments
-    handler(comments)
+    handler(buildState(target))
   })
 }
 
