@@ -18,13 +18,24 @@ router.get('/:type', function(req, res, next) {
     return next(new Error('INVALID_COMMENT_TYPE'))
   }
 
+  var comments
+
   db.Comment.find({
-    [type]: target || true
+    [type]: target || true,
+    replyTo: null
   }).sort('-_id').populate({
     path: 'user',
-    select: '-hash -email'
-  }).exec().then(function(comments) {
-    res.send(comments)
+    select: '-hash -email',
+  }).exec().then(function(docs) {
+    comments = docs
+    return Promise.all(comments.map(c => db.Comment.find({
+      replyTo: c._id
+    }).sort('-_id').limit(3).populate({
+      path: 'user',
+      select: '-hash -email',
+    }).exec()))
+  }).then(function(replies) {
+    res.send({ comments, replies })
   }).catch(next)
 })
 
@@ -83,29 +94,33 @@ router.post('/cosycorner', function(req, res, next) {
 router.post('/reply', function(req, res, next) {
   const uid = req.user._id
   const b = req.body
-  db.Comment.findById(b.replyTo).then(function(comment) {
+  var comment
+  db.Comment.findById(b.replyTo).then(function(doc) {
+    comment = doc
     if (!comment) {
       throw new Error('NO_COMMENT')
     }
-    if (comment.replyTo !== null) {
+    if (comment.replyTo) {
       throw new Error('REPLY_TO_REPLY')
     }
-    getBlockage(uid, comment.owner).then(function(relationship) {
-      if (relationship) {
-        throw new Error('BLOCKAGE')
-      }
-      return new db.Comment({
-        text: b.text,
-        user: uid,
-        owner: comment.owner,
-        replyTo: comment._id,
-        targetUser: comment.targetUser,
-        article: comment.article
-      }).save()
-    })
-  }).then(function(comment) {
-    res.send(comment)
-  })
+    return getBlockage(uid, comment.owner)
+  }).then(function(relationship) {
+    if (relationship) {
+      throw new Error('BLOCKAGE')
+    }
+    return new db.Comment({
+      text: b.text,
+      user: uid,
+      owner: comment.owner,
+      replyTo: comment._id,
+      cosyCorner: comment.cosyCorner,
+      targetUser: comment.targetUser,
+      article: comment.article
+    }).save()
+  }).then(function(reply) {
+    res.send(reply)
+    db.Comment.updateReplyCount(reply.replyTo)
+  }).catch(next)
 })
 
 router.delete('/:id', function(req, res, next) {

@@ -31,7 +31,10 @@ const schema = new Schema({
     type: Date,
     default: Date.now
   },
-
+  numReplies: {
+    type: Number,
+    default: 0
+  },
 
   // A comment should have one of the following:
   cosyCorner: Boolean,
@@ -45,4 +48,11 @@ const schema = new Schema({
   }
 })
 
-module.exports = mongoose.model('comments', schema)
+schema.statics.updateReplyCount = function(commentId) {
+  return Comment.count({replyTo: commentId}).exec().then(function(numReplies) {
+    return Comment.findByIdAndUpdate(commentId, { numReplies }).exec()
+  })
+}
+
+
+const Comment = module.exports = mongoose.model('comments', schema)

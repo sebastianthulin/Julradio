@@ -39,7 +39,7 @@ class Notification extends React.Component {
       transform: `translateY(${y}px)`
     }
 
-    const url = this.getURL()
+    const url = !err && this.getURL()
 
     const notification = (
       <div ref="notification" className={cx('Notification', { err })} style={style}>

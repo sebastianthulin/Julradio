@@ -26,9 +26,10 @@ class Comment extends React.Component {
   reply(ev) {
     ev.preventDefault()
     const { comment } = this.props
-    const text = this.refs.reply.value
+    const text = this.refs.reply.value.trim()
+    if (!text) return
     CommentStore.reply(comment._id, text).then(() => {
-      // do stuff ig
+      this.refs.reply.value = ''
     }).catch(err => {
       console.error(err)
       alert('Något gick fel')
@@ -58,6 +59,7 @@ class Comment extends React.Component {
           dangerouslySetInnerHTML={comment}
           onClick={this.handleClick.bind(this)}
         />
+        {comment.numReplies}
         {!this.isReply && (
           <form onSubmit={this.reply.bind(this)}>
             <input ref="reply" type="text" placeholder="Svara" />

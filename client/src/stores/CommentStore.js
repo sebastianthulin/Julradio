@@ -6,6 +6,7 @@ const UserStore = require('./UserStore')
 const CommentStore = new EventEmitter
 
 const commentsByTargetId = {}
+const repliesByCommentId = {}
 
 function transform(comment) {
   const username = (User.get() || {}).username
@@ -41,6 +42,7 @@ CommentStore.post = function({ type, target }, text) {
 CommentStore.reply = function(replyTo, text) {
   return new Promise(function(resolve, reject) {
     request.post('/api/comment/reply', { replyTo, text }).then(function({ body }) {
+      console.log(body)
       resolve(body)
     }).catch(reject)
   })
@@ -48,10 +50,15 @@ CommentStore.reply = function(replyTo, text) {
 
 CommentStore.fetch = function({ type, target }, handler) {
   handler(commentsByTargetId[target])
-  request.get('/api/comment/' + type, { target }).then(function({ body }) {
-    body.forEach(transform)
-    commentsByTargetId[target] = body
-    handler(body)
+  request.get('/api/comment/' + type, { target }).then(function({ body: { comments, replies } }) {
+    replies.forEach(function(replies) {
+      if (replies.length > 0) {
+        repliesByCommentId[replies[0].replyTo] = replies
+      }
+    })
+    comments.forEach(transform)
+    commentsByTargetId[target] = comments
+    handler(comments)
   })
 }
 
