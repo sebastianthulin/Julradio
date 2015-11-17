@@ -33,7 +33,7 @@ class ManageUsers extends React.Component {
 
   filter(ev) {
     const query = ev.target.value.toLowerCase()
-    const users = this.userList.filter(user => user.username.toLowerCase().indexOf(query) > -1)
+    const users = this.userList.filter(user => user.usernameLower.indexOf(query) > -1)
     this.setState({
       users,
       limit: 20

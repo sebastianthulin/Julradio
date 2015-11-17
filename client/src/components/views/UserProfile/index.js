@@ -1,9 +1,12 @@
 const React = require('react')
+const User = require('../../../services/User')
 const UserStore = require('../../../stores/UserStore')
+const ShitStore = require('../../../stores/ShitStore')
 const UserProfile = require('./UserProfile')
 
 class UserProfileContainer extends React.Component {
   componentWillMount() {
+    this.authedUser = User.get()
     this.setUser(this.props.params.username)
   }
 
@@ -11,8 +14,23 @@ class UserProfileContainer extends React.Component {
     this.setUser(props.params.username)
   }
 
+  componentWillUnmount() {
+    this.wallPostsOff()
+  }
+
   setUser(username) {
     this.execute(username, 'profile block')
+    const user = (this.authedUser || {}).usernameLower
+    if (user === username.toLowerCase()) {
+      ShitStore.clear('wallPost')
+      ShitStore.on('wallPost', () => true)
+    } else {
+      this.wallPostsOff()
+    }
+  }
+
+  wallPostsOff() {
+    ShitStore.on('wallPost', () => false)
   }
 
   runQuery(query) {
@@ -37,6 +55,7 @@ class UserProfileContainer extends React.Component {
     ) : profile ? <UserProfile
       key={profile._id}
       user={profile}
+      authedUser={this.authedUser}
       onQuery={this.runQuery.bind(this)}
       {...this.state}
     /> : null

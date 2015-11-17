@@ -12,10 +12,6 @@ const GENDERS = {
 }
 
 class UserProfile extends React.Component {
-  componentWillMount() {
-    this.authedUser = User.get() || {}
-  }
-
   getIndentity() {
     const { user } = this.props
     const genderName = GENDERS[user.gender]
@@ -37,10 +33,10 @@ class UserProfile extends React.Component {
   }
 
   render() {
-    const { authedUser } = this
     const {
       onQuery,
       user,
+      authedUser,
       block: relationship,
       wallposts: posts
     } = this.props
@@ -56,7 +52,7 @@ class UserProfile extends React.Component {
           <div>Medlem i <TimeSince date={user.date} short={true} /></div>
         </header>
         <main>
-          {authedUser._id && authedUser._id !== user._id && <ProfileOptions
+          {authedUser && authedUser._id !== user._id && <ProfileOptions
             user={user}
             relationship={relationship}
             onQuery={onQuery}

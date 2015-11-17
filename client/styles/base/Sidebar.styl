@@ -16,6 +16,8 @@
       display none
     .logo a
       font-size 32px !important
+    .unseenCircle
+      display none
 
   +desktop()
     transform none
@@ -54,7 +56,20 @@
       color #FFF
 
   .user
+    position relative
     text-align center
+    .unseenCircle
+      position absolute
+      right 0px
+      top 0px
+      display flex
+      align-items center
+      width 30px
+      height 30px
+      border-radius 50%
+      background #E1322D
+      span
+        margin 0 auto
     .ProfilePicture
       width 140px
       height 140px

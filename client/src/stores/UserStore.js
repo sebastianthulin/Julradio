@@ -26,10 +26,6 @@ UserStore.get = function(username, query) {
       if (body.profile) {
         UserStore.insert(body.profile)
       }
-      if (body.wallposts) {
-        body.wallposts.sort((a, b) => new Date(b.date) - new Date(a.date))
-        body.wallposts.forEach(({ user }) => UserStore.insert(user))
-      }
       resolve(body)
     }).catch(reject)
   })
@@ -59,6 +55,12 @@ UserStore.getCrew = function(callback) {
 
 UserStore.getAll = function(callback) {
   request.get('/api/user/all').then(function({ body: users }) {
+    users.forEach(user => user.usernameLower = user.username.toLowerCase())
+    users.sort(function(a, b) {
+      if (a.usernameLower < b.usernameLower) return -1
+      if (a.usernameLower > b.usernameLower) return 1
+      return 0
+    })
     callback(users)
   })
 }

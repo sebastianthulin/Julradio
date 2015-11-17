@@ -2,7 +2,6 @@ const { EventEmitter } = require('events')
 const socket = require('../services/socket')
 const request = require('../services/request')
 const User = require('../services/User')
-const Sound = require('../services/Sound')
 const UserStore = require('./UserStore')
 const ShitStore = require('./ShitStore')
 const NotificationStore = require('./NotificationStore')
@@ -147,17 +146,11 @@ socket.on('chat:conversation', function(conv) {
   push()
 })
 
-ShitStore.on('message', function(conversationId) {
-  if (ChatStore.getConversationId() !== conversationId || !document.hasFocus()) {
-    Sound.play('bells')
-    return true
-  }
-  return false
-})
+ShitStore.on('message', conversationId =>
+  ChatStore.getConversationId() === conversationId && document.hasFocus())
 
-document.addEventListener('focus', function() {
-  ShitStore.clear('message', ChatStore.getConversationId())
-})
+document.addEventListener('focus', () =>
+  ShitStore.clear('message', ChatStore.getConversationId()))
 
 ChatStore.fetch = function() {
   request.get('/api/chat').then(function({ body: conversations }) {

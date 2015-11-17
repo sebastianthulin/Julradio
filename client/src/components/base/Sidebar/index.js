@@ -17,18 +17,22 @@ class Sidebar extends React.Component {
     User.subscribe(user => this.setState({ user }))
     RadioStore.subscribe('onair', onair => this.setState({ onair }))
     ShitStore.subscribe('message', unseenMessages => this.setState({ unseenMessages }))
+    ShitStore.subscribe('wallPost', unseenWallPosts => this.setState({ unseenWallPosts }))
   }
 
   renderUser() {
-    const { user } = this.state
+    const { user, unseenWallPosts } = this.state
     return user ? (
-      <div>
-        <Link to={`/@${user.username}`} className="user">
-          <ProfilePicture id={user.picture} />
-          <div>{user.name ? user.name : '@' + user.username}</div>
-          {user.name && <div className="handle">{'@' + user.username}</div>}
-        </Link>
-      </div>
+      <Link to={`/@${user.username}`} className="user">
+        {unseenWallPosts.length > 0 && (
+          <div className="unseenCircle">
+            <span>1+</span>
+          </div>
+        )}
+        <ProfilePicture id={user.picture} />
+        <div>{user.name ? user.name : '@' + user.username}</div>
+        {user.name && <div className="handle">{'@' + user.username}</div>}
+      </Link>
     ) : (
       <div className="loginArea">
         <button onClick={Modal.open.bind(null, 'LogIn')} style={{marginBottom: 10}}>
@@ -44,7 +48,12 @@ class Sidebar extends React.Component {
   }
 
   render() {
-    const { user, onair, unseenMessages } = this.state
+    const {
+      user,
+      onair,
+      unseenMessages
+    } = this.state
+
     return (
       <div id="Sidebar">
         <Snowfall

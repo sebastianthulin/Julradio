@@ -3,6 +3,7 @@ const { Link } = require('react-router')
 const RadioStore = require('../../../stores/RadioStore')
 const ReservationStore = require('../../../stores/ReservationStore')
 const VolumeSlider = require('./VolumeSlider')
+const SVG = require('../../svg')
 
 class Player extends React.Component {
   componentWillMount() {
@@ -32,10 +33,10 @@ class Player extends React.Component {
           <div div className="titleControls">
             <div className="controls">
               <div className="item">
-                <i className={playing ? 'fa fa-pause' : 'fa fa-play'} onClick={RadioStore.toggle} />
+                <SVG.PlayPause pause={playing} onClick={RadioStore.toggle} />
               </div>
               <div className="item volumeControl">
-                <i onClick={this.toggleMute.bind(this)} className={volume == 0 ? 'fa fa-volume-off' : 'fa fa-volume-up'} />
+                <SVG.Volume volume={volume} onClick={this.toggleMute.bind(this)} />
                 <VolumeSlider />
               </div>
               {program && <Link className="host" to={'/@' + program.user.username} children={program.user.name} />}

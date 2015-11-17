@@ -59,12 +59,14 @@ function sendMessage(from, conversationId, text) {
   }).then(function(data) {
     data[1].users.forEach(function(userId) {
       io.to(userId).emit('chat:message', data[0])
-      Notify({
-        userId,
-        from,
-        type: 'message',
-        value: conversationId
-      })
+      if (from != userId) {
+        Notify({
+          userId,
+          from,
+          type: 'message',
+          value: conversationId
+        })
+      }
     })
   })
 }

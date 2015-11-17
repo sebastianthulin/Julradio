@@ -3,6 +3,7 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../models')
+const Notify = require('../services/Notify')
 const getBlockage = require('../services/getBlockage')
 
 function parseType(type) {
@@ -80,7 +81,16 @@ router.post('/user', function(req, res, next) {
       owner: target,
       targetUser: target
     }).save()
-  }).then(res.send.bind(res)).catch(next)
+  }).then(function(comment) {
+    if (uid != target) {
+      Notify({
+        userId: target,
+        from: uid,
+        type: 'wallPost'
+      })
+    }
+    res.send(comment)
+  }).catch(next)
 })
 
 router.post('/cosycorner', function(req, res, next) {
