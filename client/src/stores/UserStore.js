@@ -31,10 +31,7 @@ UserStore.get = function(username, query) {
         body.wallposts.forEach(({ user }) => UserStore.insert(user))
       }
       resolve(body)
-    }).catch(function(err) {
-      console.log(err)
-      reject(err)
-    })
+    }).catch(reject)
   })
 }
 

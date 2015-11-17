@@ -49,11 +49,11 @@ router.get('/profile', function getUser(req, res) {
     if (userId) {
       mongoose.Types.ObjectId.isValid(userId)
         ? resolve(userId)
-        : reject(new Error('incorrect userId'))
+        : reject(new Error('INCORRECT_USER_ID'))
     } else {
       db.User.findOne({ usernameLower }).select('_id').exec().then(doc => doc
         ? resolve(doc._id)
-        : reject(new Error('user not found'))
+        : reject(new Error('USER_NOT_FOUND'))
       )
     }
   }).then(function(userId) {

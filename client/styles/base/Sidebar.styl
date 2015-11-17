@@ -85,11 +85,10 @@
     padding 0
     color #FFF
     background none
-    transition opacity .2s
     position relative
-    &:hover
-      opacity 0.6
-      transition none
+    &:hover span
+      color #FFF
+      text-decoration underline
     .notification
       color red
       position absolute
@@ -105,16 +104,19 @@
       margin 0 auto 6px auto
     span
       font-size 13px
+      color rgba(255, 255, 255, 0.73)
+      transition color .1s ease-in-out
 
   .shortcuts a
     display table
     margin 0 auto
     text-align center
-    color rgba(255, 255, 255, 0.6)
-    transition color .2s
+    font-size 13px
+    color rgba(255, 255, 255, 0.73)
+    transition color .1s ease-in-out
     &:hover
       color #FFF
-      transition none
+      text-decoration underline
 
 #Player
   width 100%

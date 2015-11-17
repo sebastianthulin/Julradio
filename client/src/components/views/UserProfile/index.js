@@ -22,14 +22,19 @@ class UserProfileContainer extends React.Component {
   execute(username, query) {
     UserStore.get(username, query).then(body => {
       if (this.props.params.username === username) {
+        body.err = false
         this.setState(body)
       }
-    }).catch(console.error.bind(console))
+    }).catch(() => {
+      this.setState({err: true})
+    })
   }
 
   render() {
-    const { profile } = this.state || {}
-    return profile ? <UserProfile
+    const { profile, err } = this.state || {}
+    return err ? (
+      <div>404 or something</div>
+    ) : profile ? <UserProfile
       key={profile._id}
       user={profile}
       onQuery={this.runQuery.bind(this)}

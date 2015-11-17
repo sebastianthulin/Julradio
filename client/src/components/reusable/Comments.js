@@ -37,8 +37,8 @@ class Comment extends React.Component {
   }
 
   handleClick(ev) {
-    ev.preventDefault()
-    if (ev.target.tagName === 'A') {
+    if (ev.target.tagName === 'A' && ev.metaKey === false) {
+      ev.preventDefault()
       history.pushState(null, ev.target.pathname)
     }
   }

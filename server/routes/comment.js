@@ -5,20 +5,22 @@ const router = express.Router()
 const db = require('../models')
 const getBlockage = require('../services/getBlockage')
 
-const types = {
-  article: 'article',
-  user: 'targetUser',
-  cosycorner: 'cosyCorner'
+function parseType(type) {
+  switch (type) {
+    case 'article': return 'article'
+    case 'user': return 'targetUser'
+    case 'cosycorner': return 'cosyCorner'
+  }
 }
 
 router.get('/:type', function(req, res, next) {
-  const type = types[req.params.type]
+  const type = parseType(req.params.type)
   const target = req.query.target
+  var comments
+
   if (!type) {
     return next(new Error('INVALID_COMMENT_TYPE'))
   }
-
-  var comments
 
   db.Comment.find({
     [type]: target || true,

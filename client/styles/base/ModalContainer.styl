@@ -16,8 +16,9 @@
 
 .Modal
   width 540px
+  max-width calc(100% - 40px)
   margin 0 auto
-  padding 30px 50px 50px
+  padding 30px 20px 50px
   background #9F2C2C url('/images/dark-red-christmas-background.jpg') center / 200%
   border-radius 5px
   overflow hidden
@@ -25,6 +26,8 @@
   box-shadow 0 0 20px rgba(0, 0, 0, 0.3)
   transform rotateX(-70deg)
   transition transform .4s cubic-bezier(0.12, 0.4, 0.29, 1.455)
+  +mobile()
+    padding 30px 50px 50px
   &.animateIn
     transform rotateX(0deg)
 

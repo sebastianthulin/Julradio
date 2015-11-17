@@ -18,15 +18,10 @@ class ModalContainer extends React.Component {
   handleModal(name) {
     const Modal = modals[name]
     this.setState({ Modal })
-    document.removeEventListener('click', this.boundHandleClick)
-    if (Modal) {
-      this.boundHandleClick = this.handleClick.bind(this)
-      document.addEventListener('click', this.boundHandleClick)
-    }
   }
 
   handleClick(ev) {
-    if (this.refs.container === ev.target) {
+    if (ev.currentTarget === ev.target) {
       ModalService.close()
     }
   }
@@ -35,7 +30,7 @@ class ModalContainer extends React.Component {
     const { Modal } = this.state
     const visible = !!Modal
     return (
-      <div ref="container" id="ModalContainer" className={cx({ visible })}>
+      <div id="ModalContainer" className={cx({ visible })} onClick={this.handleClick.bind(this)}>
         {Modal && <Modal />}
       </div>
     )
