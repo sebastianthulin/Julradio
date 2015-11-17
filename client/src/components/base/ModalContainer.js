@@ -11,13 +11,16 @@ const modals = {
 
 class ModalContainer extends React.Component {
   componentWillMount() {
-    this.state = {}
     ModalService.on('change', this.handleModal.bind(this))
+    ModalService.on('close', () => this.setState({visible: false}))
   }
 
   handleModal(name) {
     const Modal = modals[name]
-    this.setState({ Modal })
+    this.setState({
+      Modal,
+      visible: true
+    })
   }
 
   handleClick(ev) {
@@ -27,8 +30,7 @@ class ModalContainer extends React.Component {
   }
 
   render() {
-    const { Modal } = this.state
-    const visible = !!Modal
+    const { Modal, visible } = this.state || {}
     return (
       <div id="ModalContainer" className={cx({ visible })} onClick={this.handleClick.bind(this)}>
         {Modal && <Modal />}

@@ -41,13 +41,7 @@ marked.setOptions({
 
 class App extends React.Component {
   componentWillMount() {
-    UIStore.subscribe(this.handleUI.bind(this))
-  }
-
-  handleUI(UI) {
-    this.setState({ UI })
-    const { SIDEBAR_OPEN } = UI
-    document.body.classList[SIDEBAR_OPEN ? 'add' : 'remove']('noScroll')
+    UIStore.subscribe(UI => this.setState({ UI }))
   }
 
   closeSidebar() {

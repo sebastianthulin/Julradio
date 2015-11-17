@@ -6,7 +6,9 @@ class MobileHeader extends React.Component {
   render() {
     return (
       <div id="MobileHeader">
-        <button className="openMenu" onClick={UIStore.set.bind(null, 'SIDEBAR_OPEN')}><i className="fa fa-bars"/></button>
+        <button className="openMenu" onClick={UIStore.set.bind(null, 'SIDEBAR_OPEN')}>
+          <i className="fa fa-bars" />
+        </button>
         <Link to="/" className="logo">Julradio</Link>
       </div>
     )
