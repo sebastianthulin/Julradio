@@ -20,7 +20,7 @@ class Flake {
   reset() {
     this.visible = !this.shouldDie
     this.x = random(0, this.getWidth())
-    this.y = random(0, this.maxSpeed)
+    this.y = this.getHeight() - this.y
     this.size = random((this.minSize * 100), (this.maxSize * 100)) / 100
     this.speed = random(this.minSpeed, this.maxSpeed)
     this.stepSize = random(1, 10) / 100
