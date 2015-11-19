@@ -39,6 +39,17 @@ function buildState(targetId) {
 
 CommentStore.deleteComment = commentId => request.del('/api/comment/' + commentId)
 
+CommentStore.fetchReplies = function(commentId, limit) {
+  return new Promise(function(resolve, reject) {
+    request.get('/api/comment/replies/' + commentId + '/' + limit).then(function({ body: { comment, replies } }) {
+      transform(comment)
+      replies.forEach(transform)
+      repliesByCommentId[comment._id] = replies.sort((a, b) => new Date(a.date) - new Date(b.date))
+      resolve({ comment, replies })
+    }).catch(reject)
+  })
+}
+
 CommentStore.post = function({ type, target }, text) {
   return new Promise(function(resolve, reject) {
     request.post('/api/comment/' + type, { target, text }).then(function({ body }) {
@@ -50,7 +61,6 @@ CommentStore.post = function({ type, target }, text) {
 CommentStore.reply = function(replyTo, text) {
   return new Promise(function(resolve, reject) {
     request.post('/api/comment/reply', { replyTo, text }).then(function({ body }) {
-      console.log(body)
       resolve(body)
     }).catch(reject)
   })
@@ -62,7 +72,7 @@ CommentStore.fetch = function({ type, target }, handler) {
     replies.forEach(function(replies) {
       if (replies.length > 0) {
         replies.forEach(transform)
-        repliesByCommentId[replies[0].replyTo] = replies
+        repliesByCommentId[replies[0].replyTo] = replies.sort((a, b) => new Date(a.date) - new Date(b.date))
       }
     })
     comments.forEach(transform)

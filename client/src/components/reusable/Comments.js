@@ -5,17 +5,19 @@ const history = require('../../services/history')
 const CommentStore = require('../../stores/CommentStore')
 const ProfilePicture = require('./ProfilePicture')
 const TimeSince = require('./TimeSince')
+const Comment = require('./Comment')
 
-class Comment extends React.Component {
+class Thread extends React.Component {
+
   componentWillMount() {
-    const { comment, user, admin } = this.props
-    const userId = user && user._id
-    this.isReply = comment.replyTo
-    this.removable = admin || userId === comment.user._id || userId === comment.owner
+    const { replies, comment } = this.props
+    this.handleReplies({replies, comment})
+    this.setState({ showReply: false })
   }
 
   delete() {
-    const { comment, onDelete } = this.props
+    const { comment } = this.state
+    const { onDelete } = this.props
     if (!confirm('Ta bort inlägg?')) return
     CommentStore.deleteComment(comment._id).then(onDelete).catch(err => {
       console.error(err)
@@ -23,35 +25,43 @@ class Comment extends React.Component {
     })
   }
 
+  handleReplies({comment, replies}) {
+    this.setState({ comment, replies })
+  }
+
+  fetchReplies(limit) {
+    const { comment } = this.props
+    CommentStore.fetchReplies(comment._id, limit).then(this.handleReplies.bind(this)).catch(err => {
+      console.log(err)
+      alert('Något gick fel')
+    })
+  }
+
   reply(ev) {
     ev.preventDefault()
-    const { comment } = this.props
+    const { replies, comment } = this.state
+
     const text = this.refs.reply.value.trim()
     if (!text) return
     CommentStore.reply(comment._id, text).then(() => {
       this.refs.reply.value = ''
+      this.toggleReply()
+      this.fetchReplies(replies ? replies.length + 1 : 1)
     }).catch(err => {
       console.error(err)
       alert('Något gick fel')
     })
   }
 
-  handleClick(ev) {
-    if (ev.target.tagName === 'A' && ev.metaKey === false) {
-      ev.preventDefault()
-      history.pushState(null, ev.target.pathname)
-    }
-  }
-
   renderReplies() {
-    const { replies, onDelete, user, admin } = this.props
+    const { replies } = this.state
+    const { onDelete, user, admin } = this.props
     return (
       <div>
         {replies.map(reply => <Comment
-          a={console.log('lol', reply)}
           key={reply._id}
           comment={reply}
-          onDelete={onDelete}
+          onDelete={this.fetchReplies.bind(this, replies.length)}
           user={user}
           admin={admin}
         />)}
@@ -59,30 +69,32 @@ class Comment extends React.Component {
     )
   }
 
+  toggleReply() {
+    const { showReply } = this.state
+    this.setState({ showReply: !showReply })
+  }
+
   render() {
-    const { comment, replies } = this.props
+    const { showReply, replies, comment } = this.state
+    const {user, admin } = this.props
     return (
-      <div className="Comment">
-        <header>
-          <ProfilePicture id={comment.user.picture} />
-          <div className="user">
-            <Link to={'/@' + comment.user.username}>{comment.user.username}</Link>
-            <TimeSince date={comment.date} />
-          </div>
-        </header>
-        <div
-          className="text"
-          dangerouslySetInnerHTML={comment}
-          onClick={this.handleClick.bind(this)}
+      <div className="Thread">
+        <Comment
+          key={comment._id}
+          comment={comment}
+          onDelete={this.delete.bind(this)}
+          user={user}
+          admin={admin}
         />
-        {comment.numReplies}
-        {!this.isReply && (
-          <form onSubmit={this.reply.bind(this)}>
-            <input ref="reply" type="text" placeholder="Svara" />
-          </form>
-        )}
+        <div className="options">
+          <span onClick={this.toggleReply.bind(this)} className="option">Svara</span>
+          {replies && comment.numReplies > replies.length && <span onClick={this.fetchReplies.bind(this)} className="option">Visa alla {comment.numReplies} svar</span>}
+        </div>
+        {showReply && <form className="reply" onSubmit={this.reply.bind(this)}>
+          <input ref="reply" className="replyInput" placeholder="Svara" />
+        </form>}
         {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
-        {replies && this.renderReplies()}
+        {replies && <div className="replies">{this.renderReplies()}</div>}
       </div>
     )
   }
@@ -136,7 +148,7 @@ class Comments extends React.Component {
     return (
       <div className="Comments">
         {this.renderForm()}
-        {comments.map(({ comment, replies }) => <Comment
+        {comments.map(({ comment, replies }) => <Thread
           key={comment._id}
           comment={comment}
           replies={replies}

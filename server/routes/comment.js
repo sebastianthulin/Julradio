@@ -14,6 +14,26 @@ function parseType(type) {
   }
 }
 
+router.get('/replies/:id/:limit?', function(req, res, next) {
+  const commentId = req.params.id
+  const limit = req.params.limit || 9999
+  const uid = req.session.uid
+  const isAdmin = req.user.roles.admin
+  db.Comment.findById(commentId).populate({
+    path: 'user',
+    select: '-hash -email',
+  }).exec().then(function(comment) {
+    db.Comment.find({
+      replyTo: comment._id
+    }).sort('-_id').limit(limit).populate({
+      path: 'user',
+      select: '-hash -email',
+    }).exec().then(function(replies) {
+      res.send({ comment, replies })
+    })
+  }).catch(next)
+})
+
 router.get('/:type', function(req, res, next) {
   const type = parseType(req.params.type)
   const target = req.query.target
@@ -151,6 +171,8 @@ router.delete('/:id', function(req, res, next) {
     if (comment.article) {
       db.Article.updateCommentCount(comment.article)
     }
+    if (comment.replyTo)
+      db.Comment.updateReplyCount(comment.replyTo)
   }).catch(next)
 })
 

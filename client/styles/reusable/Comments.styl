@@ -18,15 +18,14 @@
       color #FFF
       border-radius 3px
       background rgba(255, 255, 255, 0.19)
-  
-.Comment
-  position relative
-  padding 10px 0px
-  border-top 1px solid rgba(255,255,255,0.2)
-  /* form    // temp as hell
-    display none
-  &:hover form
-    display block */
+
+.Thread
+  .options
+    font-size 14px
+    .option
+      cursor pointer
+      padding 5px
+      display inline-block
   .reply
     font-size 14px
     .thing
@@ -51,10 +50,20 @@
       border-left 1px solid rgba(255, 255, 255, 0.2)
     .Comment
       font-size 14px
+      .text
+        padding-left 50px
       header
         .ProfilePicture
           width 40px
           height 40px
+.Comment
+  position relative
+  padding 10px 0px
+  border-top 1px solid rgba(255,255,255,0.2)
+  /* form    // temp as hell
+    display none
+  &:hover form
+    display block */
   header
     display flex
     align-items center
