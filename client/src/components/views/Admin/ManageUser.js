@@ -19,6 +19,15 @@ class ManageUser extends React.Component {
     })
   }
 
+  removeAvatar() {
+    UserStore.removeUserAvatar(this.props.user._id).then(function() {
+      alert('Borttagen.')
+    }).catch(function(err) {
+      console.error(err)
+      alert('Ett fel uppstod. Öppna upp konsollen för detaljer.')
+    })
+  }
+
   render() {
     const { user } = this.props
     return (
@@ -40,7 +49,7 @@ class ManageUser extends React.Component {
           />
         </label>
         {user.picture && <img src={'/picture/' + user.picture} width="100" />}
-        {user.picture && <button>Ta bort bild</button>}
+        {user.picture && <button onClick={this.removeAvatar.bind(this)}>Ta bort bild</button>}
         <label className="setting">
           <div className="label">Roller</div>
           <div>

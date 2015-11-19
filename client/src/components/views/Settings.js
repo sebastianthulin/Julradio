@@ -101,6 +101,10 @@ class Settings extends React.Component {
     })
   }
 
+  removeAvatar() {
+    User.removeAvatar().then(() => alert('Borttagen.')).catch(() => alert('Något gick fel'))
+  }
+
   setAvatar(ev) {
     const file = ev.target.files[0]
     this.setState({
@@ -214,6 +218,7 @@ class Settings extends React.Component {
               <div className="ProfilePicture avatarPreview" style={previewStyle} />
               Profilbild
             </div>
+            {user.picture && <button onClick={this.removeAvatar.bind(this)}>Ta bort</button>}
             <input
               type="file"
               ref="avatar"

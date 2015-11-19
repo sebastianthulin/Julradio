@@ -201,6 +201,15 @@ router.put('/settings2', function(req, res, next) {
   }).catch(next)
 })
 
+router.delete('/avatar', function(req, res, next) {
+  db.Picture.findById(req.user.picture).then(function(picture) {
+    new db.RemovedPicture(picture).save()
+    picture.remove()
+    db.User.findByIdAndUpdate(req.user._id, { picture: null })
+    .exec().then((user) => req.send(user))
+  }).catch(next)
+})
+
 router.post('/profilepicture', function(req, res, next) {
   const userId = req.session.uid
   upload(req, res, function(err) {
@@ -275,6 +284,22 @@ router.use(function(req, res, next) {
 router.get('/all', function(req, res) {
   db.User.find().select('username roles banned').exec(function(err, users) {
     res.send(users)
+  })
+})
+
+router.delete('/:userId/avatar', function(req, res) {
+  db.User.findById(req.params.userId).exec().then(function(user) {
+    db.Picture.findById(user.picture).then(function(picture) {
+      new db.RemovedPicture(picture).save()
+      picture.remove()
+      user.picture = null
+      user.save()      
+      res.sendStatus(200)
+    }).catch(function(err) {
+      res.status(500).send({err: err.toString()})
+    })
+  }).catch(function(err) {
+    res.status(500).send({err: err.toString()})
   })
 })
 

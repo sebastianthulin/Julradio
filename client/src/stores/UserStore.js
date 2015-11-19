@@ -69,6 +69,10 @@ UserStore.updateUserSettings = function(userId, opts) {
   return request.put(`/api/user/${userId}`, opts)
 }
 
+UserStore.removeUserAvatar = function(userId) {
+  return request.del(`/api/user/${userId}/avatar`)
+}
+
 UserStore.updateCrew = function(userIds) {
   return request.put('/api/crew', userIds)
 }

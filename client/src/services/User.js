@@ -35,6 +35,7 @@ User.set = function(user) {
 User.block = userId => request.post('/api/user/block', { userId })
 User.unBlock = userId => request.del('/api/user/block/' + userId)
 
+
 User.update = opts => new Promise(function(resolve, reject) {
   request.put('/api/user/settings', opts).then(function({ body: user }) {
     User.set(user)
@@ -44,6 +45,13 @@ User.update = opts => new Promise(function(resolve, reject) {
 
 User.update2 = opts => new Promise(function(resolve, reject) {
   request.put('/api/user/settings2', opts).then(function({ body: user }) {
+    User.set(user)
+    resolve(user)
+  }).catch(handleError('settings', reject))
+})
+
+User.removeAvatar = () => new Promise(function(resolve, reject) {
+  request.del('/api/user/avatar').then(function({ body: user }) {
     User.set(user)
     resolve(user)
   }).catch(handleError('settings', reject))
