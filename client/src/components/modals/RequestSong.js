@@ -51,9 +51,9 @@ class RequestSong extends React.Component {
         <header>Önska en låt</header>
         <main>
           <label>Ditt namn</label>
-          <input type="text" ref="name" />
+          <input type="text" ref="name" maxLength={50} />
           <label>Låt</label>
-          <input type="text" ref="song" />
+          <input type="text" ref="song" maxLength={100} />
           <label>Text</label>
           <textarea ref="text" maxLength={250} />
           <button style={{width: '48%', float: 'left'}} onClick={this.requestSong.bind(this)}>Skicka önskning</button>

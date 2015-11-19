@@ -118,12 +118,23 @@
     vendor(flex-wrap, wrap)
 
 .Request
+  display flex
+  flex-direction column
+  justify-content center
   position relative
   padding 20px
   height 300px
   text-align center
   border-radius 4px
   background rgba(204, 78, 78, 0.23)
+  overflow auto
+  
+  .name
+    opacity .5
+  
+  .song
+    font-weight bold
+    font-style italic
 
   // 2 columns
   +above(568px)

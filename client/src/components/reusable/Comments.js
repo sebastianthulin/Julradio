@@ -11,7 +11,7 @@ class Thread extends React.Component {
 
   componentWillMount() {
     const { replies, comment } = this.props
-    this.handleReplies({replies, comment})
+    this.setState({ comment, replies })
     this.setState({ showReply: false })
   }
 
@@ -25,13 +25,9 @@ class Thread extends React.Component {
     })
   }
 
-  handleReplies({comment, replies}) {
-    this.setState({ comment, replies })
-  }
-
   fetchReplies(limit) {
     const { comment } = this.props
-    CommentStore.fetchReplies(comment._id, limit).then(this.handleReplies.bind(this)).catch(err => {
+    CommentStore.fetchReplies(comment._id, limit).then(({comment, replies}) => this.setState({ comment, replies })).catch(err => {
       console.log(err)
       alert('Något gick fel')
     })
