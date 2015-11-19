@@ -15,16 +15,6 @@ class Thread extends React.Component {
     this.setState({ showReply: false })
   }
 
-  delete() {
-    const { comment } = this.state
-    const { onDelete } = this.props
-    if (!confirm('Ta bort inlägg?')) return
-    CommentStore.deleteComment(comment._id).then(onDelete).catch(err => {
-      console.error(err)
-      alert('Något gick fel')
-    })
-  }
-
   fetchReplies(limit) {
     const { comment } = this.props
     CommentStore.fetchReplies(comment._id, limit).then(({comment, replies}) => this.setState({ comment, replies })).catch(err => {
@@ -72,7 +62,7 @@ class Thread extends React.Component {
 
   render() {
     const { showReply, replies, comment } = this.state
-    const {user, admin, onDelete } = this.props
+    const { user, admin, onDelete } = this.props
     return (
       <div className="Thread">
         <Comment
