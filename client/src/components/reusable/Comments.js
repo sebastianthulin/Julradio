@@ -72,13 +72,13 @@ class Thread extends React.Component {
 
   render() {
     const { showReply, replies, comment } = this.state
-    const {user, admin } = this.props
+    const {user, admin, onDelete } = this.props
     return (
       <div className="Thread">
         <Comment
           key={comment._id}
           comment={comment}
-          onDelete={this.delete.bind(this)}
+          onDelete={onDelete}
           user={user}
           admin={admin}
         />
@@ -89,7 +89,6 @@ class Thread extends React.Component {
         {showReply && <form className="reply" onSubmit={this.reply.bind(this)}>
           <input ref="reply" className="replyInput" placeholder="Svara" />
         </form>}
-        {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
         {replies && <div className="replies">{this.renderReplies()}</div>}
       </div>
     )
