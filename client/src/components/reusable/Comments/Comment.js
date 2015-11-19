@@ -1,10 +1,9 @@
 const React = require('react')
 const { Link } = require('react-router')
-const User = require('../../services/User')
-const history = require('../../services/history')
-const CommentStore = require('../../stores/CommentStore')
-const ProfilePicture = require('./ProfilePicture')
-const TimeSince = require('./TimeSince')
+const history = require('../../../services/history')
+const CommentStore = require('../../../stores/CommentStore')
+const ProfilePicture = require('../ProfilePicture')
+const TimeSince = require('../TimeSince')
 
 class Comment extends React.Component {
   componentWillMount() {
@@ -23,22 +22,30 @@ class Comment extends React.Component {
     })
   }
 
+  handleClick(ev) {
+    if (ev.target.tagName === 'A' && ev.metaKey === false) {
+      ev.preventDefault()
+      history.pushState(null, ev.target.pathname)
+    }
+  }
+
   render() {
     const { comment, replies } = this.props
     return (
       <div className="Comment">
-        <header>
-          <ProfilePicture id={comment.user.picture} />
-          <div className="user">
+        <ProfilePicture id={comment.user.picture} />
+        <div>
+          <header>
             <Link to={'/@' + comment.user.username}>{comment.user.username}</Link>
             <TimeSince date={comment.date} />
-          </div>
-        </header>
-        <div
-          className="text"
-          dangerouslySetInnerHTML={comment}
-        />
-        {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
+          </header>
+          <div
+            className="text"
+            onClick={this.handleClick.bind(this)}
+            dangerouslySetInnerHTML={comment}
+          />
+          {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
+        </div>
       </div>
     )
   }

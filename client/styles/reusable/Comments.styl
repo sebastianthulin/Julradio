@@ -21,73 +21,58 @@
 
 .Thread
   .options
+    margin-top -20px
+    margin-bottom 20px
+    padding-left 60px
     font-size 14px
+    color rgba(255, 255, 255, 0.39)
     .option
+      margin-right 10px
       cursor pointer
-      padding 5px
-      display inline-block
+
   .reply
-    font-size 14px
-    .thing
-      padding 5px
-      display inline-block
-      cursor pointer
-      opacity .7
+    margin-top -10px
+    margin-bottom 20px
+    padding-right 60px
+    padding-left 60px
     .replyInput
-      background #FFF
-      border-radius 3px
-      font-size 13px
-      color #333
-      padding 10px
       width 100%
-      margin 10px auto
-  .replies
-    border-left 1px solid rgba(255, 255, 255, 0.2)
-    padding-left 1em
-    +desktop()
-      margin-left 20px
-      padding-left 20px
-      border-left 1px solid rgba(255, 255, 255, 0.2)
-    .Comment
+      padding 10px
       font-size 14px
-      .text
-        padding-left 50px
-      header
-        .ProfilePicture
-          width 40px
-          height 40px
+      color #333
+      border-radius 3px
+      background #FFF
+
+  .replies
+    margin-left 20px
+    padding-left 20px
+    border-left 1px solid rgba(255, 255, 255, 0.2)
+
 .Comment
+  display flex
   position relative
-  padding 10px 0px
-  border-top 1px solid rgba(255,255,255,0.2)
-  /* form    // temp as hell
-    display none
-  &:hover form
-    display block */
+  margin-bottom 20px
+  font-size 14px
+  .ProfilePicture
+    width 50px
+    height 50px
+    margin-right 10px
+
   header
     display flex
     align-items center
-    .ProfilePicture
-      width 50px
-      height 50px
-      margin-right 10px
-    .user
-      display flex
-      flex-direction column
-      .TimeSince
-        color rgba(255, 255, 255, 0.53)
-      a
-        display table
-        color #FFF
-        hardcoreHyphens()
-        &:hover
-          margin-bottom -1px
-          border-bottom 1px solid
+    margin-bottom 4px
+    .TimeSince
+      color rgba(255, 255, 255, 0.53)
+    a
+      margin-right 5px
+      color #8EB625
+      hardcoreHyphens()
+      &:hover
+        margin-bottom -1px
+        border-bottom 1px solid
 
   .text
-    padding-left 60px
-    padding-top 10px
-    font-size 14px
     hyphens()
     a
       color rgba(255, 255, 255, 0.7)

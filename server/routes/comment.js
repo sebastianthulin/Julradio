@@ -152,6 +152,7 @@ router.post('/reply', function(req, res, next) {
   }).then(function(reply) {
     res.send(reply)
     db.Comment.updateReplyCount(reply.replyTo)
+    reply.article && db.Article.updateCommentCount(reply.article)
   }).catch(next)
 })
 
@@ -160,19 +161,25 @@ router.delete('/:id', function(req, res, next) {
   const uid = req.session.uid
   const isAdmin = req.user.roles.admin
   db.Comment.findById(commentId).exec().then(function(comment) {
+    const promises = []
+
     // se vad som händer ifall comment inte finns
     if (isAdmin || uid == comment.user || uid == comment.owner) {
-      return comment.remove()
+      promises.push(comment.remove())
+      if (!comment.replyTo) {
+        promises.push(db.Comment.find({
+          replyTo: comment._id
+        }).remove())
+      }
+      return Promise.all(promises)
     } else {
       throw new Error('UNAUTHORISED')
     }
-  }).then(function(comment) {
+  }).then(function(data) {
+    const comment = data[0]
     res.sendStatus(200)
-    if (comment.article) {
-      db.Article.updateCommentCount(comment.article)
-    }
-    if (comment.replyTo)
-      db.Comment.updateReplyCount(comment.replyTo)
+    comment.article && db.Article.updateCommentCount(comment.article)
+    comment.replyTo && db.Comment.updateReplyCount(comment.replyTo)
   }).catch(next)
 })
 
