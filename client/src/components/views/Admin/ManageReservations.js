@@ -7,7 +7,7 @@ const ManageReservation = require('./ManageReservation')
 
 const ReservationItem = ({ startDate, endDate, description, user, onClick, selected }) => (
   <div className={cx('ReservationItem', { selected })} onClick={onClick}>
-    <div className="time-container">
+    <div className="timeContainer">
       <div className="time">{dateFormat(startDate, 'HH:MM')}</div>
       <span>-</span>
       <div className="time">{dateFormat(endDate, 'HH:MM')}</div>

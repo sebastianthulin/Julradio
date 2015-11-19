@@ -28,7 +28,7 @@ router.use(function(req, res, next) {
   })
 })
 
-router.post('/', function(req, res) {
+router.post('/', function(req, res, next) {
   const b = req.body
   new db.Article({
     user: b.userless ? undefined : req.user._id,
@@ -36,12 +36,10 @@ router.post('/', function(req, res) {
     content: b.content
   }).save().then(function(article) {
     res.send(article)
-  }, function() {
-    res.sendStatus(500)
-  })
+  }).catch(next)
 })
 
-router.put('/:id', function(req, res) {
+router.put('/:id', function(req, res, next) {
   const id = req.params.id
   const b = req.body
   db.Article.findByIdAndUpdate(id, {
@@ -49,18 +47,14 @@ router.put('/:id', function(req, res) {
     content: b.content
   }).exec().then(function() {
     res.sendStatus(200)
-  }, function() {
-    res.sendStatus(500)
-  })
+  }).catch(next)
 })
 
-router.delete('/:id', function(req, res) {
+router.delete('/:id', function(req, res, next) {
   const id = req.params.id
   db.Article.findByIdAndRemove(id).exec().then(function() {
     res.sendStatus(200)
-  }, function() {
-    res.sendStatus(500)
-  })
+  }).catch(next)
 })
 
 module.exports = router

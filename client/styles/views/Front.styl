@@ -51,13 +51,30 @@
 
   .article
     margin-bottom 30px
-    padding-bottom 10px
+    padding-bottom 30px
     border-bottom 2px solid rgba(255, 255, 255, 0.4)
     &:last-child
       border-bottom none
-      
-  .kommenterapls
-    font-size 13px
-    
-    i
-      font-size 14px
+
+  .commentLink
+    display inline-flex
+    align-items center
+    .meta
+      margin-right 3px
+    .icon
+      position relative
+      display inline-block
+      height 30px
+      width 40px
+    svg
+      width 100%
+      height 100%
+    .numComments
+      position absolute
+      display flex
+      align-items center
+      justify-content center
+      left 0px
+      top 0px
+      right 3px
+      bottom 1px

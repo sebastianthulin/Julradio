@@ -83,18 +83,20 @@
     padding 50px 0px
     text-align center
     background rgba(255, 0, 0, 0.1)
-    button
-      display block
+    .option
+      display flex
+      align-items center
+      justify-content center
       width 200px
+      height 50px
       margin 0 auto
       padding 10px
       color #FFF
       border 1px solid rgba(255, 255, 255, 0.22)
-      background none
       border-radius 3px
-      i
-        margin-left 4px
-        font-size 13px
+      cursor pointer
+      span
+        margin-right 3px
 
   .userAction
     padding 0
@@ -166,12 +168,13 @@
         &:hover
           border-bottom 1px solid
       .item
+        width 18px
+        height 18px
         margin-right 12px
-        width 20px
-      i
-        font-size 24px
-        cursor pointer
-        width 100%
+        svg
+          width 100%
+          height 100%
+          cursor pointer
       .volumeControl
         position relative
         &:hover #VolumeSlider, #VolumeSlider.adjusting

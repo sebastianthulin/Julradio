@@ -5,6 +5,7 @@ const RequestStore = require('../../../stores/RequestStore')
 const ArticleStore = require('../../../stores/ArticleStore')
 const Feed = require('../../reusable/Feed')
 const Article = require('../../reusable/Article')
+const SVG = require('../../svg')
 const Schedule = require('./Schedule')
 
 class Front extends React.Component {
@@ -25,9 +26,12 @@ class Front extends React.Component {
           {articles.map(article => (
             <div className="article" key={article._id}>
               <Article article={article} />
-              <Link to={`/article/${article._id}`} className="kommenterapls">
-                Kommentera <i className="fa fa-comment-o" />
-                ({article.numComments})
+              <Link to={`/article/${article._id}`} className="commentLink">
+                <div className="meta">Kommentera</div>
+                <div className="icon">
+                  <SVG.Comment />
+                  <div className="numComments">{article.numComments}</div>
+                </div>
               </Link>
             </div>
           ))}

@@ -23,14 +23,14 @@ class UserProfileContainer extends React.Component {
     const user = (this.authedUser || {}).usernameLower
     if (user === username.toLowerCase()) {
       ShitStore.clear('wallPost')
-      ShitStore.on('wallPost', () => true)
+      // ShitStore.on('wallPost', () => true)
     } else {
       this.wallPostsOff()
     }
   }
 
   wallPostsOff() {
-    ShitStore.on('wallPost', () => false)
+    // ShitStore.on('wallPost', () => false)
   }
 
   runQuery(query) {

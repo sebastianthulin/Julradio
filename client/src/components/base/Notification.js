@@ -1,6 +1,7 @@
 const React = require('react')
 const { Link } = require('react-router')
 const errors = require('../../errors')
+const NotificationStore = require('../../stores/NotificationStore')
 const User = require('../../services/User')
 const Sound = require('../../services/Sound')
 const ProfilePicture = require('../reusable/ProfilePicture')
@@ -9,8 +10,8 @@ const cx = require('classnames')
 class Notification extends React.Component {
   componentDidMount() {
     const { onHeight } = this.props
-    onHeight(this.refs.notification.clientHeight)
     this.playSound()
+    onHeight(this.refs.notification.clientHeight)
   }
 
   playSound() {
@@ -44,6 +45,10 @@ class Notification extends React.Component {
     }
   }
 
+  handleClick() {
+    NotificationStore.clear(this.props.id)
+  }
+
   render() {
     const { err, from, y } = this.props
     const url = !err && this.getURL()
@@ -52,7 +57,12 @@ class Notification extends React.Component {
     }
 
     const notification = (
-      <div ref="notification" className={cx('Notification', { err })} style={style}>
+      <div
+        ref="notification"
+        className={cx('Notification', { err })}
+        style={style}
+        onClick={this.handleClick.bind(this)}
+      >
         {from && <ProfilePicture id={from.picture} />}
         {err ? this.getErrorMessage() : this.getMessage()}
       </div>

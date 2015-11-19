@@ -5,10 +5,10 @@ const Modal = require('../../../services/Modal')
 const User = require('../../../services/User')
 const RadioStore = require('../../../stores/RadioStore')
 const ShitStore = require('../../../stores/ShitStore')
-const Player = require('./Player')
-const Snowfall = require('../Snowfall')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const SVG = require('../../svg')
+const Snowfall = require('../Snowfall')
+const Player = require('./Player')
 
 const divider = <div className="divider" />
 
@@ -35,14 +35,14 @@ class Sidebar extends React.Component {
       </Link>
     ) : (
       <div className="loginArea">
-        <button onClick={Modal.open.bind(null, 'LogIn')} style={{marginBottom: 10}}>
-          Logga in
-          <i className="fa fa-heart" />
-        </button>
-        <button onClick={Modal.open.bind(null, 'SignUp')}>
-          Registrera
-          <i className="fa fa-heart-o" />
-        </button>
+        <div className="option" onClick={Modal.open.bind(null, 'LogIn')} style={{marginBottom: 10}}>
+          <span>Logga in</span>
+          <SVG.Favorite />
+        </div>
+        <div className="option" onClick={Modal.open.bind(null, 'SignUp')}>
+          <span>Registrera</span>
+          <SVG.FavoriteOutlined />
+        </div>
       </div>
     )
   }
@@ -74,11 +74,11 @@ class Sidebar extends React.Component {
           {user && <Link to="/messages" className="userAction">
             <SVG.Messenger />
             {unseenMessages.length > 0 && <div className="notification">{unseenMessages.length}</div>}
-            Meddelanden
+            <span>Meddelanden</span>
           </Link>}
           {user && <Link to="/cosycorner" className="userAction">
             <SVG.Fire />
-            Myshörnan
+            <span>Myshörnan</span>
           </Link>}
           {user && divider}
           <div className="shortcuts">

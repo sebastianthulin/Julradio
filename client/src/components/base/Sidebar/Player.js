@@ -18,13 +18,8 @@ class Player extends React.Component {
   }
 
   render() {
-    var picture
     const { playing, currentlyPlaying, program, volume } = this.state
-
-    if (program) {
-      picture = program.picture || program.user && program.user.picture
-    }
-
+    const picture = program && (program.picture || program.user.picture)
     return (
       <div id="Player">
         {program && <div className="program">{program.description}</div>}
