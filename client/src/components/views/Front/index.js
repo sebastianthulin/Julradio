@@ -43,6 +43,10 @@ class Front extends React.Component {
           </div>
           <span className="informer">Godkända önskningar och tweets med #julradio</span>
           <Feed tweets={requests} />
+          <div className="sponsorer">
+            <a href="http://tidningskungen.se" target="blank"><img src="/images/tidningskungen.png"/></a>
+            <a href="http://sfanytime.se" target="blank"><img src="/images/sf_anytime.png"/></a>
+          </div>
         </div>
       </div>
     )
