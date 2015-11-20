@@ -45,7 +45,7 @@ class Front extends React.Component {
           <Feed tweets={requests} />
           <div className="sponsorer">
             <a href="http://tidningskungen.se" target="blank"><img src="/images/tidningskungen.png"/></a>
-            <a href="http://sfanytime.se" target="blank"><img src="/images/sf_anytime.png"/></a>
+            <a href="http://sfanytime.se" target="blank"><img className="sfanytime" src="/images/sf_anytime.png"/></a>
           </div>
         </div>
       </div>
