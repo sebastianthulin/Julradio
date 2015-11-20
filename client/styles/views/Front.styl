@@ -59,21 +59,13 @@
   .commentLink
     display inline-flex
     align-items center
-    .meta
-      margin-right 3px
-    .icon
-      position relative
-      height 30px
-      width 40px
+    color rgba(255, 255, 255, 0.76)
+    &:hover svg g
+      stroke #FFF
     svg
-      width 100%
-      height 100%
-    .numComments
-      position absolute
-      display flex
-      align-items center
-      justify-content center
-      left 0px
-      top 0px
-      right 3px
-      bottom 1px
+      width 24px
+      height 24px
+      margin-right 8px
+      g
+        stroke @color
+        transition stroke .1s ease-in-out

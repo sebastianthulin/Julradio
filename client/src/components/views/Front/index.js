@@ -27,11 +27,8 @@ class Front extends React.Component {
             <div className="article" key={article._id}>
               <Article article={article} />
               <Link to={`/article/${article._id}`} className="commentLink">
-                <div className="meta">Kommentera</div>
-                <div className="icon">
-                  <SVG.Comment />
-                  <div className="numComments">{article.numComments}</div>
-                </div>
+                <SVG.Comment />
+                <span>{article.numComments}</span>
               </Link>
             </div>
           ))}

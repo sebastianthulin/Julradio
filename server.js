@@ -4,21 +4,18 @@ const express = require('express')
 const app = express()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
-const session = require('express-session')
-const RedisStore = require('connect-redis')(session)
+const sessions = require('client-sessions')
 
-const sessionMiddleware = session({
-  secret: 'omgdisawesome',
-  store: new RedisStore,
-  resave: true,
-  saveUninitialized: true
+const sessionMiddleware = sessions({
+  cookieName: 'session',
+  secret: '=)()"(#FK=?W)IFOK)#"=(URMUPOÅÖDKF'
 })
 
 exports.io = io
 
 app.set('view engine', 'ejs')
 app.set('views', './client/views')
-// app.enable('trust proxy')
+app.enable('trust proxy')
 app.use(express.static('./public'))
 app.use(sessionMiddleware)
 app.use(require('body-parser').json())
