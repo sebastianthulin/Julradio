@@ -31,7 +31,7 @@ function handleTweet(data) {
   }
 
   process.send(tweets)
-  io.emit('tweet', tweet)
+  io.emit('request', tweet)
 }
 
 function deleteTweet(id) {
@@ -43,7 +43,7 @@ function deleteTweet(id) {
   }
 }
 
-tw.track(config.track)
+// tw.track(config.track)   // temporary disabled
 tw.on('error', console.error.bind(console))
 tw.on('tweet', handleTweet)
 

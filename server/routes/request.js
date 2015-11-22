@@ -6,23 +6,13 @@ const db = require('../models')
 const io = require('../../server').io
 
 router.post('/', function(req, res, next) {
-  const request = new db.SongRequest({
+  new db.SongRequest({
     name: req.body.name,
     song: req.body.song,
     text: req.body.text
-  })
-
-  request.validate(function(err) {
-    if (err) return next(err)
-    process.send({
-      service: 'Requests',
-      data: {
-        type: 'create',
-        opts: request
-      }
-    })
+  }).save().then(function() {
     res.sendStatus(200)
-  })
+  }).catch(next)
 })
 
 router.use(function(req, res, next) {
