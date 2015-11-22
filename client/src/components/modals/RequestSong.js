@@ -1,10 +1,15 @@
 const React = require('react')
 const ModalService = require('../../services/Modal')
 const RequestStore = require('../../stores/RequestStore')
+const ReservationStore = require('../../stores/ReservationStore')
 const NotificationStore = require('../../stores/NotificationStore')
 const Modal = require('./Modal')
 
 class RequestSong extends React.Component {
+  componentWillMount() {
+    ReservationStore.subscribe('onair', onair => this.setState({ onair }))
+  }
+
   getFields() {
     return {
       name: this.refs.name.value,
@@ -53,21 +58,29 @@ class RequestSong extends React.Component {
   }
 
   render() {
+    const { onair } = this.state
+    console.log(onair)
     return (
       <Modal className="RequestSong">
         <header>Önska en låt</header>
-        <main>
-          <label>Ditt namn</label>
-          <input type="text" ref="name" maxLength={50} />
-          <label>Låt</label>
-          <input type="text" ref="song" maxLength={100} />
-          <label>Text</label>
-          <textarea ref="text" maxLength={250} />
-          <button style={{width: '48%', float: 'left'}} onClick={this.requestSong.bind(this)}>Skicka önskning</button>
-          <a target="_blank" onClick={this.setHref.bind(this)}>
-            <button style={{width: '48%', float: 'right'}}>Önska via Twitter</button>
-          </a>
-        </main>
+        {onair ? (
+          <main>
+            <label>Ditt namn</label>
+            <input type="text" ref="name" maxLength={50} />
+            <label>Låt</label>
+            <input type="text" ref="song" maxLength={100} />
+            <label>Text</label>
+            <textarea ref="text" maxLength={250} />
+            <button style={{width: '48%', float: 'left'}} onClick={this.requestSong.bind(this)}>Skicka önskning</button>
+            <a target="_blank" onClick={this.setHref.bind(this)}>
+              <button style={{width: '48%', float: 'right'}}>Önska via Twitter</button>
+            </a>
+          </main>
+        ) : (
+          <main>
+            Det går inte att skicka in önskningar just nu
+          </main>
+        )}
       </Modal>
     )
   }

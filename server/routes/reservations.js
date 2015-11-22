@@ -2,6 +2,7 @@
 
 const express = require('express')
 const router = express.Router()
+const db = require('../models')
 
 function generateData(req, res, next) {
   const b = req.body
@@ -12,9 +13,7 @@ function generateData(req, res, next) {
   const endDate = new Date(year, b.month, b.day, endTime[0], endTime[1])
 
   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-    return res.status(500).send({err: 'INVALID_DATE'})
-  } else if (Date.now() > startDate) {
-    return res.status(500).send({err: 'TOO_EARLY'})
+    return next(new Error('INVALID_DATE'))
   }
 
   if (startDate > endDate) {
@@ -62,15 +61,21 @@ router.put('/:id', generateData, function(req, res) {
   res.sendStatus(200)
 })
 
-router.delete('/:id', function(req, res) {
-  process.send({
-    service: 'Reservations',
-    data: {
-      type: 'remove',
-      id: req.params.id
+router.delete('/:id', function(req, res, next) {
+  db.Reservation.findById(req.params.id).exec().then(function(doc) {
+    if (doc.user.toString() == req.user._id || req.user.roles.admin) {
+      process.send({
+        service: 'Reservations',
+        data: {
+          type: 'remove',
+          id: req.params.id
+        }
+      })
+      res.sendStatus(200)
+    } else {
+      throw new Error('UNAUTHORISED')
     }
-  })
-  res.sendStatus(200)
+  }).catch(next)
 })
 
 module.exports = router

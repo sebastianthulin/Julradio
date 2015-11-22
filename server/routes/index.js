@@ -4,12 +4,13 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 const io = require('../../server').io
+const config = require('../../config')
 const pictureRoutes = {}
 
 router.use(function(req, res, next) {
+  const uid = req.session.uid
   res.setHeader('Expires', '-1')
   res.setHeader('Cache-Control', 'must-revalidate, private')
-  const uid = req.session.uid
   if (!uid) return next()
   db.User.findById(uid).select('-hash').lean().exec().then(function(user) {
     if (!user || (user && user.banned)) {
@@ -58,7 +59,8 @@ router.post('/reloadclients', function(req, res) {
 
 router.get('*', function(req, res) {
   res.render('main', {
-    user: req.user
+    user: req.user,
+    analytics: config.analytics
   })
 })
 

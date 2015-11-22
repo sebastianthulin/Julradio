@@ -35,7 +35,7 @@ class Player extends React.Component {
                 <VolumeSlider />
               </div>
               {program && <Link className="host" to={'/@' + program.user.username} children={program.user.name} />}
-              {!program && <div className="host">Ingen värd</div>}
+              {!program && <div className="host">Slingan</div>}
             </div>
             <Link to="/history" className="songTitle">{currentlyPlaying.title}</Link>
           </div>

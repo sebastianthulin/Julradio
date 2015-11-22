@@ -7,7 +7,7 @@ class ManageReservation extends React.Component {
     const r = this.props.reservation
 
     this.days = []
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 3; i++) {
       const time = Date.now() + window.__TIMEDIFFERENCE__ + i * 24 * 60 * 60 * 1000
       this.days.push(time)
     }
@@ -71,11 +71,12 @@ class ManageReservation extends React.Component {
   }
 
   handleErr(err) {
-    alert(err.response.body.err)
+    alert(err.response.body.error[0])
   }
 
   render() {
     const isNew = !this.getId()
+    const { removable } = this.props
     return (
       <div>
         <label className="setting">
@@ -120,7 +121,7 @@ class ManageReservation extends React.Component {
           style={{float: 'right', marginRight: 0}}
           onClick={this.save.bind(this)}
         />
-        {!isNew && <button
+        {!isNew && removable && <button
           children="Ta bort"
           className="btn"
           style={{float: 'right'}}

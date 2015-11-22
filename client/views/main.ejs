@@ -6,6 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
   <link rel="stylesheet" href="/julradio.css" />
   <link rel="icon" href="/images/favicon.png">
+  <% if (analytics) { %>
+  <script type="text/javascript">
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+  try {
+  var pageTracker = _gat._getTracker("UA-2841374-2");
+  pageTracker._trackPageview();
+  } catch(err) {}</script>
+  <% } %>
 </head>
 <body>
   <div id="root"></div>

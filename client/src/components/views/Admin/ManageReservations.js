@@ -2,6 +2,7 @@ const React = require('react')
 const { Link } = require('react-router')
 const cx = require('classnames')
 const dateFormat = require('dateformat')
+const User = require('../../../services/User')
 const ReservationStore = require('../../../stores/ReservationStore')
 const ManageReservation = require('./ManageReservation')
 
@@ -31,7 +32,7 @@ class ManageReservations extends React.Component {
     this.list = list
     const dates = []
     const reservationsByDate = {}
-    for (var i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       const res = list[i]
       const date = dateFormat(res.startDate, 'dddd, mmmm d')
       if (dates[dates.length - 1] !== date) {
@@ -49,12 +50,18 @@ class ManageReservations extends React.Component {
     if (id === prevId) {
       this.deselect()
     } else {
-      this.setState({selected: reservation})
+      this.setState({
+        selected: reservation,
+        removable: reservation.user._id === User.get()._id || User.isAdmin()
+      })
     }
   }
 
   deselect() {
-    this.setState({selected: null})
+    this.setState({
+      selected: null,
+      removable: false
+    })
   }
 
   renderDay(date) {
@@ -74,7 +81,7 @@ class ManageReservations extends React.Component {
   }
 
   render() {
-    const { dates, selected } = this.state || {}
+    const { dates, selected, removable } = this.state || {}
     return (
       <div id="ManageReservations" className="row">
         <div className="oneHalf column">
@@ -84,6 +91,7 @@ class ManageReservations extends React.Component {
             key={selected._id}
             reservation={selected}
             deselect={this.deselect.bind(this)}
+            removable={removable}
           />}
         </div>
         <div className="oneHalf column reservationList">

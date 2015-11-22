@@ -17,6 +17,7 @@ class Front extends React.Component {
     return (
       <div id="Front" className="row">
         <div className="twoThirds column">
+          {articles.length === 0 && <div style={{height: 1}} />}
           {articles.map(article => (
             <div className="article" key={article._id}>
               <Article article={article} />

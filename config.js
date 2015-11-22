@@ -11,7 +11,8 @@ const config = {
       token_secret: 'H56tmbnfMPSk9Xm6HVwvgJstHRdFehugVoOEHZIPwbGZj'
     },
     track: 'javascript',
-    passwordMinLength: 3
+    passwordMinLength: 3,
+    analytics: false
   },
   test: {
 
@@ -26,7 +27,8 @@ const config = {
       token_secret: 'H56tmbnfMPSk9Xm6HVwvgJstHRdFehugVoOEHZIPwbGZj'
     },
     track: 'julradio',
-    passwordMinLength: 6
+    passwordMinLength: 6,
+    analytics: true
   }
 }
 
