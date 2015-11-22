@@ -16,11 +16,11 @@ const schema = new Schema({
     type: String,
     required: true
   },
-  granted: Boolean,
+  granted: Date,
   date: {
     type: Date,
     default: Date.now
   }
 })
 
-module.exports = mongoose.model('requests', schema)
+module.exports = mongoose.model('song requests', schema)

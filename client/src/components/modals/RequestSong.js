@@ -13,6 +13,12 @@ class RequestSong extends React.Component {
     }
   }
 
+  resetFields() {
+    this.refs.name.value = ''
+    this.refs.song.value = ''
+    this.refs.text.value = ''
+  }
+
   setHref(ev) {
     const node = ev.currentTarget
     const fields = this.getFields()
@@ -37,10 +43,11 @@ class RequestSong extends React.Component {
       return alert('För lång text. Högst 250 tecken.')
     }
 
-    RequestStore.request(fields).then(() => {
+    RequestStore.create(fields).then(() => {
+      this.resetFields()
       ModalService.close()
       NotificationStore.insert({type: 'requestsong'})
-    }, (err) => {
+    }).catch(err => {
       NotificationStore.error({type: 'requestsong', value: 'INVALID_FORM'})
     })
   }

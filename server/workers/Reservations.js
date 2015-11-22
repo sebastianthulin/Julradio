@@ -1,24 +1,13 @@
 'use strict';
 
-const db = require('../models')
 const io = require('socket.io-emitter')({
   host: '127.0.0.1',
   port: 6379
 })
+const db = require('../models')
 
 var reservations = []
 update()
-
-process.on('message', function(data) {
-  switch (data.type) {
-    case 'create':
-      createReservation(data.opts); break
-    case 'edit':
-      editReservation(data.id, data.opts); break
-    case 'remove':
-      removeReservation(data.id); break
-  }
-})
 
 function update(items) {
   const d = new Date()
@@ -55,3 +44,14 @@ function editReservation(id, opts) {
 function removeReservation(id) {
   db.Reservation.findByIdAndRemove(id).exec().then(update).catch(console.error.bind(console))
 }
+
+process.on('message', function(data) {
+  switch (data.type) {
+    case 'create':
+      createReservation(data.opts); break
+    case 'edit':
+      editReservation(data.id, data.opts); break
+    case 'remove':
+      removeReservation(data.id); break
+  }
+})

@@ -17,8 +17,6 @@ function parseType(type) {
 router.get('/replies/:id/:limit?', function(req, res, next) {
   const commentId = req.params.id
   const limit = req.params.limit || 9999
-  const uid = req.session.uid
-  const isAdmin = req.user.roles.admin
   db.Comment.findById(commentId).populate({
     path: 'user',
     select: '-hash -email',
@@ -161,11 +159,10 @@ router.delete('/:id', function(req, res, next) {
   const uid = req.session.uid
   const isAdmin = req.user.roles.admin
   db.Comment.findById(commentId).exec().then(function(comment) {
-    const promises = []
 
     // se vad som händer ifall comment inte finns
     if (isAdmin || uid == comment.user || uid == comment.owner) {
-      promises.push(comment.remove())
+      const promises = [comment.remove()]
       if (!comment.replyTo) {
         promises.push(db.Comment.find({
           replyTo: comment._id

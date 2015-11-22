@@ -47,7 +47,7 @@ if (cluster.isMaster) {
     cluster.fork()
   })
 
-  ;(['RadioStream', 'TweetStream', 'Reservations']).forEach(fork)
+  ;(['RadioStream', 'TweetStream', 'Reservations', 'Requests']).forEach(fork)
 }
 
 if (cluster.isWorker) {

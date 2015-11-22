@@ -49,7 +49,7 @@ const VolumeMute = props => (
 )
 
 const oneThird = 1 / 3
-const twoThirds = oneThird * 2
+const twoThirds = 2 / 3
 
 const Volume = props => props.volume > twoThirds
   ? <VolumeUp {...props} />

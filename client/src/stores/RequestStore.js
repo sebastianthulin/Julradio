@@ -5,44 +5,46 @@ const RequestStore = new EventEmitter
 
 var requests = []
 
-socket.on('tweets', function(data) {
+function handleRequest(request) {
+  request.songRequest = !!request.granted
+  request.tweet = !request.songRequest
+}
+
+socket.on('requests', function(data) {
   requests = data
-  RequestStore.emit('tweets', requests)
+  requests.forEach(handleRequest)
+  RequestStore.emit('requests', requests)
 })
 
-socket.on('tweet', function(tweet) {
-  requests.unshift(tweet)
+socket.on('request', function(request) {
+  handleRequest(request)
+  requests.unshift(request)
   if (requests.length === 51) {
     requests.splice(50, 1)
   }
-  RequestStore.emit('tweets', requests)
+  RequestStore.emit('requests', requests)
 })
 
-RequestStore.request = function(opts) {
-  return request.post('/api/request', opts)
-}
+RequestStore.deleteTweet = id =>
+  request.del('/api/request/tweet/' + id)
 
-RequestStore.accept = function(id) {
-  return request.put('/api/request/' + id)
-}
+RequestStore.create = opts =>
+  request.post('/api/request', opts)
 
-RequestStore.deny = function(id) {
-  return request.del('/api/request/' + id)
-}
+RequestStore.accept = id =>
+  request.put('/api/request/' + id)
 
-RequestStore.getRequests = function() {
-  return request.get('/api/request')
-}
+RequestStore.deny = id =>
+  request.del('/api/request/' + id)
 
-RequestStore.getGranted = function() {
-  return request.get('/api/request/granted')
-}
+RequestStore.fetch = () =>
+  request.get('/api/request')
 
 RequestStore.subscribe = function(handler) {
   handler(requests)
-  RequestStore.on('tweets', handler)
+  RequestStore.on('requests', handler)
   return function unsubscribe() {
-    RequestStore.removeListener('tweets', handler)
+    RequestStore.removeListener('requests', handler)
   }
 }
 

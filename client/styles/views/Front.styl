@@ -37,9 +37,6 @@
     border-radius 3px
     noUserSelect()
 
-  .Feed
-    max-height 1000px
-
   .informer
     font-size 13px
     font-style italic
@@ -52,7 +49,7 @@
   .article
     margin-bottom 30px
     padding-bottom 30px
-    border-bottom 2px solid rgba(255, 255, 255, 0.4)
+    border-bottom 2px solid rgba(255, 255, 255, 0.3)
     &:last-child
       border-bottom none
 
@@ -63,9 +60,68 @@
     &:hover svg g
       stroke #FFF
     svg
-      width 24px
+      width 22px
       height 24px
       margin-right 8px
       g
         stroke @color
         transition stroke .1s ease-in-out
+
+  .sponsors
+    width 100%
+    padding 20px 0px 0px 0px
+    img
+      width calc(100% - 80px)
+      margin 20px 40px
+
+    .sfanytime
+      width calc(100% - 100px)
+      margin-left 54px
+      
+.Feed
+  max-height 1000px
+  overflow-y scroll
+  border-radius 3px
+
+.Request
+  position relative
+  padding 10px
+  background rgba(0, 0, 0, 0.15)
+  margin-bottom 10px
+  border-radius 3px
+  overflow hidden
+
+  
+  img
+    margin-right 10px
+    border-radius 50%
+    width 30px
+    float left
+    
+  .user
+    color #FFF
+    font-weight 400
+    height 30px
+    line-height 30px
+  a:hover
+    border-bottom 1px solid
+    
+  .text
+    display block
+    color rgba(255,255,255,0.7)
+    margin 5px 0 0 0
+  
+  .song
+    margin-top 5px
+    color rgba(255, 255, 255, 0.4)
+
+  .remove
+    position absolute
+    top 4px
+    right 10px
+    color #FFF
+    background none
+    opacity 0.2
+    cursor pointer
+    &:hover
+      opacity 0.5

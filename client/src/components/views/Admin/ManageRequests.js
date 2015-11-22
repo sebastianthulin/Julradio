@@ -3,26 +3,37 @@ const RequestStore = require('../../../stores/RequestStore')
 
 class Request extends React.Component {
   accept() {
-    const {_id, refresh} = this.props
-    RequestStore.accept(_id).then(() => refresh())
+    RequestStore.accept(this.props._id)
+      .then(() => this.setState({accepted: true}))
   }
 
   deny() {
-    const {_id, refresh} = this.props
-    RequestStore.deny(_id).then(() => refresh())
+    RequestStore.deny(this.props._id)
+      .then(() => this.setState({removed: true}))
   }
 
   render() {
-    const {name, song, text} = this.props
+    const { name, song, text} = this.props
+    const { accepted, removed } = this.state || {}
     return (
-      <div className="Request">
+      <div className="SongRequest">
         <div className="name">{name}</div>
         <div className="song">{song}</div>
         <div className="text">{text}</div>
-        <div className="actions">
-          <button onClick={this.accept.bind(this)} children="Accept" />
-          <button onClick={this.deny.bind(this)} children="Deny" />
-        </div>
+        {accepted ? (
+          <div className="message">
+            Accepterad
+          </div>
+        ) : removed ? (
+          <div className="message">
+            Borttagen
+          </div>
+        ) : (
+          <div className="actions">
+            <button onClick={this.accept.bind(this)} children="Accept" />
+            <button onClick={this.deny.bind(this)} children="Ta bort" />
+          </div>
+        )}
       </div>
     )
   }
@@ -37,7 +48,7 @@ class ManageRequests extends React.Component {
   }
 
   refresh(requests) {
-    RequestStore.getRequests().then(({ body: requests }) => this.setState({ requests }))
+    RequestStore.fetch().then(({ body: requests }) => this.setState({ requests }))
   }
 
   render() {
