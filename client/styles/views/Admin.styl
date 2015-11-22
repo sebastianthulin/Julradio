@@ -118,33 +118,21 @@
     vendor(flex-wrap, wrap)
 
 .SongRequest
-  display flex
-  flex-direction column
-  justify-content center
-  position relative
-  padding 20px
-  height 300px
-  text-align center
-  border-radius 4px
-  background rgba(204, 78, 78, 0.23)
-  overflow auto
+  position: relative;
+  padding: 10px 20px 60px 20px;
+  overflow: auto;
+  width: 100%;
+  height: auto;
+  margin-top 10px
+  border-bottom 1px solid rgba(255,255,255,0.15)
   
   .name
     opacity .5
+    font-size 18px
   
   .song
     font-weight bold
     font-style italic
-
-  // 2 columns
-  +above(568px)
-    width calc(50% - 10px)
-    margin 5px  
-
-  // 3 - 6 columns
-  for i in (3..6)
-    +above(300px * i + 300px)
-      width 'calc(100% / %s - 10px)' % i
       
   .actions
     position absolute
@@ -154,11 +142,15 @@
     border-radius 2px
     overflow hidden
     button
-      width 50%
-      background rgba(0, 0, 0, 0.06)
-      color rgba(203, 115, 115, 0.76)
-      padding 5px 0
-      font-weight 400
-      font-size 16px
-      &:first-child
-        border-right 1px solid rgba(255, 255, 255, 0.14)
+      width: 100px;
+      color: rgba(255,255,255,0.3)
+      padding: 5px 0px 4px 0px;
+      font-weight: 400;
+      font-size: 14px;
+      border: 1px solid rgba(255,255,255,0.3)
+      margin: 10px 5px;
+      border-radius: 50px;
+      background: none;
+      &:hover
+        color white
+        border 1px solid white
