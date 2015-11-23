@@ -8,6 +8,7 @@ const fs = require('fs')
 const router = express.Router()
 const db = require('../models')
 const getBlockage = require('../services/getBlockage')
+const performAction = require('../services/performAction')
 
 const upload = multer({
   dest: 'uploads/',
@@ -84,8 +85,10 @@ router.post('/signup', function(req, res, next) {
 })
 
 router.post('/login', function(req, res, next) {
-  const username = typeof req.body.username === 'string' && req.body.username.toLowerCase()
-  db.User.findOne({usernameLower: username}).exec().then(function(user) {
+  performAction(req.ip, 'loginattempt').then(function() {
+    const username = typeof req.body.username === 'string' && req.body.username.toLowerCase()
+    return db.User.findOne({usernameLower: username}).exec()
+  }).then(function(user) {
     if (user) {
       if (user.banned) {
         throw new Error('USER_BANNED')

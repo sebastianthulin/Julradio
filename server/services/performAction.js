@@ -3,6 +3,10 @@
 const db = require('../models')
 
 const timeouts = {
+  loginattempt: {
+    length: 1000,
+    strikes: 1
+  },
   comment: {
     length: 3000, 
     strikes: 1
@@ -29,7 +33,7 @@ function performAction(ip, action) {
       } else {
         // remove old
         db.IPTimeout.find({
-          action, ip, 
+          ip, 
           expires: {$lte: now}
         }).remove().exec()
         
