@@ -43,7 +43,7 @@ function deleteTweet(id) {
   }
 }
 
-// tw.track(config.track)   // temporary disabled
+config.track && tw.track(config.track)
 tw.on('error', console.error.bind(console))
 tw.on('tweet', handleTweet)
 

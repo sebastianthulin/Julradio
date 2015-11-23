@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events')
-// const { Promise } = require('es6-promise')
+const { Promise } = require('es6-promise')
 const request = require('../services/request')
 const User = require('../services/User')
 const UserStore = require('./UserStore')

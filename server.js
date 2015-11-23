@@ -8,7 +8,9 @@ const sessions = require('client-sessions')
 
 const sessionMiddleware = sessions({
   cookieName: 'session',
-  secret: '=)()"(#FK=?W)IFOK)#"=(URMUPOÅÖDKF'
+  secret: '=)()"(#FK=?W)IFOK)#"=(URMUPOÅÖDKF',
+  duration: 1000 * 60 * 60 * 24 * 14,
+  activeDuration: 1000 * 60 * 60 * 24 * 14
 })
 
 exports.io = io

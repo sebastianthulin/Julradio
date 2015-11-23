@@ -59,7 +59,6 @@ class RequestSong extends React.Component {
 
   render() {
     const { onair } = this.state
-    console.log(onair)
     return (
       <Modal className="RequestSong">
         <header>Önska en låt</header>
