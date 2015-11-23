@@ -4,6 +4,7 @@ const db = require('../models')
 const io = require('../../server').io
 const Notify = require('../services/Notify')
 const getBlockage = require('../services/getBlockage')
+const performAction = require('../services/performAction')
 
 function createConversation(users) {
   var conv = new db.Conversation({ users })
@@ -72,17 +73,22 @@ function sendMessage(from, conversationId, text) {
 }
 
 function chatHandler(socket) {
+  const ip = socket.request.connection.remoteAddress || socket.request['x-forwarded-for']
   socket.on('chat:message', function(opts, errHandler) {
     if (typeof opts !== 'object' || !opts.text) return
-    getBlockage(socket.uid, opts.userId).then(function(relationship) {
-      if (relationship) {
-        throw new Error('blocked')
-      }
-      return opts.conversationId || getConversationId(socket.uid, opts.userId)
-    }).then(function(conversationId) {
-      return sendMessage(socket.uid, conversationId, opts.text)
+    performAction(ip, 'chat').then(function() {
+      getBlockage(socket.uid, opts.userId).then(function(relationship) {
+        if (relationship) {
+          throw new Error('blocked')
+        }
+        return opts.conversationId || getConversationId(socket.uid, opts.userId)
+      }).then(function(conversationId) {
+        return sendMessage(socket.uid, conversationId, opts.text)
+      }).catch(function(err) {
+        console.error('@chatHandler', err)
+        errHandler && errHandler()
+      })
     }).catch(function(err) {
-      console.error('@chatHandler', err)
       errHandler && errHandler()
     })
   })

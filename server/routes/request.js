@@ -4,14 +4,17 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 const io = require('../../server').io
+const performAction = require('../services/performAction')
 
 router.post('/', function(req, res, next) {
-  new db.SongRequest({
-    name: req.body.name,
-    song: req.body.song,
-    text: req.body.text
-  }).save().then(function() {
-    res.sendStatus(200)
+  performAction(req.ip, 'requestsong').then(function() {
+    new db.SongRequest({
+      name: req.body.name,
+      song: req.body.song,
+      text: req.body.text
+    }).save().then(function() {
+      res.sendStatus(200)
+    }).catch(next)
   }).catch(next)
 })
 

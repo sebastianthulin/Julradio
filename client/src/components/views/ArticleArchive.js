@@ -20,7 +20,7 @@ const months = [
 class Article extends React.Component {
   render() {
     const { article } = this.props
-    const dateInHuman = article.date.getDay() + ' ' + months[article.date.getMonth()] + ' ' + article.date.getFullYear()
+    const dateInHuman = article.date.getDate() + ' ' + months[article.date.getMonth()] + ' ' + article.date.getFullYear()
     return (
       <Link to={`/article/${article._id}`} className="article">
         <h3>{article.title}</h3>
