@@ -4,7 +4,7 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 const Notify = require('../services/Notify')
-const getBlockage = require('../services/getBlockage')
+const Blockages = require('../services/Blockages')
 const performAction = require('../services/performAction')
 
 function parseType(type) {
@@ -73,18 +73,18 @@ router.post('/article', function(req, res, next) {
   const articleId = req.body.target
   const text = req.body.text
   performAction(req.ip, 'comment').then(function() {
-    db.Article.findById(articleId).then(function(article) {
-      if (!article) throw new Error('ARTICLE_NOT_FOUND')
-      return new db.Comment({
-        text,
-        user: req.user._id,
-        owner: article.user,
-        article: articleId
-      }).save()
-    }).then(function(comment) {
-      res.send(comment)
-      db.Article.updateCommentCount(articleId)
-    }).catch(next)
+    return db.Article.findById(articleId).exec()
+  }).then(function(article) {
+    if (!article) throw new Error('ARTICLE_NOT_FOUND')
+    return new db.Comment({
+      text,
+      user: req.user._id,
+      owner: article.user,
+      article: articleId
+    }).save()
+  }).then(function(comment) {
+    res.send(comment)
+    db.Article.updateCommentCount(articleId)
   }).catch(next)
 })
 
@@ -92,40 +92,36 @@ router.post('/user', function(req, res, next) {
   const uid = req.user._id
   const target = req.body.target
   const text = req.body.text
-  performAction(req.ip, 'comment').then(function() {
-    getBlockage(uid, target).then(function(relationship) {
-      if (relationship) {
-        throw new Error('BLOCKAGE')
-      }
-      return new db.Comment({
-        text,
-        user: uid,
-        owner: target,
-        targetUser: target
-      }).save()
-    }).then(function(comment) {
-      if (uid != target) {
-        Notify({
-          userId: target,
-          from: uid,
-          type: 'wallPost'
-        })
-      }
-      res.send(comment)
-    }).catch(next)
+  return Promise.all([
+    performAction(req.ip, 'comment'),
+    Blockages.confirm(uid, target)
+  ]).then(function() {
+    return new db.Comment({
+      text,
+      user: uid,
+      owner: target,
+      targetUser: target
+    }).save()
+  }).then(function(comment) {
+    if (uid != target) {
+      Notify({
+        userId: target,
+        from: uid,
+        type: 'wallPost'
+      })
+    }
+    res.send(comment)
   }).catch(next)
 })
 
 router.post('/cosycorner', function(req, res, next) {
   performAction(req.ip, 'comment').then(function() {
-    new db.Comment({
+    return new db.Comment({
       text: req.body.text,
       user: req.user._id,
       cosyCorner: true
     }).save()
-      .then(res.send.bind(res))
-      .catch(next)
-  }).catch(next)
+  }).then(res.send.bind(res)).catch(next)
 })
 
 router.post('/reply', function(req, res, next) {
@@ -133,33 +129,30 @@ router.post('/reply', function(req, res, next) {
   const b = req.body
   var comment
   performAction(req.ip, 'comment').then(function() {
-    db.Comment.findById(b.replyTo).then(function(doc) {
-      comment = doc
-      if (!comment) {
-        throw new Error('NO_COMMENT')
-      }
-      if (comment.replyTo) {
-        throw new Error('REPLY_TO_REPLY')
-      }
-      return getBlockage(uid, comment.owner)
-    }).then(function(relationship) {
-      if (relationship) {
-        throw new Error('BLOCKAGE')
-      }
-      return new db.Comment({
-        text: b.text,
-        user: uid,
-        owner: comment.owner,
-        replyTo: comment._id,
-        cosyCorner: comment.cosyCorner,
-        targetUser: comment.targetUser,
-        article: comment.article
-      }).save()
-    }).then(function(reply) {
-      res.send(reply)
-      db.Comment.updateReplyCount(reply.replyTo)
-      reply.article && db.Article.updateCommentCount(reply.article)
-    }).catch(next)
+    return db.Comment.findById(b.replyTo).exec()
+  }).then(function(doc) {
+    comment = doc
+    if (!comment) {
+      throw new Error('NO_COMMENT')
+    }
+    if (comment.replyTo) {
+      throw new Error('REPLY_TO_REPLY')
+    }
+    return Blockages.confirm(uid, comment.owner)
+  }).then(function() {
+    return new db.Comment({
+      text: b.text,
+      user: uid,
+      owner: comment.owner,
+      replyTo: comment._id,
+      cosyCorner: comment.cosyCorner,
+      targetUser: comment.targetUser,
+      article: comment.article
+    }).save()
+  }).then(function(reply) {
+    res.send(reply)
+    db.Comment.updateReplyCount(reply.replyTo)
+    reply.article && db.Article.updateCommentCount(reply.article)
   }).catch(next)
 })
 

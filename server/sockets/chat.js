@@ -3,7 +3,7 @@
 const db = require('../models')
 const io = require('../../server').io
 const Notify = require('../services/Notify')
-const getBlockage = require('../services/getBlockage')
+const Blockages = require('../services/Blockages')
 const performAction = require('../services/performAction')
 
 function createConversation(users) {
@@ -76,19 +76,15 @@ function chatHandler(socket) {
   const ip = socket.request.connection.remoteAddress || socket.request['x-forwarded-for']
   socket.on('chat:message', function(opts, errHandler) {
     if (typeof opts !== 'object' || !opts.text) return
-    performAction(ip, 'chat').then(function() {
-      getBlockage(socket.uid, opts.userId).then(function(relationship) {
-        if (relationship) {
-          throw new Error('blocked')
-        }
-        return opts.conversationId || getConversationId(socket.uid, opts.userId)
-      }).then(function(conversationId) {
-        return sendMessage(socket.uid, conversationId, opts.text)
-      }).catch(function(err) {
-        console.error('@chatHandler', err)
-        errHandler && errHandler()
-      })
+    Promise.all([
+      performAction(ip, 'chat'),
+      Blockages.confirm(socket.uid, opts.userId)
+    ]).then(function() {
+      return opts.conversationId || getConversationId(socket.uid, opts.userId)
+    }).then(function(conversationId) {
+      return sendMessage(socket.uid, conversationId, opts.text)
     }).catch(function(err) {
+      console.error('@chatHandler', err)
       errHandler && errHandler()
     })
   })

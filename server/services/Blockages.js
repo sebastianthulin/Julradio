@@ -31,4 +31,15 @@ function getBlockage(user1, user2) {
   })
 }
 
-module.exports = getBlockage
+function confirmBlockage(user1, user2) {
+  return new Promise(function(resolve, reject) {
+    getBlockage(user1, user2).then(function(blockage) {
+      blockage ? reject(new Error('BLOCKAGE')) : resolve()
+    }).catch(reject)
+  })
+}
+
+module.exports = {
+  get: getBlockage,
+  confirm: confirmBlockage
+}

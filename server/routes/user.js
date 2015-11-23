@@ -7,8 +7,8 @@ const gm = require('gm')
 const fs = require('fs')
 const router = express.Router()
 const db = require('../models')
-const getBlockage = require('../services/getBlockage')
 const performAction = require('../services/performAction')
+const Blockages = require('../services/Blockages')
 
 const upload = multer({
   dest: 'uploads/',
@@ -61,7 +61,7 @@ router.get('/profile', function getUser(req, res) {
     return Promise.all(query.map(function(type) {
       switch (type) {
         case 'profile': return getUserDoc(userId)
-        case 'block': return getBlockage(req.session.uid, userId)
+        case 'block': return Blockages.get(req.session.uid, userId, true)
       }
     }))
   }).then(function(data) {
