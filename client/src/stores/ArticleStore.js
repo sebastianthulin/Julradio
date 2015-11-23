@@ -33,9 +33,9 @@ ArticleStore.delete = function(id) {
   request.del('/api/articles/' + id).then(ArticleStore.get)
 }
 
-ArticleStore.get = function(callback) {
+ArticleStore.get = function(callback, archive) {
   typeof callback === 'function' && callback(articles)
-  request.get('/api/articles').then(function({ body }) {
+  request.get('/api/articles' + (archive ? '/archive' : '')).then(function({ body }) {
     articles = body
     articles.forEach(ArticleStore.transform)
     articles.sort((a, b) => b.date - a.date)

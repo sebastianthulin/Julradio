@@ -27,6 +27,7 @@ class Front extends React.Component {
               </Link>
             </div>
           ))}
+          <Link to={"/archive"}>Läs gamla nyheter på arkivet!</Link>
         </div>
         <div className="oneThird column">
           <Schedule />

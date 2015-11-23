@@ -4,8 +4,9 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 
-router.get('/', function(req, res, next) {
-  db.Article.find().populate({
+router.get('(/:archive?)', function(req, res, next) {
+  const archive = req.params.archive
+  db.Article.find().limit(archive ? 10000 : 20).populate({
     path: 'user',
     select: '-hash -email'
   }).exec().then(res.send.bind(res)).catch(next)
@@ -18,6 +19,7 @@ router.get('/:id', function(req, res, next) {
   }).exec().then(res.send.bind(res)).catch(next)
 })
 
+// Has to be a writer
 router.use(function(req, res, next) {
   db.User.findById(req.session.uid).exec().then(function(user) {
     if (user && user.roles.writer) {
