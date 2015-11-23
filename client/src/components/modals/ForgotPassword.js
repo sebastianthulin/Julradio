@@ -1,4 +1,5 @@
 const React = require('react')
+const NotificationStore = require('../../stores/NotificationStore')
 const ModalService = require('../../services/Modal')
 const User = require('../../services/User')
 const Modal = require('./Modal')
@@ -10,7 +11,7 @@ class ForgotPassword extends React.Component {
       email: this.refs.email.value
     }).then(() => {
       ModalService.close()
-      alert('Instruktioner har nu skickats till din email')
+      NotificationStore.insert({type: 'resetinstructions'})
     })
   }
 

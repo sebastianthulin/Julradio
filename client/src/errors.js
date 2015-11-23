@@ -20,5 +20,9 @@ module.exports = {
   NAME_TOO_LONG: 'För långt namn',
   LOCATION_TOO_LONG: 'För lång boplats',
   DESCRIPTION_TOO_LONG: 'För lång personlig beskrivning',
-  INVALID_BIRTH: 'Ogiltig födelsedag'
+  INVALID_BIRTH: 'Ogiltig födelsedag',
+
+  // Forgot errors
+  INVALID_EMAIL: 'Ingen användare med denna email är registrerad',
+  INVALID_REQUEST_ID: 'Du har begärt ett nytt lösenord.'
 }

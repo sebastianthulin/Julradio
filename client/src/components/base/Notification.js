@@ -28,6 +28,7 @@ class Notification extends React.Component {
       case 'settings': return 'Profilinställningar uppdaterade'
       case 'profilepicture': return 'Profilbild uppdaterad'
       case 'requestsong': return 'Din önskning har skickats'
+      case 'resetinstructions': return 'Instruktioner har skickats till din email'
       default: return type
     }
   }
