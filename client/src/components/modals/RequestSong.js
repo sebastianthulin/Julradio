@@ -78,7 +78,7 @@ class RequestSong extends React.Component {
           </main>
         ) : (
           <main>
-            Det går inte att skicka in önskningar just nu
+            Det enda du kan önska just nu är 1 december
           </main>
         )}
       </Modal>
