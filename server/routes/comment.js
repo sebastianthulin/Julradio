@@ -36,6 +36,7 @@ router.get('/replies/:id/:limit?', function(req, res, next) {
 router.get('/:type', function(req, res, next) {
   const type = parseType(req.params.type)
   const target = req.query.target
+  const page = req.query.page
   var comments
 
   if (!type) {
@@ -45,7 +46,7 @@ router.get('/:type', function(req, res, next) {
   db.Comment.find({
     [type]: target || true,
     replyTo: null
-  }).sort('-_id').populate({
+  }).sort('-_id').limit(page ? page * 5 : 1000).populate({
     path: 'user',
     select: '-hash -email',
   }).exec().then(function(docs) {

@@ -66,9 +66,9 @@ CommentStore.reply = function(replyTo, text) {
   })
 }
 
-CommentStore.fetch = function({ type, target }, handler) {
+CommentStore.fetch = function({ type, target, page }, handler) {
   handler(buildState(target))
-  request.get('/api/comment/' + type, { target }).then(function({ body: { comments, replies } }) {
+  request.get('/api/comment/' + type, { target, page }).then(function({ body: { comments, replies } }) {
     replies.forEach(function(replies) {
       if (replies.length > 0) {
         replies.forEach(transform)

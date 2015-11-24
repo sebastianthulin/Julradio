@@ -7,14 +7,16 @@ const Thread = require('./Thread')
 
 class Comments extends React.Component {
   componentWillMount() {
+    this.page = 1
     this.user = User.get()
     this.admin = User.isAdmin()
     this.fetchComments()
   }
 
   fetchComments() {
+    const page = this.page
     const { type, target } = this.props
-    CommentStore.fetch({ type, target }, comments => this.setState({ comments }))
+    CommentStore.fetch({ type, target, page }, comments => this.setState({ comments }))
   }
 
   post(ev) {
@@ -48,6 +50,11 @@ class Comments extends React.Component {
     )
   }
 
+  loadMore() {
+    ++this.page
+    this.fetchComments()
+  }
+
   render() {
     const { user, admin } = this
     const { comments } = this.state || {}
@@ -63,6 +70,7 @@ class Comments extends React.Component {
           user={user}
           admin={admin}
         />)}
+        <button onClick={this.loadMore.bind(this)}>Visa äldre kommentarer</button>
       </div>
     )
   }
