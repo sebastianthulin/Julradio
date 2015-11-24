@@ -4,7 +4,7 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 
-router.get('(/:archive?)', function(req, res, next) {
+router.get('(/archive?)', function(req, res, next) {
   const archive = req.params.archive
   db.Article.find().limit(archive ? 10000 : 20).populate({
     path: 'user',
