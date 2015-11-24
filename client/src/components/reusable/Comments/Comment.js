@@ -2,6 +2,7 @@ const React = require('react')
 const { Link } = require('react-router')
 const history = require('../../../services/history')
 const CommentStore = require('../../../stores/CommentStore')
+const NotificationStore = require('../../../stores/NotificationStore')
 const ProfilePicture = require('../ProfilePicture')
 const TimeSince = require('../TimeSince')
 
@@ -17,8 +18,10 @@ class Comment extends React.Component {
     const { comment, onDelete } = this.props
     if (!confirm('Ta bort inlägg?')) return
     CommentStore.deleteComment(comment._id).then(onDelete).catch(err => {
-      console.error(err)
-      alert('Något gick fel')
+      NotificationStore.error({
+        type: 'removecomment',
+        value: err.response.body.error[0]
+      })
     })
   }
 

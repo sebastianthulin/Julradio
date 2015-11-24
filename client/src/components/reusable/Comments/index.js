@@ -2,6 +2,7 @@ const React = require('react')
 const User = require('../../../services/User')
 const history = require('../../../services/history')
 const CommentStore = require('../../../stores/CommentStore')
+const NotificationStore = require('../../../stores/NotificationStore')
 const Thread = require('./Thread')
 
 class Comments extends React.Component {
@@ -25,8 +26,10 @@ class Comments extends React.Component {
       this.refs.input.value = ''
       this.fetchComments()
     }).catch(err => {
-      console.error(err)
-      alert('något gick fel.')
+      NotificationStore.error({
+        type: 'comment',
+        value: err.response.body.error[0]
+      })
     })
   }
 

@@ -23,7 +23,7 @@ class UserProfile extends React.Component {
     if (user.age) {
       return user.age + ' år' + location
     }
-    return user.location
+    return user.location || ''
   }
 
   renderRelationship() {
@@ -46,7 +46,7 @@ class UserProfile extends React.Component {
         <header>
           <ProfilePicture id={user.picture} />
           <div className="name">{user.name ? user.name : '@' + user.username}</div>
-          <div className="identity">{(user.name ? '@' + user.username + ' ' : '') + this.getIndentity()}</div>
+          <div className="identity">{(user.name ? ('@' + user.username + ' ') : '') + this.getIndentity()}</div>
           {user.title && <span className="title">{user.title}</span>}
           <div className="description">{user.description}</div>
           <div>Medlem i <TimeSince date={user.date} short={true} /></div>

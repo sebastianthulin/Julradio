@@ -1,5 +1,6 @@
 module.exports = {
   UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+  TIMEOUT: 'Sakta ner! Du gör detta för ofta',
 
   TEXT_TOO_LONG: 'Texten är för lång',
 

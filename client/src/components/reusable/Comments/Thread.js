@@ -1,5 +1,6 @@
 const React = require('react')
 const CommentStore = require('../../../stores/CommentStore')
+const NotificationStore = require('../../../stores/NotificationStore')
 const Comment = require('./Comment')
 
 class Thread extends React.Component {
@@ -17,8 +18,10 @@ class Thread extends React.Component {
     CommentStore.fetchReplies(comment._id, limit)
       .then(({ comment, replies }) => this.setState({ comment, replies }))
       .catch(err => {
-        console.log(err)
-        alert('Något gick fel')
+        NotificationStore.error({
+          type: 'fetchreplies',
+          value: err.response.body.error[0]
+        })
       })
   }
 
@@ -32,8 +35,10 @@ class Thread extends React.Component {
       this.toggleReply()
       this.fetchReplies(replies ? replies.length + 1 : 1)
     }).catch(err => {
-      console.error(err)
-      alert('Något gick fel')
+        NotificationStore.error({
+          type: 'comment',
+          value: err.response.body.error[0]
+        })
     })
   }
 
