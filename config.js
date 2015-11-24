@@ -2,6 +2,7 @@
 
 const config = {
   development: {
+    cookieSecret: '=)()"(#FK=?W)IFOK)#"=(URMUPOÅÖDKF',
     mongodbUrl: 'mongodb://localhost/Julradio',
     shoutCastUrl: 'http://s5.voscast.com:7346',
     twitterTokens: {
@@ -9,6 +10,10 @@ const config = {
       consumer_secret: 'meCMO8dxLzExeKTB7ZLo6Gqin76NOtylAKemEWGwuPzbPUoNNw',
       token: '2883350073-h7mL232SNhxSvwSEHWqsJkDnbjyilPxFZq1Rj7z',
       token_secret: 'H56tmbnfMPSk9Xm6HVwvgJstHRdFehugVoOEHZIPwbGZj'
+    },
+    email: {
+      user: 'grovciabatta@gmail.com',
+      pass: 'minl0sen'
     },
     // track: 'javascript',   // temporary disabled
     passwordMinLength: 3,

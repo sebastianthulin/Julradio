@@ -5,10 +5,11 @@ const app = express()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
 const sessions = require('client-sessions')
+const config = require('./config')
 
 const sessionMiddleware = sessions({
   cookieName: 'session',
-  secret: '=)()"(#FK=?W)IFOK)#"=(URMUPOÅÖDKF',
+  secret: config.cookieSecret,
   duration: 1000 * 60 * 60 * 24 * 14,
   activeDuration: 1000 * 60 * 60 * 24 * 14
 })

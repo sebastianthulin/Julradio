@@ -6,7 +6,7 @@ const db = require('../models')
 const mail = require('../services/mail')
 
 router.post('/', function(req, res, next) {
-  const email = req.body.email
+  const email = String(req.body.email).toLowerCase()
   var user
 
   db.User.findOne({ email }).exec().then(function(doc) {

@@ -50,21 +50,29 @@ class ManageUser extends React.Component {
         </label>
         {user.picture && <img src={'/picture/' + user.picture} width="100" />}
         {user.picture && <button onClick={this.removeAvatar.bind(this)}>Ta bort bild</button>}
-        <label className="setting">
+        <div className="setting">
           <div className="label">Roller</div>
           <div>
-            Admin
-            <input type="checkbox" defaultChecked={user.roles.admin} ref="admin" />
-            Skribent
-            <input type="checkbox" defaultChecked={user.roles.writer} ref="writer" />
-            Radiopratare
-            <input type="checkbox" defaultChecked={user.roles.radioHost} ref="radioHost" />
+            <label>
+              <input type="checkbox" defaultChecked={user.roles.admin} ref="admin" />
+              Admin
+            </label>
+            <label>
+              <input type="checkbox" defaultChecked={user.roles.writer} ref="writer" />
+              Skribent
+            </label>
+            <label>
+              <input type="checkbox" defaultChecked={user.roles.radioHost} ref="radioHost" />
+              Radiopratare
+            </label>
           </div>
-        </label>
-        <label className="setting">
+        </div>
+        <div className="setting">
           <div className="label">Bannad</div>
-          <input type="checkbox" defaultChecked={user.banned} ref="banned" />
-        </label>
+          <div>
+            <input type="checkbox" defaultChecked={user.banned} ref="banned" />
+          </div>
+        </div>
         <button className="btn" onClick={this.save.bind(this)}>Spara ändringar</button>
         <Link to={`/@${user.username}`} style={{marginLeft: 10}}>Visa profil</Link>
       </div>

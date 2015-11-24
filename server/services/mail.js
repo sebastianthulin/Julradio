@@ -1,13 +1,11 @@
 'use strict';
 
 const nodemailer = require('nodemailer')
+const config = require('../../config')
 
-const Transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
   service: 'Gmail',
-  auth: {
-    user: 'grovciabatta@gmail.com',
-    pass: 'minl0sen'
-  }
+  auth: config.email
 })
 
-module.exports = Transporter
+module.exports = transporter

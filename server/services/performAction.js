@@ -22,29 +22,30 @@ const timeouts = {
 }
 
 function performAction(ip, action) {
-  const now = new Date()
   const timeout = timeouts[action]
-  return new Promise(function(resolve, reject) {
-    db.IPTimeout.find({ action, ip, expires: {$gt: now}}, function(err, docs) {
-      if (err) {
-        reject(err)
-      } else if (docs.length >= timeout.strikes) {
-        reject(new Error('TIMEOUT'))
-      } else {
-        // remove old
-        db.IPTimeout.find({
-          ip, 
-          expires: {$lte: now}
-        }).remove().exec()
-        
-        new db.IPTimeout({
-          ip,
-          action,
-          expires: Date.now() + timeout.length
-        }).save(resolve)
-      }
-    })
+  return db.IPTimeout.find({
+    ip,
+    action,
+    expires: {
+      $gt: Date.now()
+    }
+  }).exec().then(function(docs) {
+    if (docs.length >= timeout.strikes) {
+      throw new Error('TIMEOUT')
+    }
+    return new db.IPTimeout({
+      ip,
+      action,
+      expires: Date.now() + timeout.length
+    }).save()
   })
 }
+
+// Removes expired timeouts every 10s
+setInterval(function() {
+  db.IPTimeout.find({
+    expires: {$lte: Date.now()}
+  }).remove().exec()
+}, 10000)
 
 module.exports = performAction
