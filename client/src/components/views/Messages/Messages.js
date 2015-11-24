@@ -72,7 +72,7 @@ class Messages extends React.Component {
   renderInitialScreen() {
     return (
       <div className="initial">
-        Ingen konversation vald
+        Påbörja en konversation genom att gå in på någons profil och tryck på "skicka meddelande".
       </div>
     )
   }

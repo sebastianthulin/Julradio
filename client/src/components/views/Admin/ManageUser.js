@@ -48,8 +48,6 @@ class ManageUser extends React.Component {
             ref="title"
           />
         </label>
-        {user.picture && <img src={'/picture/' + user.picture} width="100" />}
-        {user.picture && <button onClick={this.removeAvatar.bind(this)}>Ta bort bild</button>}
         <div className="setting">
           <div className="label">Roller</div>
           <div>
@@ -73,6 +71,8 @@ class ManageUser extends React.Component {
             <input type="checkbox" defaultChecked={user.banned} ref="banned" />
           </div>
         </div>
+        {user.picture && <img class="manageUserPic" src={'/picture/' + user.picture} width="200" />}
+        {user.picture && <button className="removePic" onClick={this.removeAvatar.bind(this)}>Ta bort bild</button>}
         <button className="btn" onClick={this.save.bind(this)}>Spara ändringar</button>
         <Link to={`/@${user.username}`} style={{marginLeft: 10}}>Visa profil</Link>
       </div>
