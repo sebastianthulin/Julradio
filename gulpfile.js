@@ -3,12 +3,14 @@
 const gulp = require('gulp')
 const util = require('gulp-util')
 const browserify = require('browserify')
+const envify = require('envify/custom')
 const babelify = require('babelify')
 const uglify = require('gulp-uglify')
 const stylus = require('gulp-stylus')
 const source = require('vinyl-source-stream')
 const buffer = require('vinyl-buffer')
 const request = require('superagent')
+const config = require('./config')
 
 const reload = () => request.post('http://127.0.0.1:8080/reloadclients').end()
 const production = process.env.NODE_ENV === 'production'
@@ -30,6 +32,9 @@ const dependencies = [
 gulp.task('js', function() {
   return browserify('./client/src/app', {debug: !production})
     .external(dependencies)
+    .transform(envify({
+      shoutCastUrl: config.shoutCastUrl
+    }))
     .transform(babelify.configure({
       presets: ['es2015', 'react']
     }))

@@ -13,7 +13,7 @@ const state = {
 }
 
 Radio.play = function() {
-  audio.src = 'http://s5.voscast.com:7346/;'
+  audio.src = process.env.shoutCastUrl + '/;'
   audio.play()
   Radio.emit('playing', true)
   state.playing = true

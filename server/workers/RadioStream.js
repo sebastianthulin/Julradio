@@ -7,7 +7,6 @@ const io = require('socket.io-emitter')({
 const radio = require('radio-stream')
 const config = require('../../config')
 const db = require('../models')
-const stream = new radio.ReadStream(config.shoutCastUrl)
 
 var playing = {}
 var history = []
@@ -17,6 +16,11 @@ db.Song.find().sort('-_id').limit(30).exec(function(err, docs) {
   process.send({ history })
 })
 
+if (!config.shoutCastUrl) {
+  return
+}
+
+const stream = new radio.ReadStream(config.shoutCastUrl)
 stream.on('connect', () => console.log('Connected to SHOUTcast server'))
 stream.on('error', err => console.log(err))
 stream.on('close', process.exit)
