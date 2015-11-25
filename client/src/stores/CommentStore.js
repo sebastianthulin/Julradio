@@ -7,6 +7,7 @@ const CommentStore = new EventEmitter
 
 const commentsByTargetId = {}
 const repliesByCommentId = {}
+const totalComments = {}
 
 function transform(comment) {
   const username = (User.get() || {}).username
@@ -24,6 +25,7 @@ function transform(comment) {
   
   comment.__html = markup
     .replace(/\n/g, '<br />')
+    .replace(/:tomten:/g, '<img alt=":tomten:" src="/images/user-3.png" height="16" />')
     .replace(new RegExp(matchesNotMe, 'ig'), '<a href="/@$1">@$1</a>')
 
   UserStore.insert(comment.user)
@@ -66,17 +68,19 @@ CommentStore.reply = function(replyTo, text) {
   })
 }
 
-CommentStore.fetch = function({ type, target, page }, handler) {
+CommentStore.fetch = function({ type, target, offset }, handler) {
   handler(buildState(target))
-  request.get('/api/comment/' + type, { target, page }).then(function({ body: { comments, replies } }) {
+  request.get('/api/comment/' + type, { target, offset }).then(function({ body: { comments, replies, totalComments } }) {
     replies.forEach(function(replies) {
       if (replies.length > 0) {
         replies.forEach(transform)
+        totalComments[target] = totalComments
         repliesByCommentId[replies[0].replyTo] = replies.sort((a, b) => new Date(a.date) - new Date(b.date))
       }
     })
     comments.forEach(transform)
     commentsByTargetId[target] = comments
+
     handler(buildState(target))
   })
 }

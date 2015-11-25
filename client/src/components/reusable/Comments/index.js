@@ -7,16 +7,16 @@ const Thread = require('./Thread')
 
 class Comments extends React.Component {
   componentWillMount() {
-    this.page = 1
+    this.offset = 0
     this.user = User.get()
     this.admin = User.isAdmin()
     this.fetchComments()
   }
 
   fetchComments() {
-    const page = this.page
+    const offset = this.offset
     const { type, target } = this.props
-    CommentStore.fetch({ type, target, page }, comments => this.setState({ comments }))
+    CommentStore.fetch({ type, target, offset }, comments => this.setState({ comments }))
   }
 
   post(ev) {
@@ -51,7 +51,7 @@ class Comments extends React.Component {
   }
 
   loadMore() {
-    ++this.page
+    ++this.offset
     this.fetchComments()
   }
 

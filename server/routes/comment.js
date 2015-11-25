@@ -15,6 +15,17 @@ function parseType(type) {
   }
 }
 
+function postComment(query) {
+  return db.CommentSection.findOne(query).exec().then(function(doc) {
+    if (!doc)
+      return new db.CommentSection(query).save()
+    else {
+      doc.count++
+      return doc.save()
+    }
+  })
+}
+
 router.get('/replies/:id/:limit?', function(req, res, next) {
   const commentId = req.params.id
   const limit = req.params.limit || 9999
@@ -36,29 +47,38 @@ router.get('/replies/:id/:limit?', function(req, res, next) {
 router.get('/:type', function(req, res, next) {
   const type = parseType(req.params.type)
   const target = req.query.target
-  const page = req.query.page
+  const offset = req.query.offset
   var comments
+  var totalComments
 
   if (!type) {
     return next(new Error('INVALID_COMMENT_TYPE'))
   }
 
   db.Comment.find({
-    [type]: target || true,
+    [type]: target || true,
     replyTo: null
-  }).sort('-_id').limit(page ? page * 5 : 1000).populate({
-    path: 'user',
-    select: '-hash -email',
-  }).exec().then(function(docs) {
-    comments = docs
-    return Promise.all(comments.map(c => db.Comment.find({
-      replyTo: c._id
-    }).sort('-_id').limit(3).populate({
+  }).count().exec().then(function(count) {
+    totalComments = count
+    return db.Comment.find({
+      [type]: target || true,
+      replyTo: null
+    }).sort('-_id')
+    .skip(offset * 20)
+    .limit(20).populate({
       path: 'user',
       select: '-hash -email',
-    }).exec()))
+    }).exec().then(function(docs) {
+      comments = docs
+      return Promise.all(comments.map(c => db.Comment.find({
+        replyTo: c._id
+      }).sort('-_id').limit(3).populate({
+        path: 'user',
+        select: '-hash -email',
+      }).exec()))
+    })
   }).then(function(replies) {
-    res.send({ comments, replies })
+    res.send({ comments, replies, totalComments })
   }).catch(next)
 })
 
@@ -74,7 +94,9 @@ router.post('/article', function(req, res, next) {
   const articleId = req.body.target
   const text = req.body.text
   performAction(req.ip, 'comment').then(function() {
-    return db.Article.findById(articleId).exec()
+    return postComment({ article: articleId }).then(function() {
+      return db.Article.findById(articleId).exec()
+    })
   }).then(function(article) {
     if (!article) throw new Error('ARTICLE_NOT_FOUND')
     return new db.Comment({
@@ -95,7 +117,8 @@ router.post('/user', function(req, res, next) {
   const text = req.body.text
   return Promise.all([
     performAction(req.ip, 'comment'),
-    Blockages.confirm(uid, target)
+    Blockages.confirm(uid, target),
+    postComment({ targetUser: target })
   ]).then(function() {
     return new db.Comment({
       text,
@@ -117,11 +140,13 @@ router.post('/user', function(req, res, next) {
 
 router.post('/cosycorner', function(req, res, next) {
   performAction(req.ip, 'comment').then(function() {
-    return new db.Comment({
-      text: req.body.text,
-      user: req.user._id,
-      cosyCorner: true
-    }).save()
+    return postComment({ cosyCorner: true }).then(function() {
+      return new db.Comment({
+        text: req.body.text,
+        user: req.user._id,
+        cosyCorner: true
+      }).save()
+    })
   }).then(res.send.bind(res)).catch(next)
 })
 
