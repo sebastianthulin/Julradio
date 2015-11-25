@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events')
-const { Promise } = require('es6-promise')
+//const { Promise } = require('es6-promise')
 const request = require('../services/request')
 const User = require('../services/User')
 const UserStore = require('./UserStore')
@@ -7,7 +7,6 @@ const CommentStore = new EventEmitter
 
 const commentsByTargetId = {}
 const repliesByCommentId = {}
-const totalComments = {}
 
 function transform(comment) {
   const username = (User.get() || {}).username
@@ -70,11 +69,10 @@ CommentStore.reply = function(replyTo, text) {
 
 CommentStore.fetch = function({ type, target, offset }, handler) {
   handler(buildState(target))
-  request.get('/api/comment/' + type, { target, offset }).then(function({ body: { comments, replies, totalComments } }) {
+  request.get('/api/comment/' + type, { target, offset }).then(function({ body: { comments, replies } }) {
     replies.forEach(function(replies) {
       if (replies.length > 0) {
         replies.forEach(transform)
-        totalComments[target] = totalComments
         repliesByCommentId[replies[0].replyTo] = replies.sort((a, b) => new Date(a.date) - new Date(b.date))
       }
     })
