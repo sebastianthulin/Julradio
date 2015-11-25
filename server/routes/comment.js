@@ -55,11 +55,10 @@ router.get('/:type', function(req, res, next) {
     return next(new Error('INVALID_COMMENT_TYPE'))
   }
 
-  db.Comment.find({
+  db.CommentSection.findOne({
     [type]: target || true,
-    replyTo: null
-  }).count().exec().then(function(count) {
-    totalComments = count
+  }).exec().then(function(commentSection) {
+    totalComments = commentSection.count
     return db.Comment.find({
       [type]: target || true,
       replyTo: null

@@ -7,6 +7,7 @@ const CommentStore = new EventEmitter
 
 const commentsByTargetId = {}
 const repliesByCommentId = {}
+const commentCountById = {}
 
 function transform(comment) {
   const username = (User.get() || {}).username
@@ -31,11 +32,12 @@ function transform(comment) {
 }
 
 function buildState(targetId) {
-  if (!commentsByTargetId[targetId]) return
-  return commentsByTargetId[targetId].map(comment => ({
+  if (!commentsByTargetId[targetId]) return {}
+  const comments = commentsByTargetId[targetId].map(comment => ({
     comment,
     replies: repliesByCommentId[comment._id]
   }))
+  return { comments, totalComments: commentCountById[targetId] }
 }
 
 CommentStore.deleteComment = commentId => request.del('/api/comment/' + commentId)
@@ -69,7 +71,7 @@ CommentStore.reply = function(replyTo, text) {
 
 CommentStore.fetch = function({ type, target, offset }, handler) {
   handler(buildState(target))
-  request.get('/api/comment/' + type, { target, offset }).then(function({ body: { comments, replies } }) {
+  request.get('/api/comment/' + type, { target, offset }).then(function({ body: { comments, replies, totalComments } }) {
     replies.forEach(function(replies) {
       if (replies.length > 0) {
         replies.forEach(transform)
@@ -78,6 +80,7 @@ CommentStore.fetch = function({ type, target, offset }, handler) {
     })
     comments.forEach(transform)
     commentsByTargetId[target] = comments
+    commentCountById[target] = totalComments
 
     handler(buildState(target))
   })

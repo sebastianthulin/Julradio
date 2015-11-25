@@ -16,7 +16,7 @@ class Comments extends React.Component {
   fetchComments() {
     const offset = this.offset
     const { type, target } = this.props
-    CommentStore.fetch({ type, target, offset }, comments => this.setState({ comments }))
+    CommentStore.fetch({ type, target, offset }, ({ comments, totalComments }) => this.setState({ comments, totalComments }))
   }
 
   post(ev) {
@@ -57,7 +57,7 @@ class Comments extends React.Component {
 
   render() {
     const { user, admin } = this
-    const { comments } = this.state || {}
+    const { comments, totalComments } = this.state || {}
     if (!comments) return null
     return (
       <div className="Comments">
@@ -70,7 +70,7 @@ class Comments extends React.Component {
           user={user}
           admin={admin}
         />)}
-        <button className="standardBtn" onClick={this.loadMore.bind(this)}>Visa äldre meddelanden</button>
+        {comments.length < totalComments && <button className="standardBtn" onClick={this.loadMore.bind(this)}>Visa äldre meddelanden</button>}
       </div>
     )
   }
