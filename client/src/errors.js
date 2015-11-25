@@ -10,7 +10,7 @@ module.exports = {
   USER_BANNED: 'Du är blockad från sidan',
 
   // Signup errors
-  DUPLICATE: 'Användarnamnet används',
+  DUPLICATE: 'Användarnamnet eller email addressen används redan',  // spelling error? emailaddressen?
   INVALID_FORMAT: 'Ditt Användarnamn får bara innehålla bokstäver, siffror & understreck',
   USERNAME_TOO_SHORT: 'Ditt användarnamn måste vara minst 3 tecken',
   USERNAME_TOO_LONG: 'Ditt användarnamn får högst innehålla 25 tecken',

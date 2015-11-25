@@ -52,10 +52,12 @@ router.use('/api/reservations', require('./reservations'))
 router.use('/api/crew', require('./crew'))
 router.use('/api/forgot', require('./forgot'))
 
-router.post('/reloadclients', function(req, res) {
-  io.emit('reload')
-  res.end()
-})
+if (config.liveReload) {
+  router.post('/reloadclients', function(req, res) {
+    io.emit('reload')
+    res.end()
+  })
+}
 
 router.get('*', function(req, res) {
   res.render('main', {

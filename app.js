@@ -3,6 +3,7 @@
 const cluster = require('cluster')
 const childProcess = require('child_process')
 const os = require('os')
+const config = require('./config')
 const forks = {}
 
 function fork(service) {
@@ -23,10 +24,7 @@ function fork(service) {
 }
 
 if (cluster.isMaster) {
-  const numWorkers = process.env.NODE_ENV === 'production'
-    ? os.cpus().length
-    : 1
-
+  const numWorkers = config.multiCore ? os.cpus().length : 1
   console.log(`Master cluster setting up ${numWorkers} workers...`)
 
   for (let i = 0; i < numWorkers; i++) {
@@ -34,7 +32,9 @@ if (cluster.isMaster) {
   }
 
   cluster.on('message', function(data) {
-    forks[data.service].send(data.data)
+    if (data.service && forks[data.service]) {
+      forks[data.service].send(data.data)
+    }
   })
 
   cluster.on('online', function(worker) {
