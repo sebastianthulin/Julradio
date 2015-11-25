@@ -51,10 +51,10 @@ User.update2 = opts => new Promise(function(resolve, reject) {
 })
 
 User.removeAvatar = () => new Promise(function(resolve, reject) {
-  request.del('/api/user/avatar').then(function({ body: user }) {
+  request.del('/api/user/profilepicture').then(function({ body: user }) {
     User.set(user)
     resolve(user)
-  }).catch(handleError('settings', reject))
+  }).catch(handleError('avatar', reject))
 })
 
 User.setAvatar = function(file) {

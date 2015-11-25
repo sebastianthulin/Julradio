@@ -4,6 +4,7 @@ const RadioStore = require('../../../stores/RadioStore')
 const ReservationStore = require('../../../stores/ReservationStore')
 const VolumeSlider = require('./VolumeSlider')
 const SVG = require('../../svg')
+const ProfilePicture = require('../../reusable/ProfilePicture')
 
 class Player extends React.Component {
   componentWillMount() {
@@ -19,12 +20,11 @@ class Player extends React.Component {
 
   render() {
     const { playing, currentlyPlaying, program, volume } = this.state
-    const picture = program && (program.picture || program.user.picture)
     return (
       <div id="Player">
         {program && <div className="program">{program.description}</div>}
         <div className="main">
-          {picture && <img src={`/picture/${picture}`} />}
+          {program && <ProfilePicture id={program.user.picture} />}
           <div div className="titleControls">
             <div className="controls">
               <div className="item">

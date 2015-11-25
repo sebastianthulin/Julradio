@@ -204,12 +204,22 @@ router.put('/settings2', function(req, res, next) {
   }).catch(next)
 })
 
-router.delete('/avatar', function(req, res, next) {
-  db.Picture.findById(req.user.picture).then(function(picture) {
-    new db.RemovedPicture(picture).save()
-    picture.remove()
-    db.User.findByIdAndUpdate(req.user._id, { picture: null })
-    .exec().then((user) => req.send(user))
+router.delete('/profilepicture', function(req, res, next) {
+  db.User.findByIdAndUpdate(req.user._id, {
+    picture: undefined
+  }).exec().then(function(user) {
+    if (user.picture) {
+      db.Picture.findById(user.picture).exec().then(function(picture) {
+        return Promise.all([
+          new db.RemovedPicture(picture).save(),
+          picture.remove()
+        ])
+      }).catch(console.error.bind(console))
+    }
+
+    user.picture = null
+    user.hash = null
+    res.send(user)
   }).catch(next)
 })
 

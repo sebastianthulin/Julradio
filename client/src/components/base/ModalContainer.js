@@ -6,7 +6,8 @@ const modals = {
   LogIn: require('../modals/LogIn'),
   SignUp: require('../modals/SignUp'),
   RequestSong: require('../modals/RequestSong'),
-  ForgotPassword: require('../modals/ForgotPassword')
+  ForgotPassword: require('../modals/ForgotPassword'),
+  ChangeAvatar: require('../modals/ChangeAvatar')
 }
 
 class ModalContainer extends React.Component {

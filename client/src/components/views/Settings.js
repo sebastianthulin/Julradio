@@ -1,6 +1,8 @@
 const React = require('react')
 const User = require('../../services/User')
+const Modal = require('../../services/Modal')
 const NotificationStore = require('../../stores/NotificationStore')
+const ProfilePicture = require('../reusable/ProfilePicture')
 
 const months = [
   'Januari',
@@ -80,7 +82,6 @@ class Settings extends React.Component {
   }
 
   save(ev) {
-    const avatar = this.refs.avatar.files[0]
     User.update({
       name: this.refs.name.value,
       gender: this.refs.gender.value,
@@ -90,25 +91,9 @@ class Settings extends React.Component {
       month: parseInt(this.refs.month.value),
       day: parseInt(this.refs.day.value)
     }).then(() => {
-      avatar && User.setAvatar(avatar).then(() => {
-        NotificationStore.insert({
-          type: 'profilepicture'
-        })
-      })
       NotificationStore.insert({type: 'settings'})
     }).catch(err => {
       NotificationStore.error({type: 'settings', value: err})
-    })
-  }
-
-  removeAvatar() {
-    User.removeAvatar().then(() => alert('Borttagen.')).catch(() => alert('Något gick fel'))
-  }
-
-  setAvatar(ev) {
-    const file = ev.target.files[0]
-    this.setState({
-      avatarPreview: URL.createObjectURL(file)
     })
   }
 
@@ -129,10 +114,7 @@ class Settings extends React.Component {
   }
 
   render() {
-    const { user, changes, avatarPreview } = this.state
-    const previewStyle = {}
-    if (avatarPreview)
-      previewStyle.backgroundImage = 'url(' + (avatarPreview ? avatarPreview : user.picture ? '/picture/' + user.picture : '') + ')'
+    const { user, changes } = this.state
     return (
       <div id="Settings">
         <h1>Profilinställningar</h1>
@@ -205,25 +187,17 @@ class Settings extends React.Component {
             </div>
           </label>
           <label className="setting">
+            <div className="label">Profilbild</div>
+            <ProfilePicture id={user.picture} />
+            <div style={{marginLeft: 10}} onClick={Modal.open.bind(null, 'ChangeAvatar')}>Ändra</div>
+          </label>
+          <label className="setting">
             <div className="label">Personlig beskrivning</div>
             <textarea
               defaultValue={user.description}
               ref="description"
               placeholder="— (500 tecken högst)"
               maxLength={500}
-            />
-          </label>
-          <label className="setting">
-            <div className="label">
-              <div className="ProfilePicture avatarPreview" style={previewStyle} />
-              Profilbild
-            </div>
-            {user.picture && <button onClick={this.removeAvatar.bind(this)}>Ta bort</button>}
-            <input
-              type="file"
-              ref="avatar"
-              accept="image/*"
-              onChange={this.setAvatar.bind(this)}
             />
           </label>
           <button
