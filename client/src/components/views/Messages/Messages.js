@@ -72,7 +72,11 @@ class Messages extends React.Component {
   renderInitialScreen() {
     return (
       <div className="initial">
-        Påbörja en konversation genom att gå in på någons profil och tryck på "skicka meddelande".
+        <div className="chatWelcome">
+          <h1>Julchatten</h1>
+          <p>Påbörja en konversation genom att gå in på någons profil och tryck på "skicka meddelande".</p>
+        </div>
+        
       </div>
     )
   }

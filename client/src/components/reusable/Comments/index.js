@@ -70,7 +70,7 @@ class Comments extends React.Component {
           user={user}
           admin={admin}
         />)}
-        <button onClick={this.loadMore.bind(this)}>Visa äldre kommentarer</button>
+        <button className="standardBtn" onClick={this.loadMore.bind(this)}>Visa äldre meddelanden</button>
       </div>
     )
   }
