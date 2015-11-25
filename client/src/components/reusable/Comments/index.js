@@ -7,16 +7,16 @@ const Thread = require('./Thread')
 
 class Comments extends React.Component {
   componentWillMount() {
-    this.offset = 0
+    this.limit = 20
     this.user = User.get()
     this.admin = User.isAdmin()
     this.fetchComments()
   }
 
   fetchComments() {
-    const offset = this.offset
+    const limit = this.limit
     const { type, target } = this.props
-    CommentStore.fetch({ type, target, offset }, ({ comments, totalComments }) => this.setState({ comments, totalComments }))
+    CommentStore.fetch({ type, target, limit }, ({ comments, totalComments }) => this.setState({ comments, totalComments }))
   }
 
   post(ev) {
@@ -26,6 +26,7 @@ class Comments extends React.Component {
     if (!text) return
     CommentStore.post({ type, target }, text).then(() => {
       this.refs.input.value = ''
+      this.limit++
       this.fetchComments()
     }).catch(err => {
       NotificationStore.error({
@@ -51,7 +52,7 @@ class Comments extends React.Component {
   }
 
   loadMore() {
-    ++this.offset
+    this.limit += 20
     this.fetchComments()
   }
 

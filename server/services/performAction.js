@@ -8,7 +8,7 @@ const timeouts = {
     strikes: 1
   },
   comment: {
-    length: 3000, 
+    length: 1, 
     strikes: 1
   },
   requestsong: {

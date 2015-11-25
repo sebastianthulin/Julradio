@@ -2,6 +2,7 @@
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const Comment = require('./Comment')
 
 const schema = new Schema({
   count: {
@@ -19,4 +20,11 @@ const schema = new Schema({
   }
 })
 
-const Comment = module.exports = mongoose.model('comment sections', schema)
+schema.methods.updateCommentCount = function() {
+  Comment.find({commentSection: this._id}).count().exec().then(count => {
+    this.count = count
+    this.save()
+  })
+}
+
+module.exports = mongoose.model('comment sections', schema)

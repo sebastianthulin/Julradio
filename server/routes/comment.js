@@ -15,6 +15,12 @@ function parseType(type) {
   }
 }
 
+function updateCommentSection(commentSection) {
+  db.CommentSection.findById(commentSection).then(function(doc) {
+    doc.updateCommentCount()
+  })
+}
+
 function getSection(query) {
   return db.CommentSection.findOne(query).exec().then(function(doc) {
     return doc ? doc : new db.CommentSection(query).save()
@@ -42,7 +48,7 @@ router.get('/replies/:id/:limit?', function(req, res, next) {
 router.get('/:type', function(req, res, next) {
   const type = parseType(req.params.type)
   const target = req.query.target
-  const offset = req.query.offset
+  const limit = req.query.limit || 20
   var comments
   var totalComments
 
@@ -64,7 +70,7 @@ router.get('/:type', function(req, res, next) {
     return db.Comment.find({
       commentSection: commentSection._id,
       replyTo: null
-    }).sort('-_id').skip(offset * 20).limit(20).populate({
+    }).sort('-_id').limit(limit).populate({
       path: 'user',
       select: '-hash -email',
     }).exec().then(function(docs) {
@@ -109,6 +115,7 @@ router.post('/article', function(req, res, next) {
   }).then(function(comment) {
     res.send(comment)
     db.Article.updateCommentCount(articleId)
+    updateCommentSection(comment.commentSection)
   }).catch(next)
 })
 
@@ -136,6 +143,7 @@ router.post('/user', function(req, res, next) {   // to b fix
       })
     }
     res.send(comment)
+    updateCommentSection(comment.commentSection)
   }).catch(next)
 })
 
@@ -148,7 +156,10 @@ router.post('/cosycorner', function(req, res, next) {
       user: req.user._id,
       commentSection: commentSection._id
     }).save()
-  }).then(res.send.bind(res)).catch(next)
+  }).then(function(comment) {
+    res.send(comment)
+    updateCommentSection(comment.commentSection)
+  }).catch(next)
 })
 
 router.post('/reply', function(req, res, next) {
@@ -174,11 +185,13 @@ router.post('/reply', function(req, res, next) {
       replyTo: comment._id,
       commentSection: comment.commentSection
     }).save()
+    updateCommentSection(comment.commentSection)
   }).then(function(reply) {
     res.send(reply)
     db.Comment.updateReplyCount(reply.replyTo)
     db.CommentSection.findById(comment.commentSection, function(err, doc) {
       doc.article && db.Article.updateCommentCount(doc.article)
+      doc.updateCommentCount()
     })
   }).catch(next)
 })
@@ -207,6 +220,7 @@ router.delete('/:id', function(req, res, next) {
     db.CommentSection.findById(comment.commentSection, function(err, doc) {
       doc.article && db.Article.updateCommentCount(doc.article)
       doc.replyTo && db.Comment.updateReplyCount(doc.replyTo)
+      doc.updateCommentCount()
     })
   }).catch(next)
 })
