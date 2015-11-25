@@ -10,9 +10,12 @@ class SignUp extends React.Component {
       email: this.refs.email.value,
       password: this.refs.password.value
     })
+    this.setState({disabled: true})
+    setTimeout(() => this.setState({disabled: false}), 150)
   }
   
   render() {
+    const { disabled } = this.state || {}
     return (
       <Modal className="SignUp">
         <header>
@@ -26,7 +29,7 @@ class SignUp extends React.Component {
             <input ref="email" type="email" />
             <label>Lösenord</label>
             <input ref="password" type="password" />
-            <button>Registrera dig</button>
+            <button disabled={disabled}>Registrera dig</button>
           </form>
         </main>
       </Modal>

@@ -11,9 +11,12 @@ class LogIn extends React.Component {
       username: this.refs.username.value,
       password: this.refs.password.value
     })
+    this.setState({disabled: true})
+    setTimeout(() => this.setState({disabled: false}), 150)
   }
 
   render() {
+    const { disabled } = this.state || {}
     return (
       <Modal className="LogIn">
         <header>
@@ -30,7 +33,7 @@ class LogIn extends React.Component {
               onClick={ModalService.open.bind(null, 'ForgotPassword')}
               children="Glömt lösenord?"
             />
-            <button>Logga in</button>
+            <button disabled={disabled}>Logga in</button>
           </form>
         </main>
       </Modal>
