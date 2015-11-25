@@ -32,7 +32,9 @@ if (cluster.isMaster) {
   }
 
   cluster.on('message', function(data) {
-    forks[data.service].send(data.data)
+    if (data.service && forks[data.service]) {
+      forks[data.service].send(data.data)
+    }
   })
 
   cluster.on('online', function(worker) {

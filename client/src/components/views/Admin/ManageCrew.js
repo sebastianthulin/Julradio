@@ -81,7 +81,7 @@ class ManageCrew extends React.Component {
           </tbody>
         </table>
         <form onSubmit={this.addCrewMember.bind(this)}>
-          <input style={{width: '470px'}} type="text" ref="input" placeholder="Lägg till (skriv in användarnamn)" />
+          <input style={{width: '470px'}} type="text" ref="input" placeholder="Lägg till (skriv in användarnamn, klicka enter)" />
         </form>
         {!crew && 'Vänta...'}
         <br />
