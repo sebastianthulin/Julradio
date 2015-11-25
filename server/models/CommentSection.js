@@ -13,10 +13,10 @@ const schema = new Schema({
     type: Schema.ObjectId,
     ref: 'articles'
   },
-  targetUser: {
+  user: {
     type: Schema.ObjectId,
     ref: 'users'
   }
 })
 
-const Comment = module.exports = mongoose.model('commentsections', schema)
+const Comment = module.exports = mongoose.model('comment sections', schema)

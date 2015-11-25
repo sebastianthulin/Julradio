@@ -35,16 +35,9 @@ const schema = new Schema({
     type: Number,
     default: 0
   },
-
-  // A comment should have one of the following:
-  cosyCorner: Boolean,
-  article: {
+  commentSection: {
     type: Schema.ObjectId,
-    ref: 'articles'
-  },
-  targetUser: {
-    type: Schema.ObjectId,
-    ref: 'users'
+    ref: 'comment sections'
   }
 })
 
@@ -53,6 +46,5 @@ schema.statics.updateReplyCount = function(commentId) {
     return Comment.findByIdAndUpdate(commentId, { numReplies }).exec()
   })
 }
-
 
 const Comment = module.exports = mongoose.model('comments', schema)

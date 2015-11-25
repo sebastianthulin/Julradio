@@ -10,19 +10,14 @@ const performAction = require('../services/performAction')
 function parseType(type) {
   switch (type) {
     case 'article': return 'article'
-    case 'user': return 'targetUser'
+    case 'user': return 'user'
     case 'cosycorner': return 'cosyCorner'
   }
 }
 
-function postComment(query) {
+function getSection(query) {
   return db.CommentSection.findOne(query).exec().then(function(doc) {
-    if (!doc)
-      return new db.CommentSection(query).save()
-    else {
-      doc.count++
-      return doc.save()
-    }
+    return doc ? doc : new db.CommentSection(query).save()
   })
 }
 
@@ -58,13 +53,18 @@ router.get('/:type', function(req, res, next) {
   db.CommentSection.findOne({
     [type]: target || true,
   }).exec().then(function(commentSection) {
+    if (!commentSection) {
+      return res.send({
+        comments: [],
+        replies: [],
+        totalComments: 0
+      })
+    }
     totalComments = commentSection.count
     return db.Comment.find({
-      [type]: target || true,
+      commentSection: commentSection._id,
       replyTo: null
-    }).sort('-_id')
-    .skip(offset * 20)
-    .limit(20).populate({
+    }).sort('-_id').skip(offset * 20).limit(20).populate({
       path: 'user',
       select: '-hash -email',
     }).exec().then(function(docs) {
@@ -75,10 +75,10 @@ router.get('/:type', function(req, res, next) {
         path: 'user',
         select: '-hash -email',
       }).exec()))
-    })
-  }).then(function(replies) {
-    res.send({ comments, replies, totalComments })
-  }).catch(next)
+    }).then(function(replies) {
+      res.send({ comments, replies, totalComments })
+    }).catch(next)
+  })
 })
 
 router.use(function(req, res, next) {
@@ -90,19 +90,21 @@ router.use(function(req, res, next) {
 })
 
 router.post('/article', function(req, res, next) {
-  const articleId = req.body.target
   const text = req.body.text
-  performAction(req.ip, 'comment').then(function() {
-    return postComment({ article: articleId }).then(function() {
-      return db.Article.findById(articleId).exec()
-    })
-  }).then(function(article) {
-    if (!article) throw new Error('ARTICLE_NOT_FOUND')
+  const articleId = req.body.target
+  var article
+  db.Article.findById(articleId).exec().then(function(doc) {
+    if (!doc) throw new Error('ARTICLE_NOT_FOUND')
+    article = doc
+    return performAction(req.ip, 'comment')
+  }).then(function() {
+    return getSection({article: articleId})
+  }).then(function(commentSection) {
     return new db.Comment({
       text,
       user: req.user._id,
       owner: article.user,
-      article: articleId
+      commentSection: commentSection._id
     }).save()
   }).then(function(comment) {
     res.send(comment)
@@ -110,20 +112,20 @@ router.post('/article', function(req, res, next) {
   }).catch(next)
 })
 
-router.post('/user', function(req, res, next) {
+router.post('/user', function(req, res, next) {   // to b fix
   const uid = req.user._id
   const target = req.body.target
   const text = req.body.text
   return Promise.all([
+    getSection({user: target}),
     performAction(req.ip, 'comment'),
-    Blockages.confirm(uid, target),
-    postComment({ targetUser: target })
-  ]).then(function() {
+    Blockages.confirm(uid, target)
+  ]).then(function(data) {
     return new db.Comment({
       text,
       user: uid,
       owner: target,
-      targetUser: target
+      commentSection: data[0]._id
     }).save()
   }).then(function(comment) {
     if (uid != target) {
@@ -139,13 +141,13 @@ router.post('/user', function(req, res, next) {
 
 router.post('/cosycorner', function(req, res, next) {
   performAction(req.ip, 'comment').then(function() {
-    return postComment({ cosyCorner: true }).then(function() {
-      return new db.Comment({
-        text: req.body.text,
-        user: req.user._id,
-        cosyCorner: true
-      }).save()
-    })
+    return getSection({cosyCorner: true})
+  }).then(function(commentSection) {
+    return new db.Comment({
+      text: req.body.text,
+      user: req.user._id,
+      commentSection: commentSection._id
+    }).save()
   }).then(res.send.bind(res)).catch(next)
 })
 
@@ -170,14 +172,14 @@ router.post('/reply', function(req, res, next) {
       user: uid,
       owner: comment.owner,
       replyTo: comment._id,
-      cosyCorner: comment.cosyCorner,
-      targetUser: comment.targetUser,
-      article: comment.article
+      commentSection: comment.commentSection
     }).save()
   }).then(function(reply) {
     res.send(reply)
     db.Comment.updateReplyCount(reply.replyTo)
-    reply.article && db.Article.updateCommentCount(reply.article)
+    db.CommentSection.findById(comment.commentSection, function(err, doc) {
+      doc.article && db.Article.updateCommentCount(doc.article)
+    })
   }).catch(next)
 })
 
@@ -202,8 +204,10 @@ router.delete('/:id', function(req, res, next) {
   }).then(function(data) {
     const comment = data[0]
     res.sendStatus(200)
-    comment.article && db.Article.updateCommentCount(comment.article)
-    comment.replyTo && db.Comment.updateReplyCount(comment.replyTo)
+    db.CommentSection.findById(comment.commentSection, function(err, doc) {
+      doc.article && db.Article.updateCommentCount(doc.article)
+      doc.replyTo && db.Comment.updateReplyCount(doc.replyTo)
+    })
   }).catch(next)
 })
 

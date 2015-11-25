@@ -3,6 +3,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const Comment = require('./Comment')
+const CommentSection = require('./CommentSection')
 
 const schema = new Schema({
   title: {
@@ -28,8 +29,10 @@ const schema = new Schema({
 })
 
 schema.statics.updateCommentCount = function(articleId) {
-  return Comment.count({article: articleId}).exec().then(function(numComments) {
-    return Article.findByIdAndUpdate(articleId, { numComments }).exec()
+  return CommentSection.findOne({article: articleId}).select('-id').exec().then(function(section) {
+    return Comment.count({commentSection: section._id}).exec().then(function(numComments) {
+      return Article.findByIdAndUpdate(articleId, { numComments }).exec()
+    })
   })
 }
 
