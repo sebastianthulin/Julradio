@@ -58,7 +58,6 @@ router.get('/:type', function(req, res, next) {
   db.Comment.find({
     [type]: target || true,
     replyTo: null
-<<<<<<< HEAD
   }).count().exec().then(function(count) {
     totalComments = count
     return db.Comment.find({
@@ -67,16 +66,6 @@ router.get('/:type', function(req, res, next) {
     }).sort('-_id')
     .skip(offset * 20)
     .limit(20).populate({
-=======
-  }).sort('-_id').limit(page ? page * 20 : 1000).populate({
-    path: 'user',
-    select: '-hash -email',
-  }).exec().then(function(docs) {
-    comments = docs
-    return Promise.all(comments.map(c => db.Comment.find({
-      replyTo: c._id
-    }).sort('-_id').limit(3).populate({
->>>>>>> origin/master
       path: 'user',
       select: '-hash -email',
     }).exec().then(function(docs) {
