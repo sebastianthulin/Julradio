@@ -192,13 +192,13 @@ class Settings extends React.Component {
                 ref="year"
                 placeholder="År"
                 maxLength={4}
-                style={{width: '33%'}}
+                style={{width: '33%', minWidth: '33%'}}
               />
-              <select ref="month" defaultValue={user.birth && user.birth.getMonth()} style={{width: '33%'}}>
+              <select ref="month" defaultValue={user.birth && user.birth.getMonth()} style={{width: '33%', minWidth: '33%'}}>
                 <option value="">Månad</option>
                 {months.map((m, i) => <option key={i} value={i} children={m} />)}
               </select>
-              <select ref="day" defaultValue={user.birth && user.birth.getDate()} style={{width: '33%'}}>
+              <select ref="day" defaultValue={user.birth && user.birth.getDate()} style={{width: '33%', minWidth: '33%'}}>
                 <option value="">Dag</option>
                 {days.map(d => <option key={d} value={d} children={d} />)}
               </select>

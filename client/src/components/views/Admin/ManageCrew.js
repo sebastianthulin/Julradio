@@ -60,9 +60,9 @@ class ManageCrew extends React.Component {
     return (
       <tr key={user._id}>
         <td><Link to={`/@${user.username}`}>{user.username}</Link></td>
-        <td><button onClick={this.moveUp.bind(this, user)}>Flytta upp</button></td>
-        <td><button onClick={this.moveDown.bind(this, user)}>Flytta ner</button></td>
-        <td><button onClick={this.remove.bind(this, user)}>Ta bort</button></td>
+        <td><button className="standardBtn" onClick={this.moveUp.bind(this, user)}>Flytta upp</button></td>
+        <td><button className="standardBtn" onClick={this.moveDown.bind(this, user)}>Flytta ner</button></td>
+        <td><button className="standardBtn" onClick={this.remove.bind(this, user)}>Ta bort</button></td>
       </tr>
     )
   }
