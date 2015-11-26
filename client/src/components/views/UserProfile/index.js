@@ -3,6 +3,7 @@ const User = require('../../../services/User')
 const UserStore = require('../../../stores/UserStore')
 const ShitStore = require('../../../stores/ShitStore')
 const UserProfile = require('./UserProfile')
+const NotFound = require('../NotFound')
 
 class UserProfileContainer extends React.Component {
   componentWillMount() {
@@ -51,7 +52,7 @@ class UserProfileContainer extends React.Component {
   render() {
     const { profile, err } = this.state || {}
     return err ? (
-      <div>404 or something</div>
+      <NotFound referingTo={"Användaren"} />
     ) : profile ? <UserProfile
       key={profile._id}
       user={profile}
