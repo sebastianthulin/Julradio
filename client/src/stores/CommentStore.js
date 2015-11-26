@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
 const API = require('../services/API')
-const User = require('../services/User')
+const parseComment = require('../services/parseComment')
 const UserStore = require('./UserStore')
 const CommentStore = new EventEmitter
 
@@ -10,24 +10,7 @@ const commentCountByTargetId = {}
 const threadCountByTargetId = {}
 
 function transform(comment) {
-  const username = (User.get() || {}).username
-  var markup = comment.text, matchesNotMe
-
-  if (username) {
-    // user signed in, match all mentions except for @${username}
-    const matchesMe = `@(${username})(?!\\\w+)`
-    matchesNotMe = `@((?!${username}(?!\\\w+))\\\w+)`
-    markup = markup.replace(new RegExp(matchesMe, 'ig'), '<a href="/@$1" class="highlight">@$1</a>')
-  } else {
-    // user not signed in, match all mentions
-    matchesNotMe = `@(\\\w+)(?!\\\w+)`
-  }
-  
-  comment.__html = markup
-    .replace(/\n/g, '<br />')
-    .replace(/:tomten:/g, '<img class="emoji" alt=":tomten:" src="/images/santa-small.png" />')
-    .replace(new RegExp(matchesNotMe, 'ig'), '<a href="/@$1">@$1</a>')
-
+  comment.__html = parseComment(comment.text)
   UserStore.insert(comment.user)
 }
 

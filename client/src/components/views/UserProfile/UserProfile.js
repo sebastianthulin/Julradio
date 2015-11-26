@@ -1,6 +1,7 @@
 const React = require('react')
 const { Link } = require('react-router')
 const User = require('../../../services/User')
+const history = require('../../../services/history')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const TimeSince = require('../../reusable/TimeSince')
 const Comments = require('../../reusable/Comments')
@@ -32,6 +33,13 @@ class UserProfile extends React.Component {
       : <h3>Du har blockat denna användare</h3>
   }
 
+  handleClick(ev) {
+    if (ev.target.tagName === 'A' && ev.metaKey === false) {
+      ev.preventDefault()
+      history.pushState(null, ev.target.pathname)
+    }
+  }
+
   render() {
     const {
       onQuery,
@@ -48,7 +56,11 @@ class UserProfile extends React.Component {
           <div className="name">{user.name ? user.name : '@' + user.username}</div>
           <div className="identity">{(user.name ? ('@' + user.username + ' ') : '') + this.getIndentity()}</div>
           {user.title && <span className="title">{user.title}</span>}
-          <div className="description">{user.description}</div>
+          <div
+            className="description"
+            onClick={this.handleClick.bind(this)}
+            dangerouslySetInnerHTML={{__html: user.description}}
+          />
           <div>Medlem i <TimeSince date={user.date} short={true} /></div>
         </header>
         <main>

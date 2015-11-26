@@ -1,6 +1,7 @@
 const { EventEmitter } = require('events')
 const request = require('superagent')
 const API = require('../services/API')
+const parseComment = require('../services/parseComment')
 const UserStore = new EventEmitter
 const usersByName = {}
 const wallPostsByUserId = {}
@@ -13,6 +14,7 @@ UserStore.insert = function(user) {
   const s = Date.now() - Date.parse(user.birth)
   const age = s / (1000 * 60 * 60 * 24 * 365)
   user.age = isNaN(age) ? false : ~~age
+  user.description = parseComment(user.description || '')
   usersByName[user.username] = user
 }
 
