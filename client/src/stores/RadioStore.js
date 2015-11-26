@@ -17,14 +17,18 @@ Radio.play = function() {
   audio.play()
   Radio.emit('playing', true)
   state.playing = true
-  localStorage.playing = 1
+  try {
+    localStorage.playing = 1
+  } catch (e) {}
 }
 
 Radio.pause = function() {
   audio.pause()
   Radio.emit('playing', false)
   state.playing = false
-  localStorage.playing = 0
+  try {
+    localStorage.playing = 0
+  } catch (e) {}
 }
 
 Radio.toggle = function() {
@@ -37,7 +41,10 @@ Radio.toggleMute = function() {
 
 Radio.setVolume = function(vol) {
   vol = vol > 1 ? 1 : vol < 0 ? 0 : vol
-  audio.volume = state.volume = localStorage.volume = vol
+  audio.volume = state.volume
+  try {
+    localStorage.volume = vol
+  } catch (e) {}
   Radio.emit('volume', vol)
 }
 

@@ -39,7 +39,7 @@ class ManageCrew extends React.Component {
       const { crew } = this.state
       const conflict = crew.filter(member => user && user._id === member._id)[0]
       if (!user || conflict) {
-        return alert(`Kunde inte lägga till "${username}"`)
+        return alert(`Hittade inte ${username}`)
       }
       crew.push(user)
       this.refs.input.value = ''
