@@ -7,15 +7,22 @@ const Modal = require('./Modal')
 class ForgotPassword extends React.Component {
   handleForgot(ev) {
     ev.preventDefault()
+    console.log('...............')
     User.forgotPassword({
       email: this.refs.email.value
-    }, () => {
-      ModalService.close()
-      NotificationStore.insert({type: 'resetinstructions'})
+    }, err => {
+      if (err) {
+        this.setState({disabled: false})
+      } else {
+        ModalService.close()
+        NotificationStore.insert({type: 'resetinstructions'})
+      }
     })
+    this.setState({disabled: true})
   }
 
   render() {
+    const { disabled } = this.state || {}
     return (
       <Modal className="ForgotPassword">
         <header>
@@ -26,7 +33,7 @@ class ForgotPassword extends React.Component {
             <label>Email</label>
             <input type="text" ref="email" />
             <div className="submit">
-              <button>Begär nytt lösenord</button>
+              <button disabled={disabled}>Begär nytt lösenord</button>
             </div>
           </form>
         </main>

@@ -37,7 +37,7 @@ class ResetPassword extends React.Component {
         <p>Glöm inte av det denna gången!</p>
       </div>
     ) : (
-      <div>request not even exist</div>
+      <div>...</div>
     )
   }
 }

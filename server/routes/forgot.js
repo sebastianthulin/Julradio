@@ -4,6 +4,7 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 const mail = require('../services/mail')
+const config = require('../../config')
 
 router.post('/', function(req, res, next) {
   const email = String(req.body.email).toLowerCase()
@@ -18,6 +19,7 @@ router.post('/', function(req, res, next) {
   }).then(function() {
     return new db.PasswordRequest({ user }).save()
   }).then(function(request) {
+    res.sendStatus(200)
     const resetURL = 'http://julradio.se/forgot/' + request._id
     const html = `
       <h1>Julradio lösenordsåterställning</h1>
@@ -31,9 +33,8 @@ router.post('/', function(req, res, next) {
       html
     }, function(err, info) {
       if (err) {
-        throw new Error('UNKNOWN_ERROR')
+        console.error(new Error('MAIL_NOT_SENT'))
       }
-      res.sendStatus(200)
     })
   }).catch(next)
 })

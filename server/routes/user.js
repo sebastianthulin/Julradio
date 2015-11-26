@@ -86,8 +86,8 @@ router.post('/signup', function(req, res, next) {
 
 router.post('/login', function(req, res, next) {
   performAction(req.ip, 'loginattempt').then(function() {
-    const username = typeof req.body.username === 'string' && req.body.username.toLowerCase()
-    return db.User.findOne({usernameLower: username}).exec()
+    const usernameLower = String(req.body.username).toLowerCase()
+    return db.User.findOne({ usernameLower }).exec()
   }).then(function(user) {
     if (user) {
       if (user.banned) {

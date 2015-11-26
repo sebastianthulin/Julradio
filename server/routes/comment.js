@@ -89,7 +89,7 @@ router.get('/:type', function(req, res, next) {
 })
 
 router.use(function(req, res, next) {
-  if (req.user._id) {
+  if (req.user) {
     next()
   } else {
     next(new Error('NOT_SIGNED_IN'))

@@ -40,11 +40,18 @@ User.setAvatar = function(file, cb) {
   })
 }
 
-User.forgotPassword = (form, cb) => API.post('/forgot', form, cb)
+User.forgotPassword = function(form, cb) {
+  request.post('/api/forgot', form, function(err, { body }) {
+    cb(err, body)
+    if (err) {
+      NotificationStore.error({value: err.response.body.error[0]})
+    }
+  })
+}
 
 User.newPassword = function(id, password) {
   API.post('/forgot/' + id, { password }, function() {
-    location.reload()
+    window.location = '/'
   })
 }
 

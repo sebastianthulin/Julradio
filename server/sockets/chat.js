@@ -73,11 +73,10 @@ function sendMessage(from, conversationId, text) {
 }
 
 function chatHandler(socket) {
-  const ip = socket.request.connection.remoteAddress || socket.request['x-forwarded-for']
   socket.on('chat:message', function(opts, errHandler) {
     if (typeof opts !== 'object' || !opts.text) return
     Promise.all([
-      performAction(ip, 'chat'),
+      performAction(socket.ip, 'chat'),
       Blockages.confirm(socket.uid, opts.userId)
     ]).then(function() {
       return opts.conversationId || getConversationId(socket.uid, opts.userId)
