@@ -59,7 +59,7 @@ class UserProfile extends React.Component {
           <div
             className="description"
             onClick={this.handleClick.bind(this)}
-            dangerouslySetInnerHTML={{__html: user.description}}
+            dangerouslySetInnerHTML={{__html: user.html}}
           />
           <div>Medlem i <TimeSince date={user.date} short={true} /></div>
         </header>
