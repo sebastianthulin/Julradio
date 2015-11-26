@@ -25,7 +25,7 @@ function transform(comment) {
   
   comment.__html = markup
     .replace(/\n/g, '<br />')
-    .replace(/:tomten:/g, '<img alt=":tomten:" src="/images/user-3.png" height="16" />')
+    .replace(/:tomten:/g, '<img class="emoji" alt=":tomten:" src="/images/santa-small.png" />')
     .replace(new RegExp(matchesNotMe, 'ig'), '<a href="/@$1">@$1</a>')
 
   UserStore.insert(comment.user)
