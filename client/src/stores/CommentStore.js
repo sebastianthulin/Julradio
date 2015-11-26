@@ -1,6 +1,5 @@
 const { EventEmitter } = require('events')
-//const { Promise } = require('es6-promise')
-const request = require('../services/request')
+const API = require('../services/API')
 const User = require('../services/User')
 const UserStore = require('./UserStore')
 const CommentStore = new EventEmitter
@@ -41,38 +40,28 @@ function buildState(targetId) {
   return { comments, totalComments: commentCountByTargetId[targetId], totalThreads: threadCountByTargetId[targetId] }
 }
 
-CommentStore.deleteComment = commentId => request.del('/api/comment/' + commentId)
+CommentStore.deleteComment = (commentId, cb) => API.delete('/comment/' + commentId, cb)
 
-CommentStore.fetchReplies = function(commentId, limit) {
-  return new Promise(function(resolve, reject) {
-    request.get('/api/comment/replies/' + commentId + '/' + limit).then(function({ body: { comment, replies } }) {
-      transform(comment)
-      replies.forEach(transform)
-      repliesByCommentId[comment._id] = replies.sort((a, b) => new Date(a.date) - new Date(b.date))
-      resolve({ comment, replies })
-    }).catch(reject)
+CommentStore.fetchReplies = function(commentId, limit, cb) {
+  API.get('/comment/replies/' + commentId + '/' + limit, function({ comment, replies }) {
+    transform(comment)
+    replies.forEach(transform)
+    repliesByCommentId[comment._id] = replies.sort((a, b) => new Date(a.date) - new Date(b.date))
+    cb({ comment, replies })
   })
 }
 
-CommentStore.post = function({ type, target }, text) {
-  return new Promise(function(resolve, reject) {
-    request.post('/api/comment/' + type, { target, text }).then(function({ body }) {
-      resolve(body)
-    }).catch(reject)
-  })
+CommentStore.post = function({ type, target }, text, cb) {
+  API.post('/comment/' + type, { target, text }, cb)
 }
 
-CommentStore.reply = function(replyTo, text) {
-  return new Promise(function(resolve, reject) {
-    request.post('/api/comment/reply', { replyTo, text }).then(function({ body }) {
-      resolve(body)
-    }).catch(reject)
-  })
+CommentStore.reply = function(replyTo, text, cb) {
+  API.post('/comment/reply', { replyTo, text }, cb)
 }
 
 CommentStore.fetch = function({ type, target, limit }, handler) {
   handler(buildState(target))
-  request.get('/api/comment/' + type, { target, limit }).then(function({ body: { comments, replies, totalComments, totalThreads } }) {
+  API.get('/comment/' + type, { target, limit }, function({ comments, replies, totalComments, totalThreads }) {
     replies.forEach(function(replies) {
       if (replies.length > 0) {
         replies.forEach(transform)
@@ -83,7 +72,6 @@ CommentStore.fetch = function({ type, target, limit }, handler) {
     commentsByTargetId[target] = comments
     commentCountByTargetId[target] = totalComments
     threadCountByTargetId[target] = totalThreads
-
     handler(buildState(target))
   })
 }

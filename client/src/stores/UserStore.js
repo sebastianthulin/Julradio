@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
-const { Promise } = require('es6-promise')
-const request = require('../services/request')
+const request = require('superagent')
+const API = require('../services/API')
 const UserStore = new EventEmitter
 const usersByName = {}
 const wallPostsByUserId = {}
@@ -16,18 +16,19 @@ UserStore.insert = function(user) {
   usersByName[user.username] = user
 }
 
-UserStore.get = function(username, query) {
-  return new Promise(function(resolve, reject) {
-    request.get('/api/user/profile', {
-      query,
-      username,
-      userId: (usersByName[username] || {})._id
-    }).then(function({ body }) {
-      if (body.profile) {
-        UserStore.insert(body.profile)
-      }
-      resolve(body)
-    }).catch(reject)
+UserStore.get = function(username, query, handler, errHandler) {
+  request.get('/api/user/profile', {
+    query,
+    username,
+    userId: (usersByName[username] || {})._id
+  }, function(err, { body }) {
+    if (err) {
+      return errHandler(err)
+    }
+    if (body.profile) {
+      UserStore.insert(body.profile)
+    }
+    handler(body)
   })
 }
 
@@ -37,7 +38,7 @@ UserStore.getByUsername = function(username, callback) {
   } else if (usersByName[username]) {
     callback(usersByName[username])
   } else {
-    request.get(`/api/user/byname/${username}`).then(function({ body: user }) {
+    API.get(`/user/byname/${username}`, function(user) {
       user && UserStore.insert(user)
       callback(user)
     })
@@ -46,7 +47,7 @@ UserStore.getByUsername = function(username, callback) {
 
 UserStore.getCrew = function(callback) {
   if (crew) callback(crew)
-  request.get('/api/crew').then(({ body }) => {
+  API.get('/crew', function(body) {
     crew = body
     crew.forEach(UserStore.insert)
     callback(crew)
@@ -54,7 +55,7 @@ UserStore.getCrew = function(callback) {
 }
 
 UserStore.getAll = function(callback) {
-  request.get('/api/user/all').then(function({ body: users }) {
+  API.get('/user/all', function(users) {
     users.forEach(user => user.usernameLower = user.username.toLowerCase())
     users.sort(function(a, b) {
       if (a.usernameLower < b.usernameLower) return -1
@@ -65,16 +66,16 @@ UserStore.getAll = function(callback) {
   })
 }
 
-UserStore.updateUserSettings = function(userId, opts) {
-  return request.put(`/api/user/${userId}`, opts)
+UserStore.updateUserSettings = function(userId, opts, cb) {
+  API.put(`/user/${userId}`, opts, cb)
 }
 
-UserStore.removeUserAvatar = function(userId) {
-  return request.del(`/api/user/${userId}/avatar`)
+UserStore.removeUserAvatar = function(userId, cb) {
+  API.delete(`/user/${userId}/avatar`, cb)
 }
 
-UserStore.updateCrew = function(userIds) {
-  return request.put('/api/crew', userIds)
+UserStore.updateCrew = function(userIds, cb) {
+  API.put('/crew', userIds, cb)
 }
 
 module.exports = UserStore

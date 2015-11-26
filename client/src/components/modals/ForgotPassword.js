@@ -9,7 +9,7 @@ class ForgotPassword extends React.Component {
     ev.preventDefault()
     User.forgotPassword({
       email: this.refs.email.value
-    }).then(() => {
+    }, () => {
       ModalService.close()
       NotificationStore.insert({type: 'resetinstructions'})
     })

@@ -16,13 +16,9 @@ class Comment extends React.Component {
 
   delete() {
     const { comment, onDelete } = this.props
-    if (!confirm('Ta bort inlägg?')) return
-    CommentStore.deleteComment(comment._id).then(onDelete).catch(err => {
-      NotificationStore.error({
-        type: 'removecomment',
-        value: err.response.body.error[0]
-      })
-    })
+    if (confirm('Ta bort inlägg?')) {
+      CommentStore.deleteComment(comment._id, onDelete)
+    }
   }
 
   handleClick(ev) {

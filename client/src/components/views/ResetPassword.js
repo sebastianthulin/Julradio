@@ -1,18 +1,20 @@
 const React = require('react')
 const { Link } = require('react-router')
 const User = require('../../services/User')
-const request = require('../../services/request')
+const request = require('superagent')
 
 class ResetPassword extends React.Component {
   componentWillMount() {
     const { id } = this.props.params
-    request.get('/api/forgot/' + id).then(res => {
-      this.setState({
-        request: res.body,
-        loaded: true
-      })
-    }).catch(() => {
-      this.setState({loaded: true})
+    request.get('/api/forgot/' + id, (err, { body }) => {
+      if (err) {
+        this.setState({loaded: true})
+      } else {
+        this.setState({
+          request: body,
+          loaded: true
+        })
+      }
     })
   }
 

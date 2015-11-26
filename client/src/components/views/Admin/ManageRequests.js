@@ -3,13 +3,11 @@ const RequestStore = require('../../../stores/RequestStore')
 
 class Request extends React.Component {
   accept() {
-    RequestStore.accept(this.props._id)
-      .then(() => this.setState({accepted: true}))
+    RequestStore.accept(this.props._id, () => this.setState({accepted: true}))
   }
 
   deny() {
-    RequestStore.deny(this.props._id)
-      .then(() => this.setState({removed: true}))
+    RequestStore.deny(this.props._id, () => this.setState({removed: true}))
   }
 
   render() {
@@ -48,7 +46,7 @@ class ManageRequests extends React.Component {
   }
 
   refresh(requests) {
-    RequestStore.fetch().then(({ body: requests }) => this.setState({ requests }))
+    RequestStore.fetch(requests => this.setState({ requests }))
   }
 
   render() {

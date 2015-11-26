@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
 const socket = require('../services/socket')
-const request = require('../services/request')
+const API = require('../services/API')
 const RequestStore = new EventEmitter
 
 var requests = []
@@ -25,20 +25,11 @@ socket.on('request', function(request) {
   RequestStore.emit('requests', requests)
 })
 
-RequestStore.deleteTweet = id =>
-  request.del('/api/request/tweet/' + id)
-
-RequestStore.create = opts =>
-  request.post('/api/request', opts)
-
-RequestStore.accept = id =>
-  request.put('/api/request/' + id)
-
-RequestStore.deny = id =>
-  request.del('/api/request/' + id)
-
-RequestStore.fetch = () =>
-  request.get('/api/request')
+RequestStore.deleteTweet = (id, cb) => API.delete('/request/tweet/' + id, cb)
+RequestStore.create = (opts, cb) => API.post('/request', opts, cb)
+RequestStore.accept = (id, cb) => API.put('/request/' + id, cb)
+RequestStore.deny = (id, cb) => API.delete('/request/' + id, cb)
+RequestStore.fetch = cb => API.get('/request', cb)
 
 RequestStore.subscribe = function(handler) {
   handler(requests)

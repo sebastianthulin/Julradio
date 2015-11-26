@@ -15,14 +15,7 @@ class Thread extends React.Component {
 
   fetchReplies(limit) {
     const { comment } = this.props
-    CommentStore.fetchReplies(comment._id, limit)
-      .then(({ comment, replies }) => this.setState({ comment, replies }))
-      .catch(err => {
-        NotificationStore.error({
-          type: 'fetchreplies',
-          value: err.response.body.error[0]
-        })
-      })
+    CommentStore.fetchReplies(comment._id, limit, this.setState.bind(this))
   }
 
   reply(ev) {
@@ -30,15 +23,10 @@ class Thread extends React.Component {
     const { replies, comment } = this.state
     const text = this.refs.reply.value.trim()
     if (!text) return
-    CommentStore.reply(comment._id, text).then(() => {
+    CommentStore.reply(comment._id, text, () => {
       this.refs.reply.value = ''
       this.toggleReply()
       this.fetchReplies(replies ? replies.length + 1 : 1)
-    }).catch(err => {
-        NotificationStore.error({
-          type: 'comment',
-          value: err.response.body.error[0]
-        })
     })
   }
 

@@ -49,10 +49,8 @@ class ManageCrew extends React.Component {
 
   save() {
     const userIds = this.state.crew.map(user => user._id)
-    UserStore.updateCrew(userIds).then(() => {
+    UserStore.updateCrew(userIds, () => {
       alert('Done.')
-    }).catch(() => {
-      alert('Kunde inte spara.')
     })
   }
 

@@ -2,6 +2,7 @@
 
 const MongoError = require('mongodb-core/lib/error.js')
 const MongooseError = require('mongoose/lib/error.js')
+const errors = require('../client/src/errors')
 
 function errorHandler(err, req, res, next) {
   const error = []
@@ -16,11 +17,14 @@ function errorHandler(err, req, res, next) {
   } else if (err instanceof Error) {
     error.push(err.message)
   }
-  if (error.length === 0) {
-    console.error('UNHANDLED ERROR:', err)
+  let i = error.length
+  while (i--) {
+    if (!errors[error[i]]) {
+      console.error(err)
+      error[i] = 'UNKNOWN_ERROR'
+    }
   }
   res.status(500).send({ error })
-  console.error(error)
 }
 
 module.exports = errorHandler

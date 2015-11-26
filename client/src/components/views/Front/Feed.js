@@ -13,7 +13,7 @@ class Request extends React.Component {
 
   delete() {
     if (confirm('Ta bort tweet?')) {
-      RequestStore.deleteTweet(this.props.request._id).then(() => {
+      RequestStore.deleteTweet(this.props.request._id, () => {
         this.setState({removed: true})
       })
     }

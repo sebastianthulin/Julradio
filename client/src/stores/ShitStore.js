@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
 const socket = require('../services/socket')
-const request = require('../services/request')
+const request = require('superagent')
 const NotificationStore = require('./NotificationStore')
 const ShitStore = new EventEmitter
 const handlersByType = {}
@@ -56,9 +56,9 @@ socket.on('notification:new', function(opts) {
 })
 
 ShitStore.fetch = function() {
-  request.get('/api/notification').then(function({ body: notifications }) {
+  request.get('/api/notification', function(err, { body: notifications }) {
     notifications.forEach(handleNotification)
-  }).catch(console.error.bind(console))
+  })
 }
 
 module.exports = ShitStore

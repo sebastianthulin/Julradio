@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
 const socket = require('../services/socket')
-const request = require('../services/request')
+const request = require('superagent')
 const User = require('../services/User')
 const UserStore = require('./UserStore')
 const ShitStore = require('./ShitStore')
@@ -49,7 +49,11 @@ ChatStore.load = function(callback) {
     conversation.offset = 0
   }
 
-  request.get(`/api/chat/${chatId}/${conversation.offset}`).then(function({ body: messages }) {
+  request.get(`/api/chat/${chatId}/${conversation.offset}`, function(err, { body: messages }) {
+    if (err) {
+      return console.error('Couldn\'t load conversation', err)
+    }
+
     let i = messages.length
     while (i--) {
       const message = messages[i]
@@ -61,8 +65,6 @@ ChatStore.load = function(callback) {
     messageIds.sort((a, b) => messagesById[a].date - messagesById[b].date)
     callback && callback()
     updateMessages()
-  }).catch(function(err) {
-    console.log('Couldn\'t load conversation', err)
   })
 }
 
@@ -153,12 +155,12 @@ document.addEventListener('focus', () =>
   ShitStore.clear('message', ChatStore.getConversationId()))
 
 ChatStore.fetch = function() {
-  request.get('/api/chat').then(function({ body: conversations }) {
+  request.get('/api/chat', function(err, { body: conversations }) {
     conversations.forEach(insertConversation)
     state.loaded = true
     updateThreads()
     ChatStore.emit('ready')
-  }).catch(console.error.bind(console))
+  })
 }
 
 module.exports = ChatStore

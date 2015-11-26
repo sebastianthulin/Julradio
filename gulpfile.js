@@ -23,8 +23,6 @@ const dependencies = [
   'superagent',
   'classnames',
   'marked',
-  'es6-promise',
-  'superagent-promise',
   'dateformat',
   'history/lib/createBrowserHistory'
 ]

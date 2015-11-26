@@ -48,12 +48,10 @@ class RequestSong extends React.Component {
       return alert('För lång text. Högst 250 tecken.')
     }
 
-    RequestStore.create(fields).then(() => {
+    RequestStore.create(fields, () => {
       this.resetFields()
       ModalService.close()
       NotificationStore.insert({type: 'requestsong'})
-    }).catch(err => {
-      NotificationStore.error({type: 'requestsong', value: 'INVALID_FORM'})
     })
   }
 

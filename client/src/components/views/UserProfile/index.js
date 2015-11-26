@@ -38,12 +38,12 @@ class UserProfileContainer extends React.Component {
   }
 
   execute(username, query) {
-    UserStore.get(username, query).then(body => {
+    UserStore.get(username, query, body => {
       if (this.props.params.username === username) {
         body.err = false
         this.setState(body)
       }
-    }).catch(() => {
+    }, () => {
       this.setState({err: true})
     })
   }

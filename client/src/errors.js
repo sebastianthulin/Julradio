@@ -1,5 +1,5 @@
 module.exports = {
-  UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+  UNKNOWN_ERROR: 'Något gick fel. Försök igen',
   TIMEOUT: 'Sakta ner! Du gör detta för ofta',
 
   TEXT_TOO_LONG: 'Texten är för lång',
@@ -10,7 +10,7 @@ module.exports = {
   USER_BANNED: 'Du är blockad från sidan',
 
   // Signup errors
-  DUPLICATE: 'Användarnamnet eller email addressen används redan',  // spelling error? emailaddressen?
+  DUPLICATE: 'Användarnamnet eller emailaddressen används redan',
   INVALID_FORMAT: 'Ditt Användarnamn får bara innehålla bokstäver, siffror & understreck',
   USERNAME_TOO_SHORT: 'Ditt användarnamn måste vara minst 3 tecken',
   USERNAME_TOO_LONG: 'Ditt användarnamn får högst innehålla 25 tecken',
@@ -25,5 +25,8 @@ module.exports = {
 
   // Forgot errors
   INVALID_EMAIL: 'Ingen användare med denna email är registrerad',
-  INVALID_REQUEST_ID: 'Du har begärt ett nytt lösenord.'
+  INVALID_REQUEST_ID: 'Du har begärt ett nytt lösenord.',
+
+  // Request song errors
+  MISSING_FIELD: 'Fyll i alla fält'
 }

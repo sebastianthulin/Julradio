@@ -32,10 +32,10 @@ class ChangeAvatar extends React.Component {
 
   save() {
     if (this.state.removed) {
-      User.removeAvatar().then(this.done.bind(this))
+      User.removeAvatar(this.done.bind(this))
     } else if (this.state.avatarPreview) {
       const avatar = this.refs.input.files[0]
-      User.setAvatar(avatar).then(this.done.bind(this))
+      User.setAvatar(avatar, this.done.bind(this))
     }
   }
 

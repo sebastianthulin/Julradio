@@ -1,5 +1,5 @@
 const { EventEmitter } = require('events')
-const request = require('../services/request')
+const API = require('../services/API')
 const socket = require('../services/socket')
 const ReservationStore = new EventEmitter
 
@@ -26,9 +26,9 @@ function setOnAir(reservation) {
   ReservationStore.emit('onair', reservation)
 }
 
-ReservationStore.create = opts => request.post('/api/reservations', opts).end()
-ReservationStore.update = (id, opts) => request.put('/api/reservations/' + id, opts).end()
-ReservationStore.delete = id => request.del('/api/reservations/' + id).end()
+ReservationStore.create = (opts, cb) => API.post('/reservations', opts, cb)
+ReservationStore.update = (id, opts, cb) => API.put('/reservations/' + id, opts, cb)
+ReservationStore.delete = (id, cb) => API.delete('/reservations/' + id, cb)
 
 ReservationStore.handleReservations = function(reservations) {
   const today = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()

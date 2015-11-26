@@ -11,20 +11,14 @@ class ManageUser extends React.Component {
       writer: this.refs.writer.checked,
       radioHost: this.refs.radioHost.checked,
       banned: this.refs.banned.checked
-    }).then(function() {
+    }, function() {
       alert('Ändringar sparade.')
-    }).catch(function(err) {
-      console.error(err)
-      alert('Ett fel uppstod. Öppna upp konsollen för detaljer.')
     })
   }
 
   removeAvatar() {
-    UserStore.removeUserAvatar(this.props.user._id).then(function() {
+    UserStore.removeUserAvatar(this.props.user._id, function() {
       alert('Borttagen.')
-    }).catch(function(err) {
-      console.error(err)
-      alert('Ett fel uppstod. Öppna upp konsollen för detaljer.')
     })
   }
 

@@ -24,15 +24,10 @@ class Comments extends React.Component {
     const { type, target } = this.props
     const text = this.refs.input.value.trim()
     if (!text) return
-    CommentStore.post({ type, target }, text).then(() => {
+    CommentStore.post({ type, target }, text, () => {
       this.refs.input.value = ''
       this.limit++
       this.fetchComments()
-    }).catch(err => {
-      NotificationStore.error({
-        type: 'comment',
-        value: err.response.body.error[0]
-      })
     })
   }
 

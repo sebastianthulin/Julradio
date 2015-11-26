@@ -48,30 +48,26 @@ class ManageReservation extends React.Component {
     }
 
     if (id) {
-      ReservationStore.update(id, opts).then(() => {
+      ReservationStore.update(id, opts, () => {
         alert('ändringar sparade.')
-      }).catch(this.handleErr.bind(this))
+      })
     } else {
-      ReservationStore.create(opts).then(() => {
+      ReservationStore.create(opts, () => {
         this.refs.startTime.value = ''
         this.refs.endTime.value = ''
         this.refs.text.value = ''
         alert('done.')
-      }).catch(this.handleErr.bind(this))
+      })
     }
   }
 
   delete() {
     const id = this.getId()
     if (confirm('Säkert?')) {
-      ReservationStore.delete(id).then(() => {
+      ReservationStore.delete(id, () => {
         this.props.deselect()
-      }).catch(this.handleErr.bind(this))
+      })
     }
-  }
-
-  handleErr(err) {
-    alert(err.response.body.error[0])
   }
 
   render() {

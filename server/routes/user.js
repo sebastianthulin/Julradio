@@ -199,7 +199,7 @@ router.put('/settings2', function(req, res, next) {
     }
     return user.save()
   }).then(function(user) {
-    delete user.hash
+    user.hash = null
     res.send(user)
   }).catch(next)
 })

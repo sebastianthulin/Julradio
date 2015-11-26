@@ -7,15 +7,23 @@ const io = require('../../server').io
 const performAction = require('../services/performAction')
 
 router.post('/', function(req, res, next) {
-  performAction(req.ip, 'requestsong').then(function() {
-    new db.SongRequest({
-      name: req.body.name,
-      song: req.body.song,
-      text: req.body.text
-    }).save().then(function() {
+  const request = new db.SongRequest({
+    name: req.body.name,
+    song: req.body.song,
+    text: req.body.text
+  })
+
+  request.validate(function(err) {
+    if (err) {
+      return next(new Error('MISSING_FIELD'))
+    }
+    Promise.all([
+      performAction(req.ip, 'requestsong'),
+      request.save()
+    ]).then(function() {
       res.sendStatus(200)
     }).catch(next)
-  }).catch(next)
+  })
 })
 
 router.use(function(req, res, next) {

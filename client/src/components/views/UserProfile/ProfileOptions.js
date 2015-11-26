@@ -4,13 +4,13 @@ const User = require('../../../services/User')
 
 class ProfileOptions extends React.Component {
   onBlock() {
-    User.block(this.props.user._id).then(() => {
+    User.block(this.props.user._id, () => {
       this.props.onQuery('block')
     })
   }
 
   onUnBlock() {
-    User.unBlock(this.props.user._id).then(() => {
+    User.unBlock(this.props.user._id, () => {
       this.props.onQuery('block')
     })
   }

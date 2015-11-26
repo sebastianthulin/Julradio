@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
 const marked = require('marked')
-const request = require('../services/request')
+const API = require('../services/API')
 const UserStore = require('./UserStore')
 const ArticleStore = new EventEmitter
 
@@ -19,23 +19,19 @@ ArticleStore.transform = function(article) {
 }
 
 ArticleStore.create = function(opts, callback) {
-  request.post('/api/articles', opts).then(function({ body }) {
+  API.post('/articles', opts, function(body) {
     ArticleStore.get()
     callback(body)
   })
 }
 
-ArticleStore.update = function(id, opts) {
-  request.put('/api/articles/' + id, opts).then(ArticleStore.get)
-}
+ArticleStore.update = (id, opts) => API.put('/articles/' + id, opts, ArticleStore.get)
 
-ArticleStore.delete = function(id) {
-  request.del('/api/articles/' + id).then(ArticleStore.get)
-}
+ArticleStore.delete = id => API.delete('/articles/' + id, ArticleStore.get)
 
 ArticleStore.get = function(callback, archive) {
   typeof callback === 'function' && callback(articles)
-  request.get('/api/articles' + (archive ? '/archive' : '')).then(function({ body }) {
+  API.get('/articles' + (archive ? '/archive' : ''), function(body) {
     articles = body
     articles.forEach(ArticleStore.transform)
     articles.sort((a, b) => b.date - a.date)
@@ -48,7 +44,7 @@ ArticleStore.getById = function(id, callback) {
   if (articleById[id]) {
     callback(articleById[id])
   }
-  request.get('/api/articles/' + id).then(function({ body: article }) {
+  API.get('/articles/' + id, function(article) {
     ArticleStore.transform(article)
     callback(article)
   })

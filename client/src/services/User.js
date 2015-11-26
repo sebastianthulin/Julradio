@@ -1,6 +1,6 @@
 const { EventEmitter } = require('events')
-const { Promise } = require('es6-promise')
-const request = require('../services/request')
+const request = require('superagent')
+const API = require('../services/API')
 const User = module.exports = new EventEmitter
 const ChatStore = require('../stores/ChatStore')
 const ShitStore = require('../stores/ShitStore')
@@ -9,20 +9,10 @@ const UserStore = require('../stores/UserStore')
 
 var doc = null
 
-function handleError(type, reject) {
-  return function({ response }) {
-    const error = response.body.error
-    reject && reject(error)
-    NotificationStore.error({
-      type,
-      value: error
-    })
-  }
-}
-
-function justok(resolve) {
-  return function({ body }) {
-    resolve(body)
+function setAndCB(cb) {
+  return function(user) {
+    User.set(user)
+    cb(user)
   }
 }
 
@@ -32,67 +22,41 @@ User.set = function(user) {
   User.emit('doc', user)
 }
 
-User.block = userId => request.post('/api/user/block', { userId })
-User.unBlock = userId => request.del('/api/user/block/' + userId)
+User.block = (userId, cb) => API.post('/user/block', { userId }, cb)
+User.unBlock = (userId, cb) => API.delete('/user/block/' + userId, cb)
+User.update = (opts, cb) => API.put('/user/settings', opts, setAndCB(cb))
+User.update2 =  (opts, cb) => API.put('/user/settings2', opts, setAndCB(cb))
+User.removeAvatar = cb => API.delete('/user/profilepicture', setAndCB(cb))
 
-
-User.update = opts => new Promise(function(resolve, reject) {
-  request.put('/api/user/settings', opts).then(function({ body: user }) {
-    User.set(user)
-    resolve(user)
-  }).catch(handleError('settings', reject))
-})
-
-User.update2 = opts => new Promise(function(resolve, reject) {
-  request.put('/api/user/settings2', opts).then(function({ body: user }) {
-    User.set(user)
-    resolve(user)
-  }).catch(handleError('settings', reject))
-})
-
-User.removeAvatar = () => new Promise(function(resolve, reject) {
-  request.del('/api/user/profilepicture').then(function({ body: user }) {
-    User.set(user)
-    resolve(user)
-  }).catch(handleError('avatar', reject))
-})
-
-User.setAvatar = function(file) {
+User.setAvatar = function(file, cb) {
   const formData = new FormData
   formData.append('avatar', file)
-  return new Promise(function(resolve, reject) {
-    request.post('/api/user/profilepicture').send(formData).then(function({ body: user }) {
-      User.set(user)
-      resolve(user)
-    }).catch(handleError('avatar', reject))
+  request.post('/api/user/profilepicture').send(formData).end(function(err, { body: user }) {
+    if (err) {
+      return NotificationStore.error({value: err.response.body.error[0]})
+    }
+    User.set(user)
+    cb(user)
   })
 }
 
-User.forgotPassword = form =>
-  new Promise((a, b) =>
-    request.post('/api/forgot', form).then(justok(a)).catch(handleError('forgotpassword', b)))
+User.forgotPassword = (form, cb) => API.post('/forgot', form, cb)
 
 User.newPassword = function(id, password) {
-  return new Promise(function(resolve, reject) {
-    request.post('/api/forgot/' + id, { password }).then(function() {
-      location.reload()
-    }).catch(handleError('newpassword', reject))
+  API.post('/forgot/' + id, { password }, function() {
+    location.reload()
   })
 }
 
 User.logIn = function(creds) {
-  return new Promise(function(resolve, reject) {
-    request.post('/api/user/login', creds).then(function() {
-      location.reload()
-    }).catch(handleError('login', reject))
+  API.post('/user/login', creds, function() {
+    location.reload()
   })
 }
 
 User.signUp = function(form) {
-  return new Promise(function(resolve, reject) {
-    request.post('/api/user/signup', form).then(function() {
-      location.reload()
-    }).catch(handleError('signup', reject))
+  API.post('/user/signup', form, function() {
+    location.reload()
   })
 }
 
