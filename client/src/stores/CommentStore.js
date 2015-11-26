@@ -7,7 +7,8 @@ const CommentStore = new EventEmitter
 
 const commentsByTargetId = {}
 const repliesByCommentId = {}
-const commentCountById = {}
+const commentCountByTargetId = {}
+const threadCountByTargetId = {}
 
 function transform(comment) {
   const username = (User.get() || {}).username
@@ -37,7 +38,7 @@ function buildState(targetId) {
     comment,
     replies: repliesByCommentId[comment._id]
   }))
-  return { comments, totalComments: commentCountById[targetId] }
+  return { comments, totalComments: commentCountByTargetId[targetId], totalThreads: threadCountByTargetId[targetId] }
 }
 
 CommentStore.deleteComment = commentId => request.del('/api/comment/' + commentId)
@@ -71,7 +72,7 @@ CommentStore.reply = function(replyTo, text) {
 
 CommentStore.fetch = function({ type, target, limit }, handler) {
   handler(buildState(target))
-  request.get('/api/comment/' + type, { target, limit }).then(function({ body: { comments, replies, totalComments } }) {
+  request.get('/api/comment/' + type, { target, limit }).then(function({ body: { comments, replies, totalComments, totalThreads } }) {
     replies.forEach(function(replies) {
       if (replies.length > 0) {
         replies.forEach(transform)
@@ -80,7 +81,8 @@ CommentStore.fetch = function({ type, target, limit }, handler) {
     })
     comments.forEach(transform)
     commentsByTargetId[target] = comments
-    commentCountById[target] = totalComments
+    commentCountByTargetId[target] = totalComments
+    threadCountByTargetId[target] = totalThreads
 
     handler(buildState(target))
   })

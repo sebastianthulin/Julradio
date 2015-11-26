@@ -16,7 +16,7 @@ class Comments extends React.Component {
   fetchComments() {
     const limit = this.limit
     const { type, target } = this.props
-    CommentStore.fetch({ type, target, limit }, ({ comments, totalComments }) => this.setState({ comments, totalComments }))
+    CommentStore.fetch({ type, target, limit }, ({ comments, totalThreads }) => this.setState({ comments, totalThreads }))
   }
 
   post(ev) {
@@ -58,7 +58,7 @@ class Comments extends React.Component {
 
   render() {
     const { user, admin } = this
-    const { comments, totalComments } = this.state || {}
+    const { comments, totalThreads } = this.state || {}
     if (!comments) return null
     return (
       <div className="Comments">
@@ -71,7 +71,7 @@ class Comments extends React.Component {
           user={user}
           admin={admin}
         />)}
-        {comments.length < totalComments && <button className="standardBtn" onClick={this.loadMore.bind(this)}>Visa äldre meddelanden</button>}
+        {comments.length < totalThreads && <button className="standardBtn" onClick={this.loadMore.bind(this)}>Visa äldre meddelanden</button>}
       </div>
     )
   }

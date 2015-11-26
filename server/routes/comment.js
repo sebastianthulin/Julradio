@@ -50,7 +50,7 @@ router.get('/:type', function(req, res, next) {
   const target = req.query.target
   const limit = req.query.limit || 20
   var comments
-  var totalComments
+  var totalComments, totalThreads
 
   if (!type) {
     return next(new Error('INVALID_COMMENT_TYPE'))
@@ -66,7 +66,8 @@ router.get('/:type', function(req, res, next) {
         totalComments: 0
       })
     }
-    totalComments = commentSection.count
+    totalComments = commentSection.totalComments
+    totalThreads = commentSection.totalThreads
     return db.Comment.find({
       commentSection: commentSection._id,
       replyTo: null
@@ -82,7 +83,7 @@ router.get('/:type', function(req, res, next) {
         select: '-hash -email',
       }).exec()))
     }).then(function(replies) {
-      res.send({ comments, replies, totalComments })
+      res.send({ comments, replies, totalComments, totalThreads })
     }).catch(next)
   })
 })
