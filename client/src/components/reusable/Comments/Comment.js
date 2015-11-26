@@ -33,7 +33,7 @@ class Comment extends React.Component {
     return (
       <div className="Comment">
         <ProfilePicture id={comment.user.picture} />
-        <div>
+        <div className="content">
           <header>
             <Link to={'/@' + comment.user.username}>{comment.user.username}</Link>
             <TimeSince date={comment.date} />

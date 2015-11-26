@@ -8,7 +8,7 @@ const performAction = require('../services/performAction')
 
 function createConversation(users) {
   var conv = new db.Conversation({ users })
-  conv.populate('users', function(err, doc) {
+  conv.populate({path: 'users', select: '-hash -email'}, function(err, doc) {
     users.forEach(function(userId) {
       io.to(userId).emit('chat:conversation', doc)
     })

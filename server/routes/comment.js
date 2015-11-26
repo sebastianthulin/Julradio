@@ -120,7 +120,7 @@ router.post('/article', function(req, res, next) {
   }).catch(next)
 })
 
-router.post('/user', function(req, res, next) {   // to b fix
+router.post('/user', function(req, res, next) {
   const uid = req.user._id
   const target = req.body.target
   const text = req.body.text

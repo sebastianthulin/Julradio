@@ -6,11 +6,13 @@ const Schema = mongoose.Schema
 const schema = new Schema({
   from: {
     type: Schema.ObjectId,
-    ref: 'users'
+    ref: 'users',
+    required: true
   },
   target: {
     type: Schema.ObjectId,
-    ref: 'users'
+    ref: 'users',
+    required: true
   },
 })
 
