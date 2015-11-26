@@ -31,7 +31,7 @@ class ResetPassword extends React.Component {
       <div id="ResetPassword">
         <form onSubmit={this.handleSubmit.bind(this)}>
           <h2>Nytt lösenord</h2><br/>
-          <input className="changeInput" type="text" ref="password" placeholder="Varning: Här syns lösenordet i klartext."/><br/>
+          <input className="changeInput" type="password" ref="password" placeholder="Nytt lösenord"/><br/>
           <button className="changeBtn">Byt lösenord</button>
         </form>
         <p>Glöm inte av det denna gången!</p>

@@ -12,7 +12,7 @@ process.on('message', function(message) {
 })
 
 router.get('/inc', function(req, res) {
-  res.send(playing)
+  res.send(playing || 'failed to connect')
 })
 
 module.exports = router
