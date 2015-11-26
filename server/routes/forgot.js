@@ -25,7 +25,7 @@ router.post('/', function(req, res, next) {
       <p>God Jul!</p>`
 
     mail.sendMail({
-      from: 'Julradio Admin <grovciabatta@gmail.com>',
+      from: 'Julradio no-reply <' + config.email.user + '>',
       to: email,
       subject: 'Återställ lösenord',
       html
