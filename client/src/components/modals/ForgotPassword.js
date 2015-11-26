@@ -31,7 +31,7 @@ class ForgotPassword extends React.Component {
         <main>
           <form onSubmit={this.handleForgot.bind(this)}>
             <label>Email</label>
-            <input type="text" ref="email" />
+            <input type="text" ref="email" className="clean" />
             <div className="submit">
               <button disabled={disabled}>Begär nytt lösenord</button>
             </div>

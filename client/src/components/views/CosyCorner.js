@@ -9,6 +9,7 @@ class CosyCorner extends React.Component {
         <Comments
           type="cosycorner"
           placeholder="Skriv något i myshörnan"
+          signInPlaceholder="Logga in för att ta del av myset"
         />
       </div>
     )

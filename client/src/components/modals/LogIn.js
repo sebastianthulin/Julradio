@@ -25,9 +25,9 @@ class LogIn extends React.Component {
         <main>
           <form onSubmit={this.handleSubmit.bind(this)}>
             <label>Användarnamn</label>
-            <input type="text" ref="username" />
+            <input type="text" ref="username" className="clean" />
             <label>Password</label>
-            <input type="password" ref="password" />
+            <input type="password" ref="password" className="clean" />
             <div
               className="misq"
               onClick={ModalService.open.bind(null, 'ForgotPassword')}

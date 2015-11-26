@@ -24,11 +24,11 @@ class SignUp extends React.Component {
         <main>
           <form ref="form" onSubmit={this.handleSubmit.bind(this)}>
             <label>Användarnamn</label>
-            <input ref="username" type="text" />
+            <input ref="username" type="text" className="clean" />
             <label>Email</label>
-            <input ref="email" type="email" />
+            <input ref="email" type="email" className="clean" />
             <label>Lösenord</label>
-            <input ref="password" type="password" />
+            <input ref="password" type="password" className="clean" />
             <button disabled={disabled}>Registrera dig</button>
           </form>
         </main>

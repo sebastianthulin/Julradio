@@ -63,11 +63,11 @@ class RequestSong extends React.Component {
         {onair ? (
           <main>
             <label>Ditt namn</label>
-            <input type="text" ref="name" maxLength={50} />
+            <input type="text" ref="name" maxLength={50} className="clean" />
             <label>Låt</label>
-            <input type="text" ref="song" maxLength={100} />
+            <input type="text" ref="song" maxLength={100} className="clean" />
             <label>Text</label>
-            <textarea ref="text" maxLength={250} />
+            <textarea ref="text" maxLength={250} className="clean" />
             <button style={{width: '48%', float: 'left'}} onClick={this.requestSong.bind(this)}>Skicka önskning</button>
             <a target="_blank" onClick={this.setHref.bind(this)}>
               <button style={{width: '48%', float: 'right'}}>Önska via Twitter</button>

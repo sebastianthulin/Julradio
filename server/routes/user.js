@@ -23,7 +23,7 @@ function getUserDoc(userId) {
 
 router.get('/logout', function(req, res) {
   req.session.uid = null
-  res.redirect('/')
+  res.redirect('back')
 })
 
 router.get('/byname/:username', function(req, res) {

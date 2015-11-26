@@ -1,5 +1,6 @@
 module.exports = {
-  UNKNOWN_ERROR: 'Något gick fel. Försök igen',
+  UNKNOWN_ERROR: 'Något gick fel, försök igen',
+  NOT_SIGNED_IN: 'Du måste vara inloggad för att göra detta',
   TIMEOUT: 'Sakta ner! Du gör detta för ofta',
 
   TEXT_TOO_LONG: 'Texten är för lång',
@@ -25,7 +26,7 @@ module.exports = {
 
   // Forgot errors
   INVALID_EMAIL: 'Ingen användare med denna email är registrerad',
-  INVALID_REQUEST_ID: 'Du har begärt ett nytt lösenord.',
+  INVALID_REQUEST_ID: 'Du har begärt ett nytt lösenord.',   // ??
 
   // Request song errors
   MISSING_FIELD: 'Fyll i alla fält'

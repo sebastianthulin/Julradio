@@ -32,14 +32,21 @@ class Comments extends React.Component {
   }
 
   renderForm() {
-    const { block, placeholder } = this.props
+    const { user } = this
+    const { block, placeholder, signInPlaceholder } = this.props
+    const p = user
+      ? placeholder || 'Skriv en kommentar'
+      : signInPlaceholder || 'Logga in för att kommentera'
+
     return block ? null : (
       <form className="mainForm" onSubmit={this.post.bind(this)}>
         <textarea
           type="text"
           ref="input"
-          placeholder={placeholder || 'Skriv en kommentar'}
+          placeholder={p}
+          disabled={!user}
           maxLength={1000}
+          className="clean"
         />
         <button className="btn">Skicka</button>
       </form>
