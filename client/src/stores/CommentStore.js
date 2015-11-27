@@ -1,6 +1,5 @@
 const { EventEmitter } = require('events')
 const API = require('../services/API')
-const parseComment = require('../services/parseComment')
 const UserStore = require('./UserStore')
 const CommentStore = new EventEmitter
 
@@ -9,8 +8,7 @@ const repliesByCommentId = {}
 const commentCountByTargetId = {}
 const threadCountByTargetId = {}
 
-function transform(comment) {
-  comment.__html = parseComment(comment.text)
+function handleComment(comment) {
   UserStore.insert(comment.user)
 }
 
@@ -27,8 +25,8 @@ CommentStore.deleteComment = (commentId, cb) => API.delete('/comment/' + comment
 
 CommentStore.fetchReplies = function(commentId, limit, cb) {
   API.get('/comment/replies/' + commentId + '/' + limit, function({ comment, replies }) {
-    transform(comment)
-    replies.forEach(transform)
+    handleComment(comment)
+    replies.forEach(handleComment)
     repliesByCommentId[comment._id] = replies.sort((a, b) => new Date(a.date) - new Date(b.date))
     cb({ comment, replies })
   })
@@ -47,11 +45,11 @@ CommentStore.fetch = function({ type, target, limit }, handler) {
   API.get('/comment/' + type, { target, limit }, function({ comments, replies, totalComments, totalThreads }) {
     replies.forEach(function(replies) {
       if (replies.length > 0) {
-        replies.forEach(transform)
+        replies.forEach(handleComment)
         repliesByCommentId[replies[0].replyTo] = replies.sort((a, b) => new Date(a.date) - new Date(b.date))
       }
     })
-    comments.forEach(transform)
+    comments.forEach(handleComment)
     commentsByTargetId[target] = comments
     commentCountByTargetId[target] = totalComments
     threadCountByTargetId[target] = totalThreads

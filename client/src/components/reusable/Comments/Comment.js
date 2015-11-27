@@ -1,10 +1,10 @@
 const React = require('react')
 const { Link } = require('react-router')
-const history = require('../../../services/history')
 const CommentStore = require('../../../stores/CommentStore')
 const NotificationStore = require('../../../stores/NotificationStore')
 const ProfilePicture = require('../ProfilePicture')
 const TimeSince = require('../TimeSince')
+const MDMini = require('../MDMini')
 
 class Comment extends React.Component {
   componentWillMount() {
@@ -21,13 +21,6 @@ class Comment extends React.Component {
     }
   }
 
-  handleClick(ev) {
-    if (ev.target.tagName === 'A' && ev.metaKey === false) {
-      ev.preventDefault()
-      history.pushState(null, ev.target.pathname)
-    }
-  }
-
   render() {
     const { comment, replies } = this.props
     return (
@@ -38,11 +31,7 @@ class Comment extends React.Component {
             <Link to={'/@' + comment.user.username}>{comment.user.username}</Link>
             <TimeSince date={comment.date} />
           </header>
-          <div
-            className="text"
-            onClick={this.handleClick.bind(this)}
-            dangerouslySetInnerHTML={comment}
-          />
+          <MDMini className="text" text={comment.text} allowNewLine={true} />
           {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
         </div>
       </div>

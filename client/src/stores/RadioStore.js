@@ -41,7 +41,7 @@ Radio.toggleMute = function() {
 
 Radio.setVolume = function(vol) {
   vol = vol > 1 ? 1 : vol < 0 ? 0 : vol
-  audio.volume = state.volume
+  audio.volume = state.volume = vol
   try {
     localStorage.volume = vol
   } catch (e) {}

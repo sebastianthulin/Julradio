@@ -1,2 +1,4 @@
 const io = require('socket.io-client')
-module.exports = io()
+module.exports = io({
+  transports: ['websocket']
+})

@@ -2,6 +2,7 @@ const React = require('react')
 const { Link } = require('react-router')
 const UserStore = require('../../stores/UserStore')
 const ProfilePicture = require('../reusable/ProfilePicture')
+const MDMini = require('../reusable/MDMini')
 
 const CrewMember = ({ id, username, name, title, description, picture }) => (
   <div className="CrewMember">
@@ -13,7 +14,7 @@ const CrewMember = ({ id, username, name, title, description, picture }) => (
         <div className="username"><Link to={`/@${username}`}>@{username}</Link></div>
       </div>
     </header>
-    <p>{description}</p>
+    <MDMini text={description} />
   </div>
 )
 
