@@ -63,7 +63,8 @@ if (config.liveReload) {
 router.get('*', function(req, res) {
   res.render('main', {
     user: req.user,
-    analytics: config.analytics
+    analytics: config.analytics,
+    playerLess: req.headers['user-agent'] === 'Julradio Android App'
   })
 })
 

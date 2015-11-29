@@ -23,6 +23,7 @@
   <script>
   window.__USER__ = <%- user ? JSON.stringify(user) : 'null' %>
   window.__TIMEDIFFERENCE__ = <%- Date.now() %> - Date.now()
+  window.__PLAYERLESS__ = <%- playerLess %>
   </script>
   <script src="/vendors.js"></script>
   <script src="/app.js"></script>

@@ -95,7 +95,7 @@ class Sidebar extends React.Component {
             <Link to="/crew">Medarbetare</Link>
             {user && <a onClick={User.logOut}>Logga ut</a>}
           </div>
-          <Player />
+          {!window.__PLAYERLESS__ && <Player />}
         </div>
       </div>
     )

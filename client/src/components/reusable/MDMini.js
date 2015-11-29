@@ -2,7 +2,7 @@ const React = require('react')
 const User = require('../../services/User')
 const history = require('../../services/history')
 
-function parseContent(markup, allowNewLine) {
+function parseContent(markup = '', allowNewLine) {
   const username = (User.get() || {}).username
   var matchesNotMe
 
