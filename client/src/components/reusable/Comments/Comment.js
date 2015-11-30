@@ -31,7 +31,7 @@ class Comment extends React.Component {
             <Link to={'/@' + comment.user.username}>{comment.user.username}</Link>
             <TimeSince date={comment.date} />
           </header>
-          <MDMini className="text" text={comment.text} allowNewLine={true} />
+          <MDMini className="text" text={comment.text} />
           {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
         </div>
       </div>

@@ -18,7 +18,7 @@ class ProfileOptions extends React.Component {
   render() {
     const { user, relationship } = this.props
     return (
-      <div id="ProfileOptions">
+      <div className="ProfileOptions">
         <Link to={`/messages/${user.username}`} className="action">Skicka Meddelande</Link>
         {!relationship || !relationship.hasBlocked
           ? <div onClick={this.onBlock.bind(this)} className="action">Blocka</div>

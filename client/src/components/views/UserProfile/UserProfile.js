@@ -28,8 +28,8 @@ class UserProfile extends React.Component {
 
   renderRelationship() {
     return this.props.block.isBlocked
-      ? <h5>Du är blockad av denna användare</h5>
-      : <h5>Du har blockat denna användare</h5>
+      ? <div className="blockage">Du är blockad av denna användare</div>
+      : <div className="blockage">Du har blockat denna användare</div>
   }
 
   render() {
@@ -43,28 +43,26 @@ class UserProfile extends React.Component {
 
     return (
       <div id="UserProfile">
-        <header>
+        <main>
           <ProfilePicture id={user.picture} />
           <div className="name">{user.name ? user.name : '@' + user.username}</div>
-          <div className="identity">{(user.name ? ('@' + user.username + ' ') : '') + this.getIndentity()}</div>
-          {user.title && <span className="title">{user.title}</span>}
-          <MDMini className="description" text={user.description} />
-          <div>Medlem i <TimeSince date={user.date} short={true} /></div>
-        </header>
-        <main>
-          {authedUser && authedUser._id !== user._id && <ProfileOptions
-            user={user}
-            relationship={relationship}
-            onQuery={onQuery}
-          />}
-          {relationship && this.renderRelationship()}
-          <Comments
-            type="user"
-            target={user._id}
-            placeholder="Skriv ett inlägg i gästboken"
-            block={!!relationship}
-          />
+          <div className="misq">{(user.name ? ('@' + user.username + ' ') : '') + this.getIndentity()}</div>
+          {user.title && <div className="title">{user.title}</div>}
+          <div className="misq">Medlem i <TimeSince date={user.date} short={true} /></div>
         </main>
+        {authedUser && authedUser._id !== user._id && <ProfileOptions
+          user={user}
+          relationship={relationship}
+          onQuery={onQuery}
+        />}
+        <MDMini className="description" text={user.description} />
+        {relationship && this.renderRelationship()}
+        <Comments
+          type="user"
+          target={user._id}
+          placeholder="Skriv ett inlägg i gästboken"
+          block={!!relationship}
+        />
       </div>
     )
   }

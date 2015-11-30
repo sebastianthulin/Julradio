@@ -11,7 +11,7 @@ process.on('message', function(message) {
   }
 })
 
-router.get('/inc', function(req, res) {
+router.get('/inc/now_playing.php', function(req, res) {
   res.send(playing || 'failed to connect')
 })
 

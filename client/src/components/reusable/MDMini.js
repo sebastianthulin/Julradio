@@ -2,7 +2,7 @@ const React = require('react')
 const User = require('../../services/User')
 const history = require('../../services/history')
 
-function parseContent(markup = '', allowNewLine) {
+function parseContent(markup = '') {
   const username = (User.get() || {}).username
   var matchesNotMe
 
@@ -22,31 +22,28 @@ function parseContent(markup = '', allowNewLine) {
     // user not signed in, match all mentions
     matchesNotMe = `@(\\\w+)(?!\\\w+)`
   }
-  
-  if (allowNewLine) {
-    markup = markup.replace(/\n/g, '<br />')
-  }
 
   return markup
+    .replace(/\n/g, '<br />')
     .replace(/:tomten:/g, '<img class="emoji" alt=":tomten:" src="/images/santa-small.png" />')
     .replace(new RegExp(matchesNotMe, 'ig'), '<a href="/@$1">@$1</a>')
 }
 
 class MDMini extends React.Component {
   componentWillMount() {
-    this.parse(this.props.text, this.props.allowNewLine)
+    this.parse(this.props.text)
   }
 
   componentWillReceiveProps(props) {
     if (props.text !== this.props.text) {
-      this.parse(props.text, props.allowNewLine)
+      this.parse(props.text)
     }
   }
 
-  parse(text, allowNewLine) {
+  parse(text) {
     this.setState({
       content: {
-        __html: parseContent(text, allowNewLine)
+        __html: parseContent(text)
       }
     })
   }
