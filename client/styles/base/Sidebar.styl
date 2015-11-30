@@ -8,7 +8,6 @@
   background rgba(130, 9, 9, 0.75)
   transform translateX(-300px)
   transition transform .4s
-  overflow hidden
   @media (max-height: 700px)
     .inner
       padding-top 20px !important
@@ -182,44 +181,30 @@
         right 10px
 
 #Hampburger
-  width 22px
-  height 18px
-  position relative
-  cursor pointer
-  box-shadow inset 0 -4px 0 #fff
-  .menu
-    position absolute
-    bottom 32px
-    background #CD2828
-    right 0px
-    width 137px
-    text-align right
-    padding 20px
-    border-radius 5px
-    .media
-      color #fff
-      font-size 15px
-      width 100%
-      padding 5px
-      display block
-  &:before
-    content " "
-    position absolute
+  position absolute
+  bottom 32px
+  background #CD2828
+  left 50%
+  width 137px
+  text-align center
+  padding 20px
+  border-radius 5px
+  z-index 100
+  transform translateX(-50%)
+  visibility hidden
+  opacity 0
+  transition visibility .25s, opacity .25s ease
+  &.visible
+    visibility visible
+    opacity 1
+    transition none
+    transition-delay 0s
+  .media
+    color #fff
+    font-size 15px
     width 100%
-    top 0
-    left 0
-    z-index 100
-    height 4px
-    background #FFF
-  &:after
-    content " "
-    position absolute
-    width 100%
-    top calc(50% - 2px)
-    left 0
-    z-index 100
-    height 4px
-    background #FFF
+    padding 5px
+    display block
 
 #VolumeSlider
   visibility hidden
@@ -241,7 +226,7 @@
     pointer-events none
     display inline-block
     width 100%
-    background #DD1616
+    background #CD2828
     border-radius 10px
     bottom 0
   .handle

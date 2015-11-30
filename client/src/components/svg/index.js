@@ -6,5 +6,6 @@ module.exports = {
   Volume: require('./Volume'),
   Menu: require('./Menu'),
   Favorite: require('./Favorite'),
-  FavoriteOutlined: require('./FavoriteOutlined')
+  FavoriteOutlined: require('./FavoriteOutlined'),
+  Dots: require('./Dots')
 }
