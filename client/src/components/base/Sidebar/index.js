@@ -61,8 +61,10 @@ class Sidebar extends React.Component {
       unseenMessages
     } = this.state
 
+    const playerLess = window.__PLAYERLESS__
+
     return (
-      <div id="Sidebar" onClick={this.handleClick.bind(this)}>
+      <div id="Sidebar" className={cx({ playerLess })} onClick={this.handleClick.bind(this)}>
         <Snowfall
           active={onair}
           count={500}
@@ -95,7 +97,7 @@ class Sidebar extends React.Component {
             <Link to="/crew">Medarbetare</Link>
             {user && <a onClick={User.logOut}>Logga ut</a>}
           </div>
-          {!window.__PLAYERLESS__ && <Player />}
+          {!playerLess && <Player />}
         </div>
       </div>
     )

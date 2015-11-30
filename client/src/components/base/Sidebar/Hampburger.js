@@ -7,10 +7,10 @@ class Hampburger extends React.Component {
     const { visible } = this.props
     return (
       <div id="Hampburger" className={cx({ visible })} ref="menu">
-        <a target="_blank" href={"/"} className="media">Android app</a>
-        <a target="_blank" href={"/"} className="media">iOS app</a>
-        <a target="_blank" href={"http://www.winamp.com"} className="media">Winamp</a>
-        <a target="_blank" href={"http://www.apple.com/se/itunes/download/"} className="media">iTunes</a>
+        <a target="_blank" href="https://play.google.com/store/apps/details?id=com.limani.julradio2013" className="media">Android app</a>
+        <a target="_blank" href="https://itunes.apple.com/se/app/julradio/id582060389" className="media">iOS app</a>
+        <a href="/lyssna.pls" className="media">VLC/Winamp</a>
+        <a href="/lyssna.m3u" className="media">iTunes</a>
       </div>
     )
   }

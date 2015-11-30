@@ -55,7 +55,7 @@ class UserProfile extends React.Component {
           relationship={relationship}
           onQuery={onQuery}
         />}
-        <MDMini className="description" text={user.description} />
+        {user.description && <MDMini className="description" text={user.description} />}
         {relationship && this.renderRelationship()}
         <Comments
           type="user"

@@ -8,6 +8,8 @@
   background rgba(130, 9, 9, 0.75)
   transform translateX(-300px)
   transition transform .4s
+  overflow-x hidden
+  overflow-y auto
   @media (max-height: 700px)
     .inner
       padding-top 20px !important
@@ -20,6 +22,9 @@
 
   +desktop()
     transform none
+    
+  &.playerLess
+    padding-bottom 60px
 
   .inner
     displayFlex()
@@ -28,6 +33,7 @@
     justify-content space-between
     height 100%
     padding-top 30px
+    min-height 600px
 
   .divider
     height 2px

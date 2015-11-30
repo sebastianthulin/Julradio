@@ -15,10 +15,16 @@ class Player extends React.Component {
     ReservationStore.subscribe('onair', program => this.setState({ program }))
   }
 
-  toggleMediaMenu() {
-    this.setState({
-      mediaMenu: !this.state.mediaMenu
-    })
+  openMediaMenu() {
+    const menu = this.refs.hampburger.children[1]
+    const hide = ev => {
+      if (!menu.contains(ev.target)) {
+        document.removeEventListener('mousedown', hide)
+        this.setState({mediaMenu: false})
+      }
+    }
+    document.addEventListener('mousedown', hide)
+    this.setState({mediaMenu: true})
   }
 
   toggleMute() {
@@ -43,9 +49,9 @@ class Player extends React.Component {
               </div>
               {program && <Link className="host" to={'/@' + program.user.username} children={program.user.name} />}
               {!program && <div className="host">Slingan</div>}
-              <div className = "item hampurgerMenu">
-                <SVG.Dots onClick={this.toggleMediaMenu.bind(this)}/>
-                <Hampburger visible={mediaMenu}/>
+              <div className="item hampurgerMenu" ref="hampburger">
+                <SVG.Dots onClick={this.openMediaMenu.bind(this)} />
+                <Hampburger visible={mediaMenu} />
               </div>
             </div>
             <Link to="/history" className="songTitle">{currentlyPlaying.title}</Link>
