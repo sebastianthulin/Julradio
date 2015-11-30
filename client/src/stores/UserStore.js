@@ -1,10 +1,13 @@
 const { EventEmitter } = require('events')
 const request = require('superagent')
+const socket = require('../services/socket')
 const API = require('../services/API')
 const UserStore = new EventEmitter
 const usersByName = {}
 const wallPostsByUserId = {}
 var crew
+
+var onlineList = []
 
 UserStore.insert = function(user) {
   if (user.birth) {
@@ -77,5 +80,9 @@ UserStore.removeUserAvatar = function(userId, cb) {
 UserStore.updateCrew = function(userIds, cb) {
   API.put('/crew', userIds, cb)
 }
+
+socket.on('onlinelist', function(list) {
+  onlineList = list
+})
 
 module.exports = UserStore

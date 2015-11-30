@@ -1,7 +1,7 @@
 const React = require('react')
 
 const PlayPause = props => props.pause ? (
-  <svg width="12px" height="14px" viewBox="0 0 12 14" {...props}>
+  <svg width="24px" height="28px" viewBox="0 0 12 14" {...props}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g transform="translate(-214.000000, -46.000000)" fill="#FFF">
         <g transform="translate(214.000000, 46.000000)">
@@ -11,7 +11,7 @@ const PlayPause = props => props.pause ? (
     </g>
   </svg>
 ) : (
-  <svg width="12px" height="14px" viewBox="0 0 12 14" {...props}>
+  <svg width="24px" height="28px" viewBox="0 0 12 14" {...props}>
     <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
       <g transform="translate(-88.000000, -88.000000)" fill="#FFF">
         <g transform="translate(88.500000, 88.000000)">

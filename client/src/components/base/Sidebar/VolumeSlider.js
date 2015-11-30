@@ -23,15 +23,15 @@ class VolumeSlider extends React.Component {
 
   handleDrag(ev) {
     const rect = this.refs.slider.getBoundingClientRect()
-    const offsetTop = ev.clientY - rect.top
-    RadioStore.setVolume(1 - offsetTop / rect.height)
+    const offsetLeft = ev.clientX - rect.left
+    RadioStore.setVolume(offsetLeft / rect.width)
   }
 
   render() {
     const { volume, adjusting } = this.state
     return (
       <div id="VolumeSlider" className={cx({ adjusting })} ref="slider" onMouseDown={this.initDrag.bind(this)}>
-        <div className="volume" style={{height: volume * 100 + '%'}}>
+        <div className="volume" style={{width: volume * 100 + '%'}}>
           <div className="handle" />
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 const broadcast = require('./broadcast')
 const chat = require('./chat')
+const onlinelist = require('./onlinelist')
 
 module.exports = function(socket) {
   socket.uid = socket.request.session.uid
@@ -10,5 +11,6 @@ module.exports = function(socket) {
   if (socket.uid) {
     socket.join(socket.uid)
     chat(socket)
+    onlinelist(socket)
   }
 }

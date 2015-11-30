@@ -46,7 +46,7 @@ class UserProfile extends React.Component {
         <main>
           <ProfilePicture id={user.picture} />
           <div className="name">{user.name ? user.name : '@' + user.username}</div>
-          <div className="misq">{(user.name ? ('@' + user.username + ' ') : '') + this.getIndentity()}</div>
+          <div className="misq">{(user.name ? ('@' + user.username + ' ') : '') + this.getIndentity()} </div>
           {user.title && <div className="title">{user.title}</div>}
           <div className="misq">Medlem i <TimeSince date={user.date} short={true} /></div>
         </main>

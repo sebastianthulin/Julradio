@@ -3,7 +3,6 @@ const { Link } = require('react-router')
 const RadioStore = require('../../../stores/RadioStore')
 const ReservationStore = require('../../../stores/ReservationStore')
 const Hampburger = require('./Hampburger')
-const VolumeSlider = require('./VolumeSlider')
 const SVG = require('../../svg')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 
@@ -37,21 +36,19 @@ class Player extends React.Component {
       <div id="Player">
         {program && <div className="program">{program.description}</div>}
         <div className="main">
-          {program && <ProfilePicture id={program.user.picture} />}
+          <div className="shit">
+            {program && <ProfilePicture id={program.user.picture} />}
+            <div className="playPause" onClick={RadioStore.toggle} >
+              <SVG.PlayPause pause={playing} />
+            </div>
+          </div>
           <div div className="titleControls">
             <div className="controls">
-              <div className="item">
-                <SVG.PlayPause pause={playing} onClick={RadioStore.toggle} />
-              </div>
-              <div className="item volumeControl">
-                <SVG.Volume volume={volume} onClick={this.toggleMute.bind(this)} />
-                <VolumeSlider />
-              </div>
               {program && <Link className="host" to={'/@' + program.user.username} children={program.user.name} />}
               {!program && <div className="host">Slingan</div>}
               <div className="item hampurgerMenu" ref="hampburger">
                 <SVG.Dots onClick={this.openMediaMenu.bind(this)} />
-                <Hampburger visible={mediaMenu} />
+                <Hampburger visible={mediaMenu} volume={volume} />
               </div>
             </div>
             <Link to="/history" className="songTitle">{currentlyPlaying.title}</Link>

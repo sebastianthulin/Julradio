@@ -8,8 +8,8 @@
   background rgba(130, 9, 9, 0.75)
   transform translateX(-300px)
   transition transform .4s
-  overflow-x hidden
-  overflow-y auto
+  //overflow-x hidden
+  //overflow-y auto
   @media (max-height: 700px)
     .inner
       padding-top 20px !important
@@ -148,11 +148,31 @@
   .songTitle
     white-space nowrap
     overflow hidden
-  .ProfilePicture
+  .shit
     float left
     width 80px
     height 100%
-    border-radius 0
+    position relative
+    .playPause
+      cursor pointer
+      position absolute
+      width 100%
+      height 100%
+      background rgba(0,0,0,.1)
+      cursor pointer
+      text-align center
+      svg
+        position absolute
+        left 50%
+        top 50%
+        transform translate(-50%, -50%)
+    .ProfilePicture
+      position absolute
+      left 0 
+      top 0
+      width 100%
+      height 100%
+      border-radius 0
   .titleControls
     displayFlex()
     flex-direction column
@@ -175,13 +195,7 @@
           width 100%
           height 100%
           cursor pointer
-      .volumeControl
-        position relative
-        &:hover #VolumeSlider, #VolumeSlider.adjusting
-          visibility visible
-          opacity 1
-          transition none
-          transition-delay 0s
+          vertical-align middle
       .hampurgerMenu
         position absolute
         right 10px
@@ -191,9 +205,9 @@
   bottom 32px
   background #CD2828
   left 50%
-  width 137px
+  width 160px
   text-align center
-  padding 20px
+  padding-bottom 10px
   border-radius 5px
   z-index 100
   transform translateX(-50%)
@@ -211,36 +225,41 @@
     width 100%
     padding 5px
     display block
+  .volumeControl
+    position relative
+    padding 10px
+    .volumeButton
+      vertical-align middle
+      width 20px
+      height 20px
+      margin-right 10px
+      display inline-block
 
 #VolumeSlider
-  visibility hidden
-  opacity 0
-  transition visibility .25s, opacity .25s ease
-  transition-delay .2s
-  position absolute
-  left 0px
-  right 0px
-  bottom 32px
-  height 100px
-  width 8px
+  height 8px
+  width 100px
   background #FFF
   border-radius 10px
   margin 0 auto
   cursor pointer
+  position relative
+  display inline-block
   .volume
     position absolute
     pointer-events none
     display inline-block
-    width 100%
-    background #CD2828
+    height 100%
+    background #900
     border-radius 10px
-    bottom 0
+    left 0
   .handle
     position absolute
     display inline-block
-    margin-top -8px
-    margin-left -2.5px
+    margin-top -2.5px
+    transform translateX(4px)
+    right 0
     width 12px
     height 12px
     border-radius 50%
     background #FFF
+    box-shadow 0 0 0px 3px rgba(255,255,255,.5)
