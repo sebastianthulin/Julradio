@@ -16,11 +16,11 @@ db.Song.find().sort('-_id').limit(30).exec(function(err, docs) {
   process.send({ history })
 })
 
-if (!config.shoutCastUrl) {
+if (!config.shoutCastUrls[0]) {
   return
 }
 
-const stream = new radio.ReadStream(config.shoutCastUrl)
+const stream = new radio.ReadStream(config.shoutCastUrls[0])
 stream.on('connect', () => console.log('Connected to SHOUTcast server'))
 stream.on('error', err => console.log(err))
 stream.on('close', process.exit)

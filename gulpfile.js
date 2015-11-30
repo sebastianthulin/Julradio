@@ -31,7 +31,7 @@ gulp.task('js', function() {
   return browserify('./client/src/app', {debug: !production})
     .external(dependencies)
     .transform(envify({
-      shoutCastUrl: config.shoutCastUrl
+      shoutCastUrls: config.shoutCastUrls
     }))
     .transform(babelify.configure({
       presets: ['es2015', 'react']

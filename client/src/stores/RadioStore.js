@@ -13,7 +13,8 @@ const state = {
 }
 
 Radio.play = function() {
-  audio.src = process.env.shoutCastUrl + '/;'
+  const url = process.env.shoutCastUrls[Math.floor(Math.random() * process.env.shoutCastUrls.length)]
+  audio.src = url + '/;'
   audio.play()
   Radio.emit('playing', true)
   state.playing = true

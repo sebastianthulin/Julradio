@@ -19,7 +19,7 @@ function fork(service) {
 
   child.on('exit', function() {
     console.log(`${service} exited`)
-    setTimeout(() => fork(service), 1000)
+    setTimeout(() => fork(service), 10000)
   })
 }
 

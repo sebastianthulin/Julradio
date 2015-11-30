@@ -91,7 +91,7 @@ class Sidebar extends React.Component {
           </Link>
           {divider}
           <div className="shortcuts">
-            <a href="https://webchat.quakenet.org/?channels=julradio&nick=" target="_new">IRC</a>
+            <a href={'https://webchat.quakenet.org/?channels=julradio' + (user ? '&nick=' + user.username : '')} target="_new">IRC</a>
             {User.isAnything() && <Link to="/admin/articles">Admin</Link>}
             {user && <Link to="/settings">Inställningar</Link>}
             <Link to="/crew">Medarbetare</Link>
