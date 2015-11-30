@@ -12,8 +12,13 @@ class Request extends React.Component {
   }
 
   delete() {
+    const { request } = this.props
     if (confirm('Ta bort tweet?')) {
-      RequestStore.deleteTweet(this.props.request._id, () => {
+      request.tweet ? 
+      RequestStore.deleteTweet(request._id, () => {
+        this.setState({removed: true})
+      })
+      : RequestStore.deleteRequest(request._id, () => {
         this.setState({removed: true})
       })
     }
@@ -38,6 +43,7 @@ class Request extends React.Component {
         <span className="user">{request.name}</span>
         <p className="text">{request.text}</p>
         <div className="song">{request.song}</div>
+        {removable && <div className="remove" onClick={this.delete.bind(this)}>x</div>}
       </div>
     )
   }

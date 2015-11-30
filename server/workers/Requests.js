@@ -21,9 +21,22 @@ function requestGranted(requestId) {
   })
 }
 
+function requestDelete(requestId) {
+  db.SongRequest.findById(requestId).exec().then(function(request) {
+    var index = requests.findIndex(request => request._id == requestId)
+    if (index !== -1) {
+      requests.splice(index, 1)
+      process.send(requests)
+      request.remove().exec()
+    }
+  })
+}
+
 process.on('message', function(data) {
   switch (data.type) {
     case 'granted':
       requestGranted(data.requestId); break
+    case 'delete':
+      requestDelete(data.requestId); break
   }
 })

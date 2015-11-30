@@ -75,7 +75,7 @@ class RequestSong extends React.Component {
           </main>
         ) : (
           <main>
-            <div className="cantwishyetbro">Det enda du kan önska just nu är 1 december</div>
+            <div className="cantwishyetbro">Spara din önskning till nästa sändning!</div>
           </main>
         )}
       </Modal>

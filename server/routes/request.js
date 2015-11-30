@@ -17,10 +17,9 @@ router.post('/', function(req, res, next) {
     if (err) {
       return next(new Error('MISSING_FIELD'))
     }
-    Promise.all([
-      performAction(req.ip, 'requestsong'),
-      request.save()
-    ]).then(function() {
+    performAction(req.ip , 'requestsong').then(function() {
+      return request.save()
+    }).then(function() {
       res.sendStatus(200)
     }).catch(next)
   })
@@ -64,6 +63,20 @@ router.delete('/:id', function(req, res, next) {
   db.SongRequest.findByIdAndRemove(req.params.id).exec().then(function() {
     res.sendStatus(200)
   }).catch(next)
+})
+
+router.delete('/accepted/:id', function(req, res) {
+  if (!req.user.roles.admin) {
+    return res.sendStatus(500)
+  }
+  process.send({
+    service: 'Requests',
+    data: {
+      type: 'delete',
+      requestId: req.params.id
+    }
+  })
+  res.sendStatus(200)
 })
 
 router.delete('/tweet/:id', function(req, res) {
