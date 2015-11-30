@@ -2,6 +2,7 @@ const React = require('react')
 const { Link } = require('react-router')
 const RadioStore = require('../../../stores/RadioStore')
 const ReservationStore = require('../../../stores/ReservationStore')
+const Hampburger = require('./Hampburger')
 const VolumeSlider = require('./VolumeSlider')
 const SVG = require('../../svg')
 const ProfilePicture = require('../../reusable/ProfilePicture')
@@ -36,6 +37,9 @@ class Player extends React.Component {
               </div>
               {program && <Link className="host" to={'/@' + program.user.username} children={program.user.name} />}
               {!program && <div className="host">Slingan</div>}
+              <div className = "item hampurgerMenu">
+                <Hampburger />
+              </div>
             </div>
             <Link to="/history" className="songTitle">{currentlyPlaying.title}</Link>
           </div>

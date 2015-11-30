@@ -177,6 +177,47 @@
           opacity 1
           transition none
           transition-delay 0s
+      .hampurgerMenu
+        position absolute
+        right 10px
+
+#Hampburger
+  width 25px
+  height 20px
+  position relative
+  cursor pointer
+  box-shadow inset 0 -4px 0 #fff
+  .menu
+    position absolute
+    bottom 32px
+    background #FFF
+    right 0px
+    width 100px
+    text-align right
+    .media
+      color #333
+      font-size 15px
+      width 100%
+      padding 5px
+      display block
+  &:before
+    content " "
+    position absolute
+    width 100%
+    top 0
+    left 0
+    z-index 100
+    height 4px
+    background #FFF
+  &:after
+    content " "
+    position absolute
+    width 100%
+    top calc(50% - 2px)
+    left 0
+    z-index 100
+    height 4px
+    background #FFF
 
 #VolumeSlider
   visibility hidden
