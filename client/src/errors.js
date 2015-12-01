@@ -7,12 +7,12 @@ module.exports = {
   // Signin errors
   INCORRECT_PASSWORD: 'Fel lösenord',
   USER_NOT_FOUND: 'Användaren inte hittad',
-  USER_NOT_ACTIVATED: 'Du har inte verifierat ditt konto',
+  USER_NOT_ACTIVATED: 'Du har inte verifierat ditt konto, kolla din mail!',
   USER_BANNED: 'Du är blockad från sidan',
 
   // Signup errors
   DUPLICATE: 'Användarnamnet eller emailaddressen används redan',
-  INVALID_FORMAT: 'Ditt Användarnamn får bara innehålla bokstäver, siffror & understreck',
+  INVALID_FORMAT: 'Ditt användarnamn får bara innehålla bokstäver, siffror & understreck',
   USERNAME_TOO_SHORT: 'Ditt användarnamn måste vara minst 3 tecken',
   USERNAME_TOO_LONG: 'Ditt användarnamn får högst innehålla 25 tecken',
   EMAIL_INVALID: 'Felaktig mailaddress',
