@@ -214,6 +214,7 @@
   visibility hidden
   opacity 0
   transition visibility .25s, opacity .25s ease
+  noUserSelect()
   &.visible
     visibility visible
     opacity 1
@@ -225,6 +226,8 @@
     width 100%
     padding 5px
     display block
+    &:hover
+      background rgba(0, 0, 0, 0.05)
   .volumeControl
     position relative
     padding 10px
@@ -238,20 +241,20 @@
 #VolumeSlider
   height 8px
   width 100px
-  background #FFF
   border-radius 10px
   margin 0 auto
   cursor pointer
   position relative
   display inline-block
+  background #900
   .volume
     position absolute
     pointer-events none
     display inline-block
     height 100%
-    background #900
     border-radius 10px
     left 0
+    background #FFF
   .handle
     position absolute
     display inline-block

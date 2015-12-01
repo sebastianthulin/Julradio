@@ -27,6 +27,10 @@ const schema = new Schema({
   location: String,
   title: String,
   banned: Boolean,
+  activated: {
+    type: Boolean,
+    default: false
+  },
   picture: {
     type: Schema.ObjectId,
     ref: 'pictures'
@@ -101,11 +105,9 @@ schema.methods.setUsername = function(username) {
 }
 
 schema.methods.setEmail = function(email) {
-  if (typeof email !== 'string' || email.length === 0) {
-    return true
-  }
-
-  if (email.length > 254) {
+  if (typeof email !== 'string') {
+    this.invalidate('email', 'EMAIL_INVALID')
+  } else if (email.length > 254) {
     this.invalidate('email', 'EMAIL_INVALID')
   } else if (!/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i.test(email)) {
     this.invalidate('email', 'EMAIL_INVALID')

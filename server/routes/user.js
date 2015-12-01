@@ -7,6 +7,8 @@ const gm = require('gm')
 const fs = require('fs')
 const router = express.Router()
 const db = require('../models')
+const mail = require('../services/mail')
+const config = require('../../config')
 const performAction = require('../services/performAction')
 const Blockages = require('../services/Blockages')
 
@@ -77,10 +79,29 @@ router.get('/profile', function getUser(req, res) {
 })
 
 router.post('/signup', function(req, res, next) {
-  new db.User().signUp(req.body).then(function(user) {
-    delete user.hash
-    req.session.uid = user.id
-    res.send({ user })
+  var user
+  new db.User().signUp(req.body).then(function(doc) {
+    user = doc
+    return new db.UserActivation({user: doc._id}).save()
+  }).then(function(activate) {
+    res.sendStatus(200)
+    const activateURL = 'http://julradio.se/activate/' + activate._id
+    const html = `
+      <h1>Tjena ${user.username}</h1>
+      <p>För att vi ska kunna behålla säkerheten här på Julradio och hålla trolls borta krävs det att du verifierar ditt konto för att kunna posta.</p>
+      <p><a href="${activateURL}">${activateURL}</a></p>
+      <p>Godjul<br />Julradio</p>`
+
+    mail.sendMail({
+      from: 'Julradio no-reply <' + config.email.user + '>',
+      to: user.email,
+      subject: 'Välkommen till Julradio - Verifikation',
+      html
+    }, function(err, info) {
+      if (err) {
+        console.error(new Error('MAIL_NOT_SENT'))
+      }
+    })
   }).catch(next)
 })
 
@@ -92,7 +113,9 @@ router.post('/login', function(req, res, next) {
     if (user) {
       if (user.banned) {
         throw new Error('USER_BANNED')
-      } else if (user.auth(req.body.password)) {
+      } else if (user.activated === false) {
+        throw new Error('USER_NOT_ACTIVATED')
+      } else if (user.auth(req.body.password)) {
         user.lastVisit = Date.now()
         user.save()
         req.session.uid = user.id
@@ -227,6 +250,7 @@ router.post('/profilepicture', function(req, res, next) {
   const userId = req.session.uid
   upload(req, res, function(err) {
     if (err) {
+      console.error(err, '/profilepicture INVALID_IMAGE')
       return next(new Error('INVALID_IMAGE'))
     }
 
@@ -241,6 +265,7 @@ router.post('/profilepicture', function(req, res, next) {
       .write(req.file.path, function(err) {
         gm(req.file.path).size(function(err, value) {
           if (err) {
+            console.error(err, '/profilepicture INVALID_IMAGE')
             fs.unlink(req.file.path)
             return next(new Error('INVALID_IMAGE'))
           }

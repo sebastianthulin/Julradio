@@ -5,6 +5,7 @@ const ModalService = require('../../services/Modal')
 const modals = {
   LogIn: require('../modals/LogIn'),
   SignUp: require('../modals/SignUp'),
+  SignUpSuccess: require('../modals/SignUpSuccess'),
   RequestSong: require('../modals/RequestSong'),
   ForgotPassword: require('../modals/ForgotPassword'),
   ChangeAvatar: require('../modals/ChangeAvatar')

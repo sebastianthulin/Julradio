@@ -4,11 +4,10 @@ module.exports = {
   TIMEOUT: 'Sakta ner! Du gör detta för ofta',
   TEXT_TOO_LONG: 'Texten är för lång',
 
-  CHAT_DISABLED: 'Det går inte att skicka meddelanden just nu',
-
   // Signin errors
   INCORRECT_PASSWORD: 'Fel lösenord',
   USER_NOT_FOUND: 'Användaren inte hittad',
+  USER_NOT_ACTIVATED: 'Du har inte verifierat ditt konto',
   USER_BANNED: 'Du är blockad från sidan',
 
   // Signup errors
@@ -16,6 +15,7 @@ module.exports = {
   INVALID_FORMAT: 'Ditt Användarnamn får bara innehålla bokstäver, siffror & understreck',
   USERNAME_TOO_SHORT: 'Ditt användarnamn måste vara minst 3 tecken',
   USERNAME_TOO_LONG: 'Ditt användarnamn får högst innehålla 25 tecken',
+  EMAIL_INVALID: 'Felaktig mailaddress',
   PASSWORD_EMPTY: 'Ange ett lösenord',
   PASSWORD_TOO_SHORT: 'Ditt lösenord måste vara minst 6 tecken',
 
@@ -30,5 +30,8 @@ module.exports = {
   INVALID_REQUEST_ID: 'Du har begärt ett nytt lösenord.',   // ??
 
   // Request song errors
-  MISSING_FIELD: 'Fyll i alla fält'
+  MISSING_FIELD: 'Fyll i alla fält',
+
+  // Unused
+  CHAT_DISABLED: 'Det går inte att skicka meddelanden just nu'
 }

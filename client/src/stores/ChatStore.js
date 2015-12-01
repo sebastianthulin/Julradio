@@ -75,7 +75,6 @@ ChatStore.deselect = function() {
 }
 
 ChatStore.sendMessage = function(text) {
-  return NotificationStore.error({value: 'CHAT_DISABLED'})
   socket.emit('chat:message', {
     text,
     userId: state.targetUser._id,

@@ -61,11 +61,7 @@ User.logIn = function(creds) {
   })
 }
 
-User.signUp = function(form) {
-  API.post('/user/signup', form, function() {
-    location.reload()
-  })
-}
+User.signUp = (form, cb) => API.post('/user/signup', form, cb)
 
 User.logOut = function() {
   window.location = '/api/user/logout'
