@@ -2,8 +2,9 @@ module.exports = {
   UNKNOWN_ERROR: 'Något gick fel, försök igen',
   NOT_SIGNED_IN: 'Du måste vara inloggad för att göra detta',
   TIMEOUT: 'Sakta ner! Du gör detta för ofta',
-
   TEXT_TOO_LONG: 'Texten är för lång',
+
+  CHAT_DISABLED: 'Det går inte att skicka meddelanden just nu',
 
   // Signin errors
   INCORRECT_PASSWORD: 'Fel lösenord',

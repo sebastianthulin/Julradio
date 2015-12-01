@@ -3,6 +3,7 @@ const socket = require('../services/socket')
 const Radio = new EventEmitter
 const audio = new Audio
 const localStorage = window.localStorage || {}
+const urls = process.env.shoutCastUrls
 
 const state = {
   currentlyPlaying: {},
@@ -13,7 +14,7 @@ const state = {
 }
 
 Radio.play = function() {
-  const url = process.env.shoutCastUrls[Math.floor(Math.random() * process.env.shoutCastUrls.length)]
+  const url = urls[Math.floor(Math.random() * urls.length)]
   audio.src = url + '/;'
   audio.play()
   Radio.emit('playing', true)

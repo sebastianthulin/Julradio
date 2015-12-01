@@ -1,4 +1,4 @@
 const io = require('socket.io-client')
 module.exports = io({
-  transports: ['websocket']
+  transports: ['websocket', 'xhr-polling', 'jsonp-polling']
 })
