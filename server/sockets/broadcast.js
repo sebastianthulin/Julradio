@@ -1,5 +1,7 @@
 'use strict';
 
+const share = require('../share')
+
 var playing = {}
 var history = []
 var tweets = []
@@ -15,21 +17,25 @@ function updateRequests() {
   requests.splice(50)
 }
 
-process.on('message', function(message) {
-  if (message.service === 'RadioStream') {
-    history = message.data.history
-    if (message.data.playing) {
-      playing = message.data.playing
-    }
-  } else if (message.service === 'TweetStream') {
-    tweets = message.data
-    updateRequests()
-  } else if (message.service === 'Requests') {
-    songRequests = message.data
-    updateRequests()
-  } else if (message.service === 'Reservations') {
-    reservations = message.data
+share.on('RadioStream', function(data) {
+  history = data.history
+  if (data.playing) {
+    playing = data.playing
   }
+})
+
+share.on('TweetStream', function(data) {
+  tweets = data
+  updateRequests()
+})
+
+share.on('Requests', function(data) {
+  songRequests = data
+  updateRequests()
+})
+
+share.on('Reservations', function(data) {
+  reservations = data
 })
 
 module.exports = socket => socket

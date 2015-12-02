@@ -4,6 +4,7 @@ const express = require('express')
 const router = express.Router()
 const db = require('../models')
 const io = require('../../server').io
+const share = require('../share')
 const performAction = require('../services/performAction')
 
 router.post('/', function(req, res, next) {
@@ -48,13 +49,7 @@ router.put('/:id', function(req, res, next) {
     }
     throw new Error('SONG_REQUEST_INVALID')
   }).then(function() {
-    process.send({
-      service: 'Requests',
-      data: {
-        type: 'granted',
-        requestId: id
-      }
-    })
+    share.emit('Requests:granted', id)
     res.sendStatus(200)
   }).catch(next)
 })
@@ -67,30 +62,20 @@ router.delete('/:id', function(req, res, next) {
 
 router.delete('/accepted/:id', function(req, res) {
   if (!req.user.roles.admin) {
-    return res.sendStatus(500)
+    res.sendStatus(500)
+  } else {
+    share.emit('Requests:delete', req.params.id)
+    res.sendStatus(200)
   }
-  process.send({
-    service: 'Requests',
-    data: {
-      type: 'delete',
-      requestId: req.params.id
-    }
-  })
-  res.sendStatus(200)
 })
 
 router.delete('/tweet/:id', function(req, res) {
   if (!req.user.roles.admin) {
-    return res.sendStatus(500)
+    res.sendStatus(500)
+  } else {
+    share.emit('TweetStream:delete', req.params.id)
+    res.sendStatus(200)
   }
-  process.send({
-    service: 'TweetStream',
-    data: {
-      type: 'delete',
-      id: req.params.id
-    }
-  })
-  res.sendStatus(200)
 })
 
 module.exports = router

@@ -1,5 +1,6 @@
 const React = require('react')
 const RequestStore = require('../../../stores/RequestStore')
+const TimeSince = require('../../reusable/TimeSince')
 
 class Request extends React.Component {
   accept() {
@@ -11,13 +12,14 @@ class Request extends React.Component {
   }
 
   render() {
-    const { name, song, text} = this.props
+    const { name, song, text, date } = this.props
     const { accepted, removed } = this.state || {}
     return (
       <div className="SongRequest">
         <div className="name">{name}</div>
         <div className="song">{song}</div>
         <div className="text">{text}</div>
+        <TimeSince date={date} />
         {accepted ? (
           <div className="message">
             Accepterad

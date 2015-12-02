@@ -6,6 +6,7 @@ const io = require('socket.io-emitter')({
 })
 const Twitter = require('node-tweet-stream')
 const config = require('../../config')
+const share = require('../share')
 const db = require('../models')
 const tw = new Twitter(config.twitterTokens)
 
@@ -13,7 +14,7 @@ var tweets = []
 
 db.Tweet.find().sort('-_id').limit(50).exec(function(err, docs) {
   tweets = docs
-  process.send(tweets)
+  setTimeout(() => share.emit('TweetStream', tweets), 1000)
 })
 
 function handleTweet(data) {
@@ -30,7 +31,7 @@ function handleTweet(data) {
     tweets.splice(50, 1)
   }
 
-  process.send(tweets)
+  share.emit('TweetStream', tweets)
   io.emit('request', tweet)
 }
 
@@ -39,17 +40,11 @@ function deleteTweet(id) {
   if (i > -1) {
     tweets.splice(i, 1)
     db.Tweet.findByIdAndRemove(id).exec()
-    process.send(tweets)
+    share.emit('TweetStream', tweets)
   }
 }
 
 config.track && tw.track(config.track)
 tw.on('error', console.error.bind(console))
 tw.on('tweet', handleTweet)
-
-process.on('message', function(data) {
-  switch (data.type) {
-    case 'delete':
-      deleteTweet(data.id); break
-  }
-})
+share.on('TweetStream:delete', deleteTweet)

@@ -2,6 +2,7 @@
 
 const express = require('express')
 const router = express.Router()
+const share = require('../share')
 const db = require('../models')
 
 function generateData(req, res, next) {
@@ -39,24 +40,14 @@ router.use(function(req, res, next) {
 })
 
 router.post('/', generateData, function(req, res) {
-  process.send({
-    service: 'Reservations',
-    data: {
-      type: 'create',
-      opts: req.reservation
-    }
-  })
+  share.emit('Reservations:create', req.reservation)
   res.sendStatus(200)
 })
 
 router.put('/:id', generateData, function(req, res) {
-  process.send({
-    service: 'Reservations',
-    data: {
-      type: 'edit',
-      id: req.params.id,
-      opts: req.reservation
-    }
+  share.emit('Reservations:edit', {
+    id: req.params.id,
+    opts: req.reservation
   })
   res.sendStatus(200)
 })
@@ -64,13 +55,7 @@ router.put('/:id', generateData, function(req, res) {
 router.delete('/:id', function(req, res, next) {
   db.Reservation.findById(req.params.id).exec().then(function(doc) {
     if (doc.user.toString() == req.user._id || req.user.roles.admin) {
-      process.send({
-        service: 'Reservations',
-        data: {
-          type: 'remove',
-          id: req.params.id
-        }
-      })
+      share.emit('Reservations:remove', req.params.id)
       res.sendStatus(200)
     } else {
       throw new Error('UNAUTHORISED')

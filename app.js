@@ -4,20 +4,44 @@ const cluster = require('cluster')
 const childProcess = require('child_process')
 const os = require('os')
 const config = require('./config')
-const forks = {}
+const workers = []
+const subscriptions = {}
 
-function fork(service) {
-  console.log(`Forking ${service}`)
-  const child = childProcess.fork(`server/workers/${service}`)
-  forks[service] = child
+function handleWorker(worker) {
+  workers.push(worker)
 
-  child.on('message', function(data) {
-    for (let id in cluster.workers) {
-      cluster.workers[id].send({ data, service })
+  worker.on('message', function(data) {
+    if (data.subscribe) {
+      subscriptions[data.subscribe] = subscriptions[data.subscribe] || []
+      subscriptions[data.subscribe].push(worker)
+    }
+    if (data.event) {
+      const workers = subscriptions[data.event]
+      if (workers) {
+        workers.forEach(worker => worker.send(data))
+      }
     }
   })
 
-  child.on('exit', function() {
+  worker.on('exit', function() {
+    workers.splice(workers.indexOf(worker), 1)
+    for (let event in subscriptions) {
+      let i = subscriptions[event].length
+      while (i--) {
+        if (subscriptions[event][i] === worker) {
+          subscriptions[event].splice(i, 1)
+        }
+      }
+    }
+  })
+}
+
+function fork(service) {
+  console.log(`Forking ${service}`)
+  const worker = childProcess.fork(`server/workers/${service}`)
+  handleWorker(worker)
+
+  worker.on('exit', function() {
     console.log(`${service} exited`)
     setTimeout(() => fork(service), 10000)
   })
@@ -28,14 +52,8 @@ if (cluster.isMaster) {
   console.log(`Master cluster setting up ${numWorkers} workers...`)
 
   for (let i = 0; i < numWorkers; i++) {
-    cluster.fork()
+    handleWorker(cluster.fork())
   }
-
-  cluster.on('message', function(data) {
-    if (data.service && forks[data.service]) {
-      forks[data.service].send(data.data)
-    }
-  })
 
   cluster.on('online', function(worker) {
     console.log(`Worker ${worker.process.pid} is online`)
@@ -44,7 +62,7 @@ if (cluster.isMaster) {
   cluster.on('exit', function(worker, code, signal) {
     console.log(`Worker ${worker.process.pid} died with code: ${code} and signal: ${signal}`)
     console.log('Starting a new worker')
-    cluster.fork()
+    handleWorker(cluster.fork())
   })
 
   ;[

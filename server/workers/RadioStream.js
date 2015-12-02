@@ -6,6 +6,7 @@ const io = require('socket.io-emitter')({
 })
 const radio = require('radio-stream')
 const config = require('../../config')
+const share = require('../share')
 const db = require('../models')
 const urls = config.shoutCastUrls
 
@@ -14,7 +15,7 @@ var history = []
 
 db.Song.find().sort('-_id').limit(30).exec(function(err, docs) {
   history = docs.reverse()
-  process.send({ history })
+  setTimeout(() => share.emit('RadioStream', { history }), 1000)
 })
 
 if (!urls || !urls[0]) {
@@ -42,7 +43,7 @@ stream.on('metadata', function(data) {
 
   playing = song
 
-  process.send({ playing, history })
+  share.emit('RadioStream', { playing, history })
   io.emit('metadata', { playing })
 
   db.Song.findOne().sort('-_id').exec(function(err, doc) {
