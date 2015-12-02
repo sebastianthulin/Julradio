@@ -47,7 +47,7 @@ class Player extends React.Component {
               {program && <Link className="host" to={'/@' + program.user.username} children={program.user.name} />}
               {!program && <div className="host">Slingan</div>}
               <div className="item hampurgerMenu" ref="hampburger">
-                <SVG.Dots onClick={this.openMediaMenu.bind(this)} />
+                <SVG.Dots className="dots" onClick={this.openMediaMenu.bind(this)} />
                 <Hampburger visible={mediaMenu} volume={volume} />
               </div>
             </div>

@@ -7,5 +7,9 @@ module.exports = {
   Menu: require('./Menu'),
   Favorite: require('./Favorite'),
   FavoriteOutlined: require('./FavoriteOutlined'),
-  Dots: require('./Dots')
+  Dots: require('./Dots'),
+  Android: require('./Android'),
+  Apple: require('./Apple'),
+  iTunes: require('./iTunes'),
+  VLC: require('./VLC')
 }

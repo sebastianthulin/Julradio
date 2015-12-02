@@ -1,8 +1,10 @@
 {
   "name": "julradio",
-  "version": "3.0.0-a",
+  "version": "4.0.0",
   "scripts": {
-    "deploy": "NODE_ENV=production gulp build && NODE_ENV=production node server.js"
+    "build": "NODE_ENV=production gulp build",
+    "start": "NODE_ENV=production pm2 start app.js --name jr",
+    "restart": "pm2 restart jr"
   },
   "dependencies": {
     "body-parser": "^1.14.1",
@@ -22,7 +24,7 @@
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
     "react-router": "^1.0.0",
-    "redis": "^2.4.1",
+    "redis": "^2.4.2",
     "socket.io": "^1.3.7",
     "socket.io-client": "^1.3.7",
     "socket.io-emitter": "^0.2.0",
@@ -30,8 +32,8 @@
     "superagent": "^1.4.0"
   },
   "devDependencies": {
-    "babel-preset-es2015": "^6.2.4",
-    "babel-preset-react": "^6.2.4",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-react": "^6.1.18",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
     "envify": "^3.4.0",
