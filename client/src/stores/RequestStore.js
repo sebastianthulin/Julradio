@@ -25,12 +25,13 @@ socket.on('request', function(request) {
   RequestStore.emit('requests', requests)
 })
 
-RequestStore.deleteTweet = (id, cb) => API.delete('/request/tweet/' + id, cb)
-RequestStore.deleteRequest = (id, cb) => API.delete('/request/accepted/' + id, cb)
 RequestStore.create = (opts, cb) => API.post('/request', opts, cb)
+RequestStore.fetch = cb => API.get('/request', cb)
 RequestStore.accept = (id, cb) => API.put('/request/' + id, cb)
 RequestStore.deny = (id, cb) => API.delete('/request/' + id, cb)
-RequestStore.fetch = cb => API.get('/request', cb)
+RequestStore.wipe = cb => API.delete('/request/all', cb)
+RequestStore.deleteTweet = (id, cb) => API.delete('/request/tweet/' + id, cb)
+RequestStore.deleteRequest = (id, cb) => API.delete('/request/accepted/' + id, cb)
 
 RequestStore.subscribe = function(handler) {
   handler(requests)

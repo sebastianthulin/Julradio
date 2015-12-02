@@ -51,11 +51,18 @@ class ManageRequests extends React.Component {
     RequestStore.fetch(requests => this.setState({ requests }))
   }
 
+  wipe() {
+    if (confirm('Vill du ta bort alla önskningar?')) {
+      RequestStore.wipe(this.refresh.bind(this))
+    }
+  }
+
   render() {
     const { requests } = this.state
     return (
       <div>
         <button className="btn" onClick={this.refresh.bind(this)}>Refresh</button>
+        <button className="btn" onClick={this.wipe.bind(this)}>Ta bort alla</button>
         <div className="requestContainer">
           {requests.map(request => <Request key={request._id} {...request} />)}
         </div>

@@ -5,7 +5,6 @@ const Modal = require('../../../services/Modal')
 const User = require('../../../services/User')
 const RadioStore = require('../../../stores/RadioStore')
 const ShitStore = require('../../../stores/ShitStore')
-const UIStore = require('../../../stores/UIStore')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const SVG = require('../../svg')
 const Snowfall = require('../Snowfall')
@@ -19,12 +18,6 @@ class Sidebar extends React.Component {
     RadioStore.subscribe('onair', onair => this.setState({ onair }))
     ShitStore.subscribe('message', unseenMessages => this.setState({ unseenMessages }))
     ShitStore.subscribe('wallPost', unseenWallPosts => this.setState({ unseenWallPosts }))
-  }
-
-  handleClick(ev) {
-    if (ev.target.tagName === 'A' && ev.metaKey === false) {
-      UIStore.close('SIDEBAR_OPEN')
-    }
   }
 
   renderUser() {
@@ -64,7 +57,7 @@ class Sidebar extends React.Component {
     const playerLess = window.__PLAYERLESS__
 
     return (
-      <div id="Sidebar" className={cx({ playerLess })} onClick={this.handleClick.bind(this)}>
+      <div id="Sidebar" className={cx({ playerLess })}>
         <Snowfall
           active={onair}
           count={500}

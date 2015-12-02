@@ -23,7 +23,7 @@ const API = {}
 
 ;['get', 'post', 'put', 'delete'].forEach(function(method) {
   API[method] = function() {
-    send.call(null, method, [...arguments])
+    send(method, [...arguments])
   }
 })
 

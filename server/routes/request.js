@@ -54,6 +54,12 @@ router.put('/:id', function(req, res, next) {
   }).catch(next)
 })
 
+router.delete('/all', function(req, res, next) {
+  db.SongRequest.remove({granted: null}).exec().then(function() {
+    res.sendStatus(200)
+  }).catch(next)
+})
+
 router.delete('/:id', function(req, res, next) {
   db.SongRequest.findByIdAndRemove(req.params.id).exec().then(function() {
     res.sendStatus(200)

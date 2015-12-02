@@ -45,6 +45,10 @@ class App extends React.Component {
     UIStore.subscribe(UI => this.setState({ UI }))
   }
 
+  componentWillReceiveProps() {
+    UIStore.close('SIDEBAR_OPEN')
+  }
+
   closeSidebar() {
     if (this.state.UI.SIDEBAR_OPEN) {
       UIStore.close('SIDEBAR_OPEN')
