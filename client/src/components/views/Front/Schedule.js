@@ -15,6 +15,7 @@ const Reservation = ({ startDate, endDate, description, user }) => (
 
 class Schedule extends React.Component {
   componentWillMount() {
+    this.state = {reservations: []}
     this.unsubscribe = ReservationStore.subscribe('reservations', reservations => this.setState({ reservations }))
   }
 
@@ -23,10 +24,11 @@ class Schedule extends React.Component {
   }
 
   render() {
-    const { reservations } = this.state || {}
+    const { reservations } = this.state
     const fn = r => <Reservation key={r._id} {...r} />
-    const today = (reservations || []).filter(r => r.today).map(fn)
-    const tomorrow = (reservations || []).filter(r => r.tomorrow).map(fn)
+    const date = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
+    const today = reservations.filter(r => r.startDate.getDate() === date).map(fn)
+    const tomorrow = reservations.filter(r => r.startDate.getDate() === date + 1).map(fn)
 
     return today.length > 0 || tomorrow.length > 0 ? (
       <div id="Schedule">

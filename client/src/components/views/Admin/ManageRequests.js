@@ -12,7 +12,7 @@ class Request extends React.Component {
   }
 
   render() {
-    const { name, song, text, date } = this.props
+    const { name, song, text, date, ip } = this.props
     const { accepted, removed } = this.state || {}
     return (
       <div className="SongRequest">
@@ -20,6 +20,7 @@ class Request extends React.Component {
         <div className="song">{song}</div>
         <div className="text">{text}</div>
         <TimeSince date={date} />
+        <div>{ip}</div>
         {accepted ? (
           <div className="message">
             Accepterad

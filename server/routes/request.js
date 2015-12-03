@@ -11,7 +11,8 @@ router.post('/', function(req, res, next) {
   const request = new db.SongRequest({
     name: req.body.name,
     song: req.body.song,
-    text: req.body.text
+    text: req.body.text,
+    ip: req.ip
   })
 
   request.validate(function(err) {

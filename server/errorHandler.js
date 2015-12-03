@@ -20,7 +20,7 @@ function errorHandler(err, req, res, next) {
   let i = error.length
   while (i--) {
     if (!errors[error[i]]) {
-      console.error(err)
+      console.error(err, req.ip, req.user ? req.user.username : '')
       error[i] = 'UNKNOWN_ERROR'
     }
   }

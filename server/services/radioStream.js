@@ -156,7 +156,7 @@ ReadStream.prototype.onMetaData = function(chunk) {
     } else {
       this.metaBuffer = metaChunk;
     }
-    const utf8String = iconv.decode(new Buffer(this.metaBuffer), 'ISO-8859-1')
+    const utf8String = iconv.decode(this.metaBuffer, 'ISO-8859-1')
     this.emit("metadata", utf8String)
     //console.error("Meta Bytes Recieved: " + this.counter + ", " + this.metaBuffer.length);
     this.metaBuffer = null;

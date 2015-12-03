@@ -31,12 +31,9 @@ ReservationStore.update = (id, opts, cb) => API.put('/reservations/' + id, opts,
 ReservationStore.delete = (id, cb) => API.delete('/reservations/' + id, cb)
 
 ReservationStore.handleReservations = function(reservations) {
-  const today = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
   reservations.forEach(res => {
     res.startDate = new Date(res.startDate)
     res.endDate = new Date(res.endDate)
-    res.today = res.startDate.getDate() === today
-    res.tomorrow = res.startDate.getDate() === today + 1
   })
   state.reservations = reservations
   tick()

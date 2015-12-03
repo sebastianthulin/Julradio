@@ -9,13 +9,13 @@ const db = require('../models')
 
 var requests = []
 
-db.SongRequest.find({granted: {$ne: null}}).sort('-_id').limit(50).exec(function(err, docs) {
+db.SongRequest.find({granted: {$ne: null}}).select('-ip').sort('-_id').limit(50).exec(function(err, docs) {
   requests = docs.reverse()
   setTimeout(() => share.emit('Requests', requests), 1000)
 })
 
 share.on('Requests:granted', function(id) {
-  db.SongRequest.findById(id).exec().then(function(request) {
+  db.SongRequest.findById(id).select('-ip').exec().then(function(request) {
     requests.push(request)
     share.emit('Requests', requests)
     io.emit('request', request)

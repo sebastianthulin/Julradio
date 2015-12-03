@@ -16,6 +16,10 @@ const schema = new Schema({
     type: String,
     required: true
   },
+  ip: {
+    type: String,
+    // required: true
+  },
   granted: Date,
   date: {
     type: Date,
