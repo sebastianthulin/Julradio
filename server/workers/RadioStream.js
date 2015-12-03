@@ -4,7 +4,7 @@ const io = require('socket.io-emitter')({
   host: '127.0.0.1',
   port: 6379
 })
-const radio = require('radio-stream')
+const radio = require('../services/radioStream')
 const config = require('../../config')
 const share = require('../share')
 const db = require('../models')
@@ -30,7 +30,11 @@ stream.on('close', process.exit)
 
 stream.on('metadata', function(data) {
   const title = radio.parseMetadata(data).StreamTitle
-  const song = new db.Song({ title })
+  const song = new db.Song({
+    title,
+    artist: title.split(' - ')[0],
+    song: title.split(' - ')[1]
+  })
 
   if (!title || title === playing.title) {
     return

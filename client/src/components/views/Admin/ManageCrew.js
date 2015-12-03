@@ -58,9 +58,9 @@ class ManageCrew extends React.Component {
     return (
       <tr key={user._id}>
         <td><Link to={`/@${user.username}`}>{user.username}</Link></td>
-        <td><button className="standardBtn" onClick={this.moveUp.bind(this, user)}>Flytta upp</button></td>
-        <td><button className="standardBtn" onClick={this.moveDown.bind(this, user)}>Flytta ner</button></td>
-        <td><button className="standardBtn" onClick={this.remove.bind(this, user)}>Ta bort</button></td>
+        <td><button className="btn" onClick={this.moveUp.bind(this, user)}>Flytta upp</button></td>
+        <td><button className="btn" onClick={this.moveDown.bind(this, user)}>Flytta ner</button></td>
+        <td><button className="btn" onClick={this.remove.bind(this, user)}>Ta bort</button></td>
       </tr>
     )
   }
@@ -68,7 +68,7 @@ class ManageCrew extends React.Component {
   render() {
     const { crew } = this.state || {}
     return (
-      <div>
+      <div id="ManageCrew">
         <h3>Medarbetare</h3>
         <table>
           <tbody>

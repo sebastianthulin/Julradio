@@ -8,6 +8,8 @@ const schema = new Schema({
     type: String,
     required: true
   },
+  artist: String,
+  song: String,
   date: {
     type: Date,
     default: Date.now

@@ -28,26 +28,22 @@ class Schedule extends React.Component {
     const today = (reservations || []).filter(r => r.today).map(fn)
     const tomorrow = (reservations || []).filter(r => r.tomorrow).map(fn)
 
-    return reservations && reservations.length > 0 ? (
-        <div id="Schedule">
-          {today.length > 0 && (
-            <section className="fst">
-              <header>Idag</header>
-              {today}
-            </section>
-          )}
-          {tomorrow.length > 0 && (
-            <section className="snd">
-              <header>Imorgon</header>
-              {tomorrow}
-            </section>
-          )}
-        </div>
-    ) : (
-      <div className="somethingcool">
-
+    return today.length > 0 || tomorrow.length > 0 ? (
+      <div id="Schedule">
+        {today.length > 0 && (
+          <section className="fst">
+            <header>Idag</header>
+            {today}
+          </section>
+        )}
+        {tomorrow.length > 0 && (
+          <section className="snd">
+            <header>Imorgon</header>
+            {tomorrow}
+          </section>
+        )}
       </div>
-    )
+    ) : null
   }
 }
 

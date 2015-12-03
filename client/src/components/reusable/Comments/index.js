@@ -73,7 +73,7 @@ class Comments extends React.Component {
           user={user}
           admin={admin}
         />)}
-        {comments.length < totalThreads && <button className="standardBtn" onClick={this.loadMore.bind(this)}>Visa äldre meddelanden</button>}
+        {comments.length < totalThreads && <button className="btn" onClick={this.loadMore.bind(this)}>Visa äldre meddelanden</button>}
       </div>
     )
   }
