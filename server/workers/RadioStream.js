@@ -4,7 +4,7 @@ const io = require('socket.io-emitter')({
   host: '127.0.0.1',
   port: 6379
 })
-const radio = require('../services/radioStream')
+const ReadStream = require('../services/ReadStream')
 const config = require('../../config')
 const share = require('../share')
 const db = require('../models')
@@ -23,13 +23,13 @@ if (!urls || !urls[0]) {
 }
 
 const url = urls[Math.floor(Math.random() * urls.length)]
-const stream = new radio.ReadStream(url)
+const stream = new ReadStream(url)
 stream.on('connect', () => console.log('Connected to SHOUTcast server'))
 stream.on('error', err => console.log(err))
 stream.on('close', process.exit)
 
 stream.on('metadata', function(data) {
-  const title = radio.parseMetadata(data).StreamTitle
+  const title = data.StreamTitle
   const song = new db.Song({
     title,
     artist: title.split(' - ')[0],

@@ -1,15 +1,19 @@
-// based on radio-stream 0.0.1
-// https://www.npmjs.com/package/radio-stream
+ 'use strict';
+ 
+/**
+ * based on radio-stream 0.0.1
+ * https://www.npmjs.com/package/radio-stream
+ */
 
-const R = '\r'.charCodeAt(0);
-const N = '\n'.charCodeAt(0);
-const META_BLOCK_SIZE = 16;
+const R = '\r'.charCodeAt(0)
+const N = '\n'.charCodeAt(0)
+const META_BLOCK_SIZE = 16
 
 const iconv = require('iconv-lite')
-var fs = require("fs");
-var net = require("net");
-var parse = require("url").parse;
-var EventEmitter = require("events").EventEmitter;
+const fs = require('fs')
+const net = require('net')
+const parse = require('url').parse
+const EventEmitter = require('events').EventEmitter
 
 
 /**
@@ -19,30 +23,24 @@ var EventEmitter = require("events").EventEmitter;
  * which occurs after a metadata chunk has been recieved and parsed, for your
  * Node application to do something useful with.
  */
-function ReadStream(url, retainMetadata) {
+function ReadStream(url) {
+  this.url = new String(url)
+  var parsedUrl = parse(url)
+  parsedUrl.__proto__ = this.url.__proto__
+  this.url.__proto__ = parsedUrl
 
-  this.url = new String(url);  
-  var parsedUrl = parse(url);
-  parsedUrl.__proto__ = this.url.__proto__;
-  this.url.__proto__ = parsedUrl;
-  
-  // Not currently used:
-  // TODO: If this is true, emit the metadata bytes as well
-  this.retainMetadata = retainMetadata;
+  this.connection = net.createConnection(this.url.port || (this.url.protocol == "https:" ? 443 : 80), this.url.hostname)
+  this.connection.on("connect", this.onConnect.bind(this))
+  this.connection.on("close", this.onClose.bind(this))
+  this.connection.on("error", this.onError.bind(this))
 
-  this.connection = net.createConnection(this.url.port || (this.url.protocol == "https:" ? 443 : 80), this.url.hostname);
-  this.connection.on("connect", this.onConnect.bind(this));
-  this.connection.on("close", this.onClose.bind(this));
-  this.connection.on("error", this.onError.bind(this));
-
-  this.bindedOnMetaData = this.onMetaData.bind(this);
-  this.bindedOnMetaLengthByte = this.onMetaLengthByte.bind(this);
-  this.connection.on("data", (this.bindedOnData = this.onDataHeader.bind(this)));
+  this.bindedOnMetaData = this.onMetaData.bind(this)
+  this.bindedOnMetaLengthByte = this.onMetaLengthByte.bind(this)
+  this.connection.on("data", (this.bindedOnData = this.onDataHeader.bind(this)))
   
   // The counter used to keep track of count of the audio/metadata bytes parsed.
-  this.counter = 0;
+  this.counter = 0
 }
-exports.ReadStream = ReadStream;
 
 // Make `ReadStream` inherit from `EventEmitter`
 ReadStream.prototype = Object.create(EventEmitter.prototype, {
@@ -51,13 +49,6 @@ ReadStream.prototype = Object.create(EventEmitter.prototype, {
     enumerable: false
   }
 });
-
-exports.appendBuffer = function(a, b) {
-  var temp = new Buffer(a.length + b.length);
-  a.copy(temp, 0, 0);
-  b.copy(temp, a.length, 0);
-  return temp;
-}
 
 // False immediately after instantiation, set to `true` right before the
 // 'connect' event is fired.
@@ -105,7 +96,7 @@ ReadStream.prototype.onData = function(chunk) {
 ReadStream.prototype.onDataHeader = function(chunk) {
   // Append 'chunk' into the 'response' variable
   if (this.headerBuffer) {
-    this.headerBuffer = exports.appendBuffer(this.headerBuffer, chunk);
+    this.headerBuffer = appendBuffer(this.headerBuffer, chunk);
   } else {
     this.headerBuffer = chunk;
   }
@@ -152,12 +143,12 @@ ReadStream.prototype.onMetaData = function(chunk) {
     var metaChunk = chunk.slice(0, metaEnd);
     
     if (this.metaBuffer) {
-      this.metaBuffer = exports.appendBuffer(this.metaBuffer, metaChunk);
+      this.metaBuffer = appendBuffer(this.metaBuffer, metaChunk);
     } else {
       this.metaBuffer = metaChunk;
     }
     const utf8String = iconv.decode(this.metaBuffer, 'ISO-8859-1')
-    this.emit("metadata", utf8String)
+    this.emit("metadata", parseMetadata(utf8String))
     //console.error("Meta Bytes Recieved: " + this.counter + ", " + this.metaBuffer.length);
     this.metaBuffer = null;
     this.metaLength = null;
@@ -172,7 +163,7 @@ ReadStream.prototype.onMetaData = function(chunk) {
     }
   } else {
     if (this.metaBuffer) {
-      this.metaBuffer = exports.appendBuffer(this.metaBuffer, chunk);
+      this.metaBuffer = appendBuffer(this.metaBuffer, chunk);
     } else {
       this.metaBuffer = chunk;
     }
@@ -278,19 +269,12 @@ ReadStream.prototype.destroy = function() {
   this.readable = false;
 }
 
-
-/**
- * Returns a new ReadStream for the given Internet Radio URL.
- * First arg is the URL to the radio stream. Second arg is a
- * boolean indicating whether or not to include the metadata
- * chunks in the 'data' events. Defaults to 'false' (metadata,
- * is stripped, parsed, and formatted into the 'metadata' event).
- */
-function createReadStream(url, retainMetadata) {
-  return new ReadStream(url, retainMetadata);
+function appendBuffer(a, b) {
+  var temp = new Buffer(a.length + b.length);
+  a.copy(temp, 0, 0);
+  b.copy(temp, a.length, 0);
+  return temp;
 }
-exports.createReadStream = createReadStream;
-
 
 /**
  * Accepts the String passed from the 'metadata' event, and parses it into
@@ -307,7 +291,6 @@ function parseMetadata(metadata) {
   }
   return rtn;
 }
-exports.parseMetadata = parseMetadata;
 
 function stripNulls(str) {
   while(str.indexOf('\0') != -1) {
@@ -315,3 +298,5 @@ function stripNulls(str) {
   }
   return str;
 }
+
+module.exports = ReadStream

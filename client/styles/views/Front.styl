@@ -3,20 +3,31 @@
   text-align center
   border-radius 5px
   overflow hidden
+  &.expanded section
+    display block
   section
     padding 20px 0
-    &.fst
+    display none
+    &:first-child
+      display block
+    &:nth-child(odd)
       background rgba(245, 55, 55, 0.2)
-    &.snd
+    &:nth-child(even)
       background rgba(230, 103, 103, 0.11)
+  footer
+    padding 10px 0
+    background rgba(245, 55, 55, 0.2)
+    span
+      cursor pointer
+      noUserSelect()
 
   header
-    width 110px
+    display table
     margin 0 auto
     padding-bottom 5px
     font-size 22px
     font-weight 600
-    border-bottom 2px solid #FFF
+    border-bottom 2px solid rgba(255, 255, 255, 0.5)
 
 .Reservation
   margin-top 20px

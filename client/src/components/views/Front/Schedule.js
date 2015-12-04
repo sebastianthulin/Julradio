@@ -1,5 +1,6 @@
 const React = require('react')
 const { Link } = require('react-router')
+const cx = require('classnames')
 const dateFormat = require('dateformat')
 const ReservationStore = require('../../../stores/ReservationStore')
 
@@ -15,7 +16,6 @@ const Reservation = ({ startDate, endDate, description, user }) => (
 
 class Schedule extends React.Component {
   componentWillMount() {
-    this.state = {reservations: []}
     this.unsubscribe = ReservationStore.subscribe('reservations', reservations => this.setState({ reservations }))
   }
 
@@ -23,27 +23,41 @@ class Schedule extends React.Component {
     this.unsubscribe()
   }
 
+  expand() {
+    this.setState({expanded: true})
+  }
+
   render() {
-    const { reservations } = this.state
+    const { reservations, expanded } = this.state
     const fn = r => <Reservation key={r._id} {...r} />
     const date = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
     const today = reservations.filter(r => r.startDate.getDate() === date).map(fn)
     const tomorrow = reservations.filter(r => r.startDate.getDate() === date + 1).map(fn)
+    const dayAfterTomorrow = reservations.filter(r => r.startDate.getDate() === date + 2).map(fn)
 
-    return today.length > 0 || tomorrow.length > 0 ? (
-      <div id="Schedule">
+    return today.length > 0 || tomorrow.length > 0 || dayAfterTomorrow.length > 0 ? (
+      <div id="Schedule" className={cx({ expanded })}>
         {today.length > 0 && (
-          <section className="fst">
+          <section>
             <header>Idag</header>
             {today}
           </section>
         )}
         {tomorrow.length > 0 && (
-          <section className="snd">
+          <section>
             <header>Imorgon</header>
             {tomorrow}
           </section>
         )}
+        {dayAfterTomorrow.length > 0 && (
+          <section>
+            <header>Övermorgon</header>
+            {dayAfterTomorrow}
+          </section>
+        )}
+        {!expanded && <footer>
+          <span onClick={this.expand.bind(this)}>Visa hela...</span>
+        </footer>}
       </div>
     ) : null
   }
