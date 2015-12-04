@@ -19,8 +19,7 @@ class Request extends React.Component {
         <div className="name">{name}</div>
         <div className="song">{song}</div>
         <div className="text">{text}</div>
-        <TimeSince date={date} />
-        <div>{ip}</div>
+        <span className="iptime"><TimeSince date={date} /> {ip}</span>
         {accepted ? (
           <div className="message">
             Accepterad

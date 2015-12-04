@@ -4,7 +4,7 @@ const socket = require('../services/socket')
 const ReservationStore = new EventEmitter
 
 const state = {
-  reservations: null,
+  reservations: [],
   onair: null
 }
 
@@ -18,7 +18,7 @@ function tick() {
       return
     }
   }
-  state.onair && setOnAir(null)
+  state.onair && setOnAir(null) 
 }
 
 function setOnAir(reservation) {
