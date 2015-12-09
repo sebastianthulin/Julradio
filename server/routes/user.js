@@ -72,8 +72,7 @@ router.get('/profile', function getUser(req, res) {
       return prev
     }, {})
     res.send(result)
-  }).catch(function(err) {
-    console.error(err)
+  }).catch(function() {
     res.sendStatus(500)
   })
 })
@@ -251,6 +250,8 @@ router.post('/profilepicture', function(req, res, next) {
   upload(req, res, function(err) {
     if (err) {
       console.error(err, '/profilepicture INVALID_IMAGE')
+      return next(new Error('INVALID_IMAGE'))
+    } else if (!req.file) {
       return next(new Error('INVALID_IMAGE'))
     }
 

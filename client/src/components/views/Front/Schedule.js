@@ -35,7 +35,12 @@ class Schedule extends React.Component {
     const tomorrow = reservations.filter(r => r.startDate.getDate() === date + 1).map(fn)
     const dayAfterTomorrow = reservations.filter(r => r.startDate.getDate() === date + 2).map(fn)
 
-    return today.length > 0 || tomorrow.length > 0 || dayAfterTomorrow.length > 0 ? (
+    let upcomingDaysCount = 0
+    today.length > 0 && upcomingDaysCount++
+    tomorrow.length > 0 && upcomingDaysCount++
+    dayAfterTomorrow.length > 0 && upcomingDaysCount++
+
+    return upcomingDaysCount === 0 ? null : (
       <div id="Schedule" className={cx({ expanded })}>
         {today.length > 0 && (
           <section>
@@ -55,11 +60,11 @@ class Schedule extends React.Component {
             {dayAfterTomorrow}
           </section>
         )}
-        {!expanded && <footer>
-          <span onClick={this.expand.bind(this)}>Visa hela...</span>
+        {!expanded && upcomingDaysCount > 1 && <footer>
+          <span onClick={this.expand.bind(this)}>Visa mer...</span>
         </footer>}
       </div>
-    ) : null
+    )
   }
 }
 

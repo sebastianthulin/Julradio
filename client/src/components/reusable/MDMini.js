@@ -51,7 +51,7 @@ class MDMini extends React.Component {
   handleClick(ev) {
     if (ev.target.tagName === 'A' && ev.metaKey === false) {
       ev.preventDefault()
-      history.pushState(null, ev.target.pathname)
+      history.push(ev.target.pathname)
     }
   }
 

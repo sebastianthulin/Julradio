@@ -9,7 +9,7 @@ class Article extends React.Component {
     if (ev.target.tagName === 'A' && ev.metaKey === false) {
       if (ev.target.host === window.location.host) {
         ev.preventDefault()
-        history.pushState(null, ev.target.pathname)
+        history.push(ev.target.pathname)
       }
     }
   }

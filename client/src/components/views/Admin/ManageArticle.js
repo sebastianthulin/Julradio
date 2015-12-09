@@ -36,14 +36,14 @@ class ManageArticle extends React.Component {
     }
 
     ArticleStore.create(this.getOpts(), article => {
-      this.props.history.pushState(null, `/admin/articles/${article._id}`)
+      this.props.history.push(`/admin/articles/${article._id}`)
     })
   }
 
   delete() {
     if (confirm('Säkert?')) {
       ArticleStore.delete(this.id)
-      this.props.history.pushState(null, '/admin/articles')
+      this.props.history.push('/admin/articles')
     }
   }
 
@@ -61,7 +61,7 @@ class ManageArticle extends React.Component {
   }
 
   cancel() {
-    this.props.history.pushState(null, '/admin/articles')
+    this.props.history.push('/admin/articles')
   }
 
   render() {

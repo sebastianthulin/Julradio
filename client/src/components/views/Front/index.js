@@ -27,7 +27,7 @@ class Front extends React.Component {
               </Link>
             </div>
           ))}
-          {articles.length > 0 && <Link to="/archive">Läs gamla nyheter på arkivet!</Link>}
+          {articles.length > 0 && <Link to="/archive" style={{display: 'table', marginBottom: 20}}>Läs gamla nyheter på arkivet!</Link>}
         </div>
         <div className="oneThird column">
           <Schedule />
