@@ -63,7 +63,7 @@ router.get('/profile', function getUser(req, res) {
     return Promise.all(query.map(function(type) {
       switch (type) {
         case 'profile': return getUserDoc(userId)
-        case 'block': return Blockages.get(req.session.uid, userId, true)
+        case 'block': return Blockages.get(req.userId, userId, true)
       }
     }))
   }).then(function(data) {
@@ -117,7 +117,7 @@ router.post('/login', function(req, res, next) {
       } else if (user.auth(req.body.password)) {
         user.lastVisit = Date.now()
         user.save()
-        req.session.uid = user.id
+        req.session.uid = user._id
         res.send({ user })
       } else {
         throw new Error('INCORRECT_PASSWORD')
@@ -140,10 +140,10 @@ router.post('/block', function(req, res) {
   // block a user
   const b = req.body
   db.Block.findOneAndUpdate({
-    from: req.session.uid,
+    from: req.userId,
     target: b.userId
   }, {
-    from: req.session.uid,
+    from: req.userId,
     target: b.userId
   }, {
     upsert: true,
@@ -158,7 +158,7 @@ router.post('/block', function(req, res) {
 router.delete('/block/:userId', function(req, res) {
   // unblock a user
   db.Block.findOneAndRemove({
-    from: req.session.uid,
+    from: req.userId,
     target: req.params.userId
   }).exec().then(function() {
     res.sendStatus(200)
@@ -193,7 +193,7 @@ router.put('/settings', function(req, res, next) {
     }
   }
 
-  db.User.findByIdAndUpdate(req.user._id, {
+  db.User.findByIdAndUpdate(req.userId, {
     name: b.name,
     gender: b.gender,
     location: b.location,
@@ -209,7 +209,7 @@ router.put('/settings', function(req, res, next) {
 
 router.put('/settings2', function(req, res, next) {
   const b = req.body
-  db.User.findById(req.session.uid).exec().then(function(user) {
+  db.User.findById(req.userId).exec().then(function(user) {
     if (!user.auth(b.auth)) {
       throw new Error('INCORRECT_PASSWORD')
     }
@@ -227,7 +227,7 @@ router.put('/settings2', function(req, res, next) {
 })
 
 router.delete('/profilepicture', function(req, res, next) {
-  db.User.findByIdAndUpdate(req.user._id, {
+  db.User.findByIdAndUpdate(req.userId, {
     picture: undefined
   }).exec().then(function(user) {
     if (user.picture) {
@@ -246,7 +246,7 @@ router.delete('/profilepicture', function(req, res, next) {
 })
 
 router.post('/profilepicture', function(req, res, next) {
-  const userId = req.session.uid
+  const userId = req.userId
   upload(req, res, function(err) {
     if (err) {
       console.error(err, '/profilepicture INVALID_IMAGE')

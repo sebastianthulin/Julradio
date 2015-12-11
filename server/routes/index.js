@@ -8,11 +8,11 @@ const config = require('../../config')
 const pictureRoutes = {}
 
 router.use(function(req, res, next) {
-  const uid = req.session.uid
+  req.userId = req.session.uid
   res.setHeader('Expires', '-1')
   res.setHeader('Cache-Control', 'must-revalidate, private')
-  if (!uid) return next()
-  db.User.findById(uid).select('-hash').lean().exec().then(function(user) {
+  if (!req.userId) return next()
+  db.User.findById(req.userId).select('-hash').lean().exec().then(function(user) {
     if (!user || (user && user.banned)) {
       // Disauth user
       throw new Error()

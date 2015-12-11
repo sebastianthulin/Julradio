@@ -5,7 +5,7 @@ const router = express.Router()
 const db = require('../models')
 
 router.use(function(req, res, next) {
-  if (req.session.uid) {
+  if (req.user) {
     next()
   } else {
     next(new Error('NOT_SIGNED_IN'))
@@ -13,7 +13,7 @@ router.use(function(req, res, next) {
 })
 
 router.get('/', function(req, res) {
-  db.Notification.find({to: req.session.uid}).exec().then(function(docs) {
+  db.Notification.find({to: req.userId}).exec().then(function(docs) {
     res.send(docs || [])
   })
 })
@@ -21,7 +21,7 @@ router.get('/', function(req, res) {
 router.post('/', function(req, res) {
   const b = req.body
   db.Notification.findOneAndRemove({
-    to: req.session.uid,
+    to: req.userId,
     type: b.type,
     value: b.value
   }).exec().then(function() {

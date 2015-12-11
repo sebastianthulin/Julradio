@@ -29,19 +29,17 @@ router.get('/:id', function(req, res, next) {
 
 // Has to be a writer
 router.use(function(req, res, next) {
-  db.User.findById(req.session.uid).exec().then(function(user) {
-    if (user && user.roles.writer) {
-      next()
-    } else {
-      next(new Error('UNAUTHORISED'))
-    }
-  })
+  if (req.user && req.user.roles.writer) {
+    next()
+  } else {
+    next(new Error('UNAUTHORISED'))
+  }
 })
 
 router.post('/', function(req, res, next) {
   const b = req.body
   new db.Article({
-    user: b.userless ? undefined : req.user._id,
+    user: b.userless ? undefined : req.userId,
     title: b.title,
     content: b.content
   }).save().then(function(article) {

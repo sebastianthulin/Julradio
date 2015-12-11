@@ -24,7 +24,7 @@ function generateData(req, res, next) {
   req.reservation = {
     startDate,
     endDate,
-    userId: req.user._id,
+    userId: req.userId,
     description: b.description
   }
 
@@ -54,7 +54,9 @@ router.put('/:id', generateData, function(req, res) {
 
 router.delete('/:id', function(req, res, next) {
   db.Reservation.findById(req.params.id).exec().then(function(doc) {
-    if (doc.user.toString() == req.user._id || req.user.roles.admin) {
+    if (!doc) {
+      res.sendStatus(200)
+    } else if (doc.user.toString() == req.userId || req.user.roles.admin) {
       share.emit('Reservations:remove', req.params.id)
       res.sendStatus(200)
     } else {

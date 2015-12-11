@@ -5,7 +5,7 @@ const router = express.Router()
 const db = require('../models')
 
 router.use(function(req, res, next) {
-  if (req.session.uid) {
+  if (req.user) {
     next()
   } else {
     next(new Error('NOT_SIGNED_IN'))
@@ -14,7 +14,7 @@ router.use(function(req, res, next) {
 
 router.get('/', function(req, res) {
   db.Conversation.find({
-    users: req.session.uid
+    users: req.userId
   }).populate({
     path: 'users lastMessage',
     select: '-hash -email'

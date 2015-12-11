@@ -61,7 +61,7 @@ router.post('/:requestId', function(req, res, next) {
     user.lastVisit = Date.now()
     return user.save()
   }).then(function(user) {
-    req.session.uid = user.id
+    req.session.uid = user._id
     request.remove()
     res.sendStatus(200)
   }).catch(next)

@@ -109,7 +109,7 @@ router.post('/article', function(req, res, next) {
   }).then(function(commentSection) {
     return new db.Comment({
       text,
-      user: req.user._id,
+      user: req.userId,
       owner: article.user,
       commentSection: commentSection._id
     }).save()
@@ -121,7 +121,7 @@ router.post('/article', function(req, res, next) {
 })
 
 router.post('/user', function(req, res, next) {
-  const uid = req.user._id
+  const uid = req.userId
   const target = req.body.target
   const text = req.body.text
   return Promise.all([
@@ -154,7 +154,7 @@ router.post('/cosycorner', function(req, res, next) {
   }).then(function(commentSection) {
     return new db.Comment({
       text: req.body.text,
-      user: req.user._id,
+      user: req.userId,
       commentSection: commentSection._id
     }).save()
   }).then(function(comment) {
@@ -164,7 +164,7 @@ router.post('/cosycorner', function(req, res, next) {
 })
 
 router.post('/reply', function(req, res, next) {
-  const uid = req.user._id
+  const uid = req.userId
   const b = req.body
   var comment
   performAction(req.ip, 'comment').then(function() {
@@ -199,7 +199,7 @@ router.post('/reply', function(req, res, next) {
 
 router.delete('/:id', function(req, res, next) {
   const commentId = req.params.id
-  const uid = req.session.uid
+  const uid = req.userId
   const isAdmin = req.user.roles.admin
   db.Comment.findById(commentId).exec().then(function(comment) {
 
