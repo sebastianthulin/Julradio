@@ -26,6 +26,7 @@ class Notification extends React.Component {
       case 'message': return 'Nytt meddelande från ' + from.username
       case 'wallPost': return 'Gästbok inlägg från ' + from.username
       case 'settings': return 'Profilinställningar uppdaterade'
+      case 'article': return 'Artikel uppdaterad'
       case 'profilepicture': return 'Profilbild uppdaterad'
       case 'requestsong': return 'Din önskning har skickats'
       case 'resetinstructions': return 'Instruktioner har skickats till din email'

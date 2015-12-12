@@ -5,40 +5,36 @@ const ManageArticle = require('./ManageArticle')
 const TimeSince = require('../../reusable/TimeSince')
 
 class ManageArticles extends React.Component {
-  noti(err) {
-    const store = require('../../../stores/NotificationStore')
-    const user = require('../../../services/User').get()
-    store.insert({
-      type: 'message',
-      from: err ? null : user
-    }, err)
-  }
-
   componentWillMount() {
-    this.state = {}
-    this.unsubscribe = ArticleStore.subscribe(this.handleArticles.bind(this))
-    this.setArticle(this.props.params.id)
+    this.state = {articles: []}
+    this.handleRoute(this.props.params.id)
   }
 
   componentWillReceiveProps(props) {
-    this.setArticle(props.params.id)
+    this.handleRoute(props.params.id)
   }
 
-  componentWillUnmount() {
-    this.unsubscribe()
+  handleRoute(id) {
+    if (id) {
+      this.setArticle(id)
+    } else {
+      this.fetchArticles()
+    }
   }
 
-  handleArticles(articles) {
-    this.state.articles = articles
-    this.setArticle(this.props.params.id)
+  fetchArticles() {
+    ArticleStore.getAll(articles => this.setState({
+      articles,
+      selected: null,
+      creatingNew: false
+    }))
   }
 
   setArticle(id) {
-    const selected = this.state.articles.filter(article => article._id === id)[0]
-    this.setState({
-      selected,
+    ArticleStore.getById(id, article => this.setState({
+      selected: article,
       creatingNew: false
-    })
+    }))
   }
 
   create() {
@@ -70,8 +66,6 @@ class ManageArticles extends React.Component {
         {articles.map(this.renderArticle.bind(this))}
         <br/>
         <button className="btn" onClick={this.create.bind(this)}>Skapa ny</button>
-        <button className="btn" onClick={this.noti.bind(null, false)}>Notify</button>
-        <button className="btn" onClick={this.noti.bind(null, true)}>Error notify</button>
       </div>
     )
   }

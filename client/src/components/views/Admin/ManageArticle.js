@@ -42,8 +42,9 @@ class ManageArticle extends React.Component {
 
   delete() {
     if (confirm('Säkert?')) {
-      ArticleStore.delete(this.id)
-      this.props.history.push('/admin/articles')
+      ArticleStore.delete(this.id, () => {
+        this.props.history.push('/admin/articles')
+      })
     }
   }
 

@@ -6,15 +6,15 @@ const db = require('../models')
 
 // Get frontpage articles
 router.get('/', function(req, res, next) {
-  db.Article.find().limit(20).populate({
+  db.Article.find().sort('-date').limit(5).populate({
     path: 'user',
     select: '-hash -email'
   }).exec().then(res.send.bind(res)).catch(next)
 })
 
-// Get archived articles
-router.get('/archive', function(req, res, next) {
-  db.Article.find().populate({
+// Get all articles w/out articlecontent
+router.get('/all', function(req, res, next) {
+  db.Article.find().select('title user date').populate({
     path: 'user',
     select: '-hash -email'
   }).exec().then(res.send.bind(res)).catch(next)

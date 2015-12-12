@@ -1,7 +1,6 @@
 const React = require('react')
 const User = require('../../services/User')
 const Modal = require('../../services/Modal')
-const NotificationStore = require('../../stores/NotificationStore')
 const ProfilePicture = require('../reusable/ProfilePicture')
 
 const months = [
@@ -88,8 +87,6 @@ class Settings extends React.Component {
       year: parseInt(this.refs.year.value),
       month: parseInt(this.refs.month.value),
       day: parseInt(this.refs.day.value)
-    }, () => {
-      NotificationStore.insert({type: 'settings'})
     })
   }
 

@@ -24,7 +24,9 @@ User.set = function(user) {
 
 User.block = (userId, cb) => API.post('/user/block', { userId }, cb)
 User.unBlock = (userId, cb) => API.delete('/user/block/' + userId, cb)
-User.update = (opts, cb) => API.put('/user/settings', opts, setAndCB(cb))
+User.update = (opts, cb) => API.put('/user/settings', opts, setAndCB(() => {
+  NotificationStore.insert({type: 'settings'})
+}))
 User.update2 =  (opts, cb) => API.put('/user/settings2', opts, setAndCB(cb))
 User.removeAvatar = cb => API.delete('/user/profilepicture', setAndCB(cb))
 

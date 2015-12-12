@@ -61,8 +61,8 @@ gulp.task('vendors', function() {
     .require(dependencies)
     .bundle()
     .pipe(source('vendors.js'))
-    .pipe(buffer())
-    .pipe(uglify())
+    .pipe(production ? buffer() : util.noop())
+    .pipe(production ? uglify() : util.noop())
     .pipe(gulp.dest('./public'))
 })
 

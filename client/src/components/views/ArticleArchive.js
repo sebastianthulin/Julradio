@@ -32,11 +32,12 @@ class Article extends React.Component {
 
 class ArticleArchive extends React.Component {
   componentWillMount() {
-    ArticleStore.get(articles => this.setState({ articles }), true)
+    this.state = {}
+    ArticleStore.getAll(articles => this.setState({ articles }))
   }
 
   render() {
-    const { articles } = this.state || []
+    const articles = this.state.articles || []
     return (
       <div id="ArticleArchive">
         {articles.map(article => (<Article key={article._id} article={article} />))}
