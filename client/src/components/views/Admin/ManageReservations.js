@@ -34,12 +34,15 @@ class ManageReservations extends React.Component {
     const reservationsByDate = {}
     for (let i = 0; i < list.length; i++) {
       const res = list[i]
-      const date = dateFormat(res.startDate, 'dddd, mmmm d')
-      if (dates[dates.length - 1] !== date) {
-        dates.push(date)
+      const today = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
+      if (res.startDate.getDate() >= today) {
+        const date = dateFormat(res.startDate, 'dddd, mmmm d')
+        if (dates[dates.length - 1] !== date) {
+          dates.push(date)
+        }
+        reservationsByDate[date] = reservationsByDate[date] || []
+        reservationsByDate[date].push(res)
       }
-      reservationsByDate[date] = reservationsByDate[date] || []
-      reservationsByDate[date].push(res)
     }
     this.setState({ dates, reservationsByDate })
   }

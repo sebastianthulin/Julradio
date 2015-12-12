@@ -8,11 +8,17 @@ const CommentSection = require('./CommentSection')
 const schema = new Schema({
   title: {
     type: String,
-    required: true
+    validate: {
+      validator: str => str.length > 0,
+      message: 'ARTICLE_TITLE_MISSING'
+    }
   },
   content: {
     type: String,
-    required: true
+    validate: {
+      validator: str => str.length > 0,
+      message: 'ARTICLE_CONTENT_MISSING'
+    }
   },
   user: {
     type: Schema.ObjectId,

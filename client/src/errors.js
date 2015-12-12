@@ -32,6 +32,10 @@ module.exports = {
   // Request song errors
   MISSING_FIELD: 'Fyll i alla fält',
 
+  // Manage articles errors
+  ARTICLE_TITLE_MISSING: 'Artikeltitel saknas',
+  ARTICLE_CONTENT_MISSING: 'Artikelinnehåll saknas',
+
   // Unused
   CHAT_DISABLED: 'Det går inte att skicka meddelanden just nu'
 }
