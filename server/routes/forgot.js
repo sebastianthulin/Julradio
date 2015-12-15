@@ -2,9 +2,12 @@
 
 const express = require('express')
 const router = express.Router()
+const middleware = require('../middleware')
 const db = require('../models')
 const mail = require('../services/mail')
 const config = require('../../config')
+
+router.use(middleware.body)
 
 router.post('/', function(req, res, next) {
   const email = String(req.body.email).toLowerCase()
@@ -13,6 +16,8 @@ router.post('/', function(req, res, next) {
   db.User.findOne({ email }).exec().then(function(doc) {
     if (!email || !doc) {
       throw new Error('INVALID_EMAIL')
+    } else if (doc.banned) {
+      throw new Error('USER_BANNED')
     }
     user = doc
     return db.PasswordRequest.findOneAndRemove({ user }).exec()

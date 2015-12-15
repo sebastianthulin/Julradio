@@ -3,6 +3,7 @@
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
+const middleware = require('../middleware')
 const db = require('../models')
 
 function sendCrew(req, res) {
@@ -23,13 +24,10 @@ function sendCrew(req, res) {
 
 router.get('/', sendCrew)
 
-router.put('/', function(req, res, next) {
-  if (req.user && req.user.roles.admin) {
-    next()
-  } else {
-    res.sendStatus(500)
-  }
-}, function(req, res, next) {
+router.use(middleware.role('admin'))
+router.use(middleware.body)
+
+router.put(function(req, res, next) {
   const userIds = req.body
 
   if (!Array.isArray(userIds)) {

@@ -2,10 +2,13 @@
 
 const express = require('express')
 const router = express.Router()
+const middleware = require('../middleware')
 const db = require('../models')
 const io = require('../../server').io
 const share = require('../share')
 const performAction = require('../services/performAction')
+
+router.use(middleware.body)
 
 router.post('/', function(req, res, next) {
   const request = new db.SongRequest({
@@ -27,13 +30,7 @@ router.post('/', function(req, res, next) {
   })
 })
 
-router.use(function(req, res, next) {
-  if (req.user && req.user.roles.radioHost) {
-    next()
-  } else {
-    res.sendStatus(500)
-  }
-})
+router.use(middleware.role('radioHost'))
 
 router.get('/', function(req, res, next) {
   db.SongRequest.find({granted: null}).exec()
@@ -67,22 +64,16 @@ router.delete('/:id', function(req, res, next) {
   }).catch(next)
 })
 
+router.use(middleware.role('admin'))
+
 router.delete('/accepted/:id', function(req, res) {
-  if (!req.user.roles.admin) {
-    res.sendStatus(500)
-  } else {
-    share.emit('Requests:delete', req.params.id)
-    res.sendStatus(200)
-  }
+  share.emit('Requests:delete', req.params.id)
+  res.sendStatus(200)
 })
 
 router.delete('/tweet/:id', function(req, res) {
-  if (!req.user.roles.admin) {
-    res.sendStatus(500)
-  } else {
-    share.emit('TweetStream:delete', req.params.id)
-    res.sendStatus(200)
-  }
+  share.emit('TweetStream:delete', req.params.id)
+  res.sendStatus(200)
 })
 
 module.exports = router

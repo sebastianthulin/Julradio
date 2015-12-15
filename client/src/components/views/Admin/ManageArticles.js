@@ -23,8 +23,9 @@ class ManageArticles extends React.Component {
   }
 
   fetchArticles() {
-    ArticleStore.getAll(articles => this.setState({
+    ArticleStore.getAll(({ articles, pinnedId }) => this.setState({
       articles,
+      pinnedId,
       selected: null,
       creatingNew: false
     }))
@@ -41,6 +42,35 @@ class ManageArticles extends React.Component {
     this.setState({creatingNew: true})
   }
 
+  pin(article, ev) {
+    ev.preventDefault()
+    this.setState({
+      pinnedId: article._id
+    })
+  }
+
+  unpin() {
+    this.setState({pinnedId: null})
+  }
+
+  savePin() {
+    ArticleStore.savePin(this.state.pinnedId)
+  }
+
+  renderPinned() {
+    const { pinnedId } = this.state
+    if (!pinnedId) return null
+    const pinned = this.state.articles.find(a => a._id === pinnedId)
+    return pinned ? (
+      <div>
+        {pinned.title}
+        <button onClick={this.unpin.bind(this)}>Unpin</button>
+      </div>
+    ) : (
+      <div>No pin</div>
+    )
+  }
+
   renderArticle(article) {
     return (
       <Link className="manageArticle" to={`/admin/articles/${article._id}`} key={article._id}>
@@ -49,6 +79,7 @@ class ManageArticles extends React.Component {
           {article.user ? article.user.name : 'Julradio'}
         </span>
         <TimeSince date={article.date} />
+        <button onClick={this.pin.bind(this, article)}>Pin</button>
       </Link>
     )
   }
@@ -63,6 +94,11 @@ class ManageArticles extends React.Component {
     ) : (
       <div>
         <h3>Nyheter</h3>
+        <div className="pin">
+          <h4>Pinned</h4>
+          {this.renderPinned()}
+          <button onClick={this.savePin.bind(this)}>Spara</button>
+        </div>
         {articles.map(this.renderArticle.bind(this))}
         <br/>
         <button className="btn" onClick={this.create.bind(this)}>Skapa ny</button>

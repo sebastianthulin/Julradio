@@ -6,6 +6,7 @@ const multer = require('multer')
 const gm = require('gm')
 const fs = require('fs')
 const router = express.Router()
+const middleware = require('../middleware')
 const db = require('../models')
 const mail = require('../services/mail')
 const config = require('../../config')
@@ -22,6 +23,8 @@ const upload = multer({
 function getUserDoc(userId) {
   return db.User.findById(userId).select('-hash -email').lean().exec()
 }
+
+router.use(middleware.body)
 
 router.get('/logout', function(req, res) {
   req.session.uid = null
@@ -128,13 +131,7 @@ router.post('/login', function(req, res, next) {
   }).catch(next)
 })
 
-router.use(function(req, res, next) {
-  if (req.user) {
-    next()
-  } else {
-    next(new Error('NOT_SIGNED_IN'))
-  }
-})
+router.use(middleware.signedIn)
 
 router.post('/block', function(req, res) {
   // block a user
@@ -312,13 +309,7 @@ router.post('/profilepicture', function(req, res, next) {
   })
 })
 
-router.use(function(req, res, next) {
-  if (req.user && req.user.roles.admin) {
-    next()
-  } else {
-    next(new Error('UNAUTHORISED'))
-  }
-})
+router.use(middleware.role('admin'))
 
 router.get('/all', function(req, res) {
   db.User.find().select('username roles banned').exec(function(err, users) {

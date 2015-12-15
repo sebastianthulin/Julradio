@@ -3,6 +3,7 @@
 const express = require('express')
 const router = express.Router()
 const share = require('../share')
+const middleware = require('../middleware')
 const db = require('../models')
 
 function generateData(req, res, next) {
@@ -31,13 +32,8 @@ function generateData(req, res, next) {
   next()
 }
 
-router.use(function(req, res, next) {
-  if (req.user && req.user.roles.radioHost) {
-    next()
-  } else {
-    res.sendStatus(500)
-  }
-})
+router.use(middleware.role('radioHost'))
+router.use(middleware.body)
 
 router.post('/', generateData, function(req, res) {
   share.emit('Reservations:create', req.reservation)

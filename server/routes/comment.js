@@ -2,6 +2,7 @@
 
 const express = require('express')
 const router = express.Router()
+const middleware = require('../middleware')
 const db = require('../models')
 const Notify = require('../services/Notify')
 const Blockages = require('../services/Blockages')
@@ -26,6 +27,8 @@ function getSection(query) {
     return doc ? doc : new db.CommentSection(query).save()
   })
 }
+
+router.use(middleware.body)
 
 router.get('/replies/:id/:limit?', function(req, res, next) {
   const commentId = req.params.id
@@ -88,13 +91,7 @@ router.get('/:type', function(req, res, next) {
   })
 })
 
-router.use(function(req, res, next) {
-  if (req.user) {
-    next()
-  } else {
-    next(new Error('NOT_SIGNED_IN'))
-  }
-})
+router.use(middleware.signedIn)
 
 router.post('/article', function(req, res, next) {
   const text = req.body.text

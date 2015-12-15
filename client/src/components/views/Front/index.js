@@ -9,25 +9,34 @@ const Feed = require('./Feed')
 
 class Front extends React.Component {
   componentWillMount() {
-    ArticleStore.get(articles => this.setState({ articles }))
+    ArticleStore.get(({ articles, pinned }) => {
+      this.setState({ articles, pinned })
+    })
+  }
+
+  renderArticle(article) {
+    return (
+      <div className="article" key={article._id}>
+        <Article article={article} />
+        <Link to={`/article/${article._id}`} className="commentLink">
+          <SVG.Comment />
+          <span>{article.numComments}</span>
+        </Link>
+      </div>
+    )
   }
 
   render() {
-    const { articles } = this.state
+    const { articles, pinned } = this.state
     return (
       <div id="Front" className="row">
         <div className="twoThirds column">
           {articles.length === 0 && <div style={{height: 1}} />}
-          {articles.map(article => (
-            <div className="article" key={article._id}>
-              <Article article={article} />
-              <Link to={`/article/${article._id}`} className="commentLink">
-                <SVG.Comment />
-                <span>{article.numComments}</span>
-              </Link>
-            </div>
-          ))}
-          {articles.length > 0 && <Link to="/archive" style={{display: 'table', marginBottom: 20}}>Läs gamla nyheter på arkivet!</Link>}
+          {pinned && this.renderArticle(pinned)}
+          {articles.map(this.renderArticle.bind(this))}
+          {articles.length > 0 && <Link to="/archive" style={{display: 'table', marginBottom: 20}}>
+            Läs gamla nyheter på arkivet!
+          </Link>}
         </div>
         <div className="oneThird column">
           <Schedule />

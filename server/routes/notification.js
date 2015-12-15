@@ -2,15 +2,11 @@
 
 const express = require('express')
 const router = express.Router()
+const middleware = require('../middleware')
 const db = require('../models')
 
-router.use(function(req, res, next) {
-  if (req.user) {
-    next()
-  } else {
-    next(new Error('NOT_SIGNED_IN'))
-  }
-})
+router.use(middleware.signedIn)
+router.use(middleware.body)
 
 router.get('/', function(req, res) {
   db.Notification.find({to: req.userId}).exec().then(function(docs) {

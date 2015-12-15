@@ -24,9 +24,6 @@ router.use(function(req, res, next) {
     req.session.uid = undefined
     next()
   })
-}, function(req, res, next) {
-  // console.log(req.ip, req.method, req.url, req.user ? req.user.username : '')
-  next()
 })
 
 router.get('/picture/:id', function(req, res) {

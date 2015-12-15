@@ -33,7 +33,7 @@ class Article extends React.Component {
 class ArticleArchive extends React.Component {
   componentWillMount() {
     this.state = {}
-    ArticleStore.getAll(articles => this.setState({ articles }))
+    ArticleStore.getAll(this.setState.bind(this))
   }
 
   render() {
