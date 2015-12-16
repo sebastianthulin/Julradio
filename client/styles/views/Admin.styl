@@ -17,36 +17,39 @@
         transition none
         
   .pin
+    margin-bottom 10px
     padding 20px
     border-radius 5px
     background rgba(0, 0, 0, 0.07)
 
   .manageArticle
-    padding 15px 0px 13px 0px
-    margin-top -1px
-    border-bottom 1px solid rgba(255, 255, 255, 0.1)
-    display block
-    width 100%
-    font-size 18px
+    display flex
+    align-items center
+    padding 10px 0px
     font-weight 200
-    line-height 18px
+    border-bottom 1px solid rgba(255, 255, 255, 0.1)
+    > *:not(:last-child)
+      margin-right 10px
+      padding-right 10px
+      border-right 1px solid rgba(255, 255, 255, 0.2)
+
     .title
-      color white
+      color #FFF
       font-weight 300
-      border-right 1px solid rgba(255, 255, 255, 0.2)
-      padding 0px 10px 0px 0px
-      
-    .author
+
+    .author, .TimeSince
       font-size 14px
-      margin-left 10px
-      border-right 1px solid rgba(255, 255, 255, 0.2)
-      padding 0px 10px 0px 0px
       color rgba(255, 255, 255, 0.5)
 
-    .TimeSince
-      font-size 13px
-      margin-left 10px
-      color rgba(255, 255, 255, 0.5)
+    button
+      display inline-flex
+      padding 0 5px
+      border-radius 3px
+      background rgba(255, 255, 255, 0.18)
+      &:hover
+        background rgba(255, 255, 255, 0.3)
+      svg
+        transform rotate(24deg)
         
   .goodSearch
     width 500px

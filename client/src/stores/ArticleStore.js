@@ -33,7 +33,10 @@ ArticleStore.get = function(callback) {
   callback({ articles, pinned })
   API.get('/articles', body => {
     pinned = body.pinned
-    pinned && ArticleStore.transform(pinned)
+    if (pinned) {
+      ArticleStore.transform(pinned)
+      pinned.pinned = true
+    }
     articles = body.articles
     articles.forEach(ArticleStore.transform)
     articles.sort((a, b) => b.date - a.date)

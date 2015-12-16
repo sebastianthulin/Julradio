@@ -11,5 +11,6 @@ module.exports = {
   Android: require('./Android'),
   Apple: require('./Apple'),
   iTunes: require('./iTunes'),
-  VLC: require('./VLC')
+  VLC: require('./VLC'),
+  Pin: require('./Pin')
 }

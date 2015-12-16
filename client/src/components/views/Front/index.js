@@ -1,5 +1,6 @@
 const React = require('react')
 const { Link } = require('react-router')
+const cx = require('classnames')
 const Modal = require('../../../services/Modal')
 const ArticleStore = require('../../../stores/ArticleStore')
 const Article = require('../../reusable/Article')
@@ -16,7 +17,7 @@ class Front extends React.Component {
 
   renderArticle(article) {
     return (
-      <div className="article" key={article._id}>
+      <div className={cx('article', {pinned: article.pinned})} key={article._id}>
         <Article article={article} />
         <Link to={`/article/${article._id}`} className="commentLink">
           <SVG.Comment />
@@ -32,7 +33,7 @@ class Front extends React.Component {
       <div id="Front" className="row">
         <div className="twoThirds column">
           {articles.length === 0 && <div style={{height: 1}} />}
-          {pinned && this.renderArticle(pinned)}
+          {pinned && this.renderArticle(pinned, true)}
           {articles.map(this.renderArticle.bind(this))}
           {articles.length > 0 && <Link to="/archive" style={{display: 'table', marginBottom: 20}}>
             Läs gamla nyheter på arkivet!
