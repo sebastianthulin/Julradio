@@ -31,9 +31,10 @@ class Schedule extends React.Component {
     const { reservations, expanded } = this.state
     const fn = r => <Reservation key={r._id} {...r} />
     const date = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
-    const today = reservations.filter(r => r.startDate.getDate() === date).map(fn)
-    const tomorrow = reservations.filter(r => r.startDate.getDate() === date + 1).map(fn)
-    const dayAfterTomorrow = reservations.filter(r => r.startDate.getDate() === date + 2).map(fn)
+    const f = [].filter.bind(reservations)
+    const today = f(r => r.startDate.getDate() === date).map(fn)
+    const tomorrow = f(r => r.startDate.getDate() === date + 1).map(fn)
+    const dayAfterTomorrow = f(r => r.startDate.getDate() === date + 2).map(fn)
 
     let upcomingDaysCount = 0
     today.length > 0 && upcomingDaysCount++

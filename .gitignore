@@ -4,8 +4,3 @@ Thumbs.db
 dump.rdb
 npm-debug.log
 node_modules
-uploads/
-
-public/julradio.css
-public/vendors.js
-public/app.js

@@ -17,10 +17,14 @@ const production = process.env.NODE_ENV === 'production'
 const dependencies = [
   'events',
   'react',
-  'react-dom',
-  'react-router',
+  'redux',
+  'immutable',
   'socket.io-client',
   'superagent',
+  'react-dom',
+  'react-redux',
+  'react-router',
+  'redux-thunk',
   'classnames',
   'marked',
   'dateformat',
@@ -28,15 +32,13 @@ const dependencies = [
 ]
 
 gulp.task('js', function() {
-  return browserify('./client/src/app', {debug: !production})
+  return browserify('./client/src', {debug: !production})
     .external(dependencies)
     .transform(envify({
       shoutCastUrls: config.shoutCastUrls,
       socketTransports: config.socketTransports
     }))
-    .transform(babelify.configure({
-      presets: ['es2015', 'react']
-    }))
+    .transform(babelify)
     .bundle()
     .on('error', function(err) {
       console.log(err.toString())

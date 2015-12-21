@@ -2,26 +2,9 @@ const React = require('react')
 const { Link } = require('react-router')
 const marked = require('marked')
 const User = require('../../../services/User')
-const ArticleStore = require('../../../stores/ArticleStore')
 const Article = require('../../reusable/Article')
 
 class ManageArticle extends React.Component {
-  componentWillMount() {
-    const { article } = this.props
-    const copy = {}
-    this.id = article._id
-
-    for (var i in article) {
-      copy[i] = article[i]
-    }
-    if (!copy._id) {
-      copy.content = ''
-      copy.user = User.get()
-    }
-    copy.__html = marked(copy.content)
-    this.state = { copy }
-  }
-
   getOpts() {
     return {
       title: this.refs.title.value,
@@ -31,43 +14,31 @@ class ManageArticle extends React.Component {
   }
 
   save() {
-    if (this.id) {
-      return ArticleStore.update(this.id, this.getOpts())
+    if (this.props.editing.get('_id')) {
+      this.props.updateArticle()
+    } else {
+      this.props.createArticle()
     }
-
-    ArticleStore.create(this.getOpts(), article => {
-      this.props.history.push(`/admin/articles/${article._id}`)
-    })
   }
 
   delete() {
     if (confirm('Säkert?')) {
-      ArticleStore.delete(this.id, () => {
-        this.props.history.push('/admin/articles')
-      })
+      this.props.deleteArticle()
     }
   }
 
   update() {
-    const copy = this.getOpts()
-    const old = this.state.copy
-    if (this.id) {
-      copy.userless = old.userless
-    }
-    copy._id = old._id
-    copy.date = old.date
-    copy.user = old.user
-    copy.__html = marked(copy.content)
-    this.setState({ copy })
+    this.props.updateArticleLocally(this.getOpts())
   }
 
   cancel() {
+    this.props.cancelEdit()
     this.props.history.push('/admin/articles')
   }
 
   render() {
-    const { copy } = this.state
-    const { article } = this.props
+    const { editing: article } = this.props
+    const underConstruction = !article.get('_id')
     return (
       <div id="ManageArticle">
         <div className="row">
@@ -77,11 +48,11 @@ class ManageArticle extends React.Component {
               <input
                 type="text"
                 ref="title"
-                value={copy.title}
+                value={article.get('title')}
                 onChange={this.update.bind(this)}
               />
             </label>
-            {!this.id && (
+            {underConstruction && (
               <div>
                 <span>Posta som Julradio</span>
                 <input
@@ -93,7 +64,7 @@ class ManageArticle extends React.Component {
             )}
             <textarea
               ref="content"
-              value={copy.content}
+              value={article.get('content')}
               onChange={this.update.bind(this)}
             />
             <div style={{margin: '10px 0'}}>
@@ -102,7 +73,7 @@ class ManageArticle extends React.Component {
                 onClick={this.save.bind(this)}
                 children="Spara"
               />
-              {this.id && <button
+              {!underConstruction && <button
                 className="btn"
                 style={{marginLeft: 10}}
                 onClick={this.delete.bind(this)}
@@ -120,7 +91,7 @@ class ManageArticle extends React.Component {
             </div>
           </div>
           <div className="oneHalf column">
-            <Article article={copy} />
+            <Article article={article} />
           </div>
         </div>
       </div>

@@ -12,5 +12,6 @@ module.exports = {
   Apple: require('./Apple'),
   iTunes: require('./iTunes'),
   VLC: require('./VLC'),
-  Pin: require('./Pin')
+  Pin: require('./Pin'),
+  Right: require('./Right')
 }

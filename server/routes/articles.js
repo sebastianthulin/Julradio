@@ -13,45 +13,25 @@ const populate = {
 
 // Get frontpage articles
 router.get('/', function(req, res, next) {
-  db.redis.get('pinned', function(err, pinnedId) {
-    const promises = [
-      db.Article.find().sort('-date').limit(5).populate(populate).exec()
-    ]
-    pinnedId && promises.push(
-      db.Article.findById(pinnedId).populate(populate).exec()
-    )
-    Promise.all(promises).then(data => {
-      const articles = data[0]
-      const pinned = data[1]
-      if (pinned) {
-        const i = articles.findIndex(a => a._id == pinnedId)
-        if (i > -1) {
-          articles.splice(i, 1)
-        }
-      }
-      res.send({
-        articles,
-        pinned
-      })
-    }).catch(next)
-  })
+  Promise.all([
+    db.Article.find({pinned: false}).sort('-_id').limit(5).populate(populate).exec(),
+    db.Article.find({pinned: true}).sort('-_id').select('title date pinned').populate(populate).exec()
+  ]).then(data => {
+    res.send({
+      articles: data[0],
+      pinnedArticles: data[1]
+    })
+  }).catch(next)
 })
 
 // Get all articles w/out articlecontent
 router.get('/all', function(req, res, next) {
-  db.redis.get('pinned', function(err, pinnedId) {
-    db.Article.find()
-      .select('title user date')
-      .populate(populate)
-      .exec()
-      .then(articles => {
-        res.send({
-          articles,
-          pinnedId
-        })
-      })
-      .catch(next)
-  })
+  db.Article.find()
+    .select('title user date pinned')
+    .populate(populate)
+    .exec()
+    .then(res.send.bind(res))
+    .catch(next)
 })
 
 router.get('/:id', function(req, res, next) {
@@ -77,23 +57,18 @@ router.post('/', function(req, res, next) {
   }).catch(next)
 })
 
-router.put('/pin', function(req, res) {
+router.put('/pin', function(req, res, next) {
   const id = req.body.id
-  if (!id) {
-    db.redis.del('pinned')
-    res.sendStatus(200)
-  } else if (!mongoose.Types.ObjectId.isValid(id)) {
-    res.sendStatus(500)
-  } else {
-    db.redis.set('pinned', id)
-    res.sendStatus(200)
-  }
+  const pinned = req.body.pinned
+  db.Article.findByIdAndUpdate(id, { pinned })
+    .exec()
+    .then(() => res.sendStatus(200))
+    .catch(next)
 })
 
 router.put('/:id', function(req, res, next) {
-  const id = req.params.id
   const b = req.body
-  db.Article.findByIdAndUpdate(id, {
+  db.Article.findByIdAndUpdate(req.params.id, {
     title: b.title,
     content: b.content
   }).exec().then(function() {
@@ -102,15 +77,10 @@ router.put('/:id', function(req, res, next) {
 })
 
 router.delete('/:id', function(req, res, next) {
-  const id = req.params.id
-  db.redis.get('pinned', function(err, pinnedId) {
-    if (pinnedId === id) {
-      db.redis.del('pinned')
-    }
-    db.Article.findByIdAndRemove(id).exec().then(function() {
-      res.sendStatus(200)
-    }).catch(next)
-  })
+  db.Article.findByIdAndRemove(req.params.id)
+    .exec()
+    .then(() => res.sendStatus(200))
+    .catch(next)
 })
 
 module.exports = router

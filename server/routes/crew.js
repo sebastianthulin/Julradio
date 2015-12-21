@@ -23,11 +23,10 @@ function sendCrew(req, res) {
 }
 
 router.get('/', sendCrew)
-
 router.use(middleware.role('admin'))
 router.use(middleware.body)
 
-router.put(function(req, res, next) {
+router.put('/', function(req, res, next) {
   const userIds = req.body
 
   if (!Array.isArray(userIds)) {
@@ -41,6 +40,7 @@ router.put(function(req, res, next) {
   }
 
   db.redis.set('crew', JSON.stringify(userIds))
+  console.log(req.user.username + ' ändrade i crewlist')
   next()
 }, sendCrew)
 

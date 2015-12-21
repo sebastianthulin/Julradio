@@ -15,21 +15,22 @@ class Article extends React.Component {
   }
 
   render() {
-    const { article, article: { user, userless } } = this.props
+    const { article } = this.props
+    const user = article.get('user')
     return (
       <div className="Article">
-        <h2>{article.title}</h2>
+        <h2>{article.get('title')}</h2>
         <header>
-          <ProfilePicture id={userless ? null : user.picture} />
+          <ProfilePicture id={user && user.get('picture')} />
           <div className="user">
-            {!userless && <Link to={`/@${user.username}`}>{user.name}</Link>}
-            {userless && <span>Julradio</span>}
-            <TimeSince date={article.date} />
+            {user && <Link to={`/@${user.get('username')}`}>{user.get('name')}</Link>}
+            {!user && <span>Julradio</span>}
+            <TimeSince date={article.get('date')} />
           </div>
         </header>
         <div
           className="markdownBody"
-          dangerouslySetInnerHTML={article}
+          dangerouslySetInnerHTML={{__html: article.get('marked')}}
           onClick={this.handleClick.bind(this)}
         />
       </div>

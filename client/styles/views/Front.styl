@@ -63,11 +63,6 @@
     border-bottom 2px solid rgba(255, 255, 255, 0.3)
     &:last-child
       border-bottom none
-    &.pinned
-      padding 20px
-      border-bottom none
-      border-radius 5px
-      background rgba(0, 0, 0, 0.13)
 
   .commentLink
     display inline-flex
@@ -82,7 +77,24 @@
       g
         stroke @color
         transition stroke .1s ease-in-out
-          
+        
+  .pins
+    padding 8px 20px
+    margin-bottom 30px
+    border-radius 5px
+    background rgba(0, 0, 0, 0.13)
+    .pin
+      display table
+      font-size 23px
+      margin 12px 0
+      &:hover span
+        border-bottom 1px solid
+      span
+        margin-right 10px
+      svg
+        width 20px
+        height 20px
+
   .facerurubohorukuru
     position relative
     display block

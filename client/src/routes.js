@@ -1,20 +1,9 @@
-require('./services/LiveReload')
 const React = require('react')
-const ReactDOM = require('react-dom')
-const { Router, Route, IndexRoute } = require('react-router')
-const marked = require('marked')
-const cx = require('classnames')
+const { Route, IndexRoute } = require('react-router')
 const User = require('./services/User')
-const UIStore = require('./stores/UIStore')
-const history = require('./services/history')
-
-// Site base components
-const Sidebar = require('./components/base/Sidebar')
-const MobileHeader = require('./components/base/MobileHeader')
-const ModalContainer = require('./components/base/ModalContainer')
-const NotificationContainer = require('./components/base/NotificationContainer')
 
 // Views
+const App = require('./components/App')
 const Front = require('./components/views/Front')
 const ArticleView = require('./components/views/ArticleView')
 const ArticleArchive = require('./components/views/ArticleArchive')
@@ -32,44 +21,6 @@ const ManageReservations = require('./components/views/Admin/ManageReservations'
 const ManageCrew = require('./components/views/Admin/ManageCrew')
 const ManageRequests = require('./components/views/Admin/ManageRequests')
 const NotFound = require('./components/views/NotFound')
-
-// Config
-marked.setOptions({
-  gfm: true,
-  breaks: true,
-  sanitize: true
-})
-
-class App extends React.Component {
-  componentWillMount() {
-    UIStore.subscribe(UI => this.setState({ UI }))
-  }
-
-  componentWillReceiveProps() {
-    UIStore.close('SIDEBAR_OPEN')
-  }
-
-  closeSidebar() {
-    if (this.state.UI.SIDEBAR_OPEN) {
-      UIStore.close('SIDEBAR_OPEN')
-    }
-  }
-
-  render() {
-    const { SIDEBAR_OPEN } = this.state.UI
-    return (
-      <div id="App" className={cx({sidebarVisible: SIDEBAR_OPEN})}>
-        <MobileHeader />
-        <Sidebar />
-        <div id="site" onClick={this.closeSidebar.bind(this)}>
-          {this.props.children}
-        </div>
-        <ModalContainer />
-        <NotificationContainer />
-      </div>
-    )
-  }
-}
 
 function requireAuth(nextState, replaceState) {
   if (!User.get()) {
@@ -106,7 +57,4 @@ const routes = (
   </Route>
 )
 
-ReactDOM.render(
-  <Router routes={routes} history={history} />,
-  document.getElementById('root')
-)
+module.exports = routes

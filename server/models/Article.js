@@ -24,6 +24,10 @@ const schema = new Schema({
     type: Schema.ObjectId,
     ref: 'users'
   },
+  pinned: {
+    type: Boolean,
+    default: false
+  },
   date: {
     type: Date,
     default: Date.now

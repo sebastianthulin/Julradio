@@ -1,107 +1,71 @@
 const React = require('react')
+const { connect } = require('react-redux')
 const { Link } = require('react-router')
-const ArticleStore = require('../../../stores/ArticleStore')
+const cx = require('classnames')
+const {
+  fetchAllArticles,
+  editArticle,
+  cancelEdit,
+  updateArticleLocally,
+  createArticle,
+  updateArticle,
+  deleteArticle,
+  togglePin
+} = require('../../../actions/articles')
 const ManageArticle = require('./ManageArticle')
 const TimeSince = require('../../reusable/TimeSince')
 const SVG = require('../../svg')
 
 class ManageArticles extends React.Component {
   componentWillMount() {
-    this.state = {articles: []}
     this.handleRoute(this.props.params.id)
   }
 
   componentWillReceiveProps(props) {
-    this.handleRoute(props.params.id)
+    if (props.params.id !== this.props.params.id) {
+      this.handleRoute(props.params.id)
+    }
   }
 
   handleRoute(id) {
     if (id) {
-      this.setArticle(id)
+      this.props.editArticle(id)
     } else {
-      this.fetchArticles()
+      this.props.cancelEdit()
+      this.props.fetchAllArticles()
     }
   }
 
-  fetchArticles() {
-    ArticleStore.getAll(({ articles, pinnedId }) => this.setState({
-      articles,
-      pinnedId,
-      selected: null,
-      creatingNew: false
-    }))
-  }
-
-  setArticle(id) {
-    ArticleStore.getById(id, article => this.setState({
-      selected: article,
-      creatingNew: false
-    }))
-  }
-
   create() {
-    this.setState({creatingNew: true})
+    this.props.editArticle()
   }
 
-  pin(article, ev) {
+  togglePin(id, ev) {
     ev.preventDefault()
-    this.setState({
-      pinnedId: article._id
-    })
-  }
-
-  unpin() {
-    this.setState({pinnedId: null})
-  }
-
-  savePin() {
-    ArticleStore.savePin(this.state.pinnedId)
-  }
-
-  renderPinned() {
-    const { pinnedId } = this.state
-    const pinned = this.state.articles.find(a => a._id === pinnedId)
-    return pinned ? (
-      <div>
-        {pinned.title}
-        <button className="btn" onClick={this.unpin.bind(this)}>Unpin</button>
-      </div>
-    ) : (
-      <div style={{marginBottom: 20}}>No pin</div>
-    )
-  }
-
-  renderArticle(article) {
-    return (
-      <Link className="manageArticle" to={`/admin/articles/${article._id}`} key={article._id}>
-        <span className="title">{article.title}</span>
-        <span className="author">
-          {article.user ? article.user.name : 'Julradio'}
-        </span>
-        <TimeSince date={article.date} />
-        <button onClick={this.pin.bind(this, article)}>
-          <SVG.Pin />
-        </button>
-      </Link>
-    )
+    this.props.togglePin(id)
   }
 
   render() {
-    const { articles, creatingNew, selected } = this.state
-    const { history } = this.props
-    return creatingNew ? (
-      <ManageArticle article={{}} history={history} />
-    ) : selected ? (
-      <ManageArticle key={selected._id} article={selected} history={history} />
+    const { articles, editing, togglePin } = this.props
+    return editing ? (
+      <ManageArticle {...this.props} />
     ) : (
       <div>
         <h3>Nyheter</h3>
-        <div className="pin">
-          <h4>Pinned</h4>
-          {this.renderPinned()}
-          <button onClick={this.savePin.bind(this)} className="btn">Spara</button>
-        </div>
-        {articles.map(this.renderArticle.bind(this))}
+        {articles.map(article => (
+          <Link className="manageArticle" to={`/admin/articles/${article.get('_id')}`} key={article.get('_id')}>
+            <span className="title">{article.get('title')}</span>
+            <span className="author">
+              {article.get('user') ? article.getIn(['user', 'name']) : 'Julradio'}
+            </span>
+            <TimeSince date={article.get('date')} />
+            <button
+              onClick={this.togglePin.bind(this, article.get('_id'))}
+              className={cx({active: article.get('pinned')})}
+              children={<SVG.Pin />}
+            />
+          </Link>
+        )).toJS()}
         <br/>
         <button className="btn" onClick={this.create.bind(this)}>Skapa ny</button>
       </div>
@@ -109,4 +73,21 @@ class ManageArticles extends React.Component {
   }
 }
 
-module.exports = ManageArticles
+module.exports = connect(
+  state => ({
+    editing: state.articles.get('editing'),
+    articles: state.articles
+      .get('ids')
+      .map(id => state.articles.getIn(['byId', id]))
+  }),
+  dispatch => ({
+    fetchAllArticles: () => dispatch(fetchAllArticles()),
+    editArticle: id => dispatch(editArticle(id)),
+    cancelEdit: () => dispatch(cancelEdit()),
+    updateArticleLocally: props => dispatch(updateArticleLocally(props)),
+    createArticle: () => dispatch(createArticle()),
+    updateArticle: () => dispatch(updateArticle()),
+    deleteArticle: () => dispatch(deleteArticle()),
+    togglePin: id => dispatch(togglePin(id))
+  })
+)(ManageArticles)

@@ -1,8 +1,8 @@
 const React = require('react')
+const { connect } = require('react-redux')
 const { Link } = require('react-router')
-const cx = require('classnames')
+const { fetchArticles } = require('../../../actions/articles')
 const Modal = require('../../../services/Modal')
-const ArticleStore = require('../../../stores/ArticleStore')
 const Article = require('../../reusable/Article')
 const SVG = require('../../svg')
 const Schedule = require('./Schedule')
@@ -10,32 +10,41 @@ const Feed = require('./Feed')
 
 class Front extends React.Component {
   componentWillMount() {
-    ArticleStore.get(({ articles, pinned }) => {
-      this.setState({ articles, pinned })
-    })
+    this.props.fetchArticles()
+  }
+
+  renderPin(article) {
+    return (
+      <Link key={article.get('_id')} to={`/article/${article.get('_id')}`} className="pin">
+        <span>{article.get('title')}</span>
+        <SVG.Right />
+      </Link>
+    )
   }
 
   renderArticle(article) {
     return (
-      <div className={cx('article', {pinned: article.pinned})} key={article._id}>
+      <div className="article" key={article.get('_id')}>
         <Article article={article} />
-        <Link to={`/article/${article._id}`} className="commentLink">
+        <Link to={`/article/${article.get('_id')}`} className="commentLink">
           <SVG.Comment />
-          <span>{article.numComments}</span>
+          <span>{article.get('numComments')}</span>
         </Link>
       </div>
     )
   }
 
   render() {
-    const { articles, pinned } = this.state
+    const { articles, pins } = this.props
     return (
       <div id="Front" className="row">
         <div className="twoThirds column">
-          {articles.length === 0 && <div style={{height: 1}} />}
-          {pinned && this.renderArticle(pinned, true)}
-          {articles.map(this.renderArticle.bind(this))}
-          {articles.length > 0 && <Link to="/archive" style={{display: 'table', marginBottom: 20}}>
+          {articles.size === 0 && <div style={{height: 1}} />}
+          {pins.size > 0 && <div className="pins">
+            {pins.map(this.renderPin.bind(this)).toJS()}
+          </div>}
+          {articles.map(this.renderArticle.bind(this)).toJS()}
+          {articles.size > 0 && <Link to="/archive" style={{display: 'table', marginBottom: 20}}>
             Läs gamla nyheter på arkivet!
           </Link>}
         </div>
@@ -65,4 +74,17 @@ class Front extends React.Component {
   }
 }
 
-module.exports = Front
+module.exports = connect(
+  state => {
+    const articles = state.articles
+      .get('ids')
+      .map(id => state.articles.getIn(['byId', id]))
+    return {
+      articles: articles.filter((a, i) => i < 5 && a.get('pinned') === false),
+      pins: articles.filter((a, i) => a.get('pinned') === true)
+    }
+  },
+  dispatch => ({
+    fetchArticles: () => dispatch(fetchArticles())
+  })
+)(Front)
