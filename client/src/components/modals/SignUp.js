@@ -1,6 +1,5 @@
 const React = require('react')
 const User = require('../../services/User')
-const ModalService = require('../../services/Modal')
 const Modal = require('./Modal')
 
 class SignUp extends React.Component {
@@ -11,14 +10,14 @@ class SignUp extends React.Component {
       email: this.refs.email.value,
       password: this.refs.password.value
     }, () => {
-      ModalService.open('SignUpSuccess')
+      this.props.openModal('SignUpSuccess')
     })
     this.setState({disabled: true})
     setTimeout(() => this.setState({disabled: false}), 150)
   }
   
   render() {
-    const { disabled } = this.state || {}
+    const { disabled } = this.state || {}
     return (
       <Modal className="SignUp">
         <header>

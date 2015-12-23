@@ -1,6 +1,5 @@
 const React = require('react')
-const { Link } = require('react-router')
-const ModalService = require('../../services/Modal')
+const { Link } = require('react-router')
 const User = require('../../services/User')
 const Modal = require('./Modal')
 
@@ -16,7 +15,8 @@ class LogIn extends React.Component {
   }
 
   render() {
-    const { disabled } = this.state || {}
+    const { openModal } = this.props
+    const { disabled } = this.state || {}
     return (
       <Modal className="LogIn">
         <header>
@@ -30,7 +30,7 @@ class LogIn extends React.Component {
             <input type="password" ref="password" className="clean" />
             <div
               className="misq"
-              onClick={ModalService.open.bind(null, 'ForgotPassword')}
+              onClick={() => openModal('ForgotPassword')}
               children="Glömt lösenord?"
             />
             <button disabled={disabled}>Logga in</button>

@@ -1,6 +1,7 @@
 const React = require('react')
+const { connect } = require('react-redux')
 const cx = require('classnames')
-const UIStore = require('../stores/UIStore')
+const { setVisibility } = require('../actions/visibility')
 
 // Site base components
 const Sidebar = require('./base/Sidebar')
@@ -9,24 +10,22 @@ const ModalContainer = require('./base/ModalContainer')
 const NotificationContainer = require('./base/NotificationContainer')
 
 class App extends React.Component {
-  componentWillMount() {
-    UIStore.subscribe(UI => this.setState({ UI }))
-  }
-
-  componentWillReceiveProps() {
-    UIStore.close('SIDEBAR_OPEN')
+  componentWillReceiveProps(props) {
+    if (this.props.location !== props.location) {
+      this.props.setVisibility('sidebar', 'SIDEBAR_CLOSED')
+    }
   }
 
   closeSidebar() {
-    if (this.state.UI.SIDEBAR_OPEN) {
-      UIStore.close('SIDEBAR_OPEN')
+    if (this.props.sidebarVisible) {
+      this.props.setVisibility('sidebar', 'SIDEBAR_CLOSED')
     }
   }
 
   render() {
-    const { SIDEBAR_OPEN } = this.state.UI
+    const { sidebarVisible } = this.props
     return (
-      <div id="App" className={cx({sidebarVisible: SIDEBAR_OPEN})}>
+      <div id="App" className={cx({ sidebarVisible })}>
         <MobileHeader />
         <Sidebar />
         <div id="site" onClick={this.closeSidebar.bind(this)}>
@@ -39,4 +38,11 @@ class App extends React.Component {
   }
 }
 
-module.exports = App
+module.exports = connect(
+  state => ({
+    sidebarVisible: state.visibility.get('sidebar') === 'SIDEBAR_OPEN'
+  }),
+  dispatch => ({
+    setVisibility: (ui, filter) => dispatch(setVisibility(ui, filter))
+  })
+)(App)

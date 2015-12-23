@@ -1,17 +1,24 @@
 const React = require('react')
-const { Link } = require('react-router')
-const UIStore = require('../../stores/UIStore')
+const { connect } = require('react-redux')
+const { Link } = require('react-router')
+const { setVisibility } = require('../../actions/visibility')
 const SVG = require('../svg')
 
 class MobileHeader extends React.Component {
   render() {
+    const { setVisibility } = this.props
     return (
       <div id="MobileHeader">
-        <SVG.Menu onClick={UIStore.set.bind(null, 'SIDEBAR_OPEN')} />
+        <SVG.Menu onClick={() => setVisibility('sidebar', 'SIDEBAR_OPEN')} />
         <Link to="/" className="logo">Julradio</Link>
       </div>
     )
   }
 }
 
-module.exports = MobileHeader
+module.exports = connect(
+  null,
+  dispatch => ({
+    setVisibility: (ui, filter) => dispatch(setVisibility(ui, filter))
+  })
+)(MobileHeader)

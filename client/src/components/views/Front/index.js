@@ -1,8 +1,8 @@
 const React = require('react')
-const { connect } = require('react-redux')
-const { Link } = require('react-router')
-const { fetchArticles } = require('../../../actions/articles')
-const Modal = require('../../../services/Modal')
+const { connect } = require('react-redux')
+const { Link } = require('react-router')
+const { fetchArticles } = require('../../../actions/articles')
+const { openModal } = require('../../../actions/modal')
 const Article = require('../../reusable/Article')
 const SVG = require('../../svg')
 const Schedule = require('./Schedule')
@@ -35,7 +35,7 @@ class Front extends React.Component {
   }
 
   render() {
-    const { articles, pins } = this.props
+    const { articles, pins, openModal } = this.props
     return (
       <div id="Front" className="row">
         <div className="twoThirds column">
@@ -50,7 +50,7 @@ class Front extends React.Component {
         </div>
         <div className="oneThird column">
           <Schedule />
-          <div className="compose" onClick={Modal.open.bind(null, 'RequestSong')}>
+          <div className="compose" onClick={() => openModal('RequestSong')}>
             Skriv en önskning...
           </div>
           <span className="informer">Godkända önskningar och tweets med #julradio</span>
@@ -85,6 +85,7 @@ module.exports = connect(
     }
   },
   dispatch => ({
-    fetchArticles: () => dispatch(fetchArticles())
+    fetchArticles: () => dispatch(fetchArticles()),
+    openModal: modalName => dispatch(openModal(modalName))
   })
 )(Front)

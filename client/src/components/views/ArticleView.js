@@ -1,6 +1,6 @@
 const React = require('react')
-const { connect } = require('react-redux')
-const { fetchArticle } = require('../../actions/articles')
+const { connect } = require('react-redux')
+const { fetchArticle } = require('../../actions/articles')
 const Article = require('../reusable/Article')
 const Comments = require('../reusable/Comments')
 
@@ -11,11 +11,11 @@ class ArticleView extends React.Component {
   }
 
   render() {
-    const { article } = this.props
+    const { article, params: { id } } = this.props
     return (
-      <div id="ArticleView">
-        {article && <Article key={article.get('_id')} article={article} />}
-        {article && <Comments type="article" target={article.get('_id')} />}
+      <div key={id} id="ArticleView">
+        {article && <Article article={article} />}
+        {article && <Comments type="article" target={id} />}
       </div>
     )
   }

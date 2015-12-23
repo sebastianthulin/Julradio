@@ -1,6 +1,5 @@
 const React = require('react')
 const NotificationStore = require('../../stores/NotificationStore')
-const ModalService = require('../../services/Modal')
 const User = require('../../services/User')
 const Modal = require('./Modal')
 
@@ -14,7 +13,7 @@ class ForgotPassword extends React.Component {
       if (err) {
         this.setState({disabled: false})
       } else {
-        ModalService.close()
+        this.props.closeModal()
         NotificationStore.insert({type: 'resetinstructions'})
       }
     })
@@ -22,7 +21,7 @@ class ForgotPassword extends React.Component {
   }
 
   render() {
-    const { disabled } = this.state || {}
+    const { disabled } = this.state || {}
     return (
       <Modal className="ForgotPassword">
         <header>

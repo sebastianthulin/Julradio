@@ -1,5 +1,4 @@
 const React = require('react')
-const ModalService = require('../../services/Modal')
 const RequestStore = require('../../stores/RequestStore')
 const ReservationStore = require('../../stores/ReservationStore')
 const NotificationStore = require('../../stores/NotificationStore')
@@ -50,13 +49,13 @@ class RequestSong extends React.Component {
 
     RequestStore.create(fields, () => {
       this.resetFields()
-      ModalService.close()
+      this.props.closeModal()
       NotificationStore.insert({type: 'requestsong'})
     })
   }
 
   render() {
-    const { onair } = this.state
+    const { onair } = this.state
     return (
       <Modal className="RequestSong">
         <header>Önska en låt</header>

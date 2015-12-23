@@ -15,16 +15,17 @@ class Comments extends React.Component {
 
   fetchComments() {
     const limit = this.limit
-    const { type, target } = this.props
-    CommentStore.fetch({ type, target, limit }, ({ comments, totalThreads }) => this.setState({ comments, totalThreads }))
+    const { type, target } = this.props
+    CommentStore.fetch({ type, target, limit }, ({ comments, totalThreads }) =>
+      this.setState({ comments, totalThreads }))
   }
 
   post(ev) {
     ev.preventDefault()
-    const { type, target } = this.props
+    const { type, target } = this.props
     const text = this.refs.input.value.trim()
     if (!text) return
-    CommentStore.post({ type, target }, text, () => {
+    CommentStore.post({ type, target }, text, () => {
       this.refs.input.value = ''
       this.limit++
       this.fetchComments()
@@ -32,11 +33,11 @@ class Comments extends React.Component {
   }
 
   renderForm() {
-    const { user } = this
+    const { user } = this
     const { block, placeholder, signInPlaceholder } = this.props
     const p = user
-      ? placeholder || 'Skriv en kommentar'
-      : signInPlaceholder || 'Logga in för att kommentera'
+      ? placeholder || 'Skriv en kommentar'
+      : signInPlaceholder || 'Logga in för att kommentera'
 
     return block ? null : (
       <form className="mainForm" onSubmit={this.post.bind(this)}>
@@ -59,8 +60,8 @@ class Comments extends React.Component {
   }
 
   render() {
-    const { user, admin } = this
-    const { comments, totalThreads } = this.state || {}
+    const { user, admin } = this
+    const { comments, totalThreads } = this.state || {}
     if (!comments) return null
     return (
       <div className="Comments">
@@ -73,7 +74,11 @@ class Comments extends React.Component {
           user={user}
           admin={admin}
         />)}
-        {comments.length < totalThreads && <button className="btn" onClick={this.loadMore.bind(this)}>Visa äldre meddelanden</button>}
+        {comments.length < totalThreads && (
+          <button className="btn" onClick={this.loadMore.bind(this)}>
+            Visa äldre meddelanden
+          </button>
+        )}
       </div>
     )
   }

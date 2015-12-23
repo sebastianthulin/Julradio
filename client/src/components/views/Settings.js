@@ -1,6 +1,7 @@
 const React = require('react')
+const { connect } = require('react-redux')
+const { openModal } = require('../../actions/modal')
 const User = require('../../services/User')
-const Modal = require('../../services/Modal')
 const ProfilePicture = require('../reusable/ProfilePicture')
 
 const months = [
@@ -107,7 +108,8 @@ class Settings extends React.Component {
   }
 
   render() {
-    const { user, changes } = this.state
+    const { openModal } = this.props
+    const { user, changes } = this.state
     return (
       <div id="Settings">
         <h1>Profilinställningar</h1>
@@ -182,7 +184,7 @@ class Settings extends React.Component {
           <label className="setting">
             <div className="label">Profilbild</div>
             <ProfilePicture id={user.picture} />
-            <div style={{marginLeft: 10}} onClick={Modal.open.bind(null, 'ChangeAvatar')}>Ändra</div>
+            <div style={{marginLeft: 10}} onClick={() => openModal('ChangeAvatar')}>Ändra</div>
           </label>
           <label className="setting">
             <div className="label">Personlig beskrivning</div>
@@ -205,4 +207,9 @@ class Settings extends React.Component {
   }
 }
 
-module.exports = Settings
+module.exports = connect(
+  null,
+  dispatch => ({
+    openModal: modalName => dispatch(openModal(modalName))
+  })
+)(Settings)

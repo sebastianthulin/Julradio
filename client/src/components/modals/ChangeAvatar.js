@@ -1,6 +1,5 @@
 const React = require('react')
 const User = require('../../services/User')
-const ModalService = require('../../services/Modal')
 const NotificationStore = require('../../stores/NotificationStore')
 const ProfilePicture = require('../reusable/ProfilePicture')
 const Modal = require('./Modal')
@@ -40,14 +39,14 @@ class ChangeAvatar extends React.Component {
   }
 
   done() {
-    ModalService.close()
+    this.props.closeModal()
     NotificationStore.insert({
       type: 'profilepicture'
     })
   }
 
   render() {
-    const { user, removed, avatarPreview } = this.state
+    const { user, removed, avatarPreview } = this.state
     return (
       <Modal className="ChangeAvatar">
         <header>

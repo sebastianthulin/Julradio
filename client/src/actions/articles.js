@@ -1,4 +1,4 @@
-const { List } = require('immutable')
+const { List } = require('immutable')
 const marked = require('marked')
 const API = require('../services/API')
 const history = require('../services/history')
@@ -15,8 +15,7 @@ function transform(article) {
 export const fetchArticles = () => {
   return dispatch => {
     dispatch({type: 'FETCH_ARTICLES_REQUEST'})
-    API.get('/articles', ({ articles, pinnedArticles }) => {
-      articles = [...articles, ...pinnedArticles]
+    API.get('/articles', articles => {
       dispatch({
         type: 'FETCH_ARTICLES_SUCCESS',
         articles: List(articles).map(transform)

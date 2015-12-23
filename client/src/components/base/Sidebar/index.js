@@ -1,7 +1,8 @@
 const React = require('react')
-const { Link } = require('react-router')
+const { connect } = require('react-redux')
+const { Link } = require('react-router')
 const cx = require('classnames')
-const Modal = require('../../../services/Modal')
+const { openModal } = require('../../../actions/modal')
 const User = require('../../../services/User')
 const RadioStore = require('../../../stores/RadioStore')
 const ShitStore = require('../../../stores/ShitStore')
@@ -21,7 +22,8 @@ class Sidebar extends React.Component {
   }
 
   renderUser() {
-    const { user, unseenWallPosts } = this.state
+    const { openModal } = this.props
+    const { user, unseenWallPosts } = this.state
     return user ? (
       <Link to={`/@${user.username}`} className="user">
         {unseenWallPosts.length > 0 && (
@@ -35,11 +37,11 @@ class Sidebar extends React.Component {
       </Link>
     ) : (
       <div className="loginArea">
-        <div className="option" onClick={Modal.open.bind(null, 'LogIn')} style={{marginBottom: 10}}>
+        <div className="option" onClick={() => openModal('LogIn')} style={{marginBottom: 10}}>
           <span>Logga in</span>
           <SVG.Favorite />
         </div>
-        <div className="option" onClick={Modal.open.bind(null, 'SignUp')}>
+        <div className="option" onClick={() => openModal('SignUp')}>
           <span>Registrera</span>
           <SVG.FavoriteOutlined />
         </div>
@@ -97,4 +99,9 @@ class Sidebar extends React.Component {
   }
 }
 
-module.exports = Sidebar
+module.exports = connect(
+  null,
+  dispatch => ({
+    openModal: modalName => dispatch(openModal(modalName))
+  })
+)(Sidebar)
