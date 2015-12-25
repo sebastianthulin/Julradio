@@ -1,44 +1,38 @@
 const React = require('react')
+const { connect } = require('react-redux')
+const { deleteRequest, deleteTweet } = require('../../../actions/requests')
 const User = require('../../../services/User')
-const RequestStore = require('../../../stores/RequestStore')
 
 class Request extends React.Component {
-  componentWillMount() {
-    this.state = {}
-  }
-
-  shouldComponentUpdate(props, state) {
-    return this.state.removed !== state.removed
+  shouldComponentUpdate(props) {
+    return this.props.request !== props.request
   }
 
   delete() {
-    const { request } = this.props
-    if (confirm(`Ta bort ${request.tweet ? 'tweet' : 'önskning'}?`)) {
-      RequestStore[request.tweet ? 'deleteTweet' : 'deleteRequest'](request._id, () => {
-        this.setState({removed: true})
-      })
+    const { request, remove } = this.props
+    if (confirm(`Ta bort ${request.get('tweet') ? 'tweet' : 'önskning'}?`)) {
+      remove(request.get('_id'))
     }
   }
 
   render() {
-    const { request, removable } = this.props
-    const { removed } = this.state
-    return removed ? (
+    const { request, removable } = this.props
+    return request.get('deleted') ? (
       <div className="Request">
         Borttagen.
       </div>
-    ) : request.tweet ? (
+    ) : request.get('tweet') ? (
       <div className="Request">
-        <img src={request.userImage} />
-        <a className="user" href={'http://twitter.com/' + request.username} target="_blank">{request.username}</a>
-        <p className="text">{request.text}</p>
+        <img src={request.get('userImage')} />
+        <a className="user" href={'http://twitter.com/' + request.get('username')} target="_blank">{request.get('username')}</a>
+        <p className="text">{request.get('text')}</p>
         {removable && <div className="remove" onClick={this.delete.bind(this)}>x</div>}
       </div>
     ) : (
       <div className="Request">
-        <span className="user">{request.name}</span>
-        <p className="text">{request.text}</p>
-        <div className="song">{request.song}</div>
+        <span className="user">{request.get('name')}</span>
+        <p className="text">{request.get('text')}</p>
+        <div className="song">{request.get('song')}</div>
         {removable && <div className="remove" onClick={this.delete.bind(this)}>x</div>}
       </div>
     )
@@ -48,25 +42,29 @@ class Request extends React.Component {
 class Feed extends React.Component {
   componentWillMount() {
     this.admin = User.isAdmin()
-    this.unsubscribe = RequestStore.subscribe(requests => this.setState({ requests }))
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe()
   }
 
   render() {
-    const { requests } = this.state
+    const { requests, deleteRequest, deleteTweet } = this.props
     return (
       <div className="Feed">
         {requests.map(request => <Request
-          key={request._id}
+          key={request.get('_id')}
           request={request}
           removable={this.admin}
-        />)}
+          remove={request.get('tweet') ? deleteTweet : deleteRequest}
+        />).toArray()}
       </div>
     )
   }
 }
 
-module.exports = Feed
+module.exports = connect(
+  state => ({
+    requests: state.requests
+  }),
+  dispatch => ({
+    deleteRequest: id => dispatch(deleteRequest(id)),
+    deleteTweet: id => dispatch(deleteTweet(id))
+  })
+)(Feed)

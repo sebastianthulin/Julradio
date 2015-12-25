@@ -1,19 +1,19 @@
 const React = require('react')
-const RequestStore = require('../../../stores/RequestStore')
+const Requests = require('../../../services/Requests')
 const TimeSince = require('../../reusable/TimeSince')
 
 class Request extends React.Component {
   accept() {
-    RequestStore.accept(this.props._id, () => this.setState({accepted: true}))
+    Requests.accept(this.props._id, () => this.setState({accepted: true}))
   }
 
   deny() {
-    RequestStore.deny(this.props._id, () => this.setState({removed: true}))
+    Requests.deny(this.props._id, () => this.setState({removed: true}))
   }
 
   render() {
-    const { name, song, text, date, ip } = this.props
-    const { accepted, removed } = this.state || {}
+    const { name, song, text, date, ip } = this.props
+    const { accepted, removed } = this.state || {}
     return (
       <div className="SongRequest">
         <div className="name">{name}</div>
@@ -48,17 +48,17 @@ class ManageRequests extends React.Component {
   }
 
   refresh(requests) {
-    RequestStore.fetch(requests => this.setState({ requests }))
+    Requests.fetch(requests => this.setState({ requests }))
   }
 
   wipe() {
     if (confirm('Vill du ta bort alla önskningar?')) {
-      RequestStore.wipe(this.refresh.bind(this))
+      Requests.wipe(this.refresh.bind(this))
     }
   }
 
   render() {
-    const { requests } = this.state
+    const { requests } = this.state
     return (
       <div>
         <button className="btn" onClick={this.refresh.bind(this)}>Refresh</button>

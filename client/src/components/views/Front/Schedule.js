@@ -1,72 +1,71 @@
 const React = require('react')
-const { Link } = require('react-router')
+const { connect } = require('react-redux')
+const { Link } = require('react-router')
 const cx = require('classnames')
 const dateFormat = require('dateformat')
-const ReservationStore = require('../../../stores/ReservationStore')
 
-const Reservation = ({ startDate, endDate, description, user }) => (
+const Reservation = ({ reservation }) => (
   <div className="Reservation">
-    <div className="user"><Link to={`/@${user.username}`}>{user.name}</Link></div>
-    <div className="description">{description}</div>
+    <div className="user">
+      <Link to={`/@${reservation.getIn(['user', 'username'])}`}>
+        {reservation.getIn(['user', 'name'])}
+      </Link>
+    </div>
+    <div className="description">
+      {reservation.get('description')}
+    </div>
     <div className="time">
-      {dateFormat(startDate, 'HH:MM') + ' - ' + dateFormat(endDate, 'HH:MM')}
+      {dateFormat(reservation.get('startDate'), 'HH:MM') + ' - ' + dateFormat(reservation.get('endDate'), 'HH:MM')}
     </div>
   </div>
 )
 
 class Schedule extends React.Component {
-  componentWillMount() {
-    this.unsubscribe = ReservationStore.subscribe('reservations', reservations => this.setState({ reservations }))
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe()
-  }
-
-  expand() {
-    this.setState({expanded: true})
-  }
-
   render() {
-    const { reservations, expanded } = this.state
-    const fn = r => <Reservation key={r._id} {...r} />
+    const { reservations } = this.props
+    const { expanded } = this.state || {}
+    const fn = r => <Reservation key={r.get('_id')} reservation={r} />
     const date = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
-    const f = [].filter.bind(reservations)
-    const today = f(r => r.startDate.getDate() === date).map(fn)
-    const tomorrow = f(r => r.startDate.getDate() === date + 1).map(fn)
-    const dayAfterTomorrow = f(r => r.startDate.getDate() === date + 2).map(fn)
+    const f = reservations.filter.bind(reservations)
+    const today = f(r => r.get('startDate').getDate() === date).map(fn)
+    const tomorrow = f(r => r.get('startDate').getDate() === date + 1).map(fn)
+    const dayAfterTomorrow = f(r => r.get('startDate').getDate() === date + 2).map(fn)
 
     let upcomingDaysCount = 0
-    today.length > 0 && upcomingDaysCount++
-    tomorrow.length > 0 && upcomingDaysCount++
-    dayAfterTomorrow.length > 0 && upcomingDaysCount++
+    today.size > 0 && upcomingDaysCount++
+    tomorrow.size > 0 && upcomingDaysCount++
+    dayAfterTomorrow.size > 0 && upcomingDaysCount++
 
     return upcomingDaysCount === 0 ? null : (
-      <div id="Schedule" className={cx({ expanded })}>
-        {today.length > 0 && (
+      <div id="Schedule" className={cx({ expanded })}>
+        {today.size > 0 && (
           <section>
             <header>Idag</header>
-            {today}
+            {today.toArray()}
           </section>
         )}
-        {tomorrow.length > 0 && (
+        {tomorrow.size > 0 && (
           <section>
             <header>Imorgon</header>
-            {tomorrow}
+            {tomorrow.toArray()}
           </section>
         )}
-        {dayAfterTomorrow.length > 0 && (
+        {dayAfterTomorrow.size > 0 && (
           <section>
             <header>Övermorgon</header>
-            {dayAfterTomorrow}
+            {dayAfterTomorrow.toArray()}
           </section>
         )}
         {!expanded && upcomingDaysCount > 1 && <footer>
-          <span onClick={this.expand.bind(this)}>Visa mer...</span>
+          <span onClick={() => this.setState({expanded: true})}>Visa mer...</span>
         </footer>}
       </div>
     )
   }
 }
 
-module.exports = Schedule
+module.exports = connect(
+  state => ({
+    reservations: state.reservations.get('items')
+  })
+)(Schedule)

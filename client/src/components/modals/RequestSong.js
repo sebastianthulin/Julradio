@@ -1,14 +1,10 @@
 const React = require('react')
-const RequestStore = require('../../stores/RequestStore')
-const ReservationStore = require('../../stores/ReservationStore')
+const { connect } = require('react-redux')
+const Requests = require('../../services/Requests')
 const NotificationStore = require('../../stores/NotificationStore')
 const Modal = require('./Modal')
 
 class RequestSong extends React.Component {
-  componentWillMount() {
-    ReservationStore.subscribe('onair', onair => this.setState({ onair }))
-  }
-
   getFields() {
     return {
       name: this.refs.name.value,
@@ -47,7 +43,7 @@ class RequestSong extends React.Component {
       return alert('För lång text. Högst 250 tecken.')
     }
 
-    RequestStore.create(fields, () => {
+    Requests.create(fields, () => {
       this.resetFields()
       this.props.closeModal()
       NotificationStore.insert({type: 'requestsong'})
@@ -55,11 +51,11 @@ class RequestSong extends React.Component {
   }
 
   render() {
-    const { onair } = this.state
+    const { onAir } = this.props
     return (
       <Modal className="RequestSong">
         <header>Önska en låt</header>
-        {onair ? (
+        {onAir ? (
           <main>
             <label>Ditt namn</label>
             <input type="text" ref="name" maxLength={50} className="clean" />
@@ -82,4 +78,8 @@ class RequestSong extends React.Component {
   }
 }
 
-module.exports = RequestSong
+module.exports = connect(
+  state => ({
+    onAir: !!state.reservations.get('onAir')
+  })
+)(RequestSong)

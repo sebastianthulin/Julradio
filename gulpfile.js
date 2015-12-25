@@ -53,7 +53,7 @@ gulp.task('js', function() {
 
 gulp.task('css', function() {
   gulp.src('./client/styles/julradio.styl')
-    .pipe(stylus())
+    .pipe(stylus({compress: production}))
     .pipe(gulp.dest('./public'))
     .on('finish', reload)
 })

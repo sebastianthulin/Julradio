@@ -1,46 +1,49 @@
 const React = require('react')
-const { Link } = require('react-router')
+const { connect } = require('react-redux')
+const { Link } = require('react-router')
 const cx = require('classnames')
 const dateFormat = require('dateformat')
 const User = require('../../../services/User')
-const ReservationStore = require('../../../stores/ReservationStore')
 const ManageReservation = require('./ManageReservation')
 
-const ReservationItem = ({ startDate, endDate, description, user, onClick, selected }) => (
+const ReservationItem = ({ reservation, onClick, selected }) => (
   <div className={cx('ReservationItem', { selected })} onClick={onClick}>
     <div className="timeContainer">
-      <div className="time">{dateFormat(startDate, 'HH:MM')}</div>
+      <div className="time">{dateFormat(reservation.get('startDate'), 'HH:MM')}</div>
       <span>-</span>
-      <div className="time">{dateFormat(endDate, 'HH:MM')}</div>
+      <div className="time">{dateFormat(reservation.get('endDate'), 'HH:MM')}</div>
     </div>
-    <Link className="user" to={`/@${user.username}`}>{user.name}</Link>
-    <div className="description">{description}</div>
+    <Link className="user" to={`/@${reservation.getIn(['user', 'username'])}`}>
+      {reservation.getIn(['user', 'name'])}
+    </Link>
+    <div className="description">{reservation.get('description')}</div>
   </div>
 )
 
 class ManageReservations extends React.Component {
   componentWillMount() {
-    this.unsubscribe = ReservationStore.subscribe('reservations', this.handleReservations.bind(this))
+    this.handleReservations(this.props.reservations)
   }
 
-  componentWillUnmount() {
-    this.unsubscribe()
+  componentWillReceiveProps(props) {
+    if (this.props.reservations !== props.reservations) {
+      this.handleReservations(props.reservations)
+    }
   }
 
-  handleReservations(list) {
-    if (!list) return
-    this.list = list
+  handleReservations(items) {
+    this.items = items
     const dates = []
     const reservationsByDate = {}
-    for (let i = 0; i < list.length; i++) {
-      const res = list[i]
+    for (let i = 0; i < items.size; i++) {
+      const res = items.get(i)
       const today = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
-      if (res.startDate.getDate() >= today) {
-        const date = dateFormat(res.startDate, 'dddd, mmmm d')
+      if (res.get('startDate').getDate() >= today) {
+        const date = dateFormat(res.get('startDate'), 'dddd, mmmm d')
         if (dates[dates.length - 1] !== date) {
           dates.push(date)
         }
-        reservationsByDate[date] = reservationsByDate[date] || []
+        reservationsByDate[date] = reservationsByDate[date] || []
         reservationsByDate[date].push(res)
       }
     }
@@ -48,14 +51,14 @@ class ManageReservations extends React.Component {
   }
 
   select(id) {
-    const prevId = (this.state.selected || {})._id
-    const reservation = this.list.filter(r => r._id === id)[0]
+    const prevId = this.state.selected && this.state.selected.get('_id')
+    const reservation = this.items.filter(r => r.get('_id') === id).get(0)
     if (id === prevId) {
       this.deselect()
     } else {
       this.setState({
         selected: reservation,
-        removable: reservation.user._id === User.get()._id || User.isAdmin()
+        removable: reservation.getIn(['user', '_id']) === User.get()._id || User.isAdmin()
       })
     }
   }
@@ -69,29 +72,29 @@ class ManageReservations extends React.Component {
 
   renderDay(date) {
     const reservations = this.state.reservationsByDate[date]
-    const selectedId = (this.state.selected || {})._id
+    const selectedId = this.state.selected && this.state.selected.get('_id')
     return (
       <div key={date} className="day">
         <div className="date">{date}</div>
         {reservations.map(r => <ReservationItem
-          key={r._id}
-          selected={r._id === selectedId}
-          onClick={this.select.bind(this, r._id)}
-          {...r}
+          key={r.get('_id')}
+          selected={r.get('_id') === selectedId}
+          onClick={this.select.bind(this, r.get('_id'))}
+          reservation={r}
         />)}
       </div>
     )
   }
 
   render() {
-    const { dates, selected, removable } = this.state || {}
+    const { dates, selected, removable } = this.state || {}
     return (
       <div id="ManageReservations" className="row">
         <div className="oneHalf column">
           <h3>Bokningar</h3>
           {!selected && <ManageReservation />}
           {selected && <ManageReservation
-            key={selected._id}
+            key={selected.get('_id')}
             reservation={selected}
             deselect={this.deselect.bind(this)}
             removable={removable}
@@ -105,4 +108,8 @@ class ManageReservations extends React.Component {
   }
 }
 
-module.exports = ManageReservations
+module.exports = connect(
+  state => ({
+    reservations: state.reservations.get('items')
+  })
+)(ManageReservations)

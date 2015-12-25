@@ -10,6 +10,13 @@ class ArticleView extends React.Component {
     this.props.fetchArticle(id)
   }
 
+  componentWillReceiveProps(props) {
+    const { id } = props.params
+    if (id !== this.props.params.id) {
+      this.props.fetchArticle(id)
+    }
+  }
+
   render() {
     const { article, params: { id } } = this.props
     return (
@@ -22,8 +29,8 @@ class ArticleView extends React.Component {
 }
 
 module.exports = connect(
-  state => ({
-    article: state.articles.getIn(['byId', state.articles.get('selected')])
+  (state, props) => ({
+    article: state.articles.getIn(['byId', props.params.id])
   }),
   dispatch => ({
     fetchArticle: id => dispatch(fetchArticle(id))

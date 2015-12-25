@@ -1,4 +1,4 @@
-const { List, Map } = require('immutable')
+const { List, Map } = require('immutable')
 
 function article(state = Map(), action, newProps) {
   switch (action.type) {
@@ -24,7 +24,6 @@ function article(state = Map(), action, newProps) {
 const initialState = Map({
   byId: Map(),
   ids: List(),
-  selected: null,
   editing: null,
   editingId: null
 })
@@ -42,8 +41,6 @@ function articles(state = initialState, action) {
         byId,
         ids: articles.map(a => a._id)
       })
-    case 'FETCH_ARTICLE_REQUEST':
-      return state.set('selected', action.id)
     case 'FETCH_ARTICLE_SUCCESS':
       var a = article(state.getIn(['byId', action.id]), action)
       if (state.get('editingId') === action.id) {
@@ -52,7 +49,7 @@ function articles(state = initialState, action) {
       return state.setIn(['byId', action.id], a)
     case 'EDIT_ARTICLE':
       return state.merge({
-        editing: state.getIn(['byId', action.id]) || Map({user: action.user}),
+        editing: state.getIn(['byId', action.id]) || Map({user: action.user}),
         editingId: action.id
       })
     case 'CANCEL_EDIT':

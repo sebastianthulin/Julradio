@@ -40,13 +40,17 @@ class Front extends React.Component {
       <div id="Front" className="row">
         <div className="twoThirds column">
           {articles.size === 0 && <div style={{height: 1}} />}
-          {pins.size > 0 && <div className="pins">
-            {pins.map(this.renderPin.bind(this)).toJS()}
-          </div>}
-          {articles.map(this.renderArticle.bind(this)).toJS()}
-          {articles.size > 0 && <Link to="/archive" style={{display: 'table', marginBottom: 20}}>
-            Läs gamla nyheter på arkivet!
-          </Link>}
+          {pins.size > 0 && (
+            <div className="pins">
+              {pins.map(this.renderPin.bind(this)).toArray()}
+            </div>
+          )}
+          {articles.map(this.renderArticle.bind(this)).toArray()}
+          {articles.size > 0 && (
+            <Link to="/archive" style={{display: 'table', marginBottom: 20}}>
+              Läs gamla nyheter på arkivet!
+            </Link>
+          )}
         </div>
         <div className="oneThird column">
           <Schedule />
