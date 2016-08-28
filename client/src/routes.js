@@ -1,5 +1,5 @@
 const React = require('react')
-const { Route, IndexRoute } = require('react-router')
+const {Route, IndexRoute} = require('react-router')
 const User = require('./services/User')
 
 // Views
@@ -22,13 +22,13 @@ const ManageCrew = require('./components/views/Admin/ManageCrew')
 const ManageRequests = require('./components/views/Admin/ManageRequests')
 const NotFound = require('./components/views/NotFound')
 
-function requireAuth(nextState, replaceState) {
+const requireAuth = (nextState, replaceState) => {
   if (!User.get()) {
     replaceState({nextPathname: nextState.location.pathname}, '/')
   }
 }
 
-function requireAdminAuth(nextState, replaceState) {
+const requireAdminAuth = (nextState, replaceState) => {
   if (!User.isAnything()) {
     replaceState({nextPathname: nextState.location.pathname}, '/')
   }

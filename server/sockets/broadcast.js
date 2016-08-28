@@ -1,44 +1,44 @@
-'use strict';
+'use strict'
 
 const share = require('../share')
 
-var playing = {}
-var history = []
-var tweets = []
-var songRequests = []
-var reservations = []
-var requests = []
+let playing = {}
+let history = []
+let tweets = []
+let songRequests = []
+let reservations = []
+let requests = []
 
-function updateRequests() {
+const updateRequests = () => {
   requests = [...tweets, ...songRequests]
   requests.sort((a, b) => {
-    return new Date(b.granted || b.date) - new Date(a.granted || a.date)
+    return new Date(b.granted || b.date) - new Date(a.granted || a.date)
   })
   requests.splice(50)
 }
 
-share.on('RadioStream', function(data) {
+share.on('RadioStream', data => {
   history = data.history
   if (data.playing) {
     playing = data.playing
   }
 })
 
-share.on('TweetStream', function(data) {
+share.on('TweetStream', data => {
   tweets = data
   updateRequests()
 })
 
-share.on('Requests', function(data) {
+share.on('Requests', data => {
   songRequests = data
   updateRequests()
 })
 
-share.on('Reservations', function(data) {
+share.on('Reservations', data => {
   reservations = data
 })
 
 module.exports = socket => socket
-  .emit('metadata', { playing, history })
+  .emit('metadata', {playing, history})
   .emit('requests', requests)
   .emit('reservations', reservations)

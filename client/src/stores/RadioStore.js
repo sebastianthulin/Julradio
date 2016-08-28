@@ -1,8 +1,8 @@
-const { EventEmitter } = require('events')
+const {EventEmitter} = require('events')
 const socket = require('../services/socket')
 const Radio = new EventEmitter
 const audio = new Audio
-const localStorage = window.localStorage || {}
+const localStorage = window.localStorage || {}
 const urls = process.env.shoutCastUrls
 
 const state = {
@@ -13,7 +13,7 @@ const state = {
   volume: null
 }
 
-Radio.play = function() {
+Radio.play = () => {
   const url = urls[Math.floor(Math.random() * urls.length)]
   audio.src = url + '/;'
   audio.play()
@@ -21,44 +21,44 @@ Radio.play = function() {
   state.playing = true
   try {
     localStorage.playing = 1
-  } catch (e) {}
+  } finally {}
 }
 
-Radio.pause = function() {
+Radio.pause = () => {
   audio.pause()
   Radio.emit('playing', false)
   state.playing = false
   try {
     localStorage.playing = 0
-  } catch (e) {}
+  } finally {}
 }
 
-Radio.toggle = function() {
+Radio.toggle = () => {
   audio.paused ? Radio.play() : Radio.pause()
 }
 
-Radio.toggleMute = function() {
+Radio.toggleMute = () => {
   Radio.setVolume(audio.volume > 0 ? 0 : 1)
 }
 
-Radio.setVolume = function(vol) {
+Radio.setVolume = vol => {
   vol = vol > 1 ? 1 : vol < 0 ? 0 : vol
   audio.volume = state.volume = vol
   try {
     localStorage.volume = vol
-  } catch (e) {}
+  } finally {}
   Radio.emit('volume', vol)
 }
 
-Radio.subscribe = function(event, handler) {
+Radio.subscribe = (event, handler) => {
   handler(state[event])
   Radio.on(event, handler)
-  return function unsubscribe() {
+  return () => {
     Radio.removeListener(event, handler)
   }
 }
 
-socket.on('metadata', function({ playing, history }) {
+socket.on('metadata', ({playing, history}) => {
   if (history) {
     state.history = history
   } else {
@@ -70,17 +70,17 @@ socket.on('metadata', function({ playing, history }) {
   Radio.emit('history', state.history)
 })
 
-audio.addEventListener('playing', function() {
+audio.addEventListener('playing', () => {
   state.onair = true
   Radio.emit('onair', true)
 })
 
-audio.addEventListener('pause', function() {
+audio.addEventListener('pause', () => {
   state.onair = false
   Radio.emit('onair', false)
 })
 
-Radio.setVolume(localStorage.volume || 1)
+Radio.setVolume(localStorage.volume || 1)
 localStorage.playing == 1 && Radio.play()
 
 module.exports = Radio

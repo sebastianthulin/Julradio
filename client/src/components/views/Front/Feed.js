@@ -1,6 +1,6 @@
 const React = require('react')
-const { connect } = require('react-redux')
-const { deleteRequest, deleteTweet } = require('../../../actions/requests')
+const {connect} = require('react-redux')
+const {deleteRequest, deleteTweet} = require('../../../actions/requests')
 const User = require('../../../services/User')
 
 class Request extends React.Component {
@@ -9,14 +9,14 @@ class Request extends React.Component {
   }
 
   delete() {
-    const { request, remove } = this.props
+    const {request, remove} = this.props
     if (confirm(`Ta bort ${request.get('tweet') ? 'tweet' : 'önskning'}?`)) {
       remove(request.get('_id'))
     }
   }
 
   render() {
-    const { request, removable } = this.props
+    const {request, removable} = this.props
     return request.get('deleted') ? (
       <div className="Request">
         Borttagen.
@@ -39,13 +39,19 @@ class Request extends React.Component {
   }
 }
 
+@connect(state => ({
+  requests: state.requests
+}), {
+  deleteRequest,
+  deleteTweet
+})
 class Feed extends React.Component {
   componentWillMount() {
     this.admin = User.isAdmin()
   }
 
   render() {
-    const { requests, deleteRequest, deleteTweet } = this.props
+    const {requests, deleteRequest, deleteTweet} = this.props
     return (
       <div className="Feed">
         {requests.map(request => <Request
@@ -53,18 +59,10 @@ class Feed extends React.Component {
           request={request}
           removable={this.admin}
           remove={request.get('tweet') ? deleteTweet : deleteRequest}
-        />).toArray()}
+        />)}
       </div>
     )
   }
 }
 
-module.exports = connect(
-  state => ({
-    requests: state.requests
-  }),
-  dispatch => ({
-    deleteRequest: id => dispatch(deleteRequest(id)),
-    deleteTweet: id => dispatch(deleteTweet(id))
-  })
-)(Feed)
+module.exports = Feed

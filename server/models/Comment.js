@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
@@ -41,9 +41,9 @@ const schema = new Schema({
   }
 })
 
-schema.statics.updateReplyCount = function(commentId) {
-  return Comment.count({replyTo: commentId}).exec().then(function(numReplies) {
-    return Comment.findByIdAndUpdate(commentId, { numReplies }).exec()
+schema.statics.updateReplyCount = commentId => {
+  return Comment.count({replyTo: commentId}).exec().then(numReplies => {
+    return Comment.findByIdAndUpdate(commentId, {numReplies}).exec()
   })
 }
 

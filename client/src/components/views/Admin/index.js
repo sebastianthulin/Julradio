@@ -1,10 +1,10 @@
 const React = require('react')
 const cx = require('classnames')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 
 class Admin extends React.Component {
   render() {
-    const { path } = this.props.routes[2]
+    const {path} = this.props.routes[2]
     return (
       <div id="Admin" className="row">
         <div className="navigation">

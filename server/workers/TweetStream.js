@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const io = require('socket.io-emitter')({
   host: '127.0.0.1',
@@ -10,14 +10,14 @@ const share = require('../share')
 const db = require('../models')
 const tw = new Twitter(config.twitterTokens)
 
-var tweets = []
+let tweets = []
 
-db.Tweet.find().sort('-_id').limit(50).exec(function(err, docs) {
+db.Tweet.find().sort('-_id').limit(50).exec((err, docs) => {
   tweets = docs
   setTimeout(() => share.emit('TweetStream', tweets), 1000)
 })
 
-function handleTweet(data) {
+const handleTweet = data => {
   const tweet = new db.Tweet({
     text: data.text,
     username: data.user.screen_name,
@@ -35,7 +35,7 @@ function handleTweet(data) {
   io.emit('request', tweet)
 }
 
-function deleteTweet(id) {
+const deleteTweet = id => {
   const i = tweets.findIndex(tweet => tweet._id == id)
   if (i > -1) {
     tweets.splice(i, 1)

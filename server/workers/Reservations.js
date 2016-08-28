@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const io = require('socket.io-emitter')({
   host: '127.0.0.1',
@@ -7,10 +7,10 @@ const io = require('socket.io-emitter')({
 const share = require('../share')
 const db = require('../models')
 
-var reservations = []
+let reservations = []
 setTimeout(update, 1000)
 
-function update(items) {
+const update = items => {
   const d = new Date()
   const date = new Date(d.getFullYear(), d.getMonth(), d.getDate())
   db.Reservation.find({
@@ -18,14 +18,14 @@ function update(items) {
   }).populate({
     path: 'user',
     select: '-hash -email'
-  }).exec().then(function(docs) {
+  }).exec().then(docs => {
     reservations = docs.sort((a, b) => a.startDate - b.startDate)
     share.emit('Reservations', reservations)
     io.emit('reservations', reservations)
   })
 }
 
-share.on('Reservations:create', function(opts) {
+share.on('Reservations:create', opts => {
   new db.Reservation({
     user: opts.userId,
     description: opts.description,
@@ -34,7 +34,7 @@ share.on('Reservations:create', function(opts) {
   }).save().then(update).catch(console.error.bind(console))
 })
 
-share.on('Reservations:edit', function(data) {
+share.on('Reservations:edit', data => {
   const id = data.id
   const opts = data.opts
   db.Reservation.findByIdAndUpdate(id, {
@@ -44,6 +44,6 @@ share.on('Reservations:edit', function(data) {
   }).exec().then(update).catch(console.error.bind(console))
 })
 
-share.on('Reservations:remove', function(id) {
+share.on('Reservations:remove', id => {
   db.Reservation.findByIdAndRemove(id).exec().then(update).catch(console.error.bind(console))
 })

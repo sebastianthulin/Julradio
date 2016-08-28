@@ -1,8 +1,8 @@
 const React = require('react')
-const { connect } = require('react-redux')
-const { Link } = require('react-router')
+const {connect} = require('react-redux')
+const {Link} = require('react-router')
 const cx = require('classnames')
-const { openModal } = require('../../../actions/modal')
+const {openModal} = require('../../../actions/modal')
 const User = require('../../../services/User')
 const RadioStore = require('../../../stores/RadioStore')
 const ShitStore = require('../../../stores/ShitStore')
@@ -13,17 +13,18 @@ const Player = require('./Player')
 
 const divider = <div className="divider" />
 
+@connect(null, {openModal})
 class Sidebar extends React.Component {
   componentWillMount() {
-    User.subscribe(user => this.setState({ user }))
-    RadioStore.subscribe('onair', onair => this.setState({ onair }))
-    ShitStore.subscribe('message', unseenMessages => this.setState({ unseenMessages }))
-    ShitStore.subscribe('wallPost', unseenWallPosts => this.setState({ unseenWallPosts }))
+    User.subscribe(user => this.setState({user}))
+    RadioStore.subscribe('onair', onair => this.setState({onair}))
+    ShitStore.subscribe('message', unseenMessages => this.setState({unseenMessages}))
+    ShitStore.subscribe('wallPost', unseenWallPosts => this.setState({unseenWallPosts}))
   }
 
   renderUser() {
-    const { openModal } = this.props
-    const { user, unseenWallPosts } = this.state
+    const {openModal} = this.props
+    const {user, unseenWallPosts} = this.state
     return user ? (
       <Link to={`/@${user.username}`} className="user">
         {unseenWallPosts.length > 0 && (
@@ -59,7 +60,7 @@ class Sidebar extends React.Component {
     const playerLess = window.__PLAYERLESS__
 
     return (
-      <div id="Sidebar" className={cx({ playerLess })}>
+      <div id="Sidebar" className={cx({playerLess})}>
         <Snowfall
           active={onair}
           count={500}
@@ -99,9 +100,4 @@ class Sidebar extends React.Component {
   }
 }
 
-module.exports = connect(
-  null,
-  dispatch => ({
-    openModal: modalName => dispatch(openModal(modalName))
-  })
-)(Sidebar)
+module.exports = Sidebar

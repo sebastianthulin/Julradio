@@ -1,15 +1,16 @@
-require('./services/LiveReload')
-require('./logic')
+require('./services/liveReload')
 const React = require('react')
 const ReactDOM = require('react-dom')
-const { Router } = require('react-router')
-const { Provider } = require('react-redux')
+const {Router, browserHistory} = require('react-router')
+const {Provider} = require('react-redux')
 const marked = require('marked')
-const store = require('./store')
+const configureStore = require('./configureStore')
 const routes = require('./routes')
-const history = require('./services/history')
+const runLogic = require('./logic')
 
-// Config
+const store = configureStore()
+runLogic(store)
+
 marked.setOptions({
   gfm: true,
   breaks: true,
@@ -18,7 +19,7 @@ marked.setOptions({
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router routes={routes} history={history} />
+    <Router routes={routes} history={browserHistory} />
   </Provider>,
   document.getElementById('root')
 )

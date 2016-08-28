@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
@@ -38,10 +38,10 @@ const schema = new Schema({
   }
 })
 
-schema.statics.updateCommentCount = function(articleId) {
-  return CommentSection.findOne({article: articleId}).select('-id').exec().then(function(section) {
-    return Comment.count({commentSection: section._id}).exec().then(function(numComments) {
-      return Article.findByIdAndUpdate(articleId, { numComments }).exec()
+schema.statics.updateCommentCount = articleId => {
+  return CommentSection.findOne({article: articleId}).select('-id').exec().then(section => {
+    return Comment.count({commentSection: section._id}).exec().then(numComments => {
+      return Article.findByIdAndUpdate(articleId, {numComments}).exec()
     })
   })
 }

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const express = require('express')
 const router = express.Router()
@@ -9,21 +9,21 @@ const config = require('../../config')
 
 router.use(middleware.body)
 
-router.post('/', function(req, res, next) {
+router.post('/', (req, res, next) => {
   const email = String(req.body.email).toLowerCase()
-  var user
+  let user
 
-  db.User.findOne({ email }).exec().then(function(doc) {
-    if (!email || !doc) {
+  db.User.findOne({email}).exec().then(doc => {
+    if (!email || !doc) {
       throw new Error('INVALID_EMAIL')
     } else if (doc.banned) {
       throw new Error('USER_BANNED')
     }
     user = doc
-    return db.PasswordRequest.findOneAndRemove({ user }).exec()
-  }).then(function() {
-    return new db.PasswordRequest({ user }).save()
-  }).then(function(request) {
+    return db.PasswordRequest.findOneAndRemove({user}).exec()
+  }).then(() => {
+    return new db.PasswordRequest({user}).save()
+  }).then(request => {
     res.sendStatus(200)
     const resetURL = 'http://julradio.se/forgot/' + request._id
     const html = `
@@ -36,7 +36,7 @@ router.post('/', function(req, res, next) {
       to: email,
       subject: 'Återställ lösenord',
       html
-    }, function(err, info) {
+    }, (err, info) => {
       if (err) {
         console.error(new Error('MAIL_NOT_SENT'))
       }
@@ -44,9 +44,9 @@ router.post('/', function(req, res, next) {
   }).catch(next)
 })
 
-router.param('requestId', function(req, res, next, id) {
-  db.PasswordRequest.findById(id).exec().then(function(request) {
-    if (!request || Date.now() > request.validTo) {
+router.param('requestId', (req, res, next, id) => {
+  db.PasswordRequest.findById(id).exec().then(request => {
+    if (!request || Date.now() > request.validTo) {
       throw ''
     }
     req.passwordRequest = request
@@ -58,14 +58,14 @@ router.param('requestId', function(req, res, next, id) {
 
 router.get('/:requestId', (req, res) => res.send(req.passwordRequest))
 
-router.post('/:requestId', function(req, res, next) {
+router.post('/:requestId', (req, res, next) => {
   const b = req.body
   const request = req.passwordRequest
-  db.User.findById(request.user).exec().then(function(user) {
+  db.User.findById(request.user).exec().then(user => {
     user.setPassword(b.password)
     user.lastVisit = Date.now()
     return user.save()
-  }).then(function(user) {
+  }).then(user => {
     req.session.uid = user._id
     request.remove()
     res.sendStatus(200)

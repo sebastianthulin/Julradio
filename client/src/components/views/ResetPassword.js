@@ -1,12 +1,12 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const User = require('../../services/User')
 const request = require('superagent')
 
 class ResetPassword extends React.Component {
   componentWillMount() {
-    const { id } = this.props.params
-    request.get('/api/forgot/' + id, (err, { body }) => {
+    const {id} = this.props.params
+    request.get('/api/forgot/' + id, (err, {body}) => {
       if (err) {
         this.setState({loaded: true})
       } else {
@@ -20,13 +20,13 @@ class ResetPassword extends React.Component {
 
   handleSubmit(ev) {
     ev.preventDefault()
-    const { id } = this.props.params
+    const {id} = this.props.params
     const password = this.refs.password.value
     User.newPassword(id, password)
   }
 
   render() {
-    const { request, loaded } = this.state || {}
+    const {request, loaded} = this.state || {}
     return !loaded ? null : request ? (
       <div id="ResetPassword">
         <form onSubmit={this.handleSubmit.bind(this)}>

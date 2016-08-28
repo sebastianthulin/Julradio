@@ -1,15 +1,15 @@
-const { EventEmitter } = require('events')
+const {EventEmitter} = require('events')
 const request = require('superagent')
 const socket = require('../services/socket')
 const API = require('../services/API')
-const UserStore = new EventEmitter
+const UserStore = new EventEmitter
 const usersByName = {}
 const wallPostsByUserId = {}
-var crew
 
-var onlineList = []
+let crew
+let onlineList = []
 
-UserStore.insert = function(user) {
+UserStore.insert = user => {
   if (user.birth) {
     user.birth = new Date(user.birth)
   }
@@ -19,12 +19,12 @@ UserStore.insert = function(user) {
   usersByName[user.username] = user
 }
 
-UserStore.get = function(username, query, handler, errHandler) {
+UserStore.get = (username, query, handler, errHandler) => {
   request.get('/api/user/profile', {
     query,
     username,
-    userId: (usersByName[username] || {})._id
-  }, function(err, { body }) {
+    userId: (usersByName[username] || {})._id
+  }, (err, {body}) => {
     if (err) {
       return errHandler(err)
     }
@@ -35,32 +35,32 @@ UserStore.get = function(username, query, handler, errHandler) {
   })
 }
 
-UserStore.getByUsername = function(username, callback) {
+UserStore.getByUsername = (username, callback) => {
   if (!username) {
     callback(null)
   } else if (usersByName[username]) {
     callback(usersByName[username])
   } else {
-    API.get(`/user/byname/${username}`, function(user) {
+    API.get(`/user/byname/${username}`, user => {
       user && UserStore.insert(user)
       callback(user)
     })
   }
 }
 
-UserStore.getCrew = function(callback) {
+UserStore.getCrew = callback => {
   if (crew) callback(crew)
-  API.get('/crew', function(body) {
+  API.get('/crew', body => {
     crew = body
     crew.forEach(UserStore.insert)
     callback(crew)
   })
 }
 
-UserStore.getAll = function(callback) {
-  API.get('/user/all', function(users) {
+UserStore.getAll = callback => {
+  API.get('/user/all', users => {
     users.forEach(user => user.usernameLower = user.username.toLowerCase())
-    users.sort(function(a, b) {
+    users.sort((a, b) => {
       if (a.usernameLower < b.usernameLower) return -1
       if (a.usernameLower > b.usernameLower) return 1
       return 0
@@ -69,19 +69,19 @@ UserStore.getAll = function(callback) {
   })
 }
 
-UserStore.updateUserSettings = function(userId, opts, cb) {
+UserStore.updateUserSettings = (userId, opts, cb) => {
   API.put(`/user/${userId}`, opts, cb)
 }
 
-UserStore.removeUserAvatar = function(userId, cb) {
+UserStore.removeUserAvatar = (userId, cb) => {
   API.delete(`/user/${userId}/avatar`, cb)
 }
 
-UserStore.updateCrew = function(userIds, cb) {
+UserStore.updateCrew = (userIds, cb) => {
   API.put('/crew', userIds, cb)
 }
 
-socket.on('onlinelist', function(list) {
+socket.on('onlinelist', list => {
   onlineList = list
 })
 

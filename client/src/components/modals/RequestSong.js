@@ -1,9 +1,12 @@
 const React = require('react')
-const { connect } = require('react-redux')
+const {connect} = require('react-redux')
 const Requests = require('../../services/Requests')
 const NotificationStore = require('../../stores/NotificationStore')
 const Modal = require('./Modal')
 
+@connect(state => ({
+  onAir: !!state.reservations.get('onAir')
+}))
 class RequestSong extends React.Component {
   getFields() {
     return {
@@ -51,7 +54,7 @@ class RequestSong extends React.Component {
   }
 
   render() {
-    const { onAir } = this.props
+    const {onAir} = this.props
     return (
       <Modal className="RequestSong">
         <header>Önska en låt</header>
@@ -78,8 +81,4 @@ class RequestSong extends React.Component {
   }
 }
 
-module.exports = connect(
-  state => ({
-    onAir: !!state.reservations.get('onAir')
-  })
-)(RequestSong)
+module.exports = RequestSong

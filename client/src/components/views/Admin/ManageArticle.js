@@ -1,5 +1,5 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const marked = require('marked')
 const User = require('../../../services/User')
 const Article = require('../../reusable/Article')
@@ -37,7 +37,7 @@ class ManageArticle extends React.Component {
   }
 
   render() {
-    const { editing: article } = this.props
+    const {editing: article} = this.props
     const underConstruction = !article.get('_id')
     return (
       <div id="ManageArticle">

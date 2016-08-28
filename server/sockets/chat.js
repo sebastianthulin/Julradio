@@ -1,43 +1,43 @@
-'use strict';
+'use strict'
 
 const db = require('../models')
-const io = require('../../server').io
+const {io} = require('../')
 const Notify = require('../services/Notify')
 const Blockages = require('../services/Blockages')
 const performAction = require('../services/performAction')
 
-function createConversation(users) {
-  var conv = new db.Conversation({ users })
-  conv.populate({path: 'users', select: '-hash -email'}, function(err, doc) {
-    users.forEach(function(userId) {
+const createConversation = users => {
+  let conv = new db.Conversation({users})
+  conv.populate({path: 'users', select: '-hash -email'}, (err, doc) => {
+    users.forEach(userId => {
       io.to(userId).emit('chat:conversation', doc)
     })
   })
   return conv.save()
 }
 
-function getConversationId(from, targetUserId) {
-  return db.User.findById(targetUserId).exec().then(function(user) {
-    if (!user || user._id.toString() === from) {
+const getConversationId = (from, targetUserId) => {
+  return db.User.findById(targetUserId).exec().then(user => {
+    if (!user || user._id.toString() === from) {
       throw new Error('invalid user')
     }
     return db.Conversation.findOne({$and: [
       {users: from},
       {users: user._id}
     ]}).exec()
-  }).then(function(conversation) {
+  }).then(conversation => {
     if (conversation) {
       return conversation
     } else {
       return createConversation([from, targetUserId])
     }
-  }).then(function(conversation) {
+  }).then(conversation => {
     return conversation._id
   })
 }
 
-function sendMessage(from, conversationId, text) {
-  return db.Conversation.findById(conversationId).exec().then(function(conversation) {
+const sendMessage = (from, conversationId, text) => {
+  return db.Conversation.findById(conversationId).exec().then(conversation => {
     if (!conversation) {
       throw new Error('conversation not found')
     } else if (conversation.users.indexOf(from) === -1) {
@@ -57,8 +57,8 @@ function sendMessage(from, conversationId, text) {
       message.save(),
       conversation.save()
     ])
-  }).then(function(data) {
-    data[1].users.forEach(function(userId) {
+  }).then(data => {
+    data[1].users.forEach(userId => {
       io.to(userId).emit('chat:message', data[0])
       if (from != userId) {
         Notify({
@@ -72,17 +72,17 @@ function sendMessage(from, conversationId, text) {
   })
 }
 
-function chatHandler(socket) {
-  socket.on('chat:message', function(opts, errHandler) {
-    if (typeof opts !== 'object' || !opts.text) return
+const chatHandler = socket => {
+  socket.on('chat:message', (opts, errHandler) => {
+    if (typeof opts !== 'object' || !opts.text) return
     Promise.all([
       performAction(socket.ip, 'chat'),
       Blockages.confirm(socket.uid, opts.userId)
-    ]).then(function() {
-      return opts.conversationId || getConversationId(socket.uid, opts.userId)
-    }).then(function(conversationId) {
+    ]).then(() => {
+      return opts.conversationId || getConversationId(socket.uid, opts.userId)
+    }).then(conversationId => {
       return sendMessage(socket.uid, conversationId, opts.text)
-    }).catch(function(err) {
+    }).catch(err => {
       console.error('@chatHandler', err)
       errHandler && errHandler()
     })

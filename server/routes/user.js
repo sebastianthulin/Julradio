@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const express = require('express')
 const mongoose = require('mongoose')
@@ -20,29 +20,29 @@ const upload = multer({
   }
 }).single('avatar')
 
-function getUserDoc(userId) {
+const getUserDoc = userId => {
   return db.User.findById(userId).select('-hash -email').lean().exec()
 }
 
 router.use(middleware.body)
 
-router.get('/logout', function(req, res) {
+router.get('/logout', (req, res) => {
   req.session.uid = null
   res.redirect('back')
 })
 
-router.get('/byname/:username', function(req, res) {
+router.get('/byname/:username', (req, res) => {
   const usernameLower = String(req.params.username).toLowerCase()
-  db.User.findOne({ usernameLower }).select('-hash -email').lean().exec(function(err, user) {
+  db.User.findOne({usernameLower}).select('-hash -email').lean().exec((err, user) => {
     user ? res.send(user) : res.sendStatus(200)
   })
 })
 
-router.get('/profile', function getUser(req, res) {
+router.get('/profile', (req, res) => {
   const userId = req.query.userId
   const usernameLower = String(req.query.username).toLowerCase()
   const allowed = ['profile', 'block']
-  const query = String(req.query.query).split(' ').filter(function(name) {
+  const query = String(req.query.query).split(' ').filter(name => {
     const i = allowed.indexOf(name)
     if (i > -1) {
       allowed.splice(i, 1)
@@ -51,41 +51,41 @@ router.get('/profile', function getUser(req, res) {
     return false
   })
 
-  new Promise(function(resolve, reject) {
+  new Promise((resolve, reject) => {
     if (userId) {
       mongoose.Types.ObjectId.isValid(userId)
         ? resolve(userId)
         : reject(new Error('INCORRECT_USER_ID'))
     } else {
-      db.User.findOne({ usernameLower }).select('_id').exec().then(doc => doc
+      db.User.findOne({usernameLower}).select('_id').exec().then(doc => doc
         ? resolve(doc._id)
         : reject(new Error('USER_NOT_FOUND'))
       )
     }
-  }).then(function(userId) {
-    return Promise.all(query.map(function(type) {
+  }).then(userId => {
+    return Promise.all(query.map(type => {
       switch (type) {
         case 'profile': return getUserDoc(userId)
         case 'block': return Blockages.get(req.userId, userId, true)
       }
     }))
-  }).then(function(data) {
-    const result = query.reduce(function(prev, type, i) {
+  }).then(data => {
+    const result = query.reduce((prev, type, i) => {
       prev[type] = data[i]
       return prev
     }, {})
     res.send(result)
-  }).catch(function() {
+  }).catch(() => {
     res.sendStatus(500)
   })
 })
 
-router.post('/signup', function(req, res, next) {
-  var user
-  new db.User().signUp(req.body).then(function(doc) {
+router.post('/signup', (req, res, next) => {
+  let user
+  new db.User().signUp(req.body).then(doc => {
     user = doc
     return new db.UserActivation({user: doc._id}).save()
-  }).then(function(activate) {
+  }).then(activate => {
     res.sendStatus(200)
     const activateURL = 'http://julradio.se/activate/' + activate._id
     const html = `
@@ -99,7 +99,7 @@ router.post('/signup', function(req, res, next) {
       to: user.email,
       subject: 'Välkommen till Julradio - Verifikation',
       html
-    }, function(err, info) {
+    }, (err, info) => {
       if (err) {
         console.error(new Error('MAIL_NOT_SENT'))
       }
@@ -107,21 +107,21 @@ router.post('/signup', function(req, res, next) {
   }).catch(next)
 })
 
-router.post('/login', function(req, res, next) {
-  performAction(req.ip, 'loginattempt').then(function() {
+router.post('/login', (req, res, next) => {
+  performAction(req.ip, 'loginattempt').then(() => {
     const usernameLower = String(req.body.username).toLowerCase()
-    return db.User.findOne({ usernameLower }).exec()
-  }).then(function(user) {
+    return db.User.findOne({usernameLower}).exec()
+  }).then(user => {
     if (user) {
       if (user.banned) {
         throw new Error('USER_BANNED')
       } else if (user.activated === false) {
         throw new Error('USER_NOT_ACTIVATED')
-      } else if (user.auth(req.body.password)) {
+      } else if (user.auth(req.body.password)) {
         user.lastVisit = Date.now()
         user.save()
         req.session.uid = user._id
-        res.send({ user })
+        res.send({user})
       } else {
         throw new Error('INCORRECT_PASSWORD')
       }
@@ -133,7 +133,7 @@ router.post('/login', function(req, res, next) {
 
 router.use(middleware.signedIn)
 
-router.post('/block', function(req, res) {
+router.post('/block', (req, res) => {
   // block a user
   const b = req.body
   db.Block.findOneAndUpdate({
@@ -145,26 +145,26 @@ router.post('/block', function(req, res) {
   }, {
     upsert: true,
     new: true
-  }).exec().then(function() {
+  }).exec().then(() => {
     res.sendStatus(200)
-  }).catch(function() {
+  }).catch(() => {
     res.sendStatus(500)
   })
 })
 
-router.delete('/block/:userId', function(req, res) {
+router.delete('/block/:userId', (req, res) => {
   // unblock a user
   db.Block.findOneAndRemove({
     from: req.userId,
     target: req.params.userId
-  }).exec().then(function() {
+  }).exec().then(() => {
     res.sendStatus(200)
-  }).catch(function() {
+  }).catch(() => {
     res.sendStatus(500)
   })
 })
 
-router.put('/settings', function(req, res, next) {
+router.put('/settings', (req, res, next) => {
   const b = req.body
 
   if (['', 'MALE', 'FEMALE'].indexOf(b.gender) === -1) {
@@ -181,7 +181,7 @@ router.put('/settings', function(req, res, next) {
   }
   
   if (b.year && b.month && b.day) {
-    var birth = new Date(b.year, b.month, b.day)
+    let birth = new Date(b.year, b.month, b.day)
     const y1900 = new Date(1900, 0, 0)
     const yNowMinusTen = new Date(new Date().getFullYear() - 10, 0, 0)
 
@@ -204,9 +204,9 @@ router.put('/settings', function(req, res, next) {
     .catch(next)
 })
 
-router.put('/settings2', function(req, res, next) {
+router.put('/settings2', (req, res, next) => {
   const b = req.body
-  db.User.findById(req.userId).exec().then(function(user) {
+  db.User.findById(req.userId).exec().then(user => {
     if (!user.auth(b.auth)) {
       throw new Error('INCORRECT_PASSWORD')
     }
@@ -217,18 +217,18 @@ router.put('/settings2', function(req, res, next) {
       user.setPassword(b.password)
     }
     return user.save()
-  }).then(function(user) {
+  }).then(user => {
     user.hash = null
     res.send(user)
   }).catch(next)
 })
 
-router.delete('/profilepicture', function(req, res, next) {
+router.delete('/profilepicture', (req, res, next) => {
   db.User.findByIdAndUpdate(req.userId, {
     picture: undefined
-  }).exec().then(function(user) {
+  }).exec().then(user => {
     if (user.picture) {
-      db.Picture.findById(user.picture).exec().then(function(picture) {
+      db.Picture.findById(user.picture).exec().then(picture => {
         return Promise.all([
           new db.RemovedPicture(picture).save(),
           picture.remove()
@@ -242,9 +242,9 @@ router.delete('/profilepicture', function(req, res, next) {
   }).catch(next)
 })
 
-router.post('/profilepicture', function(req, res, next) {
+router.post('/profilepicture', (req, res, next) => {
   const userId = req.userId
-  upload(req, res, function(err) {
+  upload(req, res, err => {
     if (err) {
       console.error(err, '/profilepicture INVALID_IMAGE')
       return next(new Error('INVALID_IMAGE'))
@@ -260,15 +260,15 @@ router.post('/profilepicture', function(req, res, next) {
     gm(req.file.path)
       .autoOrient()
       .noProfile()   // remove exif
-      .write(req.file.path, function(err) {
-        gm(req.file.path).size(function(err, value) {
+      .write(req.file.path, err => {
+        gm(req.file.path).size((err, value) => {
           if (err) {
             console.error(err, '/profilepicture INVALID_IMAGE')
             fs.unlink(req.file.path)
             return next(new Error('INVALID_IMAGE'))
           }
 
-          var newWidth, newHeight
+          let newWidth, newHeight
           const width = value.width
           const height = value.height
           const aspect = width / height
@@ -284,21 +284,21 @@ router.post('/profilepicture', function(req, res, next) {
           this.resize(newWidth, newHeight, '!')
             .crop(newSize, newSize, (newWidth - newSize) / 2, (newHeight - newSize) / 2)
             .setFormat('jpg')
-            .write('public/i/' + picture._id + '.jpg', function(err) {
+            .write('public/i/' + picture._id + '.jpg', err => {
               fs.unlink(req.file.path)
               if (err) {
                 console.error('@/profilepicture handler a', err)
                 return next(new Error('UNKNOWN_ERROR'))
               }
-              picture.save().then(function() {
+              picture.save().then(() => {
                 return db.User.findByIdAndUpdate(userId, {
                   picture: picture._id
                 }, {
                   new: true
                 }).select('-hash').exec()
-              }).then(function(user) {
+              }).then(user => {
                 res.send(user)
-              }, function(err) {
+              }, err => {
                 console.error('@/profilepicture handler b', err)
                 next(new Error('UNKNOWN_ERROR'))
               })
@@ -311,29 +311,29 @@ router.post('/profilepicture', function(req, res, next) {
 
 router.use(middleware.role('admin'))
 
-router.get('/all', function(req, res) {
-  db.User.find().select('username roles banned').exec(function(err, users) {
+router.get('/all', (req, res) => {
+  db.User.find().select('username roles banned').exec((err, users) => {
     res.send(users)
   })
 })
 
-router.delete('/:userId/avatar', function(req, res) {
-  db.User.findById(req.params.userId).exec().then(function(user) {
-    db.Picture.findById(user.picture).then(function(picture) {
+router.delete('/:userId/avatar', (req, res) => {
+  db.User.findById(req.params.userId).exec().then(user => {
+    db.Picture.findById(user.picture).then(picture => {
       new db.RemovedPicture(picture).save()
       picture.remove()
       user.picture = null
       user.save()      
       res.sendStatus(200)
-    }).catch(function(err) {
+    }).catch(err => {
       res.status(500).send({err: err.toString()})
     })
-  }).catch(function(err) {
+  }).catch(err => {
     res.status(500).send({err: err.toString()})
   })
 })
 
-router.put('/:userId', function(req, res) {
+router.put('/:userId', (req, res) => {
   const b = req.body
   db.User.findByIdAndUpdate(req.params.userId, {
     username: b.username,
@@ -342,12 +342,12 @@ router.put('/:userId', function(req, res) {
     banned: b.banned,
     roles: {
       admin: b.admin,
-      writer: b.admin || b.writer,
-      radioHost: b.admin || b.radioHost
+      writer: b.admin || b.writer,
+      radioHost: b.admin || b.radioHost
     }
-  }).exec().then(function() {
+  }).exec().then(() => {
     res.sendStatus(200)
-  }, function(err) {
+  }, err => {
     res.status(500).send({err: err.toString()})
   })
 })

@@ -1,6 +1,5 @@
 const React = require('react')
-const { Link } = require('react-router')
-const history = require('../../services/history')
+const {Link, browserHistory} = require('react-router')
 const TimeSince = require('./TimeSince')
 const ProfilePicture = require('./ProfilePicture')
 
@@ -9,13 +8,13 @@ class Article extends React.Component {
     if (ev.target.tagName === 'A' && ev.metaKey === false) {
       if (ev.target.host === window.location.host) {
         ev.preventDefault()
-        history.push(ev.target.pathname)
+        browserHistory.push(ev.target.pathname)
       }
     }
   }
 
   render() {
-    const { article } = this.props
+    const {article} = this.props
     const user = article.get('user')
     return (
       <div className="Article">

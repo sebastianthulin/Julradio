@@ -4,10 +4,10 @@ const RadioStore = require('../../../stores/RadioStore')
 
 class VolumeSlider extends React.Component {
   componentWillMount() {
-    RadioStore.subscribe('volume', volume => this.setState({ volume }))
+    RadioStore.subscribe('volume', volume => this.setState({volume}))
   }
 
-  initDrag(ev) {
+  initDrag(ev) {
     ev.preventDefault()
     this.handleDrag(ev)
     const handleDrag = this.handleDrag.bind(this)
@@ -28,9 +28,9 @@ class VolumeSlider extends React.Component {
   }
 
   render() {
-    const { volume, adjusting } = this.state
+    const {volume, adjusting} = this.state
     return (
-      <div id="VolumeSlider" className={cx({ adjusting })} ref="slider" onMouseDown={this.initDrag.bind(this)}>
+      <div id="VolumeSlider" className={cx({adjusting})} ref="slider" onMouseDown={this.initDrag.bind(this)}>
         <div className="volume" style={{width: volume * 100 + '%'}}>
           <div className="handle" />
         </div>

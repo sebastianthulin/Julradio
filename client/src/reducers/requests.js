@@ -1,18 +1,16 @@
-const { List } = require('immutable')
+const {List} = require('immutable')
 
-function request(state, action) {
+const request = (state, action) => {
   switch (action.type) {
     case 'DELETE_REQUEST':
     case 'DELETE_TWEET':
-      return action.id === state.get('_id')
-        ? state.set('deleted', true)
-        : state
+      return state.set('deleted', true)
     default:
       return state
   }
 }
 
-function requests(state = List(), action) {
+const requests = (state = List(), action) => {
   switch (action.type) {
     case 'RECEIVE_REQUESTS':
       return action.requests
@@ -22,7 +20,8 @@ function requests(state = List(), action) {
       return state
     case 'DELETE_REQUEST':
     case 'DELETE_TWEET':
-      return state.map(r => request(r, action))
+      const index = state.findIndex(r => r.get('_id') === action.id)
+      return index > -1 ? state.update(i, r => request(r, action)) : state
     default:
       return state
   }

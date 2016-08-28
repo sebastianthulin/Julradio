@@ -1,7 +1,7 @@
 const React = require('react')
-const { connect } = require('react-redux')
+const {connect} = require('react-redux')
 const cx = require('classnames')
-const { setVisibility } = require('../actions/visibility')
+const {setVisibility} = require('../actions/visibility')
 
 // Site base components
 const Sidebar = require('./base/Sidebar')
@@ -9,6 +9,11 @@ const MobileHeader = require('./base/MobileHeader')
 const ModalContainer = require('./base/ModalContainer')
 const NotificationContainer = require('./base/NotificationContainer')
 
+@connect(state => ({
+  sidebarVisible: state.visibility.get('sidebar') === 'SIDEBAR_OPEN'
+}), {
+  setVisibility
+})
 class App extends React.Component {
   componentWillReceiveProps(props) {
     if (this.props.location !== props.location) {
@@ -23,9 +28,9 @@ class App extends React.Component {
   }
 
   render() {
-    const { sidebarVisible } = this.props
+    const {sidebarVisible} = this.props
     return (
-      <div id="App" className={cx({ sidebarVisible })}>
+      <div id="App" className={cx({sidebarVisible})}>
         <MobileHeader />
         <Sidebar />
         <div id="site" onClick={this.closeSidebar.bind(this)}>
@@ -38,11 +43,4 @@ class App extends React.Component {
   }
 }
 
-module.exports = connect(
-  state => ({
-    sidebarVisible: state.visibility.get('sidebar') === 'SIDEBAR_OPEN'
-  }),
-  dispatch => ({
-    setVisibility: (ui, filter) => dispatch(setVisibility(ui, filter))
-  })
-)(App)
+module.exports = App

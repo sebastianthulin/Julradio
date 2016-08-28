@@ -1,5 +1,5 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const User = require('../../services/User')
 const Modal = require('./Modal')
 
@@ -15,8 +15,8 @@ class LogIn extends React.Component {
   }
 
   render() {
-    const { openModal } = this.props
-    const { disabled } = this.state || {}
+    const {openModal} = this.props
+    const {disabled} = this.state || {}
     return (
       <Modal className="LogIn">
         <header>

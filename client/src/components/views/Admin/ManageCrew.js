@@ -1,34 +1,34 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const UserStore = require('../../../stores/UserStore')
 
 class ManageCrew extends React.Component {
   componentWillMount() {
-    UserStore.getCrew(crew => this.setState({ crew }))
+    UserStore.getCrew(crew => this.setState({crew}))
   }
 
   // To move the position of an element in an array:
   // #array.splice(newIndex, 0, #array.splice(oldIndex, 1)[0])
   moveUp(user) {
-    const { crew } = this.state
+    const {crew} = this.state
     const index = crew.indexOf(user)
     if (index > 0) {
       crew.splice(index - 1, 0, crew.splice(index, 1)[0])
-      this.setState({ crew })
+      this.setState({crew})
     }
   }
 
   moveDown(user) {
-    const { crew } = this.state
+    const {crew} = this.state
     const index = crew.indexOf(user)
     crew.splice(index + 1, 0, crew.splice(index, 1)[0])
-    this.setState({ crew })
+    this.setState({crew})
   }
 
   remove(user) {
-    const { crew } = this.state
+    const {crew} = this.state
     crew.splice(crew.indexOf(user), 1)
-    this.setState({ crew })
+    this.setState({crew})
   }
 
   addCrewMember(ev) {
@@ -36,14 +36,14 @@ class ManageCrew extends React.Component {
     const username = this.refs.input.value.trim()
     if (!username) return
     UserStore.getByUsername(username, user => {
-      const { crew } = this.state
+      const {crew} = this.state
       const conflict = crew.filter(member => user && user._id === member._id)[0]
-      if (!user || conflict) {
+      if (!user || conflict) {
         return alert(`Hittade inte ${username}`)
       }
       crew.push(user)
       this.refs.input.value = ''
-      this.setState({ crew })
+      this.setState({crew})
     })
   }
 
@@ -66,7 +66,7 @@ class ManageCrew extends React.Component {
   }
 
   render() {
-    const { crew } = this.state || {}
+    const {crew} = this.state || {}
     return (
       <div id="ManageCrew">
         <h3>Medarbetare</h3>

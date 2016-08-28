@@ -1,40 +1,40 @@
-'use strict';
+'use strict'
 
 const express = require('express')
 const router = express.Router()
 const db = require('../models')
-const io = require('../../server').io
+const {io} = require('../')
 const config = require('../../config')
 const pictureRoutes = {}
 
-router.use(function(req, res, next) {
+router.use((req, res, next) => {
   req.userId = req.session.uid
   res.setHeader('Expires', '-1')
   res.setHeader('Cache-Control', 'must-revalidate, private')
   if (!req.userId) return next()
-  db.User.findById(req.userId).select('-hash').lean().exec().then(function(user) {
-    if (!user || (user && user.banned)) {
+  db.User.findById(req.userId).select('-hash').lean().exec().then(user => {
+    if (!user || (user && user.banned)) {
       // Disauth user
       throw new Error()
     }
 
     req.user = user
     next()
-  }).catch(function() {
+  }).catch(() => {
     req.session.uid = undefined
     next()
   })
 })
 
-router.get('/picture/:id', function(req, res) {
+router.get('/picture/:id', (req, res) => {
   const id = req.params.id
   if (pictureRoutes[id]) {
     return res.redirect(pictureRoutes[id])
   }
-  db.Picture.findById(id).exec().then(function(doc) {
+  db.Picture.findById(id).exec().then(doc => {
     pictureRoutes[id] = '/i/' + doc._id + doc.extension
     res.redirect(pictureRoutes[id])
-  }).catch(function() {
+  }).catch(() => {
     res.sendStatus(404)
   })
 })
@@ -51,13 +51,13 @@ router.use('/api/crew', require('./crew'))
 router.use('/api/forgot', require('./forgot'))
 
 if (config.liveReload) {
-  router.post('/reloadclients', function(req, res) {
+  router.post('/reloadclients', (req, res) => {
     io.emit('reload')
     res.end()
   })
 }
 
-router.get('*', function(req, res) {
+router.get('*', (req, res) => {
   res.render('main', {
     user: req.user,
     analytics: config.analytics,

@@ -1,15 +1,15 @@
 const React = require('react')
-const random = (min, max) => Math.round(min + Math.random() * (max - min))
+const random = (min, max) => Math.random() * (min - max) + max
 
 class Flake {
   constructor(opts, getHeight, getWidth) {
     this.getHeight = getHeight
     this.getWidth = getWidth
     this.numFlakes = opts.count
-    this.minSize = opts.minSize || 1
-    this.maxSize = opts.maxSize || 2
-    this.minSpeed = opts.minSpeed || 1
-    this.maxSpeed = opts.maxSpeed || 5
+    this.minSize = opts.minSize || 1
+    this.maxSize = opts.maxSize || 2
+    this.minSpeed = opts.minSpeed || 1
+    this.maxSpeed = opts.maxSpeed || 5
     this.reset()
     this.visible = false
     this.shouldDie = !opts.active
@@ -46,6 +46,7 @@ class Flake {
 
 class Snowfall extends React.Component {
   componentDidMount() {
+    this.tick = this.tick.bind(this)
     this.flakes = []
     this.canvas = this.refs.canvas
     this.parent = this.canvas.parentNode
@@ -54,8 +55,10 @@ class Snowfall extends React.Component {
     this.canvas.height = this.getHeight()
     window.addEventListener('resize', this.resize.bind(this))
 
-    for (var i = 0; i < this.props.count; i++) {
-      this.flakes.push(new Flake(this.props, this.getHeight.bind(this), this.getWidth.bind(this)))
+    const getHeight = this.getHeight.bind(this)
+    const getWidth = this.getWidth.bind(this)
+    for (let i = 0; i < this.props.count; i++) {
+      this.flakes.push(new Flake(this.props, getHeight, getWidth))
     }
     this.tick()
   }
@@ -75,19 +78,18 @@ class Snowfall extends React.Component {
   }
 
   resize() {
-    const { canvas } = this
+    const {canvas} = this
     canvas.width = this.getWidth()
     canvas.height = this.getHeight()
   }
 
   tick() {
-    const { canvas, ctx } = this
-    requestAnimationFrame(this.tick.bind(this))
+    const {canvas, ctx} = this
+    requestAnimationFrame(this.tick)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = '#FFF'
-    var i = this.flakes.length
-    while (i--) {
-      var flake = this.flakes[i]
+    for (let i = this.flakes.length; i--;) {
+      const flake = this.flakes[i]
       flake.tick()
       flake.visible && ctx.fillRect(flake.x, flake.y, flake.size, flake.size)
     }

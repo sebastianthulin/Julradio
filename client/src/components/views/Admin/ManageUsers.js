@@ -1,9 +1,9 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const UserStore = require('../../../stores/UserStore')
 const ManageUser = require('./ManageUser')
 
-const User = ({ username, roles, banned }) => (
+const User = ({username, roles, banned}) => (
   <tr>
     <td><Link to={`/admin/users/${username}`}>{username}</Link></td>
     <td>{roles.admin.toString()}</td>
@@ -19,7 +19,7 @@ class ManageUsers extends React.Component {
     this.setUser(this.props.params.username)
     UserStore.getAll(users => {
       this.userList = users
-      this.setState({ users })
+      this.setState({users})
     })
   }
 
@@ -28,7 +28,7 @@ class ManageUsers extends React.Component {
   }
 
   setUser(username) {
-    UserStore.getByUsername(username, selectedUser => this.setState({ selectedUser }))
+    UserStore.getByUsername(username, selectedUser => this.setState({selectedUser}))
   }
 
   filter(ev) {
@@ -47,11 +47,11 @@ class ManageUsers extends React.Component {
   }
 
   render() {
-    const { users, selectedUser, limit } = this.state
+    const {users, selectedUser, limit} = this.state
     const userNodes = []
 
     for (let i = 0; i < limit; i++) {
-      const user = (users || [])[i]
+      const user = (users || [])[i]
       if (user) {
         userNodes.push(<User key={user._id} {...user} />)
       }

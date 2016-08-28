@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
 const broadcast = require('./broadcast')
 const chat = require('./chat')
 //const onlinelist = require('./onlinelist')
 
-module.exports = function(socket) {
+module.exports = socket => {
   socket.uid = socket.request.session.uid
   socket.ip = socket.request.connection.remoteAddress || socket.request['x-forwarded-for']
   broadcast(socket)

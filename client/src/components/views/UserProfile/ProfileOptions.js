@@ -1,5 +1,5 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const User = require('../../../services/User')
 
 class ProfileOptions extends React.Component {
@@ -16,7 +16,7 @@ class ProfileOptions extends React.Component {
   }
 
   render() {
-    const { user, relationship } = this.props
+    const {user, relationship} = this.props
     return (
       <div className="ProfileOptions">
         <Link to={`/messages/${user.username}`} className="action">Skicka Meddelande</Link>

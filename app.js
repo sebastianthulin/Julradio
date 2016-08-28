@@ -66,12 +66,15 @@ if (cluster.isMaster) {
   })
 
   ;[
-    'RadioStream',
     'TweetStream',
     'Reservations',
     'Requests',
     // 'OnlineList'
   ].forEach(fork)
+
+  if (config.shoutCastOnline) {
+    fork('RadioStream')
+  }
 }
 
 if (cluster.isWorker) {

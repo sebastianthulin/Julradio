@@ -1,5 +1,5 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const User = require('../../../services/User')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const TimeSince = require('../../reusable/TimeSince')
@@ -9,7 +9,7 @@ const ProfileOptions = require('./ProfileOptions')
 
 class UserProfile extends React.Component {
   getIndentity() {
-    const { user } = this.props
+    const {user} = this.props
     const location = user.location ? ', ' + user.location : ''
     const genderName = {
       MALE: 'Pojke',

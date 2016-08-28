@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const express = require('express')
 const router = express.Router()
@@ -6,10 +6,10 @@ const mongoose = require('mongoose')
 const middleware = require('../middleware')
 const db = require('../models')
 
-function sendCrew(req, res) {
-  db.redis.get('crew', function(err, crewList) {
-    crewList = JSON.parse(crewList) || []
-    db.User.find({_id: {$in: crewList}}).select('-hash -email').exec(function(err, docs) {
+const sendCrew = (req, res) => {
+  db.redis.get('crew', (err, crewList) => {
+    crewList = JSON.parse(crewList) || []
+    db.User.find({_id: {$in: crewList}}).select('-hash -email').exec((err, docs) => {
       const crew = {}
       for (let doc of docs) {
         crew[doc._id] = doc
@@ -26,7 +26,7 @@ router.get('/', sendCrew)
 router.use(middleware.role('admin'))
 router.use(middleware.body)
 
-router.put('/', function(req, res, next) {
+router.put('/', (req, res, next) => {
   const userIds = req.body
 
   if (!Array.isArray(userIds)) {

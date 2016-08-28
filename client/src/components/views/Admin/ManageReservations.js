@@ -1,13 +1,13 @@
 const React = require('react')
-const { connect } = require('react-redux')
-const { Link } = require('react-router')
+const {connect} = require('react-redux')
+const {Link} = require('react-router')
 const cx = require('classnames')
 const dateFormat = require('dateformat')
 const User = require('../../../services/User')
 const ManageReservation = require('./ManageReservation')
 
-const ReservationItem = ({ reservation, onClick, selected }) => (
-  <div className={cx('ReservationItem', { selected })} onClick={onClick}>
+const ReservationItem = ({reservation, onClick, selected}) => (
+  <div className={cx('ReservationItem', {selected})} onClick={onClick}>
     <div className="timeContainer">
       <div className="time">{dateFormat(reservation.get('startDate'), 'HH:MM')}</div>
       <span>-</span>
@@ -20,6 +20,9 @@ const ReservationItem = ({ reservation, onClick, selected }) => (
   </div>
 )
 
+@connect(state => ({
+  reservations: state.reservations.get('items')
+}))
 class ManageReservations extends React.Component {
   componentWillMount() {
     this.handleReservations(this.props.reservations)
@@ -47,7 +50,7 @@ class ManageReservations extends React.Component {
         reservationsByDate[date].push(res)
       }
     }
-    this.setState({ dates, reservationsByDate })
+    this.setState({dates, reservationsByDate})
   }
 
   select(id) {
@@ -87,7 +90,7 @@ class ManageReservations extends React.Component {
   }
 
   render() {
-    const { dates, selected, removable } = this.state || {}
+    const {dates, selected, removable} = this.state || {}
     return (
       <div id="ManageReservations" className="row">
         <div className="oneHalf column">
@@ -108,8 +111,4 @@ class ManageReservations extends React.Component {
   }
 }
 
-module.exports = connect(
-  state => ({
-    reservations: state.reservations.get('items')
-  })
-)(ManageReservations)
+module.exports = ManageReservations

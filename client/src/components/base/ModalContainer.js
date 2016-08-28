@@ -1,7 +1,7 @@
 const React = require('react')
-const { connect } = require('react-redux')
+const {connect} = require('react-redux')
 const cx = require('classnames')
-const { openModal, closeModal } = require('../../actions/modal')
+const {openModal, closeModal} = require('../../actions/modal')
 
 const modals = {
   LogIn: require('../modals/LogIn'),
@@ -12,6 +12,13 @@ const modals = {
   ChangeAvatar: require('../modals/ChangeAvatar')
 }
 
+@connect(state => ({
+  Modal: modals[state.modal.get('modalName')],
+  visible: state.modal.get('visible')
+}), {
+  openModal,
+  closeModal
+})
 class ModalContainer extends React.Component {
   handleClick(ev) {
     if (ev.currentTarget === ev.target) {
@@ -20,22 +27,13 @@ class ModalContainer extends React.Component {
   }
 
   render() {
-    const { Modal, visible, openModal, closeModal } = this.props
+    const {Modal, visible, openModal, closeModal} = this.props
     return (
-      <div id="ModalContainer" className={cx({ visible })} onClick={this.handleClick.bind(this)}>
+      <div id="ModalContainer" className={cx({visible})} onClick={this.handleClick.bind(this)}>
         {Modal && <Modal openModal={openModal} closeModal={closeModal} />}
       </div>
     )
   }
 }
 
-module.exports = connect(
-  state => ({
-    Modal: modals[state.modal.get('modalName')],
-    visible: state.modal.get('visible')
-  }),
-  dispatch => ({
-    openModal: modalName => dispatch(openModal(modalName)),
-    closeModal: () => dispatch(closeModal())
-  })
-)(ModalContainer)
+module.exports = ModalContainer

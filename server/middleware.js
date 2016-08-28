@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const sessions = require('client-sessions')
 const bodyParser = require('body-parser')

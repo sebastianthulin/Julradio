@@ -1,13 +1,14 @@
 const superagent = require('superagent')
 const NotificationStore = require('../stores/NotificationStore')
 
-const send = function(method, args) {
-  const callback = function(err, res) {
+const send = (method, args) => {
+  const callback = (err, res) => {
     if (err) {
       NotificationStore.error({
         type: url.split('/')[1],
         value: err.response.body.error[0]
       })
+      console.error(err)
     } else {
       cb(res.body)
     }
@@ -21,7 +22,7 @@ const send = function(method, args) {
 
 const API = {}
 
-;['get', 'post', 'put', 'delete'].forEach(function(method) {
+;['get', 'post', 'put', 'delete'].forEach(method => {
   API[method] = function() {
     send(method, [...arguments])
   }

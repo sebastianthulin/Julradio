@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const express = require('express')
 const router = express.Router()
@@ -6,7 +6,7 @@ const share = require('../share')
 const middleware = require('../middleware')
 const db = require('../models')
 
-function generateData(req, res, next) {
+const generateData = (req, res, next) => {
   const b = req.body
   const year = new Date().getFullYear()
   const startTime = String(b.startTime).split(':')
@@ -14,7 +14,7 @@ function generateData(req, res, next) {
   const startDate = new Date(year, b.month, b.day, startTime[0], startTime[1])
   const endDate = new Date(year, b.month, b.day, endTime[0], endTime[1])
 
-  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
     return next(new Error('INVALID_DATE'))
   }
 
@@ -35,12 +35,12 @@ function generateData(req, res, next) {
 router.use(middleware.role('radioHost'))
 router.use(middleware.body)
 
-router.post('/', generateData, function(req, res) {
+router.post('/', generateData, (req, res) => {
   share.emit('Reservations:create', req.reservation)
   res.sendStatus(200)
 })
 
-router.put('/:id', generateData, function(req, res) {
+router.put('/:id', generateData, (req, res) => {
   share.emit('Reservations:edit', {
     id: req.params.id,
     opts: req.reservation
@@ -48,11 +48,11 @@ router.put('/:id', generateData, function(req, res) {
   res.sendStatus(200)
 })
 
-router.delete('/:id', function(req, res, next) {
-  db.Reservation.findById(req.params.id).exec().then(function(doc) {
+router.delete('/:id', (req, res, next) => {
+  db.Reservation.findById(req.params.id).exec().then(doc => {
     if (!doc) {
       res.sendStatus(200)
-    } else if (doc.user.toString() == req.userId || req.user.roles.admin) {
+    } else if (doc.user.toString() == req.userId || req.user.roles.admin) {
       share.emit('Reservations:remove', req.params.id)
       res.sendStatus(200)
     } else {

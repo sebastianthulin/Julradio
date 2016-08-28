@@ -1,10 +1,8 @@
 const socket = require('./socket')
 const reload = location.reload.bind(location)
-socket.on('reload', reload)
-// socket.on('disconnect', () => socket.on('connect', reload))
+socket.on('disconnect', () => socket.on('connect', reload))
 
-window.disableAutoRefresh = function() {
-  socket.off('reload')
+window.disableAutoRefresh = () => {
   socket.off('disconnect')
   socket.off('connect')
   console.info('Auto refresh disabled!')

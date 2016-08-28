@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
 const MongoError = require('mongodb-core/lib/error.js')
 const MongooseError = require('mongoose/lib/error.js')
 const errors = require('../client/src/errors')
 
-function errorHandler(err, req, res, next) {
+const errorHandler = (err, req, res, next) => {
   const error = []
   if (err instanceof MongooseError) {
     for (let key in err.errors) {
@@ -24,7 +24,7 @@ function errorHandler(err, req, res, next) {
       error[i] = 'UNKNOWN_ERROR'
     }
   }
-  res.status(500).send({ error })
+  res.status(500).send({error})
 }
 
 module.exports = errorHandler

@@ -51,14 +51,14 @@ class TimeSince extends React.Component {
       const time = ~~(timeSince / chrono.millis)
       if (time >= 1) {
         const suffix = time === 1 ? chrono.suffix : chrono.suffix2
-        return this.setState({ time, suffix })
+        return this.setState({time, suffix})
       }
     }
-    this.setState({ time: 1, suffix: chronos[0].suffix })
+    this.setState({time: 1, suffix: chronos[0].suffix})
   }
 
   render() {
-    var children = this.state.time + ' ' + this.state.suffix
+    let children = this.state.time + ' ' + this.state.suffix
     if (!this.props.short) {
       children += ' sedan'
     }

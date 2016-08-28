@@ -3,7 +3,6 @@ const Modal = require('./Modal')
 
 class SignUpSuccess extends React.Component {
   render() {
-    const { disabled } = this.state || {}
     return (
       <Modal className="SignUpSuccess">
         <header>

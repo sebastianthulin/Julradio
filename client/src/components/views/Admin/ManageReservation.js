@@ -1,8 +1,8 @@
 const React = require('react')
 const dateFormat = require('dateformat')
-
 const API = require('../../../services/API')
-const Reservations = {
+
+const reservations = {
   create: (opts, cb) => API.post('/reservations', opts, cb),
   update: (id, opts, cb) => API.put('/reservations/' + id, opts, cb),
   delete: (id, cb) => API.delete('/reservations/' + id, cb)
@@ -10,7 +10,7 @@ const Reservations = {
 
 class ManageReservation extends React.Component {
   componentWillMount() {
-    const { reservation } = this.props
+    const {reservation} = this.props
     this.days = []
     for (let i = 0; i < 3; i++) {
       const time = Date.now() + window.__TIMEDIFFERENCE__ + i * 24 * 60 * 60 * 1000
@@ -52,11 +52,11 @@ class ManageReservation extends React.Component {
     }
 
     if (id) {
-      Reservations.update(id, opts, () => {
+      reservations.update(id, opts, () => {
         alert('ändringar sparade.')
       })
     } else {
-      Reservations.create(opts, () => {
+      reservations.create(opts, () => {
         this.refs.startTime.value = ''
         this.refs.endTime.value = ''
         this.refs.text.value = ''
@@ -68,7 +68,7 @@ class ManageReservation extends React.Component {
   delete() {
     const id = this.getId()
     if (confirm('Säkert?')) {
-      Reservations.delete(id, () => {
+      reservations.delete(id, () => {
         this.props.deselect()
       })
     }
@@ -76,7 +76,7 @@ class ManageReservation extends React.Component {
 
   render() {
     const isNew = !this.getId()
-    const { removable } = this.props
+    const {removable} = this.props
     return (
       <div>
         <label className="setting">

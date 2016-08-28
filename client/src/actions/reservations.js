@@ -1,6 +1,6 @@
-const { fromJS } = require('immutable')
+const {fromJS} = require('immutable')
 
-function transform(res) {
+const transform = res => {
   res.startDate = new Date(res.startDate)
   res.endDate = new Date(res.endDate)
   return res

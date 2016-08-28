@@ -21,7 +21,7 @@ class UserProfileContainer extends React.Component {
 
   setUser(username) {
     this.execute(username, 'profile block')
-    const user = (this.authedUser || {}).usernameLower
+    const user = (this.authedUser || {}).usernameLower
     if (user === username.toLowerCase()) {
       ShitStore.clear('wallPost')
       // ShitStore.on('wallPost', () => true)
@@ -50,7 +50,7 @@ class UserProfileContainer extends React.Component {
   }
 
   render() {
-    const { profile, err } = this.state || {}
+    const {profile, err} = this.state || {}
     return err ? (
       <NotFound referingTo={"Användaren"} />
     ) : profile ? <UserProfile

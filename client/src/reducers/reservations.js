@@ -1,11 +1,11 @@
-const { List, Map } = require('immutable')
+const {List, Map} = require('immutable')
 
 const initialState = Map({
   items: List(),
   onAir: null
 })
 
-function reservations(state = initialState, action) {
+const reservations = (state = initialState, action) => {
   switch (action.type) {
     case 'RECEIVE_RESERVATIONS':
       return state.set('items', action.reservations)

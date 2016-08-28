@@ -1,7 +1,7 @@
-const { fromJS } = require('immutable')
+const {fromJS} = require('immutable')
 const API = require('../services/API')
 
-function transform(request) {
+const transform = request => {
   request.songRequest = !!request.granted
   request.tweet = !request.songRequest
   request.deleted = false

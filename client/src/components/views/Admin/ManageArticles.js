@@ -1,21 +1,27 @@
 const React = require('react')
-const { connect } = require('react-redux')
-const { Link } = require('react-router')
+const {connect} = require('react-redux')
+const {Link} = require('react-router')
 const cx = require('classnames')
-const {
-  fetchAllArticles,
-  editArticle,
-  cancelEdit,
-  updateArticleLocally,
-  createArticle,
-  updateArticle,
-  deleteArticle,
-  togglePin
-} = require('../../../actions/articles')
+const articleActions = require('../../../actions/articles')
 const ManageArticle = require('./ManageArticle')
 const TimeSince = require('../../reusable/TimeSince')
 const SVG = require('../../svg')
 
+@connect(state => {
+  const byId = state.articles.get('byId')
+  const editing = state.articles.get('editing')
+  const articles = state.articles.get('ids').map(id => byId.get(id))
+  return {editing, articles}
+}, {
+  fetchAllArticles: articleActions.fetchAllArticles,
+  editArticle: articleActions.editArticle,
+  cancelEdit: articleActions.cancelEdit,
+  updateArticleLocally: articleActions.updateArticleLocally,
+  createArticle: articleActions.createArticle,
+  updateArticle: articleActions.updateArticle,
+  deleteArticle: articleActions.deleteArticle,
+  togglePin: articleActions.togglePin
+})
 class ManageArticles extends React.Component {
   componentWillMount() {
     this.handleRoute(this.props.params.id)
@@ -46,7 +52,7 @@ class ManageArticles extends React.Component {
   }
 
   render() {
-    const { articles, editing, togglePin } = this.props
+    const {articles, editing, togglePin} = this.props
     return editing ? (
       <ManageArticle {...this.props} />
     ) : (
@@ -65,7 +71,7 @@ class ManageArticles extends React.Component {
               children={<SVG.Pin />}
             />
           </Link>
-        )).toJS()}
+        ))}
         <br/>
         <button className="btn" onClick={this.create.bind(this)}>Skapa ny</button>
       </div>
@@ -73,21 +79,4 @@ class ManageArticles extends React.Component {
   }
 }
 
-module.exports = connect(
-  state => ({
-    editing: state.articles.get('editing'),
-    articles: state.articles
-      .get('ids')
-      .map(id => state.articles.getIn(['byId', id]))
-  }),
-  dispatch => ({
-    fetchAllArticles: () => dispatch(fetchAllArticles()),
-    editArticle: id => dispatch(editArticle(id)),
-    cancelEdit: () => dispatch(cancelEdit()),
-    updateArticleLocally: props => dispatch(updateArticleLocally(props)),
-    createArticle: () => dispatch(createArticle()),
-    updateArticle: () => dispatch(updateArticle()),
-    deleteArticle: () => dispatch(deleteArticle()),
-    togglePin: id => dispatch(togglePin(id))
-  })
-)(ManageArticles)
+module.exports = ManageArticles

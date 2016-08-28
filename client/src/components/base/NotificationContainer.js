@@ -10,7 +10,7 @@ class NotificationContainer extends React.Component {
     this.state = {
       list: []
     }
-    NotificationStore.subscribe(list => this.setState({ list }))
+    NotificationStore.subscribe(list => this.setState({list}))
   }
 
   onHeight(notification, height) {
@@ -19,17 +19,17 @@ class NotificationContainer extends React.Component {
   }
 
   setPositions() {
-    const { list } = this.state
+    const {list} = this.state
     let offsetTop = 0
     for (let i = 0; i < list.length; i++) {
       list[i].y = offsetTop
       offsetTop += list[i].height + notificationMargin
     }
-    this.setState({ list })
+    this.setState({list})
   }
 
   render() {
-    const { list } = this.state
+    const {list} = this.state
     return (
       <div id="NotificationContainer" ref="container">
         {list.map(n => <Notification onHeight={this.onHeight.bind(this, n)} {...n} />)}

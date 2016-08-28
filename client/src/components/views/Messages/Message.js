@@ -7,7 +7,7 @@ class Message extends React.Component {
   }
 
   render() {
-    const { message, right } = this.props
+    const {message, right} = this.props
     return (
       <div className={cx('Message', right ? 'right' : 'left')}>
         {message.text}

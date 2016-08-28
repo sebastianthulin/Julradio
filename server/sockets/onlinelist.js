@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
 const db = require('../models')
-const io = require('../../server').io
+const {io} = require('../')
 
 var onlinelist = []
 
-function userJoin(socket) {
+const userJoin = socket => {
   process.send({
     service: 'OnlineList',
     data: {
@@ -15,7 +15,7 @@ function userJoin(socket) {
   })
 }
 
-function userLeave(socket) {
+const userLeave = socket => {
   process.send({
     service: 'OnlineList',
     data: {
@@ -25,7 +25,7 @@ function userLeave(socket) {
   })
 }
 
-function handler(socket) {
+const handler = socket => {
   userJoin(socket)
   process.send({
     service: 'OnlineList',
@@ -33,13 +33,13 @@ function handler(socket) {
       type: 'get'
     }
   })
-  socket.on('disconnect', function() {
+  socket.on('disconnect', () => {
     userLeave(socket)
   })
   socket.emit('onlinelist', onlinelist)
 }
 
-process.on('message', function(message) {
+process.on('message', message => {
   if (message.service === 'OnlineList') {
     onlinelist = message.data
   }

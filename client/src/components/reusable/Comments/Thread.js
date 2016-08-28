@@ -5,7 +5,7 @@ const Comment = require('./Comment')
 
 class Thread extends React.Component {
   componentWillMount() {
-    const { replies, comment } = this.props
+    const {replies, comment} = this.props
     this.state = {
       comment,
       replies,
@@ -14,13 +14,13 @@ class Thread extends React.Component {
   }
 
   fetchReplies(limit) {
-    const { comment } = this.props
+    const {comment} = this.props
     CommentStore.fetchReplies(comment._id, limit, this.setState.bind(this))
   }
 
   reply(ev) {
     ev.preventDefault()
-    const { replies, comment } = this.state
+    const {replies, comment} = this.state
     const text = this.refs.reply.value.trim()
     if (!text) return
     CommentStore.reply(comment._id, text, () => {
@@ -31,8 +31,8 @@ class Thread extends React.Component {
   }
 
   renderReplies() {
-    const { replies } = this.state
-    const { onDelete, user, admin } = this.props
+    const {replies} = this.state
+    const {onDelete, user, admin} = this.props
     return replies.map(reply => <Comment
       key={reply._id}
       comment={reply}
@@ -47,8 +47,8 @@ class Thread extends React.Component {
   }
 
   render() {
-    const { showReply, replies, comment } = this.state
-    const { user, admin, onDelete } = this.props
+    const {showReply, replies, comment} = this.state
+    const {user, admin, onDelete} = this.props
     return (
       <div className="Thread">
         <Comment

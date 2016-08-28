@@ -1,5 +1,5 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const UserStore = require('../../../stores/UserStore')
 
 class ManageUser extends React.Component {
@@ -11,19 +11,19 @@ class ManageUser extends React.Component {
       writer: this.refs.writer.checked,
       radioHost: this.refs.radioHost.checked,
       banned: this.refs.banned.checked
-    }, function() {
+    }, () => {
       alert('Ändringar sparade.')
     })
   }
 
   removeAvatar() {
-    UserStore.removeUserAvatar(this.props.user._id, function() {
+    UserStore.removeUserAvatar(this.props.user._id, () => {
       alert('Borttagen.')
     })
   }
 
   render() {
-    const { user } = this.props
+    const {user} = this.props
     return (
       <div className="oneHalf column">
         <label className="setting">

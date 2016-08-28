@@ -1,9 +1,9 @@
-const { EventEmitter } = require('events')
+const {EventEmitter} = require('events')
 const NotificationStore = new EventEmitter
 
 const state = []
 
-NotificationStore.insert = function({ type, from, value }, err) {
+NotificationStore.insert = ({type, from, value}, err) => {
   const id = Math.random()
   const notification = {
     id,
@@ -21,9 +21,8 @@ NotificationStore.insert = function({ type, from, value }, err) {
 
 NotificationStore.error = opts => NotificationStore.insert(opts, true)
 
-NotificationStore.clear = function(id) {
-  let i = state.length
-  while (i--) {
+NotificationStore.clear = id => {
+  for (let i = state.length; i--;) {
     if (state[i].id === id) {
       state.splice(i, 1)
     }
@@ -31,10 +30,10 @@ NotificationStore.clear = function(id) {
   NotificationStore.emit('change', state.slice())
 }
 
-NotificationStore.subscribe = function(handler) {
+NotificationStore.subscribe = handler => {
   handler(state.slice())
   NotificationStore.on('change', handler)
-  return function unsubscribe() {
+  return () => {
     NotificationStore.removeListener('change', handler)
   }
 }

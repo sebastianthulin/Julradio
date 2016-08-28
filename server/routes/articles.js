@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const express = require('express')
 const router = express.Router()
@@ -14,7 +14,7 @@ const populate = {
 const select = 'title user date pinned'
 
 // Get frontpage articles
-router.get('/', function(req, res, next) {
+router.get('/', (req, res, next) => {
   Promise.all([
     db.Article.find({pinned: false}).sort('-_id').limit(5).populate(populate).exec(),
     db.Article.find({pinned: true}).sort('-_id').select(select).populate(populate).exec()
@@ -24,7 +24,7 @@ router.get('/', function(req, res, next) {
 })
 
 // Get all articles w/out articlecontent
-router.get('/all', function(req, res, next) {
+router.get('/all', (req, res, next) => {
   db.Article.find()
     .select(select)
     .populate(populate)
@@ -33,7 +33,7 @@ router.get('/all', function(req, res, next) {
     .catch(next)
 })
 
-router.get('/:id', function(req, res, next) {
+router.get('/:id', (req, res, next) => {
   db.Article.findById(req.params.id)
     .populate(populate)
     .exec()
@@ -45,7 +45,7 @@ router.get('/:id', function(req, res, next) {
 router.use(middleware.role('writer'))
 router.use(middleware.body)
 
-router.post('/', function(req, res, next) {
+router.post('/', (req, res, next) => {
   const b = req.body
   new db.Article({
     user: b.userless ? undefined : req.userId,
@@ -56,16 +56,16 @@ router.post('/', function(req, res, next) {
     .catch(next)
 })
 
-router.put('/pin', function(req, res, next) {
+router.put('/pin', (req, res, next) => {
   const id = req.body.id
   const pinned = req.body.pinned
-  db.Article.findByIdAndUpdate(id, { pinned })
+  db.Article.findByIdAndUpdate(id, {pinned})
     .exec()
     .then(() => res.sendStatus(200))
     .catch(next)
 })
 
-router.put('/:id', function(req, res, next) {
+router.put('/:id', (req, res, next) => {
   const b = req.body
   db.Article.findByIdAndUpdate(req.params.id, {
     title: b.title,
@@ -75,7 +75,7 @@ router.put('/:id', function(req, res, next) {
     .catch(next)
 })
 
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', (req, res, next) => {
   db.Article.findByIdAndRemove(req.params.id)
     .exec()
     .then(() => res.sendStatus(200))

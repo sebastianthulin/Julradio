@@ -1,5 +1,5 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const errors = require('../../errors')
 const NotificationStore = require('../../stores/NotificationStore')
 const User = require('../../services/User')
@@ -9,7 +9,7 @@ const cx = require('classnames')
 
 class Notification extends React.Component {
   componentDidMount() {
-    const { onHeight } = this.props
+    const {onHeight} = this.props
     this.playSound()
     onHeight(this.refs.notification.clientHeight)
   }
@@ -21,7 +21,7 @@ class Notification extends React.Component {
   }
 
   getMessage() {
-    const { type, from } = this.props
+    const {type, from} = this.props
     switch (type) {
       case 'message': return 'Nytt meddelande från ' + from.username
       case 'wallPost': return 'Gästbok inlägg från ' + from.username
@@ -35,24 +35,24 @@ class Notification extends React.Component {
   }
 
   getErrorMessage() {
-    const { value } = this.props
-    return errors[value] || errors.UNKNOWN_ERROR
+    const {value} = this.props
+    return errors[value] || errors.UNKNOWN_ERROR
   }
 
   getURL() {
-    const { type, from } = this.props
+    const {type, from} = this.props
     switch (type) {
       case 'message': return '/messages/' + from.username
       case 'wallPost': return '/@' + User.get().username
     }
   }
 
-  handleClick() {
+  handleClick() {
     NotificationStore.clear(this.props.id)
   }
 
   render() {
-    const { err, from, y } = this.props
+    const {err, from, y} = this.props
     const url = !err && this.getURL()
     const style = {
       transform: `translateY(${y}px)`
@@ -61,7 +61,7 @@ class Notification extends React.Component {
     const notification = (
       <div
         ref="notification"
-        className={cx('Notification', { err })}
+        className={cx('Notification', {err})}
         style={style}
         onClick={this.handleClick.bind(this)}
       >

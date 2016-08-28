@@ -17,7 +17,7 @@ class SignUp extends React.Component {
   }
   
   render() {
-    const { disabled } = this.state || {}
+    const {disabled} = this.state || {}
     return (
       <Modal className="SignUp">
         <header>

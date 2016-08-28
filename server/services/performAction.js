@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const db = require('../models')
 
@@ -21,7 +21,7 @@ const timeouts = {
   }
 }
 
-function performAction(ip, action) {
+const performAction = (ip, action) => {
   const timeout = timeouts[action]
   return db.IPTimeout.find({
     ip,
@@ -29,7 +29,7 @@ function performAction(ip, action) {
     expires: {
       $gt: Date.now()
     }
-  }).exec().then(function(docs) {
+  }).exec().then(docs => {
     if (docs.length >= timeout.strikes) {
       throw new Error('TIMEOUT')
     }
@@ -42,7 +42,7 @@ function performAction(ip, action) {
 }
 
 // Removes expired timeouts every 10s
-setInterval(function() {
+setInterval(() => {
   db.IPTimeout.find({
     expires: {$lte: Date.now()}
   }).remove().exec()

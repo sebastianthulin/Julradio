@@ -1,7 +1,7 @@
 const React = require('react')
 const RadioStore = require('../../stores/RadioStore')
 
-const HistoryItem = ({ title }) => (
+const HistoryItem = ({title}) => (
   <div className="HistoryItem">
     {title}
   </div>
@@ -9,7 +9,7 @@ const HistoryItem = ({ title }) => (
 
 class History extends React.Component {
   componentWillMount() {
-    this.unsub1 = RadioStore.subscribe('currentlyPlaying', currentlyPlaying => this.setState({ currentlyPlaying }))
+    this.unsub1 = RadioStore.subscribe('currentlyPlaying', currentlyPlaying => this.setState({currentlyPlaying}))
     this.unsub2 = RadioStore.subscribe('history', history => this.setState({
       history: history.slice().reverse().slice(1)
     }))
@@ -21,7 +21,7 @@ class History extends React.Component {
   }
 
   render() {
-    const { currentlyPlaying, history } = this.state
+    const {currentlyPlaying, history} = this.state
     return (
       <div id="History">
         <HistoryItem {...currentlyPlaying} />

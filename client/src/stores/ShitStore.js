@@ -1,4 +1,4 @@
-const { EventEmitter } = require('events')
+const {EventEmitter} = require('events')
 const socket = require('../services/socket')
 const request = require('superagent')
 const NotificationStore = require('./NotificationStore')
@@ -10,8 +10,8 @@ const state = {
   wallPost: []
 }
 
-function handleNotification(opts, notify) {
-  const { _id, type, value } = opts
+const handleNotification = (opts, notify) => {
+  const {_id, type, value} = opts
   const notifications = state[type]
   const seen = handlersByType[type] && handlersByType[type](value)
   if (seen) {
@@ -25,19 +25,19 @@ function handleNotification(opts, notify) {
   }
 }
 
-ShitStore.on = function(type, handler) {
+ShitStore.on = (type, handler) => {
   handlersByType[type] = handler
 }
 
-ShitStore.subscribe = function(type, handler) {
+ShitStore.subscribe = (type, handler) => {
   handler(state[type].slice())
   ShitStore.addListener(type, handler)
-  return function unsubscribe() {
+  return () => {
     ShitStore.removeListener(type, handler)
   }
 }
 
-ShitStore.clear = function(type, value = null) {
+ShitStore.clear = (type, value = null) => {
   const notifications = state[type]
   const i = notifications.indexOf(value)
   if (i > -1) {
@@ -47,16 +47,16 @@ ShitStore.clear = function(type, value = null) {
   }
 }
 
-ShitStore.remove = function(type, value) {
-  request.post('/api/notification', { type, value }).end()
+ShitStore.remove = (type, value) => {
+  request.post('/api/notification', {type, value}).end()
 }
 
-socket.on('notification:new', function(opts) {
+socket.on('notification:new', opts => {
   handleNotification(opts, true)
 })
 
-ShitStore.fetch = function() {
-  request.get('/api/notification', function(err, { body: notifications }) {
+ShitStore.fetch = () => {
+  request.get('/api/notification', (err, {body: notifications}) => {
     notifications.forEach(handleNotification)
   })
 }

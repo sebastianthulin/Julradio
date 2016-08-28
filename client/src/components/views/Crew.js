@@ -1,10 +1,10 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const UserStore = require('../../stores/UserStore')
 const ProfilePicture = require('../reusable/ProfilePicture')
 const MDMini = require('../reusable/MDMini')
 
-const CrewMember = ({ id, username, name, title, description, picture }) => (
+const CrewMember = ({id, username, name, title, description, picture}) => (
   <div className="CrewMember">
     <header>
       <ProfilePicture id={picture} />
@@ -21,16 +21,17 @@ const CrewMember = ({ id, username, name, title, description, picture }) => (
 class Crew extends React.Component {
   componentWillMount() {
     this.state = {crew: []}
-    UserStore.getCrew(crew => this.setState({ crew }))
+    UserStore.getCrew(crew => this.setState({crew}))
   }
 
   render() {
-    const { crew } = this.state
+    const {crew} = this.state
     return (
       <div id="Crew">
         {crew.map(user => <CrewMember key={user.username} {...user} />)}
       </div>
     )
-  }}
+  }
+}
 
 module.exports = Crew

@@ -1,5 +1,5 @@
 const React = require('react')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const cx = require('classnames')
 const RadioStore = require('../../../stores/RadioStore')
 const SVG = require('../../svg')
@@ -7,9 +7,9 @@ const VolumeSlider = require('./VolumeSlider')
 
 class Hampburger extends React.Component {
   render() {
-    const { visible, volume } = this.props
+    const {visible, volume} = this.props
     return (
-      <div id="Hampburger" className={cx({ visible })} ref="menu">
+      <div id="Hampburger" className={cx({visible})}>
         <div className="volumeControl">
           <SVG.Volume volume={volume} onClick={RadioStore.toggleMute.bind(RadioStore)} />
           <VolumeSlider />

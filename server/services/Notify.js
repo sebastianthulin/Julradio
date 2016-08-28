@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
 const db = require('../models')
-const io = require('../../server').io
+const {io} = require('../')
 
-function Notify(opts) {
+const Notify = opts => {
   db.Notification.findOneAndUpdate({
     to: opts.userId,
     from: opts.from,
@@ -18,9 +18,9 @@ function Notify(opts) {
   }, {
     upsert: true,
     new: true
-  }).populate('from').exec().then(function(doc) {
+  }).populate('from').exec().then(doc => {
     io.to(opts.userId).emit('notification:new', doc)
-  }).catch(function(err) {
+  }).catch(err => {
     console.error('Notify error', err)
   })
 }

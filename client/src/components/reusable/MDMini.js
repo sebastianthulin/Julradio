@@ -1,17 +1,21 @@
 const React = require('react')
+const {browserHistory} = require('react-router')
 const User = require('../../services/User')
-const history = require('../../services/history')
 
-function parseContent(markup = '') {
-  const username = (User.get() || {}).username
-  var matchesNotMe
+const entityMap = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  '\'': '&#39;',
+  '/': '&#x2F;'
+}
 
-  markup = markup
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;')
+const parseContent = (markup = '') => {
+  const username = (User.get() || {}).username
+  let matchesNotMe
+
+  markup = markup.replace(/[&<>"'\/]/g, s => entityMap[s])
 
   if (username) {
     // user signed in, match all mentions except for @${username}
@@ -51,12 +55,12 @@ class MDMini extends React.Component {
   handleClick(ev) {
     if (ev.target.tagName === 'A' && ev.metaKey === false) {
       ev.preventDefault()
-      history.push(ev.target.pathname)
+      browserHistory.push(ev.target.pathname)
     }
   }
 
   render() {
-    const { content } = this.state
+    const {content} = this.state
     return <div
       onClick={this.handleClick.bind(this)}
       dangerouslySetInnerHTML={content}

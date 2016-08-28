@@ -12,8 +12,8 @@ class Request extends React.Component {
   }
 
   render() {
-    const { name, song, text, date, ip } = this.props
-    const { accepted, removed } = this.state || {}
+    const {name, song, text, date, ip} = this.props
+    const {accepted, removed} = this.state || {}
     return (
       <div className="SongRequest">
         <div className="name">{name}</div>
@@ -48,7 +48,7 @@ class ManageRequests extends React.Component {
   }
 
   refresh(requests) {
-    Requests.fetch(requests => this.setState({ requests }))
+    Requests.fetch(requests => this.setState({requests}))
   }
 
   wipe() {
@@ -58,7 +58,7 @@ class ManageRequests extends React.Component {
   }
 
   render() {
-    const { requests } = this.state
+    const {requests} = this.state
     return (
       <div>
         <button className="btn" onClick={this.refresh.bind(this)}>Refresh</button>

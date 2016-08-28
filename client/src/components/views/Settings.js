@@ -1,6 +1,6 @@
 const React = require('react')
-const { connect } = require('react-redux')
-const { openModal } = require('../../actions/modal')
+const {connect} = require('react-redux')
+const {openModal} = require('../../actions/modal')
 const User = require('../../services/User')
 const ProfilePicture = require('../reusable/ProfilePicture')
 
@@ -24,6 +24,7 @@ for (let i = 1; i <= 31; i++) {
   days.push(i)
 }
 
+@connect(null, {openModal})
 class Settings extends React.Component {
   componentWillMount() {
     this.timeouts = {}
@@ -40,17 +41,17 @@ class Settings extends React.Component {
       password: ''
     }
 
-    this.setState({ user })
+    this.setState({user})
   }
 
   check() {
-    var changes = []
+    let changes = []
     const values = {
       email: this.refs.email.value,
       password: this.refs.password.value
     }
 
-    for (var i in values) {
+    for (let i in values) {
       if (values[i] !== this.initialValues[i]) {
         changes.push({
           email: 'email',
@@ -62,7 +63,7 @@ class Settings extends React.Component {
     changes = changes.join(', ').replace(/, (?=[^,]*$)/, ' & ')
 
     if (changes !== this.state.changes) {
-      this.setState({ changes })
+      this.setState({changes})
     }
   }
 
@@ -92,7 +93,7 @@ class Settings extends React.Component {
   }
 
   renderConfirmation() {
-    const { changes } = this.state
+    const {changes} = this.state
     return (
       <form onSubmit={this.saveFields.bind(this)} className="ani">
         <label className="setting">
@@ -108,8 +109,8 @@ class Settings extends React.Component {
   }
 
   render() {
-    const { openModal } = this.props
-    const { user, changes } = this.state
+    const {openModal} = this.props
+    const {user, changes} = this.state
     return (
       <div id="Settings">
         <h1>Profilinställningar</h1>
@@ -207,9 +208,4 @@ class Settings extends React.Component {
   }
 }
 
-module.exports = connect(
-  null,
-  dispatch => ({
-    openModal: modalName => dispatch(openModal(modalName))
-  })
-)(Settings)
+module.exports = Settings

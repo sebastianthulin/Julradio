@@ -6,7 +6,7 @@ const Modal = require('./Modal')
 
 class ChangeAvatar extends React.Component {
   componentWillMount() {
-    this.unsub = User.subscribe(user => this.setState({ user }))
+    this.unsub = User.subscribe(user => this.setState({user}))
   }
 
   componentWillUnmount() {
@@ -46,7 +46,7 @@ class ChangeAvatar extends React.Component {
   }
 
   render() {
-    const { user, removed, avatarPreview } = this.state
+    const {user, removed, avatarPreview} = this.state
     return (
       <Modal className="ChangeAvatar">
         <header>

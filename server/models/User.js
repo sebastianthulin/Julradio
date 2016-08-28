@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
@@ -90,7 +90,7 @@ schema.methods.setUsername = function(username) {
     this.invalidate('username', 'STOP_HAXING_PLZ')
   } else if (!/^\w+$/.test(username)) {
     this.invalidate('username', 'INVALID_FORMAT')
-  } else if (mongoose.Types.ObjectId.isValid(this.username)) {
+  } else if (mongoose.Types.ObjectId.isValid(this.username)) {
     this.invalidate('username', 'INVALID_FORMAT')
   } else if (username.length < 3) {
     this.invalidate('username', 'USERNAME_TOO_SHORT')

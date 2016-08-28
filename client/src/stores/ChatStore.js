@@ -1,11 +1,11 @@
-const { EventEmitter } = require('events')
+const {EventEmitter} = require('events')
 const socket = require('../services/socket')
 const request = require('superagent')
 const User = require('../services/User')
 const UserStore = require('./UserStore')
 const ShitStore = require('./ShitStore')
 const NotificationStore = require('./NotificationStore')
-const ChatStore = new EventEmitter
+const ChatStore = new EventEmitter
 const threadsById = {}
 const threadsByUserId = {}
 const messageIdsByThreadId = {}
@@ -19,8 +19,8 @@ const state = {
   threads: []
 }
 
-ChatStore.select = function(username) {
-  UserStore.getByUsername(username, function(user) {
+ChatStore.select = username => {
+  UserStore.getByUsername(username, user => {
     if (!user) {
       return ChatStore.deselect()
     }
@@ -36,7 +36,7 @@ ChatStore.select = function(username) {
   })
 }
 
-ChatStore.load = function(callback) {
+ChatStore.load = callback => {
   const chatId = ChatStore.getConversationId()
   const conversation = threadsById[chatId]
   let messageIds
@@ -49,7 +49,7 @@ ChatStore.load = function(callback) {
     conversation.offset = 0
   }
 
-  request.get(`/api/chat/${chatId}/${conversation.offset}`, function(err, { body: messages }) {
+  request.get(`/api/chat/${chatId}/${conversation.offset}`, (err, {body: messages}) => {
     if (err) {
       return console.error('Couldn\'t load conversation', err)
     }
@@ -68,52 +68,52 @@ ChatStore.load = function(callback) {
   })
 }
 
-ChatStore.deselect = function() {
+ChatStore.deselect = () => {
   state.messages = []
   state.targetUser = null
   push()
 }
 
-ChatStore.sendMessage = function(text) {
+ChatStore.sendMessage = text => {
   socket.emit('chat:message', {
     text,
     userId: state.targetUser._id,
     conversationId: ChatStore.getConversationId()
-  }, function() {
+  }, () => {
     NotificationStore.error({type: 'message'})
   })
 }
 
-ChatStore.subscribe = function(handler) {
+ChatStore.subscribe = handler => {
   handler(state)
   ChatStore.on('state', handler)
-  return function unsubscribe() {
+  return () => {
     ChatStore.removeListener('state', handler)
   }
 }
 
 ChatStore.onReady = handler => state.loaded ? handler() : ChatStore.once('ready', handler)
 
-ChatStore.getConversationId = () => (threadsByUserId[state.targetUser && state.targetUser._id] || {})._id
+ChatStore.getConversationId = () => (threadsByUserId[state.targetUser && state.targetUser._id] || {})._id
 
 const push = () => ChatStore.emit('state', state)
 
-function updateThreads() {
+const updateThreads = () => {
   state.threads = threadIds.map(id => threadsById[id])
   state.threads.sort((a, b) => b.updatedAt - a.updatedAt)
 }
 
-function updateMessages() {
+const updateMessages = () => {
   const messageIds = messageIdsByThreadId[ChatStore.getConversationId()]
   state.messages = messageIds ? messageIds.map(id => messagesById[id]) : []
   push()
 }
 
-function insertConversation(conv) {
-  const uid = User.get()._id
+const insertConversation = conv => {
+  const userId = User.get()._id
   const conversation = {
     _id: conv._id,
-    user: conv.users.filter(user => user._id !== uid)[0],
+    user: conv.users.filter(user => user._id !== userId)[0],
     lastMessage: conv.lastMessage,
     loaded: false,
     updatedAt: new Date(conv.updatedAt),
@@ -125,10 +125,10 @@ function insertConversation(conv) {
   threadIds.push(conversation._id)
 }
 
-socket.on('chat:message', function(message) {
+socket.on('chat:message', message => {
   const chatId = message.conversation
   const messageIds = messageIdsByThreadId[chatId]
-  const conversation = threadsById[chatId] = threadsById[chatId] || {}
+  const conversation = threadsById[chatId] = threadsById[chatId] || {}
   message.date = new Date(message.date)
   messageIds && messageIds.push(message._id)
   messagesById[message._id] = message
@@ -142,20 +142,22 @@ socket.on('chat:message', function(message) {
   }
 })
 
-socket.on('chat:conversation', function(conv) {
+socket.on('chat:conversation', conv => {
   insertConversation(conv)
   updateThreads()
   push()
 })
 
 ShitStore.on('message', conversationId =>
-  ChatStore.getConversationId() === conversationId && document.hasFocus())
+  ChatStore.getConversationId() === conversationId && document.hasFocus()
+)
 
 document.addEventListener('focus', () =>
-  ShitStore.clear('message', ChatStore.getConversationId()))
+  ShitStore.clear('message', ChatStore.getConversationId())
+)
 
-ChatStore.fetch = function() {
-  request.get('/api/chat', function(err, { body: conversations }) {
+ChatStore.fetch = () => {
+  request.get('/api/chat', (err, {body: conversations}) => {
     conversations.forEach(insertConversation)
     state.loaded = true
     updateThreads()

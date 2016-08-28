@@ -1,6 +1,5 @@
 const React = require('react')
 const User = require('../../../services/User')
-const history = require('../../../services/history')
 const CommentStore = require('../../../stores/CommentStore')
 const NotificationStore = require('../../../stores/NotificationStore')
 const Thread = require('./Thread')
@@ -15,17 +14,19 @@ class Comments extends React.Component {
 
   fetchComments() {
     const limit = this.limit
-    const { type, target } = this.props
-    CommentStore.fetch({ type, target, limit }, ({ comments, totalThreads }) =>
-      this.setState({ comments, totalThreads }))
+    const {type, target} = this.props
+    CommentStore.fetch(
+      {type, target, limit},
+      ({comments, totalThreads}) => this.setState({comments, totalThreads})
+    )
   }
 
   post(ev) {
     ev.preventDefault()
-    const { type, target } = this.props
+    const {type, target} = this.props
     const text = this.refs.input.value.trim()
     if (!text) return
-    CommentStore.post({ type, target }, text, () => {
+    CommentStore.post({type, target}, text, () => {
       this.refs.input.value = ''
       this.limit++
       this.fetchComments()
@@ -33,8 +34,8 @@ class Comments extends React.Component {
   }
 
   renderForm() {
-    const { user } = this
-    const { block, placeholder, signInPlaceholder } = this.props
+    const {user} = this
+    const {block, placeholder, signInPlaceholder} = this.props
     const p = user
       ? placeholder || 'Skriv en kommentar'
       : signInPlaceholder || 'Logga in för att kommentera'
@@ -60,13 +61,13 @@ class Comments extends React.Component {
   }
 
   render() {
-    const { user, admin } = this
-    const { comments, totalThreads } = this.state || {}
+    const {user, admin} = this
+    const {comments, totalThreads} = this.state || {}
     if (!comments) return null
     return (
       <div className="Comments">
         {this.renderForm()}
-        {comments.map(({ comment, replies }) => <Thread
+        {comments.map(({comment, replies}) => <Thread
           key={comment._id}
           comment={comment}
           replies={replies}

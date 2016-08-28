@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const io = require('socket.io-emitter')({
   host: '127.0.0.1',
@@ -10,15 +10,15 @@ const share = require('../share')
 const db = require('../models')
 const urls = config.shoutCastUrls
 
-var playing = {}
-var history = []
+let playing = {}
+let history = []
 
-db.Song.find().sort('-_id').limit(30).exec(function(err, docs) {
+db.Song.find().sort('-_id').limit(30).exec((err, docs) => {
   history = docs.reverse()
-  setTimeout(() => share.emit('RadioStream', { history }), 1000)
+  setTimeout(() => share.emit('RadioStream', {history}), 1000)
 })
 
-if (!urls || !urls[0]) {
+if (!urls || !urls[0]) {
   return
 }
 
@@ -28,7 +28,7 @@ stream.on('connect', () => console.log('Connected to SHOUTcast server'))
 stream.on('error', err => console.log(err))
 stream.on('close', process.exit)
 
-stream.on('metadata', function(data) {
+stream.on('metadata', data => {
   const title = data.StreamTitle
   const song = new db.Song({
     title,
@@ -40,17 +40,17 @@ stream.on('metadata', function(data) {
     return
   }
 
-  if (song.title !== (history[history.length - 1] || {}).title) {
+  if (song.title !== (history[history.length - 1] || {}).title) {
     history.length === 30 && history.splice(0, 1)
     history.push(song)
   }
 
   playing = song
 
-  share.emit('RadioStream', { playing, history })
-  io.emit('metadata', { playing })
+  share.emit('RadioStream', {playing, history})
+  io.emit('metadata', {playing})
 
-  db.Song.findOne().sort('-_id').exec(function(err, doc) {
+  db.Song.findOne().sort('-_id').exec((err, doc) => {
     if (!doc || (doc && doc.title !== title)) {
       song.save()
     }

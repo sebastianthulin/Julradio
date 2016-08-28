@@ -1,6 +1,6 @@
 const React = require('react')
 const cx = require('classnames')
-const { Link } = require('react-router')
+const {Link} = require('react-router')
 const ChatStore = require('../../../stores/ChatStore')
 const ShitStore = require('../../../stores/ShitStore')
 const User = require('../../../services/User')
@@ -11,7 +11,7 @@ class Messages extends React.Component {
   componentWillMount() {
     this.unsub = ChatStore.subscribe(state => this.setState(state))
     ChatStore.select(this.props.params.user)
-    ShitStore.subscribe('message', unseen => this.setState({ unseen }))
+    ShitStore.subscribe('message', unseen => this.setState({unseen}))
   }
 
   componentDidMount() {
@@ -82,7 +82,7 @@ class Messages extends React.Component {
   }
 
   renderChat() {
-    const { messages, targetUser } = this.state
+    const {messages, targetUser} = this.state
     const userId = User.get()._id
     return (
       <div>
