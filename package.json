@@ -2,32 +2,28 @@
   "name": "julradio",
   "version": "4.1.0",
   "scripts": {
-    "dev": "concurrently --kill-others 'npm run web:dev'",
-    "deploy": "concurrently --kill-others 'npm run web:deploy'",
-    "web:dev": "cd server && nodemon --exec babel-node index.js",
-    "web:deploy": "cd server && NODE_ENV=production pm2 start index.js --name jr-web --interpreter babel-node",
-    "clientbuild": "cd client && NODE_ENV=production webpack --progress",
-    "update": "git checkout . && git pull && npm run build && npm run restart"
+    "dev": "concurrently --kill-others 'npm run server' 'npm run webpack'",
+    "server": "cd server && nodemon --exec babel-node index.js",
+    "build": "cd client && NODE_ENV=production webpack",
+    "webpack": "cd client && webpack-dev-server --inline --hot --host 0.0.0.0 --colors --no-info"
   },
   "devDependencies": {
-    "babel-cli": "^6.11.4",
-    "babel-core": "^6.11.4",
-    "babel-loader": "^6.2.4",
-    "babel-plugin-react-transform": "^2.0.2",
+    "babel-cli": "^6.14.0",
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-es2015": "^6.14.0",
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-0": "^6.5.0",
     "concurrently": "^2.2.0",
-    "css-loader": "^0.23.1",
-    "nodemon": "^1.10.0",
-    "proxy-middleware": "^0.15.0",
-    "react-transform-hmr": "^1.0.4",
+    "css-loader": "^0.24.0",
+    "nodemon": "^1.10.2",
+    "react-hot-loader": "^1.3.0",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
-    "stylus-loader": "^2.1.2",
-    "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1"
+    "stylus-loader": "^2.3.1",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.15.0"
   },
   "babel": {
     "presets": [
@@ -37,28 +33,6 @@
     ],
     "plugins": [
       "transform-decorators-legacy"
-    ],
-    "env": {
-      "development": {
-        "plugins": [
-          [
-            "react-transform",
-            {
-              "transforms": [
-                {
-                  "transform": "react-transform-hmr",
-                  "imports": [
-                    "react"
-                  ],
-                  "locals": [
-                    "module"
-                  ]
-                }
-              ]
-            }
-          ]
-        ]
-      }
-    }
+    ]
   }
 }
