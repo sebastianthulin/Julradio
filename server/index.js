@@ -1,28 +1,87 @@
-'use strict'
+'use strict';
 
-const express = require('express')
-const proxy = require('proxy-middleware')
-const {app, server, io, webpackServer} = require('./server')
-const {session, ioify} = require('./middleware')
-const routes = require('./routes')
-const errorHandler = require('./errorHandler')
-const sockets = require('./sockets')
-const cfg = require('../config')
+const cluster = require('cluster')
+const childProcess = require('child_process')
+const os = require('os')
+const config = require('../config')
+const workers = []
+const subscriptions = {}
+const hub = require('clusterhub')
 
-if (process.env.NODE_ENV !== 'production') {
-  app.use('/app.js', proxy(`http://localhost:${cfg.webpackPort}/app.js`))
+const workerNames = [
+  'radioStream',
+  'reservations',
+  'tweetStream',
+  'songRequests',
+  // 'OnlineList'
+]
+
+function handleWorker(worker) {
+  workers.push(worker)
+
+  worker.on('message', function(data) {
+    if (data.subscribe) {
+      subscriptions[data.subscribe] = subscriptions[data.subscribe] || []
+      subscriptions[data.subscribe].push(worker)
+    }
+    if (data.event) {
+      const workers = subscriptions[data.event]
+      if (workers) {
+        workers.forEach(worker => worker.send(data))
+      }
+    }
+  })
+
+  worker.on('exit', function() {
+    workers.splice(workers.indexOf(worker), 1)
+    for (let event in subscriptions) {
+      let i = subscriptions[event].length
+      while (i--) {
+        if (subscriptions[event][i] === worker) {
+          subscriptions[event].splice(i, 1)
+        }
+      }
+    }
+  })
 }
 
-app.set('view engine', 'ejs')
-app.enable('trust proxy')
-app.use(express.static('../public'))
-app.use(session)
-app.use(routes)
-app.use(errorHandler)
+function fork(service) {
+  console.log(`Forking ${service}`)
+  const worker = childProcess.fork(`workers/${service}`)
+  handleWorker(worker)
 
-io.use(ioify(session))
-io.on('connection', sockets)
+  worker.on('exit', function() {
+    console.log(`${service} exited`)
+    setTimeout(() => fork(service), 10000)
+  })
+}
 
-server.listen(cfg.port, () =>
-  console.log('Server started on port ' + server.address().port)
-)
+if (cluster.isMaster) {
+  const numWorkers = config.multiCore ? os.cpus().length : 1
+  console.log(`Master cluster setting up ${numWorkers} workers...`)
+
+  for (let i = 0; i < numWorkers; i++) {
+    handleWorker(cluster.fork())
+  }
+
+  cluster.on('online', function(worker) {
+    console.log(`Worker ${worker.process.pid} is online`)
+  })
+
+  cluster.on('exit', function(worker, code, signal) {
+    console.log(`Worker ${worker.process.pid} died with code: ${code} and signal: ${signal}`)
+    console.log('Starting a new worker')
+    handleWorker(cluster.fork())
+  })
+
+  workerNames.forEach(workerName => {
+    cluster.fork({workerName})
+  })
+} else {
+  const {workerName} = process.env
+  if (workerNames.indexOf(workerName) > -1) {
+    require((`./workers/${workerName}`))
+  } else {
+    require('./main')
+  }
+}

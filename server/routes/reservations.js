@@ -1,10 +1,10 @@
 'use strict'
 
+const hub = require('clusterhub')
 const express = require('express')
 const router = express.Router()
-const share = require('../share')
 const middleware = require('../middleware')
-const db = require('../models')
+const {Reservation} = require('../models')
 
 const generateData = (req, res, next) => {
   const b = req.body
@@ -36,12 +36,12 @@ router.use(middleware.role('radioHost'))
 router.use(middleware.body)
 
 router.post('/', generateData, (req, res) => {
-  share.emit('Reservations:create', req.reservation)
+  hub.emit('reservations:create', req.reservation)
   res.sendStatus(200)
 })
 
 router.put('/:id', generateData, (req, res) => {
-  share.emit('Reservations:edit', {
+  hub.emit('reservations:edit', {
     id: req.params.id,
     opts: req.reservation
   })
@@ -49,11 +49,11 @@ router.put('/:id', generateData, (req, res) => {
 })
 
 router.delete('/:id', (req, res, next) => {
-  db.Reservation.findById(req.params.id).exec().then(doc => {
+  Reservation.findById(req.params.id).exec().then(doc => {
     if (!doc) {
       res.sendStatus(200)
     } else if (doc.user.toString() == req.userId || req.user.roles.admin) {
-      share.emit('Reservations:remove', req.params.id)
+      hub.emit('reservations:remove', req.params.id)
       res.sendStatus(200)
     } else {
       throw new Error('UNAUTHORISED')

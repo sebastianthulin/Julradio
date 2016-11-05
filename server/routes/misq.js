@@ -1,22 +1,15 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
-const share = require('../share')
-const db = require('../models')
+const {Router} = require('express')
+const hub = require('clusterhub')
+const {User, UserActivation} = require('../models')
 
-let playing
-
-share.on('RadioStream', data => {
-  if (data.playing) {
-    playing = data.playing.title
-  }
-})
+const router = Router()
 
 router.get('/activate/:UserActivationId', (req, res, next) => {
-  db.UserActivation.findById(req.params.UserActivationId, (err, doc) => {
+  UserActivation.findById(req.params.UserActivationId, (err, doc) => {
     if (err || !doc) return next()
-    db.User.findByIdAndUpdate(doc.user, {
+    User.findByIdAndUpdate(doc.user, {
       activated: true
     }).exec().then(() => {
       doc.remove()
@@ -27,7 +20,9 @@ router.get('/activate/:UserActivationId', (req, res, next) => {
 })
 
 router.get('/inc/now_playing.php', (req, res) => {
-  res.send(playing || 'failed to connect')
+  hub.get('nowPlaying', nowPlaying => {
+    res.send(nowPlaying || 'failed to connect')
+  })
 })
 
 module.exports = router
