@@ -1,15 +1,10 @@
 const React = require('react')
 const cx = require('classnames')
-const RadioStore = require('../../../stores/RadioStore')
 
 class VolumeSlider extends React.Component {
-  componentWillMount() {
-    RadioStore.subscribe('volume', volume => this.setState({volume}))
-  }
-
-  initDrag(ev) {
-    ev.preventDefault()
-    this.handleDrag(ev)
+  initDrag(evt) {
+    evt.preventDefault()
+    this.handleDrag(evt)
     const handleDrag = this.handleDrag.bind(this)
     const endDrag = () => {
       document.removeEventListener('mousemove', handleDrag)
@@ -21,14 +16,17 @@ class VolumeSlider extends React.Component {
     this.setState({adjusting: true})
   }
 
-  handleDrag(ev) {
+  handleDrag(evt) {
     const rect = this.refs.slider.getBoundingClientRect()
-    const offsetLeft = ev.clientX - rect.left
-    RadioStore.setVolume(offsetLeft / rect.width)
+    const offsetLeft = evt.clientX - rect.left
+    const vol1 = offsetLeft / rect.width
+    const vol = vol1 > 1 ? 1 : vol1 < 0 ? 0 : vol1
+    this.props.onSetVolume(vol)
   }
 
   render() {
-    const {volume, adjusting} = this.state
+    const {volume} = this.props
+    const {adjusting} = this.state || {}
     return (
       <div id="VolumeSlider" className={cx({adjusting})} ref="slider" onMouseDown={this.initDrag.bind(this)}>
         <div className="volume" style={{width: volume * 100 + '%'}}>

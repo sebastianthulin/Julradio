@@ -1,31 +1,21 @@
 const React = require('react')
-const RadioStore = require('../../stores/RadioStore')
+const {connect} = require('react-redux')
 
-const HistoryItem = ({title}) => (
+const HistoryItem = ({song}) => (
   <div className="HistoryItem">
-    {title}
+    {song.get('title')}
   </div>
 )
 
+@connect(state => ({
+  history: state.player.get('history')
+}))
 class History extends React.Component {
-  componentWillMount() {
-    this.unsub1 = RadioStore.subscribe('currentlyPlaying', currentlyPlaying => this.setState({currentlyPlaying}))
-    this.unsub2 = RadioStore.subscribe('history', history => this.setState({
-      history: history.slice().reverse().slice(1)
-    }))
-  }
-
-  compoenntWillUnmount() {
-    this.unsub1()
-    this.unsub2()
-  }
-
   render() {
-    const {currentlyPlaying, history} = this.state
+    const history = this.props.history.reverse()
     return (
       <div id="History">
-        <HistoryItem {...currentlyPlaying} />
-        {history.map(song => <HistoryItem key={song._id} {...song} />)}
+        {history.map(song => <HistoryItem key={song.get('_id')} song={song} />)}
       </div>
     )
   }

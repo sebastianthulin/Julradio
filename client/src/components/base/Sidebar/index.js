@@ -3,8 +3,8 @@ const {connect} = require('react-redux')
 const {Link} = require('react-router')
 const cx = require('classnames')
 const {openModal} = require('../../../actions/modal')
+const {togglePlay, setVolume, toggleMute} = require('../../../actions/player')
 const User = require('../../../services/User')
-const RadioStore = require('../../../stores/RadioStore')
 const ShitStore = require('../../../stores/ShitStore')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const SVG = require('../../svg')
@@ -13,11 +13,21 @@ const Player = require('./Player')
 
 const divider = <div className="divider" />
 
-@connect(null, {openModal})
+@connect(state => ({
+  volume: state.player.get('volume'),
+  playing: state.player.get('playing'),
+  connected: state.player.get('connected'),
+  nowPlaying: state.player.get('nowPlaying'),
+  onAir: state.reservations.get('onAir')
+}), {
+  openModal,
+  onTogglePlay: togglePlay,
+  onSetVolume: setVolume,
+  onToggleMute: toggleMute
+})
 class Sidebar extends React.Component {
   componentWillMount() {
     User.subscribe(user => this.setState({user}))
-    RadioStore.subscribe('onair', onair => this.setState({onair}))
     ShitStore.subscribe('message', unseenMessages => this.setState({unseenMessages}))
     ShitStore.subscribe('wallPost', unseenWallPosts => this.setState({unseenWallPosts}))
   }
@@ -51,18 +61,14 @@ class Sidebar extends React.Component {
   }
 
   render() {
-    const {
-      user,
-      onair,
-      unseenMessages
-    } = this.state
-
+    const {props} = this
+    const {user, unseenMessages} = this.state
     const playerLess = window.__PLAYERLESS__
 
     return (
       <div id="Sidebar" className={cx({playerLess})}>
         <Snowfall
-          active={onair}
+          active={props.connected}
           count={500}
           minSize={1}
           maxSize={2}
@@ -93,7 +99,17 @@ class Sidebar extends React.Component {
             <Link to="/crew">Medarbetare</Link>
             {user && <a onClick={User.logOut}>Logga ut</a>}
           </div>
-          {!playerLess && <Player />}
+          {!playerLess && (
+            <Player
+              volume={props.volume}
+              playing={props.playing}
+              nowPlaying={props.nowPlaying}
+              onAir={props.onAir}
+              onTogglePlay={props.onTogglePlay}
+              onSetVolume={props.onSetVolume}
+              onToggleMute={props.onToggleMute}
+            />
+          )}
         </div>
       </div>
     )
