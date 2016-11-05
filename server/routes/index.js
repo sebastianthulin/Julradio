@@ -1,10 +1,10 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
-const db = require('../models')
-const {io} = require('../')
+const {Router} = require('express')
+const {User, Picture} = require('../models')
 const config = require('../../config')
+
+const router = Router()
 const pictureRoutes = {}
 
 router.use((req, res, next) => {
@@ -12,7 +12,7 @@ router.use((req, res, next) => {
   res.setHeader('Expires', '-1')
   res.setHeader('Cache-Control', 'must-revalidate, private')
   if (!req.userId) return next()
-  db.User.findById(req.userId).select('-hash').lean().exec().then(user => {
+  User.findById(req.userId).select('-hash').lean().exec().then(user => {
     if (!user || (user && user.banned)) {
       // Disauth user
       throw new Error()
@@ -31,7 +31,7 @@ router.get('/picture/:id', (req, res) => {
   if (pictureRoutes[id]) {
     return res.redirect(pictureRoutes[id])
   }
-  db.Picture.findById(id).exec().then(doc => {
+  Picture.findById(id).exec().then(doc => {
     pictureRoutes[id] = '/i/' + doc._id + doc.extension
     res.redirect(pictureRoutes[id])
   }).catch(() => {
@@ -49,13 +49,6 @@ router.use('/api/notification', require('./notification'))
 router.use('/api/reservations', require('./reservations'))
 router.use('/api/crew', require('./crew'))
 router.use('/api/forgot', require('./forgot'))
-
-if (config.liveReload) {
-  router.post('/reloadclients', (req, res) => {
-    io.emit('reload')
-    res.end()
-  })
-}
 
 router.get('*', (req, res) => {
   res.render('main', {

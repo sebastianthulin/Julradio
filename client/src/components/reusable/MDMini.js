@@ -34,22 +34,8 @@ const parseContent = (markup = '') => {
 }
 
 class MDMini extends React.Component {
-  componentWillMount() {
-    this.parse(this.props.text)
-  }
-
-  componentWillReceiveProps(props) {
-    if (props.text !== this.props.text) {
-      this.parse(props.text)
-    }
-  }
-
-  parse(text) {
-    this.setState({
-      content: {
-        __html: parseContent(text)
-      }
-    })
+  shouldComponentUpdate(props) {
+    return props.text !== this.props.text
   }
 
   handleClick(ev) {
@@ -60,11 +46,12 @@ class MDMini extends React.Component {
   }
 
   render() {
-    const {content} = this.state
+    const {text, ...rest} = this.props
+    const __html = parseContent(text)
     return <div
       onClick={this.handleClick.bind(this)}
-      dangerouslySetInnerHTML={content}
-      {...this.props}
+      dangerouslySetInnerHTML={{__html}}
+      {...rest}
     />
   }
 }

@@ -120,11 +120,10 @@ exports.Pin = props => (
 )
 
 exports.PlayPause = props => {
-  const passProps = {...props}
-  delete passProps.pause
+  const {pause, ...rest} = props
 
-  return props.pause ? (
-    <svg width="24px" height="28px" viewBox="0 0 12 14" {...passProps}>
+  return pause ? (
+    <svg width="24px" height="28px" viewBox="0 0 12 14" {...rest}>
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g transform="translate(-214.000000, -46.000000)" fill="#FFF">
           <g transform="translate(214.000000, 46.000000)">
@@ -134,7 +133,7 @@ exports.PlayPause = props => {
       </g>
     </svg>
   ) : (
-    <svg width="24px" height="28px" viewBox="0 0 12 14" {...passProps}>
+    <svg width="24px" height="28px" viewBox="0 0 12 14" {...rest}>
       <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g transform="translate(-88.000000, -88.000000)" fill="#FFF">
           <g transform="translate(88.500000, 88.000000)">
@@ -213,13 +212,11 @@ exports.Volume = (() => {
   const twoThirds = 2 / 3
 
   return props => {
-    const {volume} = props
-    const passProps = {...props}
-    delete passProps.volume
+    const {volume, ...rest} = props
 
-    return volume > twoThirds ? <VolumeUp {...passProps} /> :
-      volume > oneThird ? <VolumeDown {...passProps} /> :
-      volume === 0 ? <VolumeOff {...passProps} /> :
-      <VolumeMute {...passProps} />
+    return volume > twoThirds ? <VolumeUp {...rest} /> :
+      volume > oneThird ? <VolumeDown {...rest} /> :
+      volume === 0 ? <VolumeOff {...rest} /> :
+      <VolumeMute {...rest} />
   }
 })()

@@ -21,7 +21,7 @@ Radio.play = () => {
   state.playing = true
   try {
     localStorage.playing = 1
-  } finally {}
+  } catch (_) {}
 }
 
 Radio.pause = () => {
@@ -30,7 +30,7 @@ Radio.pause = () => {
   state.playing = false
   try {
     localStorage.playing = 0
-  } finally {}
+  } catch (_) {}
 }
 
 Radio.toggle = () => {
@@ -46,7 +46,7 @@ Radio.setVolume = vol => {
   audio.volume = state.volume = vol
   try {
     localStorage.volume = vol
-  } finally {}
+  } catch (_) {}
   Radio.emit('volume', vol)
 }
 

@@ -45,7 +45,7 @@ class Player extends React.Component {
               <SVG.PlayPause pause={playing} />
             </div>
           </div>
-          <div div className="titleControls">
+          <div className="titleControls">
             <div className="controls">
               {onAir && <Link className="host" to={'/@' + onAir.getIn(['user', 'username'])} children={onAir.getIn(['user', 'name'])} />}
               <div className="item hampurgerMenu" ref="hampburger">

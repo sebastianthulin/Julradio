@@ -21,7 +21,7 @@ const requests = (state = List(), action) => {
     case 'DELETE_REQUEST':
     case 'DELETE_TWEET':
       const index = state.findIndex(r => r.get('_id') === action.id)
-      return index > -1 ? state.update(i, r => request(r, action)) : state
+      return index > -1 ? state.update(index, r => request(r, action)) : state
     default:
       return state
   }

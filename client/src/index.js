@@ -1,11 +1,11 @@
-require('./services/liveReload')
 const React = require('react')
 const ReactDOM = require('react-dom')
-const {Router, browserHistory} = require('react-router')
 const {Provider} = require('react-redux')
+const {Router, browserHistory, applyRouterMiddleware} = require('react-router')
+const {useScroll} = require('react-router-scroll')
 const marked = require('marked')
-const configureStore = require('./configureStore')
 const routes = require('./routes')
+const configureStore = require('./configureStore')
 const runLogic = require('./logic')
 
 const store = configureStore()
@@ -19,7 +19,11 @@ marked.setOptions({
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router routes={routes} history={browserHistory} />
+    <Router
+      routes={routes}
+      history={browserHistory}
+      render={applyRouterMiddleware(useScroll())}
+    />
   </Provider>,
   document.getElementById('root')
 )

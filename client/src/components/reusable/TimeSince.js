@@ -45,8 +45,7 @@ class TimeSince extends React.Component {
 
   tick() {
     const timeSince = Date.now() + window.__TIMEDIFFERENCE__ - this.date
-    let i = chronos.length
-    while (i--) {
+    for (let i = chronos.length; i--;) {
       const chrono = chronos[i]
       const time = ~~(timeSince / chrono.millis)
       if (time >= 1) {
@@ -54,17 +53,15 @@ class TimeSince extends React.Component {
         return this.setState({time, suffix})
       }
     }
-    this.setState({time: 1, suffix: chronos[0].suffix})
+    this.setState({time: 0, suffix: chronos[0].suffix})
   }
 
   render() {
-    let children = this.state.time + ' ' + this.state.suffix
-    if (!this.props.short) {
-      children += ' sedan'
-    }
+    const {date, short, ...rest} = this.props
+    const children = `${this.state.time} ${this.state.suffix}${short ? '' : ' sedan'}`
 
     return <span
-      {...this.props}
+      {...rest}
       className="TimeSince"
       children={children}
     />
