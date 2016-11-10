@@ -1,10 +1,12 @@
 'use strict'
 
 const hub = require('clusterhub')
+const {User} = require('../models')
 
 const socketHandler = socket => {
   hub.get('radioStream', m => socket.emit('metadata', m))
   hub.get('reservations', r => socket.emit('reservations', r))
+  hub.get('onlineList', l => socket.emit('onlineList', l))
 
   hub.get('songRequests', songRequests => {
     hub.get('tweetStream', tweets => {
@@ -14,6 +16,15 @@ const socketHandler = socket => {
       socket.emit('requests', requests)
     })
   })
+
+  if (socket.uid) {
+    User.findById(socket.userId).select('username').lean().then(({username}) => {
+      hub.emit('userConnect', username)
+      socket.on('disconnect', () => {
+        hub.emit('userDisconnect', username)
+      })
+    })
+  }
 }
 
 module.exports = socketHandler

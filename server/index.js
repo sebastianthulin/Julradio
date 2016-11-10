@@ -1,43 +1,42 @@
 'use strict'
 
+require('clusterhub')
 const cluster = require('cluster')
-const childProcess = require('child_process')
 const os = require('os')
 const config = require('../config')
-const workers = []
-const subscriptions = {}
-const hub = require('clusterhub')
 
 const workerNames = [
   'radioStream',
   'reservations',
   'tweetStream',
   'songRequests',
-  // 'OnlineList'
+  'onlineList'
 ]
 
 if (cluster.isMaster) {
   const numWorkers = config.multiCore ? os.cpus().length : 1
   console.log(`Master cluster setting up ${numWorkers} workers...`)
 
-  const workerOpts = [
+  const optsMap = new WeakMap
+
+  const start = opts => {
+    const worker = cluster.fork(opts)
+    optsMap.set(worker, opts)
+  }
+
+  cluster.on('online', worker => {
+    console.log(`Worker ${worker.process.pid} is online`, optsMap.get(worker))
+  })
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died with code: ${code} and signal: ${signal}`, optsMap.get(worker))
+    start(optsMap.get(worker))
+  })
+
+  ;[
     ...Array(numWorkers).fill(),
     ...workerNames.map(workerName => ({workerName}))
-  ]
-  const workers = workerOpts.map(opts => cluster.fork(opts))
-
-  cluster.on('online', function(worker) {
-    console.log(`Worker ${worker.process.pid} is online`)
-  })
-
-  cluster.on('exit', function(worker, code, signal) {
-    const workerIndex = workers.indexOf(worker)
-    console.log(`Worker ${worker.process.pid} died with code: ${code} and signal: ${signal}`)
-    if (workerIndex > -1) {
-      console.log('Starting a new worker')
-      workers[workerIndex] = cluster.fork(workerOpts[workerIndex])
-    }
-  })
+  ].forEach(start)
 } else {
   const {workerName} = process.env
   if (workerNames.indexOf(workerName) > -1) {
