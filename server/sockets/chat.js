@@ -1,7 +1,7 @@
 'use strict'
 
 const db = require('../models')
-const {io} = require('../')
+const {io} = require('../server')
 const Notify = require('../services/Notify')
 const Blockages = require('../services/Blockages')
 const performAction = require('../services/performAction')
@@ -77,11 +77,11 @@ const chatHandler = socket => {
     if (typeof opts !== 'object' || !opts.text) return
     Promise.all([
       performAction(socket.ip, 'chat'),
-      Blockages.confirm(socket.uid, opts.userId)
+      Blockages.confirm(socket.userId, opts.userId)
     ]).then(() => {
-      return opts.conversationId || getConversationId(socket.uid, opts.userId)
+      return opts.conversationId || getConversationId(socket.userId, opts.userId)
     }).then(conversationId => {
-      return sendMessage(socket.uid, conversationId, opts.text)
+      return sendMessage(socket.userId, conversationId, opts.text)
     }).catch(err => {
       console.error('@chatHandler', err)
       errHandler && errHandler()

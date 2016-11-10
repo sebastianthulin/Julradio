@@ -2,15 +2,15 @@
 
 const broadcast = require('./broadcast')
 const chat = require('./chat')
-//const onlinelist = require('./onlinelist')
 
-module.exports = socket => {
-  socket.uid = socket.request.session.uid
+const socketHandler = socket => {
+  socket.userId = socket.request.session.uid
   socket.ip = socket.request.connection.remoteAddress || socket.request['x-forwarded-for']
   broadcast(socket)
-  if (socket.uid) {
-    socket.join(socket.uid)
+  if (socket.userId) {
+    socket.join(socket.userId)
     chat(socket)
-    //onlinelist(socket)
   }
 }
+
+module.exports = socketHandler

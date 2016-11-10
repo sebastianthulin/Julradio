@@ -1,13 +1,10 @@
 'use strict'
 
-const express = require('express')
 const mongoose = require('mongoose')
 const multer = require('multer')
 const gm = require('gm')
 const fs = require('fs')
-const router = express.Router()
-const middleware = require('../middleware')
-const db = require('../models')
+const {User, Activation, Block, Picture, RemovedPicture} = require('../models')
 const mail = require('../services/mail')
 const config = require('../../config')
 const performAction = require('../services/performAction')
@@ -21,24 +18,22 @@ const upload = multer({
 }).single('avatar')
 
 const getUserDoc = userId => {
-  return db.User.findById(userId).select('-hash -email').lean().exec()
+  return User.findById(userId).select('-hash -email').lean().exec()
 }
 
-router.use(middleware.body)
-
-router.get('/logout', (req, res) => {
+exports.logOut = (req, res) => {
   req.session.uid = null
   res.redirect('back')
-})
+}
 
-router.get('/byname/:username', (req, res) => {
+exports.show = (req, res) => {
   const usernameLower = String(req.params.username).toLowerCase()
-  db.User.findOne({usernameLower}).select('-hash -email').lean().exec((err, user) => {
+  User.findOne({usernameLower}).select('-hash -email').lean().exec((err, user) => {
     user ? res.send(user) : res.sendStatus(200)
   })
-})
+}
 
-router.get('/profile', (req, res) => {
+exports.showProfile = (req, res) => {
   const userId = req.query.userId
   const usernameLower = String(req.query.username).toLowerCase()
   const allowed = ['profile', 'block']
@@ -57,7 +52,7 @@ router.get('/profile', (req, res) => {
         ? resolve(userId)
         : reject(new Error('INCORRECT_USER_ID'))
     } else {
-      db.User.findOne({usernameLower}).select('_id').exec().then(doc => doc
+      User.findOne({usernameLower}).select('_id').exec().then(doc => doc
         ? resolve(doc._id)
         : reject(new Error('USER_NOT_FOUND'))
       )
@@ -78,13 +73,13 @@ router.get('/profile', (req, res) => {
   }).catch(() => {
     res.sendStatus(500)
   })
-})
+}
 
-router.post('/signup', (req, res, next) => {
+exports.signUp = (req, res, next) => {
   let user
-  new db.User().signUp(req.body).then(doc => {
+  new User().signUp(req.body).then(doc => {
     user = doc
-    return new db.UserActivation({user: doc._id}).save()
+    return new UserActivation({user: doc._id}).save()
   }).then(activate => {
     res.sendStatus(200)
     const activateURL = 'http://julradio.se/activate/' + activate._id
@@ -105,12 +100,12 @@ router.post('/signup', (req, res, next) => {
       }
     })
   }).catch(next)
-})
+}
 
-router.post('/login', (req, res, next) => {
+exports.logIn = (req, res, next) => {
   performAction(req.ip, 'loginattempt').then(() => {
     const usernameLower = String(req.body.username).toLowerCase()
-    return db.User.findOne({usernameLower}).exec()
+    return User.findOne({usernameLower}).exec()
   }).then(user => {
     if (user) {
       if (user.banned) {
@@ -129,14 +124,12 @@ router.post('/login', (req, res, next) => {
       throw new Error('USER_NOT_FOUND')
     }
   }).catch(next)
-})
+}
 
-router.use(middleware.signedIn)
-
-router.post('/block', (req, res) => {
+exports.block = (req, res) => {
   // block a user
   const b = req.body
-  db.Block.findOneAndUpdate({
+  Block.findOneAndUpdate({
     from: req.userId,
     target: b.userId
   }, {
@@ -150,11 +143,11 @@ router.post('/block', (req, res) => {
   }).catch(() => {
     res.sendStatus(500)
   })
-})
+}
 
-router.delete('/block/:userId', (req, res) => {
+exports.unBlock = (req, res) => {
   // unblock a user
-  db.Block.findOneAndRemove({
+  Block.findOneAndRemove({
     from: req.userId,
     target: req.params.userId
   }).exec().then(() => {
@@ -162,9 +155,9 @@ router.delete('/block/:userId', (req, res) => {
   }).catch(() => {
     res.sendStatus(500)
   })
-})
+}
 
-router.put('/settings', (req, res, next) => {
+exports.updateSettings1 = (req, res, next) => {
   const b = req.body
 
   if (['', 'MALE', 'FEMALE'].indexOf(b.gender) === -1) {
@@ -190,7 +183,7 @@ router.put('/settings', (req, res, next) => {
     }
   }
 
-  db.User.findByIdAndUpdate(req.userId, {
+  User.findByIdAndUpdate(req.userId, {
     name: b.name,
     gender: b.gender,
     location: b.location,
@@ -202,11 +195,11 @@ router.put('/settings', (req, res, next) => {
     .exec()
     .then(res.send.bind(res))
     .catch(next)
-})
+}
 
-router.put('/settings2', (req, res, next) => {
+exports.updateSettings2 = (req, res, next) => {
   const b = req.body
-  db.User.findById(req.userId).exec().then(user => {
+  User.findById(req.userId).exec().then(user => {
     if (!user.auth(b.auth)) {
       throw new Error('INCORRECT_PASSWORD')
     }
@@ -221,28 +214,9 @@ router.put('/settings2', (req, res, next) => {
     user.hash = null
     res.send(user)
   }).catch(next)
-})
+}
 
-router.delete('/profilepicture', (req, res, next) => {
-  db.User.findByIdAndUpdate(req.userId, {
-    picture: undefined
-  }).exec().then(user => {
-    if (user.picture) {
-      db.Picture.findById(user.picture).exec().then(picture => {
-        return Promise.all([
-          new db.RemovedPicture(picture).save(),
-          picture.remove()
-        ])
-      }).catch(console.error.bind(console))
-    }
-
-    user.picture = null
-    user.hash = null
-    res.send(user)
-  }).catch(next)
-})
-
-router.post('/profilepicture', (req, res, next) => {
+exports.createProfilePicture = (req, res, next) => {
   const userId = req.userId
   upload(req, res, err => {
     if (err) {
@@ -252,7 +226,7 @@ router.post('/profilepicture', (req, res, next) => {
       return next(new Error('INVALID_IMAGE'))
     }
 
-    const picture = new db.Picture({
+    const picture = new Picture({
       extension: '.jpg',
       user: userId
     })
@@ -291,7 +265,7 @@ router.post('/profilepicture', (req, res, next) => {
                 return next(new Error('UNKNOWN_ERROR'))
               }
               picture.save().then(() => {
-                return db.User.findByIdAndUpdate(userId, {
+                return User.findByIdAndUpdate(userId, {
                   picture: picture._id
                 }, {
                   new: true
@@ -307,20 +281,38 @@ router.post('/profilepicture', (req, res, next) => {
       })
 
   })
-})
+}
 
-router.use(middleware.role('admin'))
+exports.deleteProfilePicture = (req, res, next) => {
+  User.findByIdAndUpdate(req.userId, {
+    picture: undefined
+  }).exec().then(user => {
+    if (user.picture) {
+      Picture.findById(user.picture).exec().then(picture => {
+        return Promise.all([
+          new RemovedPicture(picture).save(),
+          picture.remove()
+        ])
+      }).catch(console.error.bind(console))
+    }
 
-router.get('/all', (req, res) => {
-  db.User.find().select('username roles banned').exec((err, users) => {
+    user.picture = null
+    user.hash = null
+    res.send(user)
+  }).catch(next)
+}
+
+// For admins!
+exports.listAll = (req, res) => {
+  User.find().select('username roles banned').exec((err, users) => {
     res.send(users)
   })
-})
+}
 
-router.delete('/:userId/avatar', (req, res) => {
-  db.User.findById(req.params.userId).exec().then(user => {
-    db.Picture.findById(user.picture).then(picture => {
-      new db.RemovedPicture(picture).save()
+exports.deleteUserProfilePicture = (req, res) => {
+  User.findById(req.params.userId).exec().then(user => {
+    Picture.findById(user.picture).then(picture => {
+      new RemovedPicture(picture).save()
       picture.remove()
       user.picture = null
       user.save()      
@@ -331,11 +323,11 @@ router.delete('/:userId/avatar', (req, res) => {
   }).catch(err => {
     res.status(500).send({err: err.toString()})
   })
-})
+}
 
-router.put('/:userId', (req, res) => {
+exports.updateUser = (req, res) => {
   const b = req.body
-  db.User.findByIdAndUpdate(req.params.userId, {
+  User.findByIdAndUpdate(req.params.userId, {
     username: b.username,
     usernameLower: b.username.toLowerCase(),
     title: b.title,
@@ -350,6 +342,4 @@ router.put('/:userId', (req, res) => {
   }, err => {
     res.status(500).send({err: err.toString()})
   })
-})
-
-module.exports = router
+}

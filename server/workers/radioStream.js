@@ -11,11 +11,13 @@ const io = sio({host: '127.0.0.1', port: 6379})
 
 const connect = (url, history) => {
   const stream = new ReadStream(url)
-  let playing = {}
 
   stream.on('connect', () => console.log('Connected to SHOUTcast server'))
   stream.on('error', err => console.error(err))
-  stream.on('close', process.exit)
+  stream.on('close', () => {
+    console.log('SHOUTcast server disconnected')
+    setTimeout(() => connect(url, history), 10000)
+  })
 
   const getPreviousTitle = () => (history[history.length - 1] || {}).title
 

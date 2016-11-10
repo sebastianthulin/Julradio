@@ -17,7 +17,7 @@ const socketHandler = socket => {
     })
   })
 
-  if (socket.uid) {
+  if (socket.userId) {
     User.findById(socket.userId).select('username').lean().then(({username}) => {
       hub.emit('userConnect', username)
       socket.on('disconnect', () => {

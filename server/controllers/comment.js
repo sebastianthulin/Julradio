@@ -1,9 +1,6 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
-const middleware = require('../middleware')
-const db = require('../models')
+const {CommentSection, Comment, Article} = require('../models')
 const Notify = require('../services/Notify')
 const Blockages = require('../services/Blockages')
 const performAction = require('../services/performAction')
@@ -17,38 +14,18 @@ const parseType = type => {
 }
 
 const updateCommentSection = commentSection => {
-  db.CommentSection.findById(commentSection).then(doc => {
+  CommentSection.findById(commentSection).then(doc => {
     doc.updateCommentCount()
   })
 }
 
 const getSection = query => {
-  return db.CommentSection.findOne(query).exec().then(doc => {
-    return doc ? doc : new db.CommentSection(query).save()
+  return CommentSection.findOne(query).exec().then(doc => {
+    return doc ? doc : new CommentSection(query).save()
   })
 }
 
-router.use(middleware.body)
-
-router.get('/replies/:id/:limit?', (req, res, next) => {
-  const commentId = req.params.id
-  const limit = req.params.limit || 9999
-  db.Comment.findById(commentId).populate({
-    path: 'user',
-    select: '-hash -email',
-  }).exec().then(comment => {
-    db.Comment.find({
-      replyTo: comment._id
-    }).sort('-_id').limit(limit).populate({
-      path: 'user',
-      select: '-hash -email',
-    }).exec().then(replies => {
-      res.send({comment, replies})
-    })
-  }).catch(next)
-})
-
-router.get('/:type', (req, res, next) => {
+exports.show = (req, res, next) => {
   const type = parseType(req.params.type)
   const target = req.query.target
   const limit = +req.query.limit || 20
@@ -59,7 +36,7 @@ router.get('/:type', (req, res, next) => {
     return next(new Error('INVALID_COMMENT_TYPE'))
   }
 
-  db.CommentSection.findOne({
+  CommentSection.findOne({
     [type]: target || true,
   }).exec().then(commentSection => {
     if (!commentSection) {
@@ -71,7 +48,7 @@ router.get('/:type', (req, res, next) => {
     }
     totalComments = commentSection.totalComments
     totalThreads = commentSection.totalThreads
-    return db.Comment.find({
+    return Comment.find({
       commentSection: commentSection._id,
       replyTo: null
     }).sort('-_id').limit(limit).populate({
@@ -79,7 +56,7 @@ router.get('/:type', (req, res, next) => {
       select: '-hash -email',
     }).exec().then(docs => {
       comments = docs
-      return Promise.all(comments.map(c => db.Comment.find({
+      return Promise.all(comments.map(c => Comment.find({
         replyTo: c._id
       }).sort('-_id').limit(3).populate({
         path: 'user',
@@ -89,22 +66,38 @@ router.get('/:type', (req, res, next) => {
       res.send({comments, replies, totalComments, totalThreads})
     }).catch(next)
   })
-})
+}
 
-router.use(middleware.signedIn)
+exports.showReplies = (req, res, next) => {
+  const commentId = req.params.id
+  const limit = req.params.limit || 9999
+  Comment.findById(commentId).populate({
+    path: 'user',
+    select: '-hash -email',
+  }).exec().then(comment => {
+    Comment.find({
+      replyTo: comment._id
+    }).sort('-_id').limit(limit).populate({
+      path: 'user',
+      select: '-hash -email',
+    }).exec().then(replies => {
+      res.send({comment, replies})
+    })
+  }).catch(next)
+}
 
-router.post('/article', (req, res, next) => {
+exports.createOnArticle = (req, res, next) => {
   const text = req.body.text
   const articleId = req.body.target
   let article
-  db.Article.findById(articleId).exec().then(doc => {
+  Article.findById(articleId).exec().then(doc => {
     if (!doc) throw new Error('ARTICLE_NOT_FOUND')
     article = doc
     return performAction(req.ip, 'comment')
   }).then(() => {
     return getSection({article: articleId})
   }).then(commentSection => {
-    return new db.Comment({
+    return new Comment({
       text,
       user: req.userId,
       owner: article.user,
@@ -112,44 +105,43 @@ router.post('/article', (req, res, next) => {
     }).save()
   }).then(comment => {
     res.send(comment)
-    db.Article.updateCommentCount(articleId)
+    Article.updateCommentCount(articleId)
     updateCommentSection(comment.commentSection)
   }).catch(next)
-})
+}
 
-router.post('/user', (req, res, next) => {
-  const uid = req.userId
+exports.createOnUser = (req, res, next) => {
   const target = req.body.target
   const text = req.body.text
   return Promise.all([
     getSection({user: target}),
     performAction(req.ip, 'comment'),
-    Blockages.confirm(uid, target)
+    Blockages.confirm(req.userId, target)
   ]).then(data => {
-    return new db.Comment({
+    return new Comment({
       text,
-      user: uid,
+      user: req.userId,
       owner: target,
       commentSection: data[0]._id
     }).save()
   }).then(comment => {
-    if (uid != target) {
+    if (req.userId != target) {
       Notify({
         userId: target,
-        from: uid,
+        from: req.userId,
         type: 'wallPost'
       })
     }
     res.send(comment)
     updateCommentSection(comment.commentSection)
   }).catch(next)
-})
+}
 
-router.post('/cosycorner', (req, res, next) => {
+exports.createOnCosycorner = (req, res, next) => {
   performAction(req.ip, 'comment').then(() => {
     return getSection({cosyCorner: true})
   }).then(commentSection => {
-    return new db.Comment({
+    return new Comment({
       text: req.body.text,
       user: req.userId,
       commentSection: commentSection._id
@@ -158,14 +150,13 @@ router.post('/cosycorner', (req, res, next) => {
     res.send(comment)
     updateCommentSection(comment.commentSection)
   }).catch(next)
-})
+}
 
-router.post('/reply', (req, res, next) => {
-  const uid = req.userId
+exports.reply = (req, res, next) => {
   const b = req.body
   let comment
   performAction(req.ip, 'comment').then(() => {
-    return db.Comment.findById(b.replyTo).exec()
+    return Comment.findById(b.replyTo).exec()
   }).then(doc => {
     comment = doc
     if (!comment) {
@@ -174,11 +165,11 @@ router.post('/reply', (req, res, next) => {
     if (comment.replyTo) {
       throw new Error('REPLY_TO_REPLY')
     }
-    return Blockages.confirm(uid, comment.owner)
+    return Blockages.confirm(req.userId, comment.owner)
   }).then(() => {
-    return new db.Comment({
+    return new Comment({
       text: b.text,
-      user: uid,
+      user: req.userId,
       owner: comment.owner,
       replyTo: comment._id,
       commentSection: comment.commentSection
@@ -186,25 +177,24 @@ router.post('/reply', (req, res, next) => {
     updateCommentSection(comment.commentSection)
   }).then(reply => {
     res.send(reply)
-    db.Comment.updateReplyCount(reply.replyTo)
-    db.CommentSection.findById(comment.commentSection, (err, doc) => {
-      doc.article && db.Article.updateCommentCount(doc.article)
+    Comment.updateReplyCount(reply.replyTo)
+    CommentSection.findById(comment.commentSection, (err, doc) => {
+      doc.article && Article.updateCommentCount(doc.article)
       doc.updateCommentCount()
     })
   }).catch(next)
-})
+}
 
-router.delete('/:id', (req, res, next) => {
+exports.delete = (req, res, next) => {
   const commentId = req.params.id
-  const uid = req.userId
   const isAdmin = req.user.roles.admin
-  db.Comment.findById(commentId).exec().then(comment => {
+  Comment.findById(commentId).exec().then(comment => {
 
     // se vad som händer ifall comment inte finns
-    if (isAdmin || uid == comment.user || uid == comment.owner) {
+    if (isAdmin || req.userId == comment.user || req.userId == comment.owner) {
       const promises = [comment.remove()]
       if (!comment.replyTo) {
-        promises.push(db.Comment.find({
+        promises.push(Comment.find({
           replyTo: comment._id
         }).remove())
       }
@@ -215,12 +205,10 @@ router.delete('/:id', (req, res, next) => {
   }).then(data => {
     const comment = data[0]
     res.sendStatus(200)
-    db.CommentSection.findById(comment.commentSection, (err, doc) => {
-      doc.article && db.Article.updateCommentCount(doc.article)
-      doc.replyTo && db.Comment.updateReplyCount(doc.replyTo)
+    CommentSection.findById(comment.commentSection, (err, doc) => {
+      doc.article && Article.updateCommentCount(doc.article)
+      doc.replyTo && Comment.updateReplyCount(doc.replyTo)
       doc.updateCommentCount()
     })
   }).catch(next)
-})
-
-module.exports = router
+}

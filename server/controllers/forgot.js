@@ -1,28 +1,23 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
-const middleware = require('../middleware')
-const db = require('../models')
+const {User, PasswordRequest} = require('../models')
 const mail = require('../services/mail')
 const config = require('../../config')
 
-router.use(middleware.body)
-
-router.post('/', (req, res, next) => {
+exports.request = (req, res, next) => {
   const email = String(req.body.email).toLowerCase()
   let user
 
-  db.User.findOne({email}).exec().then(doc => {
+  User.findOne({email}).exec().then(doc => {
     if (!email || !doc) {
       throw new Error('INVALID_EMAIL')
     } else if (doc.banned) {
       throw new Error('USER_BANNED')
     }
     user = doc
-    return db.PasswordRequest.findOneAndRemove({user}).exec()
+    return PasswordRequest.findOneAndRemove({user}).exec()
   }).then(() => {
-    return new db.PasswordRequest({user}).save()
+    return new PasswordRequest({user}).save()
   }).then(request => {
     res.sendStatus(200)
     const resetURL = 'http://julradio.se/forgot/' + request._id
@@ -42,34 +37,34 @@ router.post('/', (req, res, next) => {
       }
     })
   }).catch(next)
-})
+}
 
-router.param('requestId', (req, res, next, id) => {
-  db.PasswordRequest.findById(id).exec().then(request => {
+const getPasswordRequest = id => {
+  return PasswordRequest.findById(id).exec().then(request => {
     if (!request || Date.now() > request.validTo) {
-      throw ''
+      throw new Error('INVALID_REQUEST_ID')
     }
-    req.passwordRequest = request
-    next()
-  }).catch(() => {
-    next(new Error('INVALID_REQUEST_ID'))
+    return request
   })
-})
+}
 
-router.get('/:requestId', (req, res) => res.send(req.passwordRequest))
+exports.show = (req, res) => {
+  getPasswordRequest(req.params.id)
+    .then(res.send.bind(res))
+    .catch(next)
+}
 
-router.post('/:requestId', (req, res, next) => {
+exports.finish = (req, res, next) => {
   const b = req.body
-  const request = req.passwordRequest
-  db.User.findById(request.user).exec().then(user => {
-    user.setPassword(b.password)
-    user.lastVisit = Date.now()
-    return user.save()
-  }).then(user => {
-    req.session.uid = user._id
-    request.remove()
-    res.sendStatus(200)
+  getPasswordRequest(req.params.id).then(request => {
+    return User.findById(request.user).exec().then(user => {
+      user.setPassword(b.password)
+      user.lastVisit = Date.now()
+      return user.save()
+    }).then(user => {
+      req.session.uid = user._id
+      request.remove()
+      res.sendStatus(200)
+    })
   }).catch(next)
-})
-
-module.exports = router
+}
