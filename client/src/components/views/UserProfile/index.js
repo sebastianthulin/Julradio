@@ -1,10 +1,14 @@
 const React = require('react')
+const {connect} = require('react-redux')
 const User = require('../../../services/User')
 const UserStore = require('../../../stores/UserStore')
 const ShitStore = require('../../../stores/ShitStore')
 const UserProfile = require('./UserProfile')
 const NotFound = require('../NotFound')
 
+@connect(state => ({
+  onlineList: state.onlineList
+}))
 class UserProfileContainer extends React.Component {
   componentWillMount() {
     this.authedUser = User.get()
@@ -50,16 +54,20 @@ class UserProfileContainer extends React.Component {
   }
 
   render() {
+    const {onlineList} = this.props
     const {profile, err} = this.state || {}
     return err ? (
-      <NotFound referingTo={"Användaren"} />
-    ) : profile ? <UserProfile
-      key={profile._id}
-      user={profile}
-      authedUser={this.authedUser}
-      onQuery={this.runQuery.bind(this)}
-      {...this.state}
-    /> : null
+      <NotFound referingTo="Användaren" />
+    ) : profile ? (
+      <UserProfile
+        key={profile._id}
+        user={profile}
+        isOnline={onlineList.indexOf(profile.username) > -1}
+        authedUser={this.authedUser}
+        onQuery={this.runQuery.bind(this)}
+        {...this.state}
+      />
+    ) : null
   }
 }
 

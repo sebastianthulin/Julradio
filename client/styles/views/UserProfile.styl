@@ -7,11 +7,29 @@
     padding 50px 0 20px
     font-size 14px
     color rgba(255, 255, 255, 0.7)
-    .ProfilePicture
+    .picture
+      position relative
       width 170px
       height 170px
       margin 0 auto 10px auto
-      // border 10px solid #8A0101
+      .ProfilePicture
+        width 100%
+        height 100%
+      .status
+        position absolute
+        top 30px
+        left 150px
+        width 100%
+        display flex
+        align-items center
+        .indi
+          width 15px
+          height 15px
+          background #F00
+          border-radius 50%
+          margin-right 5px
+          &.isOnline
+            background #0F0
 
     .name
       color #FFF

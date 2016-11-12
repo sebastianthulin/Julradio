@@ -1,5 +1,6 @@
 const React = require('react')
 const {Link} = require('react-router')
+const cx = require('classnames')
 const User = require('../../../services/User')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const TimeSince = require('../../reusable/TimeSince')
@@ -36,6 +37,7 @@ class UserProfile extends React.Component {
     const {
       onQuery,
       user,
+      isOnline,
       authedUser,
       block: relationship,
       wallposts: posts
@@ -44,7 +46,13 @@ class UserProfile extends React.Component {
     return (
       <div id="UserProfile">
         <main>
-          <ProfilePicture id={user.picture} />
+          <div className="picture">
+            <ProfilePicture id={user.picture} />
+            <div className="status">
+              <div className={cx('indi', {isOnline})} />
+              <span>{isOnline ? '<-- är online :)' : '<-- är offline :('}</span>
+            </div>
+          </div>
           <div className="name">{user.name ? user.name : '@' + user.username}</div>
           <div className="misq">{(user.name ? ('@' + user.username + ' ') : '') + this.getIndentity()} </div>
           {user.title && <div className="title">{user.title}</div>}
