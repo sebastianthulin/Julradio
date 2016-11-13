@@ -1,7 +1,5 @@
 const React = require('react')
 const {Link} = require('react-router')
-const CommentStore = require('../../../stores/CommentStore')
-const NotificationStore = require('../../../stores/NotificationStore')
 const ProfilePicture = require('../ProfilePicture')
 const TimeSince = require('../TimeSince')
 const MDMini = require('../MDMini')
@@ -10,28 +8,27 @@ class Comment extends React.Component {
   componentWillMount() {
     const {comment, user, admin} = this.props
     const userId = user && user._id
-    this.isReply = comment.replyTo
-    this.removable = admin || userId === comment.user._id || userId === comment.owner
+    this.removable = admin || userId === comment.getIn(['user', '_id']) || userId === comment.get('owner')
   }
 
   delete() {
-    const {comment, onDelete} = this.props
     if (confirm('Ta bort inlägg?')) {
-      CommentStore.deleteComment(comment._id, onDelete)
+      this.props.onDelete(this.props.comment.get('_id'))
     }
   }
 
   render() {
-    const {comment, replies} = this.props
+    const {comment} = this.props
+    const user = comment.get('user')
     return (
       <div className="Comment">
-        <ProfilePicture id={comment.user.picture} />
+        <ProfilePicture id={user.get('picture')} />
         <div className="content">
           <header>
-            <Link to={'/@' + comment.user.username}>{comment.user.username}</Link>
-            <TimeSince date={comment.date} />
+            <Link to={'/@' + user.get('username')}>{user.get('username')}</Link>
+            <TimeSince date={comment.get('date')} />
           </header>
-          <MDMini className="text" text={comment.text} />
+          <MDMini className="text" text={comment.get('text')} />
           {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
         </div>
       </div>

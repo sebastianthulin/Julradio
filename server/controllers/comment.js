@@ -25,65 +25,58 @@ const getSection = query => {
   })
 }
 
-exports.show = (req, res, next) => {
-  const type = parseType(req.params.type)
-  const target = req.query.target
-  const limit = +req.query.limit || 20
-  let comments
-  let totalComments, totalThreads
-
-  if (!type) {
-    return next(new Error('INVALID_COMMENT_TYPE'))
-  }
-
-  CommentSection.findOne({
-    [type]: target || true,
-  }).exec().then(commentSection => {
-    if (!commentSection) {
-      return res.send({
-        comments: [],
-        replies: [],
-        totalComments: 0
-      })
-    }
-    totalComments = commentSection.totalComments
-    totalThreads = commentSection.totalThreads
-    return Comment.find({
-      commentSection: commentSection._id,
-      replyTo: null
-    }).sort('-_id').limit(limit).populate({
-      path: 'user',
-      select: '-hash -email',
-    }).exec().then(docs => {
-      comments = docs
-      return Promise.all(comments.map(c => Comment.find({
-        replyTo: c._id
-      }).sort('-_id').limit(3).populate({
-        path: 'user',
-        select: '-hash -email',
-      }).exec()))
-    }).then(replies => {
-      res.send({comments, replies, totalComments, totalThreads})
-    }).catch(next)
-  })
+const populate = {
+  path: 'user',
+  select: '-hash -email',
 }
 
-exports.showReplies = (req, res, next) => {
-  const commentId = req.params.id
-  const limit = req.params.limit || 9999
-  Comment.findById(commentId).populate({
-    path: 'user',
-    select: '-hash -email',
-  }).exec().then(comment => {
-    Comment.find({
-      replyTo: comment._id
-    }).sort('-_id').limit(limit).populate({
-      path: 'user',
-      select: '-hash -email',
-    }).exec().then(replies => {
-      res.send({comment, replies})
-    })
-  }).catch(next)
+const emptyCommentSection = {
+  comments: [],
+  replies: [],
+  totalComments: 0
+}
+
+exports.show = async (req, res, next) => {
+  try {
+    const type = parseType(req.params.type)
+    const {target = true} = req.query
+    const skip = +req.query.skip || 0
+
+    if (!type) {
+      return next(new Error('INVALID_COMMENT_TYPE'))
+    }
+
+    const commentSection = await CommentSection.findOne({[type]: target})
+
+    if (!commentSection) {
+      return res.send(emptyCommentSection)
+    }
+
+    const {totalComments, totalThreads} = commentSection
+
+    const comments = await Comment.find({
+      commentSection: commentSection._id,
+      replyTo: null
+    }).sort('-_id').skip(skip).limit(20).populate(populate)
+
+    const replies = await Promise.all(comments.map(c => Comment.find({
+      replyTo: c._id
+    }).sort('-_id').limit(3).populate(populate)))
+
+    res.send({comments, replies, totalComments, totalThreads})
+  } catch (err) {
+    next(err)
+  }
+}
+
+exports.showReplies = async (req, res, next) => {
+  try {
+    const replyTo = req.params.id
+    const replies = await Comment.find({replyTo}).sort('-_id').populate(populate)
+    res.send(replies)
+  } catch (err) {
+    next(err)
+  }
 }
 
 exports.createOnArticle = (req, res, next) => {
@@ -152,45 +145,47 @@ exports.createOnCosycorner = (req, res, next) => {
   }).catch(next)
 }
 
-exports.reply = (req, res, next) => {
-  const b = req.body
-  let comment
-  performAction(req.ip, 'comment').then(() => {
-    return Comment.findById(b.replyTo).exec()
-  }).then(doc => {
-    comment = doc
+exports.reply = async (req, res, next) => {
+  try {
+    const {text, replyTo} = req.body
+    await performAction(req.ip, 'comment')
+    const comment = await Comment.findById(replyTo)
     if (!comment) {
       throw new Error('NO_COMMENT')
     }
     if (comment.replyTo) {
       throw new Error('REPLY_TO_REPLY')
     }
-    return Blockages.confirm(req.userId, comment.owner)
-  }).then(() => {
-    return new Comment({
-      text: b.text,
+    await Blockages.confirm(req.userId, comment.owner)
+    const reply = await new Comment({
+      text,
       user: req.userId,
       owner: comment.owner,
       replyTo: comment._id,
       commentSection: comment.commentSection
     }).save()
     updateCommentSection(comment.commentSection)
-  }).then(reply => {
     res.send(reply)
     Comment.updateReplyCount(reply.replyTo)
     CommentSection.findById(comment.commentSection, (err, doc) => {
       doc.article && Article.updateCommentCount(doc.article)
       doc.updateCommentCount()
     })
-  }).catch(next)
+  } catch (err) {
+    next(err)
+  }
 }
 
-exports.delete = (req, res, next) => {
-  const commentId = req.params.id
-  const isAdmin = req.user.roles.admin
-  Comment.findById(commentId).exec().then(comment => {
+exports.delete = async (req, res, next) => {
+  try {
+    const commentId = req.params.id
+    const isAdmin = req.user.roles.admin
+    const comment = await Comment.findById(commentId)
 
-    // se vad som händer ifall comment inte finns
+    if (!comment) {
+      throw new Error('NO_COMMENT')
+    }
+
     if (isAdmin || req.userId == comment.user || req.userId == comment.owner) {
       const promises = [comment.remove()]
       if (!comment.replyTo) {
@@ -198,17 +193,17 @@ exports.delete = (req, res, next) => {
           replyTo: comment._id
         }).remove())
       }
-      return Promise.all(promises)
+      await Promise.all(promises)
     } else {
       throw new Error('UNAUTHORISED')
     }
-  }).then(data => {
-    const comment = data[0]
     res.sendStatus(200)
     CommentSection.findById(comment.commentSection, (err, doc) => {
+      comment.replyTo && Comment.updateReplyCount(comment.replyTo)
       doc.article && Article.updateCommentCount(doc.article)
-      doc.replyTo && Comment.updateReplyCount(doc.replyTo)
       doc.updateCommentCount()
     })
-  }).catch(next)
+  } catch (err) {
+    next(err)
+  }
 }
