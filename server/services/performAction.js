@@ -18,6 +18,10 @@ const timeouts = {
   chat: {
     length: 2000, 
     strikes: 10
+  },
+  search: {
+    length: 200,
+    strikes: 1
   }
 }
 

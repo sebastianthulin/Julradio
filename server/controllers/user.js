@@ -8,9 +8,8 @@ const mail = require('../services/mail')
 const config = require('../../config')
 const performAction = require('../services/performAction')
 const Blockages = require('../services/Blockages')
-
-const SENSITIVE_SELECT = '-hash'
-const SAFE_SELECT = '-hash -email'
+const userSearch = require('../services/userSearch')
+const {SENSITIVE_USER_SELECT, SAFE_USER_SELECT} = require('../constants')
 
 const upload = multer({
   dest: 'uploads/',
@@ -22,7 +21,7 @@ const upload = multer({
 const getUserDoc = ({userId: _id, username}) => {
   const usernameLower = typeof username === 'string' && username.toLowerCase()
   const query = _id ? {_id} : {usernameLower}
-  return User.findOne(query).select(SAFE_SELECT).lean().exec()
+  return User.findOne(query).select(SAFE_USER_SELECT).lean().exec()
 }
 
 exports.logOut = (req, res) => {
@@ -32,9 +31,18 @@ exports.logOut = (req, res) => {
 
 exports.show = (req, res) => {
   const usernameLower = String(req.params.username).toLowerCase()
-  User.findOne({usernameLower}).select(SAFE_SELECT).lean().exec((err, user) => {
+  User.findOne({usernameLower}).select(SAFE_USER_SELECT).lean().exec((err, user) => {
     user ? res.send(user) : res.sendStatus(200)
   })
+}
+
+exports.search = async (req, res, next) => {
+  try {
+    await performAction(req.ip, 'search')
+    res.send(userSearch(req.query.query))
+  } catch (err) {
+    next(err)
+  }
 }
 
 exports.showProfile = async (req, res, next) => {
@@ -178,7 +186,7 @@ exports.updateSettings1 = async (req, res, next) => {
       location: b.location,
       description: b.description,
       birth
-    }, {new: true}).select(SENSITIVE_SELECT).lean()
+    }, {new: true}).select(SENSITIVE_USER_SELECT).lean()
 
     res.send(user)
   } catch (err) {
@@ -260,7 +268,7 @@ exports.createProfilePicture = (req, res, next) => {
                   picture: picture._id
                 }, {
                   new: true
-                }).select(SENSITIVE_SELECT).exec()
+                }).select(SENSITIVE_USER_SELECT).exec()
               }).then(user => {
                 res.send(user)
               }, err => {

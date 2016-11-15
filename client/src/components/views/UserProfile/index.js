@@ -62,7 +62,7 @@ class UserProfileContainer extends React.Component {
       <UserProfile
         key={profile._id}
         user={profile}
-        isOnline={onlineList.indexOf(profile.username) > -1}
+        isOnline={onlineList.findIndex(user => user.get('_id') === profile._id) > -1}
         authedUser={this.authedUser}
         onQuery={this.runQuery.bind(this)}
         {...this.state}

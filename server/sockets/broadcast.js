@@ -2,6 +2,7 @@
 
 const hub = require('clusterhub')
 const {User} = require('../models')
+const {SAFE_USER_SELECT} = require('../constants')
 
 const socketHandler = socket => {
   hub.get('radioStream', m => socket.emit('metadata', m))
@@ -18,10 +19,10 @@ const socketHandler = socket => {
   })
 
   if (socket.userId) {
-    User.findById(socket.userId).select('username').lean().then(({username}) => {
-      hub.emit('userConnect', username)
+    User.findById(socket.userId).select(User.SAFE_SELECT).lean().then(user => {
+      hub.emit('userConnect', user)
       socket.on('disconnect', () => {
-        hub.emit('userDisconnect', username)
+        hub.emit('userDisconnect', user)
       })
     })
   }

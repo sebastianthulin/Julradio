@@ -27,6 +27,7 @@ const forgot = Router()
 user
   .get('/logout', userController.logOut)
   .get('/byname/:username', userController.show)
+  .get('/search', userController.search)
   .get('/profile', userController.showProfile)
   .post('/signup', userController.signUp)
   .post('/login', userController.logIn)

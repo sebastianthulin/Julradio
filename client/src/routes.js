@@ -12,6 +12,7 @@ const UserProfile = require('./components/views/UserProfile')
 const Settings = require('./components/views/Settings')
 const Messages = require('./components/views/Messages')
 const CosyCorner = require('./components/views/CosyCorner')
+const FindUsers = require('./components/views/FindUsers')
 const Crew = require('./components/views/Crew')
 const History = require('./components/views/History')
 const Admin = require('./components/views/Admin')
@@ -35,18 +36,19 @@ const requireAdminAuth = (nextState, replaceState) => {
 }
 
 const routes = (
-  <Route path="/" component={App}>
-    <IndexRoute component={Front} />
-    <Route path="article/:id" component={ArticleView} />
-    <Route path="archive" component={ArticleArchive} />
-    <Route path="forgot/:id" component={ResetPassword} />
-    <Route path="crew" component={Crew} />
-    <Route path="history" component={History} />
-    <Route path="messages(/:user)" component={Messages} onEnter={requireAuth} />
-    <Route path="cosycorner" component={CosyCorner} />
-    <Route path="@:username" component={UserProfile} />
-    <Route path="settings" component={Settings} onEnter={requireAuth} />
-    <Route path="admin" component={Admin} onEnter={requireAdminAuth}>
+  <Route component={App}>
+    <Route path="/" component={Front} />
+    <Route path="/article/:id" component={ArticleView} />
+    <Route path="/archive" component={ArticleArchive} />
+    <Route path="/forgot/:id" component={ResetPassword} />
+    <Route path="/crew" component={Crew} />
+    <Route path="/history" component={History} />
+    <Route path="/messages(/:user)" component={Messages} onEnter={requireAuth} />
+    <Route path="/cosycorner" component={CosyCorner} />
+    <Route path="/findusers" component={FindUsers} />
+    <Route path="/@:username" component={UserProfile} />
+    <Route path="/settings" component={Settings} onEnter={requireAuth} />
+    <Route path="/admin" component={Admin} onEnter={requireAdminAuth}>
       <Route path="articles(/:id)" component={ManageArticles} />
       <Route path="users(/:username)" component={ManageUsers} />
       <Route path="reservations" component={ManageReservations} />
