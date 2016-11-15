@@ -5,7 +5,6 @@ const selectors = require('../../../selectors')
 const User = require('../../../services/User')
 const Thread = require('./Thread')
 
-
 @connect((state, props) => ({
   comments: selectors.comments(state, props.target),
   commentCount: selectors.commentCount(state, props.target),

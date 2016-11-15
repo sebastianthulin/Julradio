@@ -2,10 +2,11 @@
   "name": "julradio",
   "version": "4.1.0",
   "scripts": {
-    "dev": "concurrently --kill-others 'npm run server' 'npm run webpack'",
-    "server": "cd server && nodemon --exec babel-node index.js",
-    "build": "cd client && NODE_ENV=production webpack",
-    "webpack": "cd client && webpack-dev-server --inline --hot --host 0.0.0.0 --colors --no-info"
+    "dev": "concurrently --kill-others 'npm run server:dev' 'npm run client:devserver'",
+    "server:dev": "cd server && nodemon --exec babel-node index.js",
+    "server:deploy": "cd server && NODE_ENV=production pm2 start index.js --name julradio --interpreter babel-node",
+    "client:build": "cd client && NODE_ENV=production webpack",
+    "client:devserver": "cd client && webpack-dev-server --inline --hot --host 0.0.0.0  --colors --no-info"
   },
   "devDependencies": {
     "babel-cli": "^6.14.0",

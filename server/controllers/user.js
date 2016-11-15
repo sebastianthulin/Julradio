@@ -1,6 +1,5 @@
 'use strict'
 
-const mongoose = require('mongoose')
 const multer = require('multer')
 const gm = require('gm')
 const fs = require('fs')
@@ -10,6 +9,9 @@ const config = require('../../config')
 const performAction = require('../services/performAction')
 const Blockages = require('../services/Blockages')
 
+const SENSITIVE_SELECT = '-hash'
+const SAFE_SELECT = '-hash -email'
+
 const upload = multer({
   dest: 'uploads/',
   limits: {
@@ -17,8 +19,10 @@ const upload = multer({
   }
 }).single('avatar')
 
-const getUserDoc = userId => {
-  return User.findById(userId).select('-hash -email').lean().exec()
+const getUserDoc = ({userId: _id, username}) => {
+  const usernameLower = typeof username === 'string' && username.toLowerCase()
+  const query = _id ? {_id} : {usernameLower}
+  return User.findOne(query).select(SAFE_SELECT).lean().exec()
 }
 
 exports.logOut = (req, res) => {
@@ -28,66 +32,52 @@ exports.logOut = (req, res) => {
 
 exports.show = (req, res) => {
   const usernameLower = String(req.params.username).toLowerCase()
-  User.findOne({usernameLower}).select('-hash -email').lean().exec((err, user) => {
+  User.findOne({usernameLower}).select(SAFE_SELECT).lean().exec((err, user) => {
     user ? res.send(user) : res.sendStatus(200)
   })
 }
 
-exports.showProfile = (req, res) => {
-  const userId = req.query.userId
-  const usernameLower = String(req.query.username).toLowerCase()
-  const allowed = ['profile', 'block']
-  const query = String(req.query.query).split(' ').filter(name => {
-    const i = allowed.indexOf(name)
-    if (i > -1) {
-      allowed.splice(i, 1)
-      return true
-    }
-    return false
-  })
+exports.showProfile = async (req, res, next) => {
+  try {
+    const {userId, username} = req.query
+    const requestTypes = String(req.query.query).split(' ')
+    const allowed = ['profile', 'block']
+    const query = allowed.filter(name => requestTypes.indexOf(name) > -1)
 
-  new Promise((resolve, reject) => {
-    if (userId) {
-      mongoose.Types.ObjectId.isValid(userId)
-        ? resolve(userId)
-        : reject(new Error('INCORRECT_USER_ID'))
-    } else {
-      User.findOne({usernameLower}).select('_id').exec().then(doc => doc
-        ? resolve(doc._id)
-        : reject(new Error('USER_NOT_FOUND'))
-      )
+    const user = await getUserDoc({userId, username})
+
+    if (!user) {
+      throw new Error('USER_NOT_FOUND')
     }
-  }).then(userId => {
-    return Promise.all(query.map(type => {
+
+    const data = await Promise.all(query.map(type => {
       switch (type) {
-        case 'profile': return getUserDoc(userId)
-        case 'block': return Blockages.get(req.userId, userId, true)
+        case 'profile': return Promise.resolve(user)
+        case 'block': return Blockages.get(req.userId, user._id, true)
       }
     }))
-  }).then(data => {
-    const result = query.reduce((prev, type, i) => {
-      prev[type] = data[i]
-      return prev
-    }, {})
+
+    const result = {}
+    query.forEach((type, i) => result[type] = data[i])
     res.send(result)
-  }).catch(() => {
+  } catch (err) {
+    console.error(err)
     res.sendStatus(500)
-  })
+  }
 }
 
-exports.signUp = (req, res, next) => {
-  let user
-  new User().signUp(req.body).then(doc => {
-    user = doc
-    return new UserActivation({user: doc._id}).save()
-  }).then(activate => {
+exports.signUp = async (req, res, next) => {
+  try {
+    const user = await new User().signUp(req.body)
+    const activate = await new UserActivation({user: doc._id}).save()
     res.sendStatus(200)
     const activateURL = 'http://julradio.se/activate/' + activate._id
     const html = `
       <h1>Tjena ${user.username}</h1>
       <p>För att vi ska kunna behålla säkerheten här på Julradio och hålla trolls borta krävs det att du verifierar ditt konto för att kunna posta.</p>
       <p><a href="${activateURL}">${activateURL}</a></p>
-      <p>Godjul<br />Julradio</p>`
+      <p>Godjul<br />Julradio</p>
+    `
 
     mail.sendMail({
       from: 'Julradio no-reply <' + config.email.user + '>',
@@ -99,14 +89,16 @@ exports.signUp = (req, res, next) => {
         console.error(new Error('MAIL_NOT_SENT'))
       }
     })
-  }).catch(next)
+  } catch (err) {
+    next(err)
+  }
 }
 
-exports.logIn = (req, res, next) => {
-  performAction(req.ip, 'loginattempt').then(() => {
+exports.logIn = async (req, res, next) => {
+  try {
+    await performAction(req.ip, 'loginattempt')
     const usernameLower = String(req.body.username).toLowerCase()
-    return User.findOne({usernameLower}).exec()
-  }).then(user => {
+    const user = await User.findOne({usernameLower}).exec()
     if (user) {
       if (user.banned) {
         throw new Error('USER_BANNED')
@@ -116,29 +108,25 @@ exports.logIn = (req, res, next) => {
         user.lastVisit = Date.now()
         user.save()
         req.session.uid = user._id
-        res.send({user})
+        res.sendStatus(200)
       } else {
         throw new Error('INCORRECT_PASSWORD')
       }
     } else {
       throw new Error('USER_NOT_FOUND')
     }
-  }).catch(next)
+  } catch (err) {
+    next(err)
+  }
 }
 
 exports.block = (req, res) => {
-  // block a user
-  const b = req.body
-  Block.findOneAndUpdate({
-    from: req.userId,
-    target: b.userId
-  }, {
-    from: req.userId,
-    target: b.userId
-  }, {
+  const from = req.userId
+  const target = req.body.userId
+  Block.findOneAndUpdate({from, target}, {from, target}, {
     upsert: true,
     new: true
-  }).exec().then(() => {
+  }).then(() => {
     res.sendStatus(200)
   }).catch(() => {
     res.sendStatus(500)
@@ -146,7 +134,6 @@ exports.block = (req, res) => {
 }
 
 exports.unBlock = (req, res) => {
-  // unblock a user
   Block.findOneAndRemove({
     from: req.userId,
     target: req.params.userId
@@ -157,49 +144,52 @@ exports.unBlock = (req, res) => {
   })
 }
 
-exports.updateSettings1 = (req, res, next) => {
-  const b = req.body
+exports.updateSettings1 = async (req, res, next) => {
+  try {
+    const b = req.body
 
-  if (['', 'MALE', 'FEMALE'].indexOf(b.gender) === -1) {
-    throw new Error('INVALID_GENDER')
-  }
-  if (b.name.length > 50) {
-    throw new Error('NAME_TOO_LONG')
-  }
-  if (b.location.length > 50) {
-    throw new Error('LOCATION_TOO_LONG')
-  }
-  if (b.description.length > 500) {
-    throw new Error('DESCRIPTION_TOO_LONG')
-  }
-  
-  if (b.year && b.month && b.day) {
-    let birth = new Date(b.year, b.month, b.day)
-    const y1900 = new Date(1900, 0, 0)
-    const yNowMinusTen = new Date(new Date().getFullYear() - 10, 0, 0)
-
-    if (!(birth > y1900 && birth < yNowMinusTen)) {
-      throw new Error('INVALID_BIRTH')
+    if (['', 'MALE', 'FEMALE'].indexOf(b.gender) === -1) {
+      throw new Error('INVALID_GENDER')
     }
-  }
+    if (b.name.length > 50) {
+      throw new Error('NAME_TOO_LONG')
+    }
+    if (b.location.length > 50) {
+      throw new Error('LOCATION_TOO_LONG')
+    }
+    if (b.description.length > 500) {
+      throw new Error('DESCRIPTION_TOO_LONG')
+    }
+    
+    const birth = b.year && b.month && b.day && new Date(b.year, b.month, b.day)
 
-  User.findByIdAndUpdate(req.userId, {
-    name: b.name,
-    gender: b.gender,
-    location: b.location,
-    description: b.description,
-    birth
-  }, {
-    new: true
-  }).select('-hash')
-    .exec()
-    .then(res.send.bind(res))
-    .catch(next)
+    if (birth) {
+      const y1900 = new Date(1900, 0, 0)
+      const yNowMinusTen = new Date(new Date().getFullYear() - 10, 0, 0)
+
+      if (!(birth > y1900 && birth < yNowMinusTen)) {
+        throw new Error('INVALID_BIRTH')
+      }
+    }
+
+    const user = await User.findByIdAndUpdate(req.userId, {
+      name: b.name,
+      gender: b.gender,
+      location: b.location,
+      description: b.description,
+      birth
+    }, {new: true}).select(SENSITIVE_SELECT).lean()
+
+    res.send(user)
+  } catch (err) {
+    next(err)
+  }
 }
 
-exports.updateSettings2 = (req, res, next) => {
-  const b = req.body
-  User.findById(req.userId).exec().then(user => {
+exports.updateSettings2 = async (req, res, next) => {
+  try {
+    const b = req.body
+    const user = await User.findById(req.userId)
     if (!user.auth(b.auth)) {
       throw new Error('INCORRECT_PASSWORD')
     }
@@ -209,11 +199,12 @@ exports.updateSettings2 = (req, res, next) => {
     if (b.password) {
       user.setPassword(b.password)
     }
-    return user.save()
-  }).then(user => {
+    await user.save()
     user.hash = null
     res.send(user)
-  }).catch(next)
+  } catch (err) {
+    next(err)
+  }
 }
 
 exports.createProfilePicture = (req, res, next) => {
@@ -269,7 +260,7 @@ exports.createProfilePicture = (req, res, next) => {
                   picture: picture._id
                 }, {
                   new: true
-                }).select('-hash').exec()
+                }).select(SENSITIVE_SELECT).exec()
               }).then(user => {
                 res.send(user)
               }, err => {
@@ -283,63 +274,64 @@ exports.createProfilePicture = (req, res, next) => {
   })
 }
 
-exports.deleteProfilePicture = (req, res, next) => {
-  User.findByIdAndUpdate(req.userId, {
-    picture: undefined
-  }).exec().then(user => {
+exports.deleteProfilePicture = async (req, res, next) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.userId, {picture: undefined}).lean()
     if (user.picture) {
-      Picture.findById(user.picture).exec().then(picture => {
-        return Promise.all([
-          new RemovedPicture(picture).save(),
-          picture.remove()
-        ])
-      }).catch(console.error.bind(console))
+      const picture = await Picture.findById(user.picture)
+      await Promise.all([
+        new RemovedPicture(picture).save(),
+        picture.remove()
+      ])
     }
 
     user.picture = null
     user.hash = null
     res.send(user)
-  }).catch(next)
+  } catch (err) {
+    next(err)
+  }
 }
 
 // For admins!
-exports.listAll = (req, res) => {
-  User.find().select('username roles banned').exec((err, users) => {
+exports.listAll = (req, res, next) => {
+  User.find().select('username roles banned').lean().then(users => {
     res.send(users)
-  })
+  }).catch(next)
 }
 
-exports.deleteUserProfilePicture = (req, res) => {
-  User.findById(req.params.userId).exec().then(user => {
-    Picture.findById(user.picture).then(picture => {
-      new RemovedPicture(picture).save()
-      picture.remove()
-      user.picture = null
+exports.deleteUserProfilePicture = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.userId)
+    const picture = await Picture.findById(user.picture)
+    user.picture = null
+    await Promise.all([
+      new RemovedPicture(picture).save(),
+      picture.remove(),
       user.save()      
-      res.sendStatus(200)
-    }).catch(err => {
-      res.status(500).send({err: err.toString()})
-    })
-  }).catch(err => {
-    res.status(500).send({err: err.toString()})
-  })
+    ])
+    res.sendStatus(200)
+  } catch (err) {
+    next(err)
+  }
 }
 
-exports.updateUser = (req, res) => {
-  const b = req.body
-  User.findByIdAndUpdate(req.params.userId, {
-    username: b.username,
-    usernameLower: b.username.toLowerCase(),
-    title: b.title,
-    banned: b.banned,
-    roles: {
-      admin: b.admin,
-      writer: b.admin || b.writer,
-      radioHost: b.admin || b.radioHost
-    }
-  }).exec().then(() => {
+exports.updateUser = async (req, res, next) => {
+  try {
+    const b = req.body
+    await User.findByIdAndUpdate(req.params.userId, {
+      username: b.username,
+      usernameLower: b.username.toLowerCase(),
+      title: b.title,
+      banned: b.banned,
+      roles: {
+        admin: b.admin,
+        writer: b.admin || b.writer,
+        radioHost: b.admin || b.radioHost
+      }
+    })
     res.sendStatus(200)
-  }, err => {
-    res.status(500).send({err: err.toString()})
-  })
+  } catch (err) {
+    next(err)
+  }
 }

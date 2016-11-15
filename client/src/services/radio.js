@@ -6,7 +6,10 @@ const url = urls[Math.random() * urls.length | 0] + '/;'
 audio.src = url
 
 radio.play = () => {
-  return audio.play()
+  return new Promise((_, reject) => {
+    audio.play()
+    audio.onerror = reject
+  })
 }
 
 radio.pause = () => {

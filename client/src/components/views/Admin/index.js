@@ -13,7 +13,6 @@ class Admin extends React.Component {
             className={cx({active: path === 'articles(/:id)'})}
             children="Nyheter"
           />
-          <a>Tävlingar</a>
           <Link
             to="/admin/users"
             className={cx({active: path === 'users(/:username)'})}

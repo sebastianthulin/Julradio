@@ -2,8 +2,10 @@
 
 const {Notification} = require('../models')
 
+const populate = {path: 'from', select: '-hash -email'}
+
 exports.showAll = (req, res) => {
-  Notification.find({to: req.userId}).exec().then(docs => {
+  Notification.find({to: req.userId}).populate(populate).then(docs => {
     res.send(docs || [])
   })
 }

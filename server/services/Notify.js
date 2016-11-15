@@ -1,25 +1,20 @@
 'use strict'
 
-const db = require('../models')
+const {Notification} = require('../models')
 const {io} = require('../server')
 
-const Notify = opts => {
-  db.Notification.findOneAndUpdate({
-    to: opts.userId,
-    from: opts.from,
-    type: opts.type,
-    value: opts.value
+const populate = {path: 'from', select: '-hash -email'}
+
+const Notify = ({userId: to, from, type, value}) => {
+  Notification.findOneAndUpdate({
+    to, from, type, value
   }, {
-    to: opts.userId,
-    from: opts.from,
-    type: opts.type,
-    value: opts.value,
-    date: Date.now()
+    to, from, type, value, date: Date.now()
   }, {
     upsert: true,
     new: true
-  }).populate('from').exec().then(doc => {
-    io.to(opts.userId).emit('notification:new', doc)
+  }).populate(populate).then(doc => {
+    io.to(to).emit('notification:new', doc)
   }).catch(err => {
     console.error('Notify error', err)
   })

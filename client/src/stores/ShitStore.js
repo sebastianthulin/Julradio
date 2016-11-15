@@ -57,7 +57,7 @@ socket.on('notification:new', opts => {
 
 ShitStore.fetch = () => {
   request.get('/api/notification', (err, {body: notifications}) => {
-    notifications.forEach(handleNotification)
+    notifications && notifications.forEach(handleNotification)
   })
 }
 

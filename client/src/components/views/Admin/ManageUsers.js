@@ -6,10 +6,10 @@ const ManageUser = require('./ManageUser')
 const User = ({username, roles, banned}) => (
   <tr>
     <td><Link to={`/admin/users/${username}`}>{username}</Link></td>
-    <td>{roles.admin.toString()}</td>
-    <td>{roles.writer.toString()}</td>
-    <td>{roles.radioHost.toString()}</td>
-    <td>{(!!banned).toString()}</td>
+    <td>{roles.admin ? 'Ja' : ''}</td>
+    <td>{roles.writer ? 'Ja' : ''}</td>
+    <td>{roles.radioHost ? 'Ja' : ''}</td>
+    <td>{banned ? 'Ja' : ''}</td>
   </tr>
 )
 

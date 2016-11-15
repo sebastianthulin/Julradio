@@ -13,14 +13,10 @@ class Thread extends React.Component {
     if (text) {
       this.props.onPostReply(comment.get('_id'), text).then(() => {
         this.refs.reply.value = ''
-        this.toggleReply()
+        this.setState({showReply: false})
         this.fetchReplies()
       })
     }
-  }
-
-  toggleReply() {
-    this.setState({showReply: !this.state || !this.state.showReply})
   }
 
   render() {
@@ -36,7 +32,9 @@ class Thread extends React.Component {
           admin={admin}
         />
         <div className="options">
-          <span onClick={this.toggleReply.bind(this)} className="option">Svara</span>
+          <span className="option" onClick={() => this.setState({showReply: !showReply})}>
+            Svara
+          </span>
           {replies && comment.get('numReplies') > replies.size && (
             <span onClick={this.fetchReplies.bind(this)} className="option">
               {`Visa alla ${comment.get('numReplies')} svar`}

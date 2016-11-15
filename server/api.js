@@ -42,7 +42,7 @@ user
 
 comment
   .get('/:type', commentController.show)
-  .get('/replies/:id/:limit?', commentController.showReplies)
+  .get('/replies/:id', commentController.showReplies)
   .post('/article', signedIn, commentController.createOnArticle)
   .post('/user', signedIn, commentController.createOnUser)
   .post('/cosycorner', signedIn, commentController.createOnCosycorner)
@@ -51,7 +51,7 @@ comment
 
 articles
   .get('/', articlesController.frontPage)
-  .get('/', articlesController.list)
+  .get('/all', articlesController.list)
   .get('/:id', articlesController.show)
   .post('/', role('writer'), articlesController.create)
   .put('/pin', role('writer'), articlesController.pin)
