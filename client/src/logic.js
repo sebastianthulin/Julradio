@@ -1,5 +1,5 @@
 const socket = require('./services/socket')
-const {receiveOnlineList} = require('./actions')
+const {receiveOnlineList, receiveOnlineListChange} = require('./actions')
 const {receiveRequests, recieveRequest} = require('./actions/requests')
 const {recieveReservations, setOnAir} = require('./actions/reservations')
 const {setHistory, setNowPlaying, togglePlay, setVolume} = require('./actions/player')
@@ -7,6 +7,7 @@ const localStorage = window.localStorage || {}
 
 const logic = store => {
   socket.on('onlineList', list => store.dispatch(receiveOnlineList(list)))
+  socket.on('onlineListChange', change => store.dispatch(receiveOnlineListChange(change)))
 
   // requests
   socket.on('requests', requests => {

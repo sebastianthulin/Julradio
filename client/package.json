@@ -6,6 +6,7 @@
     "dateformat": "^1.0.12",
     "immutable": "^3.8.1",
     "marked": "^0.3.6",
+    "promise-polyfill": "^6.0.2",
     "react": "^15.3.1",
     "react-dom": "^15.3.1",
     "react-redux": "^4.4.5",
