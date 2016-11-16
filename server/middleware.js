@@ -47,6 +47,7 @@ exports.signedIn = (req, res, next) => {
 }
 
 exports.role = role => (req, res, next) => {
+  req.userId = req.session.uid
   exports.fetchUser(req, res, () => {
     if (req.user && req.user.roles[role]) {
       next()

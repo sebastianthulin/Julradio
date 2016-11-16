@@ -2,7 +2,7 @@ const request = require('superagent')
 const socket = require('./services/socket')
 const {receiveOnlineList, receiveOnlineListChange} = require('./actions')
 const {receiveUserNotification} = require('./actions/notifications')
-const {receiveRequests, recieveRequest} = require('./actions/requests')
+const {receiveFeed, recieveFeedItem} = require('./actions/requests')
 const {recieveReservations, setOnAir} = require('./actions/reservations')
 const {setHistory, setNowPlaying, togglePlay, setVolume} = require('./actions/player')
 const localStorage = window.localStorage || {}
@@ -12,12 +12,12 @@ const logic = store => {
   socket.on('onlineListChange', change => store.dispatch(receiveOnlineListChange(change)))
 
   // requests
-  socket.on('requests', requests => {
-    store.dispatch(receiveRequests(requests))
+  socket.on('feed', feed => {
+    store.dispatch(receiveFeed(feed))
   })
 
-  socket.on('request', request => {
-    store.dispatch(recieveRequest(request))
+  socket.on('feedItem', feedItem => {
+    store.dispatch(recieveFeedItem(feedItem))
   })
 
   // reservations

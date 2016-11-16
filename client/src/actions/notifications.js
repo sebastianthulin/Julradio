@@ -52,6 +52,15 @@ export const clearNotification = id => ({
   id
 })
 
+// takes an error object returned from a superagent request
+export const errorNotify = err => {
+  return createNotification({
+    name: '/url',  // url.split('/')[1]
+    value: err.response.body.error[0],
+    isError: true
+  })
+}
+
 export const createNotification = notification => dispatch => {
   // notification: {from, name, value, isError}
   const id = Math.random().toString(36).substr(2)

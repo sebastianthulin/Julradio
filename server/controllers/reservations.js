@@ -26,7 +26,7 @@ const generateData = (b, userId) => {
   }
 }
 
-exports.create = (req, res) => {
+exports.create = (req, res, next) => {
   try {
     const reservation = generateData(req.body, req.userId)
     hub.emit('reservations:create', reservation)
@@ -36,7 +36,7 @@ exports.create = (req, res) => {
   }
 }
 
-exports.update = (req, res) => {
+exports.update = (req, res, next) => {
   try {
     const reservation = generateData(req.body, req.userId)
     hub.emit('reservations:edit', {

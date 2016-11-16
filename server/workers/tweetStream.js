@@ -35,7 +35,7 @@ const handleTweet = data => {
   }
 
   hub.set('tweetStream', tweets)
-  io.emit('request', tweet)
+  io.emit('feedItem', tweet)
 }
 
 const deleteTweet = id => {

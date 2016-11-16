@@ -1,4 +1,5 @@
-const API = require('../services/API')
+const request = require('superagent')
+const {errorNotify} = require('./notifications')
 
 let searchTimeout
 
@@ -10,11 +11,13 @@ export const searchUsers = query => dispatch => {
 
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
-    API.get('/user/search?query=' + query, users => {
+    request.get('/api/user/search?query=' + query).then(res => {
       dispatch({
         type: 'SEARCH_USERS_SUCCESS',
-        users
+        users: res.body
       })
+    }).catch(err => {
+      dispatch(errorNotify(err))
     })
   }, 200)
 }

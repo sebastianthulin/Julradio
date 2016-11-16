@@ -5,16 +5,16 @@ const {User} = require('../models')
 const {SAFE_USER_SELECT} = require('../constants')
 
 const socketHandler = socket => {
-  hub.get('radioStream', m => socket.emit('metadata', m))
-  hub.get('reservations', r => socket.emit('reservations', r))
-  hub.get('onlineList', l => socket.emit('onlineList', l))
+  hub.get('radioStream', metadata => socket.emit('metadata', metadata))
+  hub.get('reservations', rreservations => socket.emit('reservations', rreservations))
+  hub.get('onlineList', list => list && socket.emit('onlineList', list))
 
   hub.get('songRequests', songRequests => {
     hub.get('tweetStream', tweets => {
-      const requests = [...tweets, ...songRequests]
-      requests.sort((a, b) => new Date(b.granted || b.date) - new Date(a.granted || a.date))
-      requests.splice(50)
-      socket.emit('requests', requests)
+      const feed = [...tweets, ...songRequests]
+      feed.sort((a, b) => new Date(b.granted || b.date) - new Date(a.granted || a.date))
+      feed.splice(50)
+      socket.emit('feed', feed)
     })
   })
 

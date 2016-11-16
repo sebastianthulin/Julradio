@@ -5,19 +5,19 @@
     "body-parser": "^1.15.2",
     "client-sessions": "^0.7.0",
     "clusterhub": "^0.2.8",
-    "ejs": "^2.5.1",
+    "ejs": "^2.5.2",
     "express": "^4.14.0",
     "gm": "^1.23.0",
     "iconv-lite": "^0.4.13",
-    "mongoose": "^4.5.10",
+    "mongoose": "^4.6.8",
     "multer": "^1.2.0",
     "node-tweet-stream": "^2.0.1",
-    "nodemailer": "^2.5.0",
+    "nodemailer": "^2.6.4",
     "proxy-middleware": "^0.15.0",
-    "redis": "^2.6.2",
-    "rxjs": "^5.0.0-rc.1",
-    "socket.io": "^1.4.8",
+    "redis": "^2.6.3",
+    "rxjs": "^5.0.0-rc.3",
+    "socket.io": "^1.5.1",
     "socket.io-emitter": "^1.0.0",
-    "socket.io-redis": "^1.0.0"
+    "socket.io-redis": "^1.1.1"
   }
 }

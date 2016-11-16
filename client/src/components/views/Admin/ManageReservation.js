@@ -1,13 +1,11 @@
 const React = require('react')
+const {connect} = require('react-redux')
 const dateFormat = require('dateformat')
-const API = require('../../../services/API')
+const {createReservation, updateReservation, deleteReservation} = require('../../../actions/reservations')
 
-const reservations = {
-  create: (opts, cb) => API.post('/reservations', opts, cb),
-  update: (id, opts, cb) => API.put('/reservations/' + id, opts, cb),
-  delete: (id, cb) => API.delete('/reservations/' + id, cb)
-}
-
+@connect(null, {
+  createReservation, updateReservation, deleteReservation
+})
 class ManageReservation extends React.Component {
   componentWillMount() {
     const {reservation} = this.props
@@ -52,11 +50,11 @@ class ManageReservation extends React.Component {
     }
 
     if (id) {
-      reservations.update(id, opts, () => {
+      this.props.updateReservation(id, opts).then(() => {
         alert('ändringar sparade.')
       })
     } else {
-      reservations.create(opts, () => {
+      this.props.createReservation(opts).then(() => {
         this.refs.startTime.value = ''
         this.refs.endTime.value = ''
         this.refs.text.value = ''
@@ -68,7 +66,7 @@ class ManageReservation extends React.Component {
   delete() {
     const id = this.getId()
     if (confirm('Säkert?')) {
-      reservations.delete(id, () => {
+      this.props.deleteReservation(id).then(() => {
         this.props.deselect()
       })
     }

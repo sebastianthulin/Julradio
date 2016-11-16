@@ -25,14 +25,14 @@ exports.create = (req, res, next) => {
 }
 
 exports.showUngranted = (req, res, next) => {
-  SongRequest.find({granted: null}).exec()
+  SongRequest.find({granted: null})
     .then(res.send.bind(res))
     .catch(next)
 }
 
 exports.grant = (req, res, next) => {
   const id = req.params.id
-  SongRequest.findById(id).exec().then(request => {
+  SongRequest.findById(id).then(request => {
     if (request && !request.granted) {
       request.granted = Date.now()
       return request.save()
@@ -45,13 +45,13 @@ exports.grant = (req, res, next) => {
 }
 
 exports.deny = (req, res, next) => {
-  SongRequest.findByIdAndRemove(req.params.id).exec().then(() => {
+  SongRequest.findByIdAndRemove(req.params.id).then(() => {
     res.sendStatus(200)
   }).catch(next)
 }
 
 exports.wipe = (req, res, next) => {
-  SongRequest.remove({granted: null}).exec().then(() => {
+  SongRequest.remove({granted: null}).then(() => {
     res.sendStatus(200)
   }).catch(next)
 }

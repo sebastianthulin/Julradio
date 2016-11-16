@@ -1,13 +1,12 @@
 const React = require('react')
 const {connect} = require('react-redux')
-const Requests = require('../../services/Requests')
-const {createNotification} = require('../../actions/notifications')
+const {createRequest} = require('../../actions/requests')
 const Modal = require('./Modal')
 
 @connect(state => ({
   onAir: !!state.reservations.get('onAir')
 }), {
-  onCreateNotification: createNotification
+  onCreateRequest: createRequest
 })
 class RequestSong extends React.Component {
   getFields() {
@@ -48,10 +47,9 @@ class RequestSong extends React.Component {
       return alert('För lång text. Högst 250 tecken.')
     }
 
-    Requests.create(fields, () => {
+    this.props.onCreateRequest(fields, () => {
       this.resetFields()
       this.props.closeModal()
-      this.props.onCreateNotification({name: 'requestsong'})
     })
   }
 

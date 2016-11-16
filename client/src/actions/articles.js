@@ -1,8 +1,8 @@
+const request = require('superagent')
 const {List} = require('immutable')
 const marked = require('marked')
 const {browserHistory} = require('react-router')
-const API = require('../services/API')
-const {createNotification} = require('./notifications')
+const {createNotification, errorNotify} = require('./notifications')
 
 const transform = article => {
   if (article.content) {
@@ -14,21 +14,25 @@ const transform = article => {
 
 export const fetchArticles = () => dispatch => {
   dispatch({type: 'FETCH_ARTICLES_REQUEST'})
-  API.get('/articles', articles => {
+  request.get('/api/articles').then(res => {
     dispatch({
       type: 'FETCH_ARTICLES_SUCCESS',
-      articles: List(articles).map(transform)
+      articles: List(res.body).map(transform)
     })
+  }).catch(err => {
+    dispatch(errorNotify(err))
   })
 }
 
 export const fetchAllArticles = () => dispatch => {
   dispatch({type: 'FETCH_ALL_ARTICLES_REQUEST'})
-  API.get('/articles/all', articles => {
+  request.get('/api/articles/all').then(res => {
     dispatch({
       type: 'FETCH_ALL_ARTICLES_SUCCESS',
-      articles: List(articles).map(transform)
+      articles: List(res.body).map(transform)
     })
+  }).catch(err => {
+    dispatch(errorNotify(err))
   })
 }
 
@@ -37,12 +41,14 @@ export const fetchArticle = id => dispatch => {
     type: 'FETCH_ARTICLE_REQUEST',
     id
   })
-  API.get('/articles/' + id, article => {
+  request.get('/api/articles/' + id).then(res => {
     dispatch({
       type: 'FETCH_ARTICLE_SUCCESS',
       id,
-      article: transform(article)
+      article: transform(res.body)
     })
+  }).catch(err => {
+    dispatch(errorNotify(err))
   })
 }
 
@@ -72,39 +78,47 @@ export const updateArticleLocally = ({title, content, userless}) => (dispatch, g
 
 export const createArticle = () => (dispatch, getState) => {
   const article = getState().articles.get('editing')
-  API.post('/articles', {
+  request.post('/api/articles', {
     title: article.get('title'),
     content: article.get('content'),
     userless: !article.get('user')
-  }, article => {
-    browserHistory.push(`/admin/articles/${article._id}`)
+  }).then(res => {
+    browserHistory.push(`/admin/articles/${res.body._id}`)
+  }).catch(err => {
+    dispatch(errorNotify(err))
   })
 }
 
 export const updateArticle = () => (dispatch, getState) => {
   const article = getState().articles.get('editing')
-  API.put(`/articles/${article.get('_id')}`, {
+  request.put(`/api/articles/${article.get('_id')}`, {
     title: article.get('title'),
     content: article.get('content')
-  }, () => {
+  }).then(() => {
     dispatch(createNotification({name: 'article'}))
+  }).catch(err => {
+    dispatch(errorNotify(err))
   })
 }
 
 export const deleteArticle = () => (dispatch, getState) => {
   const id = getState().articles.getIn(['editing', '_id'])
-  API.delete('/articles/' + id, () => {
+  request.delete('/api/articles/' + id).then(() => {
     browserHistory.replace('/admin/articles')
+  }).catch(err => {
+    dispatch(errorNotify(err))
   })
 }
 
 export const togglePin = id => (dispatch, getState) => {
   const pinned = !getState().articles.getIn(['byId', id, 'pinned'])
-  API.put('/articles/pin', {id, pinned}, () => {
+  request.put('/api/articles/pin', {id, pinned}).then(() => {
     dispatch({
       type: 'TOGGLE_PIN_SUCCESS',
       id,
       pinned
     })
+  }).catch(err => {
+    dispatch(errorNotify(err))
   })
 }

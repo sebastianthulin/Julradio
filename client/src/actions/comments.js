@@ -1,15 +1,16 @@
-const API = require('../services/API')
+const request = require('superagent')
 const UserStore = require('../stores/UserStore')
+const {errorNotify} = require('./notifications')
 
 const insertUser = comment => UserStore.insert(comment.user)
 
 export const fetchComments = (type, target, fromTop) => (dispatch, getState) => {
   const ids = getState().comments.getIn([target, 'ids'])
   const skip = fromTop ? 0 : ids ? ids.size : 0
-  API.get('/comment/' + type, {target, skip}, ({comments, replies, totalComments, totalThreads}) => {
+  request.get('/api/comment/' + type, {target, skip}).then(res => {
+    const {comments, replies, totalComments, totalThreads} = res.body
     replies.forEach(replies => replies.forEach(insertUser))
     comments.forEach(insertUser)
-
     dispatch({
       type: 'FETCH_COMMENTS_SUCCESS',
       target,
@@ -18,11 +19,14 @@ export const fetchComments = (type, target, fromTop) => (dispatch, getState) => 
       commentCount: totalComments,
       threadCount: totalThreads
     })
+  }).catch(err => {
+    dispatch(errorNotify(err))
   })
 }
 
 export const fetchReplies = (target, commentId) => dispatch => {
-  API.get('/comment/replies/' + commentId, replies => {
+  request.get('/comment/replies/' + commentId).then(res => {
+    const replies = res.body
     replies.forEach(insertUser)
     dispatch({
       type: 'FETCH_REPLIES_SUCCESS',
@@ -30,32 +34,32 @@ export const fetchReplies = (target, commentId) => dispatch => {
       commentId,
       replies
     })
+  }).catch(err => {
+    dispatch(errorNotify(err))
   })
 }
 
-export const postComment = (type, target, text) => () => {
-  return new Promise(resolve => {
-    API.post('/comment/' + type, {target, text}, () => {
-      resolve()
-    })
-  })
+export const postComment = (type, target, text) => dispatch => {
+  return request.post('/api/comment/' + type, {target, text})
+    .then(() => null)
+    .catch(err => dispatch(errorNotify(err)))
 }
 
-export const postReply = (replyTo, text) => () => {
-  return new Promise(resolve => {
-    API.post('/comment/reply', {replyTo, text}, () => {
-      resolve()
-    })
-  })
+export const postReply = (replyTo, text) => dispatch => {
+  return request.post('/api/comment/reply', {replyTo, text})
+    .then(() => null)
+    .catch(err => dispatch(errorNotify(err)))
 }
 
 export const deleteComment = (target, commentId, replyTo) => dispatch => {
-  API.delete('/comment/' + commentId, () => {
+  request.delete('/api/comment/' + commentId).then(() => {
     dispatch({
       type: 'DELETE_COMMENT_SUCCESS',
       target,
       commentId,
       replyTo
     })
+  }).catch(err => {
+    dispatch(errorNotify(err))
   })
 }

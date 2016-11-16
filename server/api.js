@@ -67,8 +67,8 @@ request
   .post('/', requestController.create)
   .get('/', role('radioHost'), requestController.showUngranted)
   .put('/:id', role('radioHost'), requestController.grant)
-  .delete('/:id', role('radioHost'), requestController.deny)
   .delete('/all', role('radioHost'), requestController.wipe)
+  .delete('/:id', role('radioHost'), requestController.deny)
   .delete('/accepted/:id', role('admin'), requestController.deleteRequest)
   .delete('/tweet/:id', role('admin'), requestController.deleteTweet)
 

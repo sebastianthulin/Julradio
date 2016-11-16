@@ -1,25 +1,20 @@
 const React = require('react')
-const Requests = require('../../../services/Requests')
+const {connect} = require('react-redux')
+const {fetchRequests, acceptRequest, denyRequest, wipeRequests} = require('../../../actions/requests')
 const TimeSince = require('../../reusable/TimeSince')
 
 class Request extends React.Component {
-  accept() {
-    Requests.accept(this.props._id, () => this.setState({accepted: true}))
-  }
-
-  deny() {
-    Requests.deny(this.props._id, () => this.setState({removed: true}))
-  }
-
   render() {
-    const {name, song, text, date, ip} = this.props
+    const {request, onAccept, onDeny} = this.props
+    const accept = () => onAccept(request._id).then(() => this.setState({accepted: true}))
+    const deny = () => onDeny(request._id).then(() => this.setState({removed: true}))
     const {accepted, removed} = this.state || {}
     return (
       <div className="SongRequest">
-        <div className="name">{name}</div>
-        <div className="song">{song}</div>
-        <div className="text">{text}</div>
-        <span className="iptime"><TimeSince date={date} /> {ip}</span>
+        <div className="name">{request.name}</div>
+        <div className="song">{request.song}</div>
+        <div className="text">{request.text}</div>
+        <span className="iptime"><TimeSince date={request.date} /> {request.ip}</span>
         {accepted ? (
           <div className="message">
             Accepterad
@@ -30,8 +25,8 @@ class Request extends React.Component {
           </div>
         ) : (
           <div className="actions">
-            <button onClick={this.accept.bind(this)} children="Accept" />
-            <button onClick={this.deny.bind(this)} children="Ta bort" />
+            <button onClick={accept} children="Accept" />
+            <button onClick={deny} children="Ta bort" />
           </div>
         )}
       </div>
@@ -39,21 +34,24 @@ class Request extends React.Component {
   }
 }
 
+@connect(null, {
+  fetchRequests, acceptRequest, denyRequest, wipeRequests
+})
 class ManageRequests extends React.Component {
   componentWillMount() {
-    this.state = {
-      requests: []
-    }
+    this.state = {requests: []}
     this.refresh()
   }
 
   refresh(requests) {
-    Requests.fetch(requests => this.setState({requests}))
+    this.props.fetchRequests().then(requests => {
+      this.setState({requests})
+    })
   }
 
   wipe() {
     if (confirm('Vill du ta bort alla önskningar?')) {
-      Requests.wipe(this.refresh.bind(this))
+      this.props.wipeRequests().then(() => this.refresh())
     }
   }
 
@@ -64,7 +62,14 @@ class ManageRequests extends React.Component {
         <button className="btn" onClick={this.refresh.bind(this)}>Refresh</button>
         <button className="btn" onClick={this.wipe.bind(this)}>Ta bort alla</button>
         <div className="requestContainer">
-          {requests.map(request => <Request key={request._id} {...request} />)}
+          {requests.map(request => (
+            <Request
+              key={request._id}
+              request={request}
+              onAccept={this.props.acceptRequest}
+              onDeny={this.props.denyRequest}
+            />)
+          )}
         </div>
       </div>
     )
