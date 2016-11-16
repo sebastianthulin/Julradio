@@ -3,7 +3,7 @@
 const express = require('express')
 const proxy = require('proxy-middleware')
 const {app, server, io, webpackServer} = require('./server')
-const {session, ioify, body} = require('./middleware')
+const {session, ioify, body, fetchUser} = require('./middleware')
 const api = require('./api')
 const misq = require('./controllers/misq')
 const errorHandler = require('./errorHandler')
@@ -16,15 +16,21 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.set('view engine', 'ejs')
 app.enable('trust proxy')
+
+app.use((req, res, next) => {
+  res.setHeader('Expires', '-1')
+  res.setHeader('Cache-Control', 'must-revalidate, private')
+  next()
+})
+
 app.use(express.static('../public'))
 app.use(session)
 app.use(body)
-app.use(misq.fetchUser)
 app.use('/api', api)
 app.get('/picture/:id', misq.showPicture)
 app.get('/activate/:userActivationId', misq.activateUser)
 app.get('/inc/now_playing.php', misq.showNowPlaying)
-app.get('*', misq.renderPage)
+app.get('*', fetchUser, misq.renderPage)
 app.use(errorHandler)
 
 io.use(ioify(session))

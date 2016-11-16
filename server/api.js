@@ -11,7 +11,7 @@ const reservationsController = require('./controllers/reservations')
 const crewController = require('./controllers/crew')
 const forgotController = require('./controllers/forgot')
 const misq = require('./controllers/misq')
-const {signedIn, role} = require('./middleware')
+const {fetchUser, signedIn, role} = require('./middleware')
 
 const api = Router()
 const user = Router()
@@ -48,7 +48,7 @@ comment
   .post('/user', signedIn, commentController.createOnUser)
   .post('/cosycorner', signedIn, commentController.createOnCosycorner)
   .post('/reply', signedIn, commentController.reply)
-  .delete('/:id', signedIn, commentController.delete)
+  .delete('/:id', signedIn, fetchUser, commentController.delete)
 
 articles
   .get('/', articlesController.frontPage)

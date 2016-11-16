@@ -6,25 +6,6 @@ const config = require('../../config')
 
 const pictureRoutes = {}
 
-exports.fetchUser = (req, res, next) => {
-  req.userId = req.session.uid
-  res.setHeader('Expires', '-1')
-  res.setHeader('Cache-Control', 'must-revalidate, private')
-  if (!req.userId) return next()
-  User.findById(req.userId).select('-hash').lean().exec().then(user => {
-    if (!user || (user && user.banned)) {
-      // Disauth user
-      throw new Error()
-    }
-
-    req.user = user
-    next()
-  }).catch(() => {
-    req.session.uid = undefined
-    next()
-  })
-}
-
 exports.renderPage = (req, res) => {
   res.render('main', {
     user: req.user,
