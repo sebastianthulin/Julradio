@@ -52,12 +52,12 @@ export const fetchArticle = id => dispatch => {
   })
 }
 
-export const editArticle = id => dispatch => {
+export const editArticle = id => (dispatch, getState) => {
   id && dispatch(fetchArticle(id))
   dispatch({
     type: 'EDIT_ARTICLE',
     id,
-    user: require('immutable').fromJS(require('../services/User').get())
+    user: getState().account
   })
 }
 
@@ -66,7 +66,7 @@ export const cancelEdit = () => ({
 })
 
 export const updateArticleLocally = ({title, content, userless}) => (dispatch, getState) => {
-  const user = userless ? null : require('immutable').fromJS(require('../services/User').get())
+  const user = userless ? null : getState().account
   dispatch({
     type: 'UPDATE_ARTICLE_LOCALLY',
     title,

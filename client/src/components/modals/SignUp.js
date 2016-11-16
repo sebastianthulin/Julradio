@@ -1,15 +1,17 @@
 const React = require('react')
-const User = require('../../services/User')
+const {connect} = require('react-redux')
 const Modal = require('./Modal')
+const {signUp} = require('../../actions/account')
 
+@connect(null, {signUp})
 class SignUp extends React.Component {
-  handleSubmit(ev) {
-    ev.preventDefault()
-    User.signUp({
+  handleSubmit(evt) {
+    evt.preventDefault()
+    this.props.signUp({
       username: this.refs.username.value,
       email: this.refs.email.value,
       password: this.refs.password.value
-    }, () => {
+    }).then(() => {
       this.props.openModal('SignUpSuccess')
     })
     this.setState({disabled: true})

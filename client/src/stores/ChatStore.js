@@ -1,7 +1,6 @@
 const {EventEmitter} = require('events')
 const request = require('superagent')
 const socket = require('../services/socket')
-const User = require('../services/User')
 const handleNotification = require('../services/handleNotification')
 const ChatStore = new EventEmitter
 const threadsById = {}
@@ -106,7 +105,7 @@ const updateMessages = () => {
 }
 
 const insertConversation = conv => {
-  const userId = User.get()._id
+  const userId = window.__USER__._id
   const conversation = {
     _id: conv._id,
     user: conv.users.filter(user => user._id !== userId)[0],
@@ -154,6 +153,10 @@ ChatStore.fetch = () => {
     updateThreads()
     ChatStore.emit('ready')
   })
+}
+
+if (window.__USER__) {
+  ChatStore.fetch()
 }
 
 module.exports = ChatStore

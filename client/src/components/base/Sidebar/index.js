@@ -2,17 +2,20 @@ const React = require('react')
 const {connect} = require('react-redux')
 const {Link} = require('react-router')
 const cx = require('classnames')
+const Player = require('./Player')
+const Snowfall = require('../Snowfall')
+const SVG = require('../../svg')
+const ProfilePicture = require('../../reusable/ProfilePicture')
 const {openModal} = require('../../../actions/modal')
 const {togglePlay, setVolume, toggleMute} = require('../../../actions/player')
-const User = require('../../../services/User')
-const ProfilePicture = require('../../reusable/ProfilePicture')
-const SVG = require('../../svg')
-const Snowfall = require('../Snowfall')
-const Player = require('./Player')
+const {logOut} = require('../../../actions/account')
+const selectors = require('../../../selectors')
 
 const divider = <div className="divider" />
 
 @connect(state => ({
+  user: state.account,
+  isPrivileged: selectors.isPrivileged(state),
   volume: state.player.get('volume'),
   playing: state.player.get('playing'),
   connected: state.player.get('connected'),
@@ -24,16 +27,12 @@ const divider = <div className="divider" />
   openModal,
   onTogglePlay: togglePlay,
   onSetVolume: setVolume,
-  onToggleMute: toggleMute
+  onToggleMute: toggleMute,
+  onLogOut: logOut
 })
 class Sidebar extends React.Component {
-  componentWillMount() {
-    User.subscribe(user => this.setState({user}))
-  }
-
   renderUser() {
-    const {openModal, unseenWallPosts} = this.props
-    const {user} = this.state
+    const {user, openModal, unseenWallPosts} = this.props
     return user ? (
       <Link to={`/@${user.username}`} className="user">
         {unseenWallPosts > 0 && (
@@ -61,7 +60,7 @@ class Sidebar extends React.Component {
 
   render() {
     const {props} = this
-    const {user, unseenMessages} = this.state
+    const {user} = props
     const playerLess = window.__PLAYERLESS__
 
     return (
@@ -94,10 +93,10 @@ class Sidebar extends React.Component {
           {divider}
           <div className="shortcuts">
             <a href={'https://webchat.quakenet.org/?channels=julradio' + (user ? '&nick=' + user.username : '')} target="_new">IRC</a>
-            {User.isAnything() && <Link to="/admin/articles">Admin</Link>}
+            {props.isPrivileged && <Link to="/admin/articles">Admin</Link>}
             {user && <Link to="/settings">Inställningar</Link>}
             <Link to="/crew">Medarbetare</Link>
-            {user && <a onClick={User.logOut}>Logga ut</a>}
+            {user && <a onClick={props.onLogOut}>Logga ut</a>}
           </div>
           {!playerLess && (
             <Player

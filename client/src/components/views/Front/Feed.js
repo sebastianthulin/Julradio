@@ -1,7 +1,7 @@
 const React = require('react')
 const {connect} = require('react-redux')
 const {deleteRequest, deleteTweet} = require('../../../actions/requests')
-const User = require('../../../services/User')
+const selectors = require('../../../selectors')
 
 class Request extends React.Component {
   shouldComponentUpdate(props) {
@@ -40,24 +40,21 @@ class Request extends React.Component {
 }
 
 @connect(state => ({
-  requests: state.requests
+  requests: state.requests,
+  isAdmin: selectors.isAdmin(state)
 }), {
   deleteRequest,
   deleteTweet
 })
 class Feed extends React.Component {
-  componentWillMount() {
-    this.admin = User.isAdmin()
-  }
-
   render() {
-    const {requests, deleteRequest, deleteTweet} = this.props
+    const {requests, isAdmin, deleteRequest, deleteTweet} = this.props
     return (
       <div className="Feed">
         {requests.map(request => <Request
           key={request.get('_id')}
           request={request}
-          removable={this.admin}
+          removable={isAdmin}
           remove={request.get('tweet') ? deleteTweet : deleteRequest}
         />)}
       </div>

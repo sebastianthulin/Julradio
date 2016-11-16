@@ -1,19 +1,24 @@
 const React = require('react')
 const {connect} = require('react-redux')
-const User = require('../../../services/User')
 const handleNotification = require('../../../services/handleNotification')
 const UserProfile = require('./UserProfile')
 const NotFound = require('../NotFound')
 const {fetchUser} = require('../../../actions/users')
+const {blockUser, unblockUser} = require('../../../actions/account')
 const {pullUnseenCount} = require('../../../actions/notifications')
+const selectors = require('../../../selectors')
 
 @connect((state, props) => ({
+  authedUser: selectors.user(state),
+  isAdmin: selectors.isAdmin(state),
   profile: state.users.getIn(['byUsername', props.params.username]),
   block: state.users.getIn(['blockByUsername', props.params.username]),
-  onlineList: state.users.get('onlineList')
+  onlineList: state.users.get('onlineList'),
 }), {
   onFetchUser: fetchUser,
-  onPullUnseenCount: pullUnseenCount
+  onPullUnseenCount: pullUnseenCount,
+  onBlockUser: blockUser,
+  onUnblockUser: unblockUser
 })
 class UserProfileContainer extends React.Component {
   shouldComponentUpdate(props, state) {
@@ -25,7 +30,6 @@ class UserProfileContainer extends React.Component {
 
   componentWillMount() {
     this.state = {notFound: false}
-    this.authedUser = User.get()
     this.fetch(this.props.params.username, 'profile block')
   }
 
@@ -33,7 +37,7 @@ class UserProfileContainer extends React.Component {
     if (props.params.username !== this.props.params.username) {
       this.fetch(props.params.username, 'profile block')
     }
-    if (props.params.username.toLowerCase() === (this.authedUser || {}).usernameLower) {
+    if (props.params.username.toLowerCase() === (props.authedUser || {}).usernameLower) {
       this.props.onPullUnseenCount('wallPost', null)
     }
   }
@@ -47,8 +51,9 @@ class UserProfileContainer extends React.Component {
   }
 
   render() {
+    const {props} = this
     const {notFound} = this.state
-    const {profile, block, onlineList} = this.props
+    const {authedUser, profile, block, onlineList} = props
     const profileId = profile && profile.get('_id')
 
     return notFound ? (
@@ -59,8 +64,11 @@ class UserProfileContainer extends React.Component {
         user={profile}
         block={block}
         isOnline={onlineList.findIndex(user => user.get('_id') === profileId) > -1}
-        showOptions={this.authedUser && this.authedUser._id !== profileId}
+        showOptions={authedUser && authedUser._id !== profileId}
         onQuery={query => this.fetch(profile.get('username'), query)}
+        onBlockUser={props.onBlockUser}
+        onUnblockUser={props.onUnblockUser}
+        isAdmin={props.isAdmin}
       />
     ) : null
   }

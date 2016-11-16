@@ -3,8 +3,8 @@ const {connect} = require('react-redux')
 const {Link} = require('react-router')
 const cx = require('classnames')
 const dateFormat = require('dateformat')
-const User = require('../../../services/User')
 const ManageReservation = require('./ManageReservation')
+const selectors = require('../../../selectors')
 
 const ReservationItem = ({reservation, onClick, selected}) => (
   <div className={cx('ReservationItem', {selected})} onClick={onClick}>
@@ -21,6 +21,8 @@ const ReservationItem = ({reservation, onClick, selected}) => (
 )
 
 @connect(state => ({
+  userId: selectors.userId(state),
+  isAdmin: selectors.isAdmin(state),
   reservations: state.reservations.get('items')
 }))
 class ManageReservations extends React.Component {
@@ -54,6 +56,7 @@ class ManageReservations extends React.Component {
   }
 
   select(id) {
+    const {userId, isAdmin} = this.props
     const prevId = this.state.selected && this.state.selected.get('_id')
     const reservation = this.items.filter(r => r.get('_id') === id).get(0)
     if (id === prevId) {
@@ -61,7 +64,7 @@ class ManageReservations extends React.Component {
     } else {
       this.setState({
         selected: reservation,
-        removable: reservation.getIn(['user', '_id']) === User.get()._id || User.isAdmin()
+        removable: reservation.getIn(['user', '_id']) === userId || isAdmin
       })
     }
   }

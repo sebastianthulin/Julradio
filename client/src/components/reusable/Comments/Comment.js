@@ -18,17 +18,21 @@ class Comment extends React.Component {
   }
 
   render() {
-    const {comment} = this.props
-    const user = comment.get('user')
+    const {comment, user} = this.props
+    const commentUser = comment.get('user')
     return (
       <div className="Comment">
-        <ProfilePicture id={user.get('picture')} />
+        <ProfilePicture id={commentUser.get('picture')} />
         <div className="content">
           <header>
-            <Link to={'/@' + user.get('username')}>{user.get('username')}</Link>
+            <Link to={'/@' + commentUser.get('username')}>{commentUser.get('username')}</Link>
             <TimeSince date={comment.get('date')} />
           </header>
-          <MDMini className="text" text={comment.get('text')} />
+          <MDMini
+            className="text"
+            text={comment.get('text')}
+            username={user && user.username}
+          />
           {this.removable && <button className="delete" onClick={this.delete.bind(this)}>x</button>}
         </div>
       </div>

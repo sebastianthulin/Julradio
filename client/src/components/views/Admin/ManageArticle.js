@@ -1,7 +1,6 @@
 const React = require('react')
 const {Link} = require('react-router')
 const marked = require('marked')
-const User = require('../../../services/User')
 const Article = require('../../reusable/Article')
 
 class ManageArticle extends React.Component {

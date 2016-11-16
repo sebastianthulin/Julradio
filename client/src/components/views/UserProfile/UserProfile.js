@@ -1,7 +1,6 @@
 const React = require('react')
 const {Link} = require('react-router')
 const cx = require('classnames')
-const User = require('../../../services/User')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const TimeSince = require('../../reusable/TimeSince')
 const Comments = require('../../reusable/Comments')
@@ -34,7 +33,8 @@ class UserProfile extends React.Component {
   }
 
   render() {
-    const {user, block, isOnline, showOptions, onQuery} = this.props
+    const {props} = this
+    const {user, block, isOnline, showOptions} = props
 
     return (
       <div id="UserProfile">
@@ -54,7 +54,10 @@ class UserProfile extends React.Component {
         {showOptions && <ProfileOptions
           user={user}
           block={block}
-          onQuery={onQuery}
+          onQuery={props.onQuery}
+          onBlockUser={props.onBlockUser}
+          onUnblockUser={props.onUnblockUser}
+          isAdmin={props.isAdmin}
         />}
         {user.get('description') && <MDMini className="description" text={user.get('description')} />}
         {block && this.renderRelationship()}

@@ -2,10 +2,11 @@ const React = require('react')
 const {connect} = require('react-redux')
 const {fetchComments, fetchReplies, postComment, postReply, deleteComment} = require('../../../actions/comments')
 const selectors = require('../../../selectors')
-const User = require('../../../services/User')
 const Thread = require('./Thread')
 
 @connect((state, props) => ({
+  user: state.account,
+  isAdmin: selectors.isAdmin(state),
   comments: selectors.comments(state, props.target),
   commentCount: selectors.commentCount(state, props.target),
   threadCount: selectors.threadCount(state, props.target)
@@ -18,8 +19,6 @@ const Thread = require('./Thread')
 })
 class Comments extends React.Component {
   componentWillMount() {
-    this.user = User.get()
-    this.admin = User.isAdmin()
     this.fetchComments(true)
     this.handleScroll = this.handleScroll.bind(this)
     window.addEventListener('scroll', this.handleScroll)
@@ -58,7 +57,7 @@ class Comments extends React.Component {
   }
 
   renderForm() {
-    const {user} = this
+    const {user} = this.props
     const {block, placeholder, signInPlaceholder} = this.props
     const p = user ?
       placeholder || 'Skriv en kommentar' :
@@ -80,7 +79,7 @@ class Comments extends React.Component {
   }
 
   render() {
-    const {props, user, admin} = this
+    const {props} = this
     if (!props.comments) return null
     return (
       <div className="Comments">
@@ -89,8 +88,8 @@ class Comments extends React.Component {
           key={com.getIn(['comment', '_id'])}
           comment={com.get('comment')}
           replies={com.get('replies')}
-          user={user}
-          admin={admin}
+          user={props.user}
+          admin={props.isAdmin}
           target={props.target}
           onDelete={(commentId, replyTo) => props.onDeleteComment(props.target, commentId, replyTo)}
           onFetchReplies={props.onFetchReplies}

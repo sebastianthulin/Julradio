@@ -1,4 +1,5 @@
-const {List, Map} = require('immutable')
+const {fromJS, Map} = require('immutable')
+window.fromJS = fromJS
 
 const article = (state = Map(), action, newProps) => {
   switch (action.type) {
@@ -8,7 +9,7 @@ const article = (state = Map(), action, newProps) => {
     case 'FETCH_ARTICLE_SUCCESS':
       return state.merge(action.article)
     case 'UPDATE_ARTICLE_LOCALLY':
-      if (!state.get('_id')) state = state.set('user', action.user)
+      if (!state.get('_id')) state = state.set('user', fromJS(action.user))
       return state.merge({
         title: action.title,
         content: action.content,
@@ -21,9 +22,9 @@ const article = (state = Map(), action, newProps) => {
   }
 }
 
-const initialState = Map({
-  byId: Map(),
-  ids: List(),
+const initialState = fromJS({
+  byId: {},
+  ids: [],
   editing: null,
   editingId: null
 })
@@ -50,7 +51,7 @@ const articles = (state = initialState, action) => {
     }
     case 'EDIT_ARTICLE':
       return state.merge({
-        editing: state.getIn(['byId', action.id]) || Map({user: action.user}),
+        editing: state.getIn(['byId', action.id]) || fromJS({user: action.user}),
         editingId: action.id
       })
     case 'CANCEL_EDIT':

@@ -8,11 +8,12 @@ const {Provider} = require('react-redux')
 const {Router, browserHistory, applyRouterMiddleware} = require('react-router')
 const {useScroll} = require('react-router-scroll')
 const marked = require('marked')
-const routes = require('./routes')
+const getRoutes = require('./getRoutes')
 const configureStore = require('./configureStore')
 const runLogic = require('./logic')
 
 const store = configureStore()
+const routes = getRoutes(store)
 runLogic(store)
 
 marked.setOptions({

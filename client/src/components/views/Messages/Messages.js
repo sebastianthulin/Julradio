@@ -3,13 +3,14 @@ const {connect} = require('react-redux')
 const {Link} = require('react-router')
 const cx = require('classnames')
 const ChatStore = require('../../../stores/ChatStore')
-const User = require('../../../services/User')
 const Message = require('./Message')
 const Conversation = require('./Conversation')
 const {createNotification, pullUnseenCount} = require('../../../actions/notifications')
+const selectors = require('../../../selectors')
 
 @connect(state => ({
-  unseen: state.notifications.getIn(['unseenCount', 'message'])
+  unseen: state.notifications.getIn(['unseenCount', 'message']),
+  userId: selectors.userId(state)
 }), {
   onCreateNotification: createNotification,
   onPullUnseenCount: pullUnseenCount
@@ -99,7 +100,7 @@ class Messages extends React.Component {
 
   renderChat() {
     const {messages, targetUser} = this.state
-    const userId = User.get()._id
+    const {userId} = this.props
     return (
       <div>
         <div className="user">

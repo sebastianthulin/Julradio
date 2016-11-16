@@ -1,12 +1,13 @@
 const React = require('react')
-const {Link} = require('react-router')
-const User = require('../../services/User')
+const {connect} = require('react-redux')
 const Modal = require('./Modal')
+const {logIn} = require('../../actions/account')
 
+@connect(null, {logIn})
 class LogIn extends React.Component {
-  handleSubmit(ev) {
-    ev.preventDefault()
-    User.logIn({
+  handleSubmit(evt) {
+    evt.preventDefault()
+    this.props.logIn({
       username: this.refs.username.value,
       password: this.refs.password.value
     })

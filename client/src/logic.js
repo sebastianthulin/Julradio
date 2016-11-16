@@ -1,5 +1,6 @@
 const request = require('superagent')
 const socket = require('./services/socket')
+const {receiveAccount} = require('./actions/account')
 const {receiveOnlineList, receiveOnlineListChange} = require('./actions/users')
 const {receiveUserNotification} = require('./actions/notifications')
 const {receiveFeed, recieveFeedItem} = require('./actions/requests')
@@ -51,6 +52,8 @@ const logic = store => {
   setInterval(reservationsTick, 1000)
 
   if (window.__USER__) {
+    store.dispatch(receiveAccount(window.__USER__))
+
     request.get('/api/notification').then(({body: notifications}) => {
       notifications.forEach(n => store.dispatch(receiveUserNotification(n)))
     })

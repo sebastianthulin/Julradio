@@ -1,9 +1,9 @@
 const React = require('react')
 const {connect} = require('react-redux')
+const ProfilePicture = require('../reusable/ProfilePicture')
+const {updateAccountSettings, updateAccountSettings2} = require('../../actions/account')
 const {openModal} = require('../../actions/modal')
 const {createNotification} = require('../../actions/notifications')
-const User = require('../../services/User')
-const ProfilePicture = require('../reusable/ProfilePicture')
 
 const months = [
   'Januari',
@@ -20,47 +20,36 @@ const months = [
   'December'
 ]
 
-const days = []
-for (let i = 1; i <= 31; i++) {
-  days.push(i)
-}
+const days = Array.from(Array(31), (_, i) => i + 1)
 
-@connect(null, {
-  openModal,
+@connect(state => ({
+  user: state.account
+}), {
+  onUpdateAccountSettings: updateAccountSettings, 
+  onUpdateAccountSettings2: updateAccountSettings2,
+  onOpenModal: openModal,
   onCreateNotification: createNotification
 })
 class Settings extends React.Component {
   componentWillMount() {
+    this.state = {}
     this.timeouts = {}
-    this.unsub = User.subscribe(this.handleUser.bind(this))
-  }
-
-  componentWillUnmount() {
-    this.unsub()
-  }
-
-  handleUser(user) {
-    this.initialValues = {
-      email: user.email,
-      password: ''
-    }
-
-    this.setState({user})
   }
 
   check() {
     let changes = []
+    const initialValues = {
+      email: this.props.user.email,
+      password: ''
+    }
     const values = {
       email: this.refs.email.value,
       password: this.refs.password.value
     }
 
     for (let i in values) {
-      if (values[i] !== this.initialValues[i]) {
-        changes.push({
-          email: 'email',
-          password: 'lösenord'
-        }[i])
+      if (values[i] !== initialValues[i]) {
+        changes.push({email: 'email', password: 'lösenord'}[i])
       }
     }
 
@@ -71,21 +60,20 @@ class Settings extends React.Component {
     }
   }
 
-  saveFields(ev) {
-    ev.preventDefault()
-    User.update2({
+  saveFields(evt) {
+    evt.preventDefault()
+    this.props.onUpdateAccountSettings2({
       email: this.refs.email.value,
       password: this.refs.password.value,
       auth: this.refs.auth.value
-    }, user => {
-      this.handleUser(user)
+    }).then(() => {
       this.setState({changes: null})
       this.refs.password.value = ''
     })
   }
 
-  save(ev) {
-    User.update({
+  save() {
+    this.props.onUpdateAccountSettings({
       name: this.refs.name.value,
       gender: this.refs.gender.value,
       location: this.refs.location.value,
@@ -93,7 +81,7 @@ class Settings extends React.Component {
       year: parseInt(this.refs.year.value),
       month: parseInt(this.refs.month.value),
       day: parseInt(this.refs.day.value)
-    }, () => {
+    }).then(() => {
       this.props.onCreateNotification({name: 'settings'})
     })
   }
@@ -115,8 +103,8 @@ class Settings extends React.Component {
   }
 
   render() {
-    const {openModal} = this.props
-    const {user, changes} = this.state
+    const {changes} = this.state
+    const {user, onOpenModal} = this.props
     return (
       <div id="Settings">
         <h1>Profilinställningar</h1>
@@ -191,7 +179,7 @@ class Settings extends React.Component {
           <label className="setting">
             <div className="label">Profilbild</div>
             <ProfilePicture id={user.picture} />
-            <div style={{marginLeft: 10}} onClick={() => openModal('ChangeAvatar')}>Ändra</div>
+            <div style={{marginLeft: 10}} onClick={() => onOpenModal('ChangeAvatar')}>Ändra</div>
           </label>
           <label className="setting">
             <div className="label">Personlig beskrivning</div>

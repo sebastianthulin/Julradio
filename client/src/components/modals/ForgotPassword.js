@@ -1,25 +1,21 @@
 const React = require('react')
 const {connect} = require('react-redux')
-const User = require('../../services/User')
 const Modal = require('./Modal')
+const {forgotPassword} = require('../../actions/account')
 const {createNotification} = require('../../actions/notifications')
 
 @connect(null, {
+  onForgotPassword: forgotPassword,
   onCreateNotification: createNotification
 })
 class ForgotPassword extends React.Component {
-  handleForgot(ev) {
-    ev.preventDefault()
-    console.log('...............')
-    User.forgotPassword({
-      email: this.refs.email.value
-    }, err => {
-      if (err) {
-        this.setState({disabled: false})
-      } else {
-        this.props.closeModal()
-        this.props.onCreateNotification({name: 'resetinstructions'})
-      }
+  handleForgot(evt) {
+    evt.preventDefault()
+    this.props.onForgotPassword(this.refs.email.value).then(() => {
+      this.props.closeModal()
+      this.props.onCreateNotification({name: 'resetinstructions'})
+    }).catch(() => {
+      this.setState({disabled: false})
     })
     this.setState({disabled: true})
   }

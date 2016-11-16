@@ -1,8 +1,10 @@
 const React = require('react')
-const {Link} = require('react-router')
-const User = require('../../services/User')
 const request = require('superagent')
+const {connect} = require('react-redux')
+const {Link} = require('react-router')
+const {newPassword} = require('../../actions/account')
 
+@connect(null, {newPassword})
 class ResetPassword extends React.Component {
   componentWillMount() {
     const {id} = this.props.params
@@ -18,11 +20,11 @@ class ResetPassword extends React.Component {
     })
   }
 
-  handleSubmit(ev) {
-    ev.preventDefault()
+  handleSubmit(evt) {
     const {id} = this.props.params
     const password = this.refs.password.value
-    User.newPassword(id, password)
+    this.props.newPassword(id, password)
+    evt.preventDefault()
   }
 
   render() {

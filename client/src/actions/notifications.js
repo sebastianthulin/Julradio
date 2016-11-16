@@ -1,10 +1,9 @@
 const request = require('superagent')
-const User = require('../services/User')
 const Sound = require('../services/Sound')
 const handleNotification = require('../services/handleNotification')
 const errors = require('../errors')
 
-const getMetadata = notification => {
+const getMetadata = (notification, getState) => {
   const getNotificationMessage = () => {
     switch (notification.isError) {
       case true:
@@ -26,7 +25,7 @@ const getMetadata = notification => {
   const getNotificationUrl = () => {
     switch (notification.name) {
       case 'message': return '/messages/' + notification.from.username
-      case 'wallPost': return '/@' + User.get().username
+      case 'wallPost': return '/@' + getState().account.username
     }
   }
 
@@ -61,10 +60,10 @@ export const errorNotify = err => {
   })
 }
 
-export const createNotification = notification => dispatch => {
+export const createNotification = notification => (dispatch, getState) => {
   // notification: {from, name, value, isError}
   const id = Math.random().toString(36).substr(2)
-  const metadata = getMetadata(notification)
+  const metadata = getMetadata(notification, getState)
 
   if (metadata.soundName) {
     Sound.play('bells')
@@ -110,7 +109,7 @@ const pushUnseenCount = (name, value) => ({
 })
 
 export const pullUnseenCount = (name, value) => {
-  remove(name, value)
+  remove(name, value) // TODO: only call when needed
   return {
     type: 'PULL_UNSEEN_COUNT',
     name,

@@ -1,32 +1,20 @@
 const React = require('react')
 const {connect} = require('react-redux')
-const User = require('../../services/User')
 const ProfilePicture = require('../reusable/ProfilePicture')
 const Modal = require('./Modal')
+const {setAvatar, removeAvatar} = require('../../actions/account')
 const {createNotification} = require('../../actions/notifications')
 
-@connect(null, {
+@connect(state => ({
+  user: state.account
+}), {
+  onSetAvatar: setAvatar,
+  onRemoveAvatar: removeAvatar,
   onCreateNotification: createNotification
 })
 class ChangeAvatar extends React.Component {
-  componentWillMount() {
-    this.unsub = User.subscribe(user => this.setState({user}))
-  }
-
-  componentWillUnmount() {
-    this.unsub()
-  }
-
-  remove() {
-    this.setState({removed: true, avatarPreview: null})
-  }
-
-  browse() {
-    this.refs.input.click()
-  }
-
-  set(ev) {
-    const file = ev.target.files[0]
+  set(evt) {
+    const file = evt.target.files[0]
     this.setState({
       removed: false,
       avatarPreview: URL.createObjectURL(file)
@@ -34,21 +22,25 @@ class ChangeAvatar extends React.Component {
   }
 
   save() {
-    if (this.state.removed) {
-      User.removeAvatar(this.done.bind(this))
-    } else if (this.state.avatarPreview) {
-      const avatar = this.refs.input.files[0]
-      User.setAvatar(avatar, this.done.bind(this))
+    const {props, refs} = this
+    const state = this.state || {}
+
+    const done = () => {
+      props.closeModal()
+      props.onCreateNotification({name: 'profilepicture'})
+    }
+
+    if (state.removed) {
+      props.onRemoveAvatar().then(done)
+    } else if (state.avatarPreview) {
+      const avatar = refs.input.files[0]
+      props.onSetAvatar(avatar).then(done)
     }
   }
 
-  done() {
-    this.props.closeModal()
-    this.props.onCreateNotification({name: 'profilepicture'})
-  }
-
   render() {
-    const {user, removed, avatarPreview} = this.state
+    const {user} = this.props
+    const {removed, avatarPreview} = this.state || {}
     return (
       <Modal className="ChangeAvatar">
         <header>
@@ -62,11 +54,21 @@ class ChangeAvatar extends React.Component {
             onChange={this.set.bind(this)}
             hidden
           />
-          {avatarPreview && <div className="avatarPreview" style={{backgroundImage: `url(${avatarPreview})`}} />}
-          {!avatarPreview && <ProfilePicture id={removed ? null : user.picture} />}
-          <button onClick={this.browse.bind(this)}>Ändra</button>
-          <button onClick={this.remove.bind(this)}>Ta bort</button>
-          <button onClick={this.save.bind(this)}>Spara</button>
+          {avatarPreview && (
+            <div className="avatarPreview" style={{backgroundImage: `url(${avatarPreview})`}} />
+          )}
+          {!avatarPreview && (
+            <ProfilePicture id={removed ? null : user.picture} />
+          )}
+          <button onClick={() => this.refs.input.click()}>
+            Ändra
+          </button>
+          <button onClick={() => this.setState({removed: true, avatarPreview: null})}>
+            Ta bort
+          </button>
+          <button onClick={this.save.bind(this)}>
+            Spara
+          </button>
         </main>
       </Modal>
     )

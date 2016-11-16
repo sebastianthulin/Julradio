@@ -1,6 +1,5 @@
 const React = require('react')
 const {browserHistory} = require('react-router')
-const User = require('../../services/User')
 
 const entityMap = {
   '&': '&amp;',
@@ -11,10 +10,8 @@ const entityMap = {
   '/': '&#x2F;'
 }
 
-const parseContent = (markup = '') => {
-  const username = (User.get() || {}).username
+const parseContent = (markup = '', username) => {
   let matchesNotMe
-
   markup = markup.replace(/[&<>"'\/]/g, s => entityMap[s])
 
   if (username) {
@@ -38,16 +35,16 @@ class MDMini extends React.Component {
     return props.text !== this.props.text
   }
 
-  handleClick(ev) {
-    if (ev.target.tagName === 'A' && ev.metaKey === false) {
-      ev.preventDefault()
-      browserHistory.push(ev.target.pathname)
+  handleClick(evt) {
+    if (evt.target.tagName === 'A' && evt.metaKey === false) {
+      evt.preventDefault()
+      browserHistory.push(evt.target.pathname)
     }
   }
 
   render() {
-    const {text, ...rest} = this.props
-    const __html = parseContent(text)
+    const {text, username, ...rest} = this.props
+    const __html = parseContent(text, username)
     return <div
       onClick={this.handleClick.bind(this)}
       dangerouslySetInnerHTML={{__html}}
