@@ -16,7 +16,7 @@ const NotificationContainer = require('./base/NotificationContainer')
 })
 class App extends React.Component {
   componentWillReceiveProps(props) {
-    if (this.props.location !== props.location) {
+    if (props.sidebarVisible && this.props.location !== props.location) {
       this.props.setVisibility('sidebar', 'SIDEBAR_CLOSED')
     }
   }

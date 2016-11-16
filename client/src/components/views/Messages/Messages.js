@@ -1,17 +1,25 @@
 const React = require('react')
-const cx = require('classnames')
+const {connect} = require('react-redux')
 const {Link} = require('react-router')
+const cx = require('classnames')
 const ChatStore = require('../../../stores/ChatStore')
-const ShitStore = require('../../../stores/ShitStore')
 const User = require('../../../services/User')
 const Message = require('./Message')
 const Conversation = require('./Conversation')
+const {createNotification, pullUnseenCount} = require('../../../actions/notifications')
 
+@connect(state => ({
+  unseen: state.notifications.getIn(['unseenCount', 'message'])
+}), {
+  onCreateNotification: createNotification,
+  onPullUnseenCount: pullUnseenCount
+})
 class Messages extends React.Component {
   componentWillMount() {
+    this.clearUnseen = this.clearUnseen.bind(this)
     this.unsub = ChatStore.subscribe(state => this.setState(state))
-    ChatStore.select(this.props.params.user)
-    ShitStore.subscribe('message', unseen => this.setState({unseen}))
+    ChatStore.select(this.props.params.user, this.clearUnseen)
+    document.addEventListener('focus', this.clearUnseen)
   }
 
   componentDidMount() {
@@ -19,7 +27,7 @@ class Messages extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    ChatStore.select(props.params.user)
+    ChatStore.select(props.params.user, this.clearUnseen)
   }
 
   componentWillUpdate(props, state) {
@@ -47,6 +55,11 @@ class Messages extends React.Component {
   componentWillUnmount() {
     this.unsub()
     ChatStore.deselect()
+    document.removeEventListener('focus', this.clearUnseen)
+  }
+
+  clearUnseen(conversationId) {
+    this.props.onPullUnseenCount('message', ChatStore.getConversationId())
   }
 
   scrollToBottom() {
@@ -57,10 +70,14 @@ class Messages extends React.Component {
   }
 
   sendMessage(ev) {
-    ev.preventDefault()
     const text = this.refs.input.value.trim()
-    text && ChatStore.sendMessage(text)
+    ev.preventDefault()
     this.refs.input.value = ''
+    if (text) {
+      ChatStore.sendMessage(text, () => {
+        this.props.onCreateNotification({name: 'message', isError: true})
+      })
+    }
   }
 
   loadMore(ev) {
@@ -76,7 +93,6 @@ class Messages extends React.Component {
           <h1>Julchatten</h1>
           <p>Påbörja en konversation genom att gå in på någons profil och tryck på "skicka meddelande".</p>
         </div>
-        
       </div>
     )
   }
@@ -117,7 +133,7 @@ class Messages extends React.Component {
             <Conversation
               key={thread._id}
               selected={selected === thread._id}
-              unseen={unseen.indexOf(thread._id) > -1}
+              unseen={this.props.unseen.indexOf(thread._id) > -1}
               {...thread}
             />
           ))}

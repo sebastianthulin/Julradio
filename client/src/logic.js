@@ -1,5 +1,7 @@
+const request = require('superagent')
 const socket = require('./services/socket')
 const {receiveOnlineList, receiveOnlineListChange} = require('./actions')
+const {receiveUserNotification} = require('./actions/notifications')
 const {receiveRequests, recieveRequest} = require('./actions/requests')
 const {recieveReservations, setOnAir} = require('./actions/reservations')
 const {setHistory, setNowPlaying, togglePlay, setVolume} = require('./actions/player')
@@ -47,6 +49,16 @@ const logic = store => {
   }
 
   setInterval(reservationsTick, 1000)
+
+  if (window.__USER__) {
+    request.get('/api/notification').then(({body: notifications}) => {
+      notifications.forEach(n => store.dispatch(receiveUserNotification(n)))
+    })
+
+    socket.on('notification:new', notification => {
+      store.dispatch(receiveUserNotification(notification))
+    })
+  }
 }
 
 module.exports = logic

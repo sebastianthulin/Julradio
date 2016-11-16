@@ -1,12 +1,14 @@
 const React = require('react')
 const {connect} = require('react-redux')
 const Requests = require('../../services/Requests')
-const NotificationStore = require('../../stores/NotificationStore')
+const {createNotification} = require('../../actions/notifications')
 const Modal = require('./Modal')
 
 @connect(state => ({
   onAir: !!state.reservations.get('onAir')
-}))
+}), {
+  onCreateNotification: createNotification
+})
 class RequestSong extends React.Component {
   getFields() {
     return {
@@ -49,7 +51,7 @@ class RequestSong extends React.Component {
     Requests.create(fields, () => {
       this.resetFields()
       this.props.closeModal()
-      NotificationStore.insert({type: 'requestsong'})
+      this.props.onCreateNotification({name: 'requestsong'})
     })
   }
 

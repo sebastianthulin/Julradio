@@ -3,8 +3,6 @@ const request = require('superagent')
 const API = require('../services/API')
 const User = module.exports = new EventEmitter
 const ChatStore = require('../stores/ChatStore')
-const ShitStore = require('../stores/ShitStore')
-const NotificationStore = require('../stores/NotificationStore')
 const UserStore = require('../stores/UserStore')
 
 let doc = null
@@ -24,9 +22,7 @@ User.set = user => {
 
 User.block = (userId, cb) => API.post('/user/block', {userId}, cb)
 User.unBlock = (userId, cb) => API.delete('/user/block/' + userId, cb)
-User.update = (opts, cb) => API.put('/user/settings', opts, setAndCB(() => {
-  NotificationStore.insert({type: 'settings'})
-}))
+User.update = (opts, cb) => API.put('/user/settings', opts, setAndCB(cb))
 User.update2 =  (opts, cb) => API.put('/user/settings2', opts, setAndCB(cb))
 User.removeAvatar = cb => API.delete('/user/profilepicture', setAndCB(cb))
 
@@ -35,7 +31,9 @@ User.setAvatar = (file, cb) => {
   formData.append('avatar', file)
   request.post('/api/user/profilepicture').send(formData).end((err, {body: user}) => {
     if (err) {
-      return NotificationStore.error({value: err.response.body.error[0]})
+      console.error(err)
+      return alert('Error, check console.')
+      // return NotificationStore.error({value: err.response.body.error[0]})
     }
     User.set(user)
     cb(user)
@@ -46,7 +44,9 @@ User.forgotPassword = (form, cb) => {
   request.post('/api/forgot', form, (err, {body}) => {
     cb(err, body)
     if (err) {
-      NotificationStore.error({value: err.response.body.error[0]})
+      console.error(err)
+      alert('Error, check console.')
+      // NotificationStore.error({value: err.response.body.error[0]})
     }
   })
 }
@@ -86,6 +86,5 @@ User.isAnything = () => User.isWriter() || User.isRadioHost() || User.isAdmin()
 
 if (window.__USER__) {
   User.set(window.__USER__)
-  ShitStore.fetch()
   ChatStore.fetch()
 }

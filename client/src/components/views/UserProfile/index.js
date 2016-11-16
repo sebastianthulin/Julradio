@@ -2,13 +2,16 @@ const React = require('react')
 const {connect} = require('react-redux')
 const User = require('../../../services/User')
 const UserStore = require('../../../stores/UserStore')
-const ShitStore = require('../../../stores/ShitStore')
+const handleNotification = require('../../../services/handleNotification')
 const UserProfile = require('./UserProfile')
 const NotFound = require('../NotFound')
+const {pullUnseenCount} = require('../../../actions/notifications')
 
 @connect(state => ({
   onlineList: state.onlineList
-}))
+}), {
+  onPullUnseenCount: pullUnseenCount
+})
 class UserProfileContainer extends React.Component {
   componentWillMount() {
     this.authedUser = User.get()
@@ -27,15 +30,15 @@ class UserProfileContainer extends React.Component {
     this.execute(username, 'profile block')
     const user = (this.authedUser || {}).usernameLower
     if (user === username.toLowerCase()) {
-      ShitStore.clear('wallPost')
-      // ShitStore.on('wallPost', () => true)
+      this.props.onPullUnseenCount('wallPost', null)
+      // handleNotification.on('wallPost', () => true)
     } else {
       this.wallPostsOff()
     }
   }
 
   wallPostsOff() {
-    // ShitStore.on('wallPost', () => false)
+    // handleNotification.on('wallPost', () => false)
   }
 
   runQuery(query) {

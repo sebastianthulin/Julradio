@@ -2,7 +2,7 @@ const {List} = require('immutable')
 const marked = require('marked')
 const {browserHistory} = require('react-router')
 const API = require('../services/API')
-const NotificationStore = require('../stores/NotificationStore')
+const {createNotification} = require('./notifications')
 
 const transform = article => {
   if (article.content) {
@@ -87,7 +87,7 @@ export const updateArticle = () => (dispatch, getState) => {
     title: article.get('title'),
     content: article.get('content')
   }, () => {
-    NotificationStore.insert({type: 'article'})
+    dispatch(createNotification({name: 'article'}))
   })
 }
 

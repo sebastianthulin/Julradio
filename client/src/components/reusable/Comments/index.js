@@ -30,12 +30,14 @@ class Comments extends React.Component {
   }
 
   handleScroll() {
-    const body = document.body
-    const html = document.documentElement
-    const height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight)
-    const distanceToBottom = pageYOffset - (height - window.innerHeight)
-    if (distanceToBottom >= -30) {
-      this.fetchComments()
+    if (this.props.comments && this.props.comments.size < this.props.threadCount) {
+      const body = document.body
+      const html = document.documentElement
+      const height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight)
+      const distanceToBottom = pageYOffset - (height - window.innerHeight)
+      if (distanceToBottom >= -30) {
+        this.fetchComments()
+      }
     }
   }
 

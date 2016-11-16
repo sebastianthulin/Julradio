@@ -5,7 +5,6 @@ const cx = require('classnames')
 const {openModal} = require('../../../actions/modal')
 const {togglePlay, setVolume, toggleMute} = require('../../../actions/player')
 const User = require('../../../services/User')
-const ShitStore = require('../../../stores/ShitStore')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const SVG = require('../../svg')
 const Snowfall = require('../Snowfall')
@@ -18,7 +17,9 @@ const divider = <div className="divider" />
   playing: state.player.get('playing'),
   connected: state.player.get('connected'),
   nowPlaying: state.player.get('nowPlaying'),
-  onAir: state.reservations.get('onAir')
+  onAir: state.reservations.get('onAir'),
+  unseenMessages: state.notifications.getIn(['unseenCount', 'message']).size,
+  unseenWallPosts: state.notifications.getIn(['unseenCount', 'wallPost']).size
 }), {
   openModal,
   onTogglePlay: togglePlay,
@@ -28,16 +29,14 @@ const divider = <div className="divider" />
 class Sidebar extends React.Component {
   componentWillMount() {
     User.subscribe(user => this.setState({user}))
-    ShitStore.subscribe('message', unseenMessages => this.setState({unseenMessages}))
-    ShitStore.subscribe('wallPost', unseenWallPosts => this.setState({unseenWallPosts}))
   }
 
   renderUser() {
-    const {openModal} = this.props
-    const {user, unseenWallPosts} = this.state
+    const {openModal, unseenWallPosts} = this.props
+    const {user} = this.state
     return user ? (
       <Link to={`/@${user.username}`} className="user">
-        {unseenWallPosts.length > 0 && (
+        {unseenWallPosts > 0 && (
           <div className="unseenCircle">
             <span>1+</span>
           </div>
@@ -84,7 +83,7 @@ class Sidebar extends React.Component {
           {divider}
           {user && <Link to="/messages" className="userAction">
             <SVG.Messenger />
-            {unseenMessages.length > 0 && <div className="notification">{unseenMessages.length}</div>}
+            {props.unseenMessages > 0 && <div className="notification">{props.unseenMessages}</div>}
             <span>Meddelanden</span>
           </Link>}
           <Link to="/cosycorner" className="userAction">

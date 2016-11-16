@@ -1,6 +1,7 @@
 const React = require('react')
 const {connect} = require('react-redux')
 const {openModal} = require('../../actions/modal')
+const {createNotification} = require('../../actions/notifications')
 const User = require('../../services/User')
 const ProfilePicture = require('../reusable/ProfilePicture')
 
@@ -24,7 +25,10 @@ for (let i = 1; i <= 31; i++) {
   days.push(i)
 }
 
-@connect(null, {openModal})
+@connect(null, {
+  openModal,
+  onCreateNotification: createNotification
+})
 class Settings extends React.Component {
   componentWillMount() {
     this.timeouts = {}
@@ -89,6 +93,8 @@ class Settings extends React.Component {
       year: parseInt(this.refs.year.value),
       month: parseInt(this.refs.month.value),
       day: parseInt(this.refs.day.value)
+    }, () => {
+      this.props.onCreateNotification({name: 'settings'})
     })
   }
 

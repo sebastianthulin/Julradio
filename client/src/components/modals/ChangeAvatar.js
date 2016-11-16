@@ -1,9 +1,13 @@
 const React = require('react')
+const {connect} = require('react-redux')
 const User = require('../../services/User')
-const NotificationStore = require('../../stores/NotificationStore')
 const ProfilePicture = require('../reusable/ProfilePicture')
 const Modal = require('./Modal')
+const {createNotification} = require('../../actions/notifications')
 
+@connect(null, {
+  onCreateNotification: createNotification
+})
 class ChangeAvatar extends React.Component {
   componentWillMount() {
     this.unsub = User.subscribe(user => this.setState({user}))
@@ -40,9 +44,7 @@ class ChangeAvatar extends React.Component {
 
   done() {
     this.props.closeModal()
-    NotificationStore.insert({
-      type: 'profilepicture'
-    })
+    this.props.onCreateNotification({name: 'profilepicture'})
   }
 
   render() {

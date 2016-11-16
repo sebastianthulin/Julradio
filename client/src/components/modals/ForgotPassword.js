@@ -1,8 +1,12 @@
 const React = require('react')
-const NotificationStore = require('../../stores/NotificationStore')
+const {connect} = require('react-redux')
 const User = require('../../services/User')
 const Modal = require('./Modal')
+const {createNotification} = require('../../actions/notifications')
 
+@connect(null, {
+  onCreateNotification: createNotification
+})
 class ForgotPassword extends React.Component {
   handleForgot(ev) {
     ev.preventDefault()
@@ -14,7 +18,7 @@ class ForgotPassword extends React.Component {
         this.setState({disabled: false})
       } else {
         this.props.closeModal()
-        NotificationStore.insert({type: 'resetinstructions'})
+        this.props.onCreateNotification({name: 'resetinstructions'})
       }
     })
     this.setState({disabled: true})

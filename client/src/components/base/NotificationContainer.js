@@ -1,38 +1,40 @@
 const React = require('react')
-const NotificationStore = require('../../stores/NotificationStore')
+const {connect} = require('react-redux')
 const Notification = require('./Notification')
+const {setNotificationHeight, clearNotification} = require('../../actions/notifications')
 
-const animationSpeed = .1
-const notificationMargin = 10
-
+@connect(state => ({
+  items: state.notifications.get('items')
+}), {
+  onSetNotificationHeight: setNotificationHeight,
+  onClearNotification: clearNotification
+})
 class NotificationContainer extends React.Component {
-  componentWillMount() {
-    this.state = {
-      list: []
-    }
-    NotificationStore.subscribe(list => this.setState({list}))
+  shouldComponentUpdate(props) {
+    return props.items !== this.props.items
   }
 
   onHeight(notification, height) {
-    notification.height = height
-    this.setPositions()
-  }
-
-  setPositions() {
-    const {list} = this.state
-    let offsetTop = 0
-    for (let i = 0; i < list.length; i++) {
-      list[i].y = offsetTop
-      offsetTop += list[i].height + notificationMargin
-    }
-    this.setState({list})
+    this.props.onSetNotificationHeight(notification.get('id'), height)
   }
 
   render() {
-    const {list} = this.state
+    const {items, onClearNotification} = this.props
+    let offsetTop = 0
+
     return (
       <div id="NotificationContainer" ref="container">
-        {list.map(n => <Notification onHeight={this.onHeight.bind(this, n)} {...n} />)}
+        {items.map(n => {
+          const y = offsetTop
+          offsetTop += n.get('height') + 10
+          return <Notification
+            key={n.get('id')}
+            notification={n}
+            y={n.get('height') ? y : -80}
+            onHeight={height => this.onHeight(n, height)}
+            onClearNotification={onClearNotification}
+          />
+        })}
       </div>
     )
   }

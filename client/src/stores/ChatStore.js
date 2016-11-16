@@ -3,8 +3,7 @@ const socket = require('../services/socket')
 const request = require('superagent')
 const User = require('../services/User')
 const UserStore = require('./UserStore')
-const ShitStore = require('./ShitStore')
-const NotificationStore = require('./NotificationStore')
+const handleNotification = require('../services/handleNotification')
 const ChatStore = new EventEmitter
 const threadsById = {}
 const threadsByUserId = {}
@@ -19,15 +18,15 @@ const state = {
   threads: []
 }
 
-ChatStore.select = username => {
+ChatStore.select = (username, cb) => {
   UserStore.getByUsername(username, user => {
     if (!user) {
       return ChatStore.deselect()
     }
 
     const conversation = threadsByUserId[user._id]
-    conversation && ShitStore.clear('message', conversation._id)
     state.targetUser = user
+    conversation && cb()  // getConversationId() will return the selected conversation's id at this point
     updateMessages()
 
     if (conversation && !conversation.loaded) {
@@ -74,14 +73,12 @@ ChatStore.deselect = () => {
   push()
 }
 
-ChatStore.sendMessage = text => {
+ChatStore.sendMessage = (text, handleError) => {
   socket.emit('chat:message', {
     text,
     userId: state.targetUser._id,
     conversationId: ChatStore.getConversationId()
-  }, () => {
-    NotificationStore.error({type: 'message'})
-  })
+  }, handleError)
 }
 
 ChatStore.subscribe = handler => {
@@ -148,13 +145,9 @@ socket.on('chat:conversation', conv => {
   push()
 })
 
-ShitStore.on('message', conversationId =>
-  ChatStore.getConversationId() === conversationId && document.hasFocus()
-)
-
-document.addEventListener('focus', () =>
-  ShitStore.clear('message', ChatStore.getConversationId())
-)
+handleNotification.on('message', conversationId => {
+  return ChatStore.getConversationId() === conversationId && document.hasFocus()
+})
 
 ChatStore.fetch = () => {
   request.get('/api/chat', (err, {body: conversations}) => {

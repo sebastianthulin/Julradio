@@ -1,13 +1,14 @@
 const superagent = require('superagent')
-const NotificationStore = require('../stores/NotificationStore')
+// const NotificationStore = require('../stores/NotificationStore')
 
 const send = (method, args) => {
   const callback = (err, res) => {
     if (err) {
-      NotificationStore.error({
-        type: url.split('/')[1],
-        value: err.response.body.error[0]
-      })
+      // Error notifications are temporary disabled.
+      // NotificationStore.error({
+      //   type: url.split('/')[1],
+      //   value: err.response.body.error[0]
+      // })
       console.error(err)
     } else {
       cb(res.body)

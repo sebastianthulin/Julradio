@@ -4,6 +4,7 @@ module.exports = combineReducers({
   player: require('./player'),
   articles: require('./articles'),
   modal: require('./modal'),
+  notifications: require('./notifications'),
   comments: require('./comments'),
   visibility: require('./visibility'),
   requests: require('./requests'),
