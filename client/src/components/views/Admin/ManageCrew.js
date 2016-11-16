@@ -1,10 +1,18 @@
 const React = require('react')
+const {connect} = require('react-redux')
 const {Link} = require('react-router')
-const UserStore = require('../../../stores/UserStore')
+const {fetchCrew, updateCrew, getUserByUsername} = require('../../../actions/users')
 
+@connect(null, {
+  onFetchCrew: fetchCrew,
+  onUpdateCrew: updateCrew,
+  getUserByUsername
+})
 class ManageCrew extends React.Component {
   componentWillMount() {
-    UserStore.getCrew(crew => this.setState({crew}))
+    this.props.onFetchCrew().then(crew => {
+      this.setState({crew})
+    })
   }
 
   // To move the position of an element in an array:
@@ -35,7 +43,7 @@ class ManageCrew extends React.Component {
     ev.preventDefault()
     const username = this.refs.input.value.trim()
     if (!username) return
-    UserStore.getByUsername(username, user => {
+    this.props.getUserByUsername(username).then(user => {
       const {crew} = this.state
       const conflict = crew.filter(member => user && user._id === member._id)[0]
       if (!user || conflict) {
@@ -49,7 +57,7 @@ class ManageCrew extends React.Component {
 
   save() {
     const userIds = this.state.crew.map(user => user._id)
-    UserStore.updateCrew(userIds, () => {
+    this.props.onUpdateCrew(userIds).then(() => {
       alert('Done.')
     })
   }

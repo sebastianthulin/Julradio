@@ -2,7 +2,7 @@ const React = require('react')
 const {Link} = require('react-router')
 const {connect} = require('react-redux')
 const ProfilePicture = require('../reusable/ProfilePicture')
-const {searchUsers} = require('../../actions/search')
+const {searchUsers} = require('../../actions/users')
 
 const User = ({user}) => (
   <div className="User">
@@ -12,9 +12,9 @@ const User = ({user}) => (
 )
 
 @connect(state => ({
-  onlineList: state.onlineList,
-  searchQuery: state.search.get('query'),
-  searchResult: state.search.get('users')
+  onlineList: state.users.get('onlineList'),
+  searchQuery: state.users.getIn(['search', 'query']),
+  searchResult: state.users.getIn(['search', 'users'])
 }), {
   onSearchUsers: searchUsers
 })

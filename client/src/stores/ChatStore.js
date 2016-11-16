@@ -1,8 +1,7 @@
 const {EventEmitter} = require('events')
-const socket = require('../services/socket')
 const request = require('superagent')
+const socket = require('../services/socket')
 const User = require('../services/User')
-const UserStore = require('./UserStore')
 const handleNotification = require('../services/handleNotification')
 const ChatStore = new EventEmitter
 const threadsById = {}
@@ -19,7 +18,7 @@ const state = {
 }
 
 ChatStore.select = (username, cb) => {
-  UserStore.getByUsername(username, user => {
+  request.get(`/api/user/byname/${username}`).then(({body: user}) => {
     if (!user) {
       return ChatStore.deselect()
     }
@@ -116,7 +115,6 @@ const insertConversation = conv => {
     updatedAt: new Date(conv.updatedAt),
     offset: 0
   }
-  UserStore.insert(conversation.user)
   threadsById[conversation._id] = conversation
   threadsByUserId[conversation.user._id] = conversation
   threadIds.push(conversation._id)

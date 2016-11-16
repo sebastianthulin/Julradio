@@ -2,11 +2,12 @@
 
 const mongoose = require('mongoose')
 const {redis, User} = require('../models')
+const {SAFE_USER_SELECT} = require('../constants')
 
 exports.showAll = (req, res) => {
   redis.get('crew', (err, crewList) => {
     crewList = JSON.parse(crewList) || []
-    User.find({_id: {$in: crewList}}).select('-hash -email').exec((err, docs) => {
+    User.find({_id: {$in: crewList}}).select(SAFE_USER_SELECT).exec((err, docs) => {
       const crew = {}
       for (let doc of docs) {
         crew[doc._id] = doc

@@ -1,16 +1,11 @@
 const request = require('superagent')
-const UserStore = require('../stores/UserStore')
 const {errorNotify} = require('./notifications')
-
-const insertUser = comment => UserStore.insert(comment.user)
 
 export const fetchComments = (type, target, fromTop) => (dispatch, getState) => {
   const ids = getState().comments.getIn([target, 'ids'])
   const skip = fromTop ? 0 : ids ? ids.size : 0
   request.get('/api/comment/' + type, {target, skip}).then(res => {
     const {comments, replies, totalComments, totalThreads} = res.body
-    replies.forEach(replies => replies.forEach(insertUser))
-    comments.forEach(insertUser)
     dispatch({
       type: 'FETCH_COMMENTS_SUCCESS',
       target,
@@ -27,7 +22,6 @@ export const fetchComments = (type, target, fromTop) => (dispatch, getState) => 
 export const fetchReplies = (target, commentId) => dispatch => {
   request.get('/comment/replies/' + commentId).then(res => {
     const replies = res.body
-    replies.forEach(insertUser)
     dispatch({
       type: 'FETCH_REPLIES_SUCCESS',
       target,

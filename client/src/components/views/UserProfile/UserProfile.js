@@ -11,65 +11,58 @@ const ProfileOptions = require('./ProfileOptions')
 class UserProfile extends React.Component {
   getIndentity() {
     const {user} = this.props
-    const location = user.location ? ', ' + user.location : ''
+    const location = user.get('location') ? ', ' + user.get('location') : ''
     const genderName = {
       MALE: 'Pojke',
       FEMALE: 'Flicka'
-    }[user.gender]
+    }[user.get('gender')]
 
     if (genderName) {
       // ger P12 eller Pojke om ingen ålder
-      return (user.age ? genderName[0] : genderName) + (user.age ? user.age : '') + location
+      return (user.get('age') ? genderName[0] : genderName) + (user.get('age') ? user.get('age') : '') + location
     }
-    if (user.age) {
-      return user.age + ' år' + location
+    if (user.get('age')) {
+      return user.get('age') + ' år' + location
     }
-    return user.location || ''
+    return user.get('location') || ''
   }
 
   renderRelationship() {
-    return this.props.block.isBlocked
+    return this.props.block.get('isBlocked')
       ? <div className="blockage">Du är blockad av denna användare</div>
       : <div className="blockage">Du har blockat denna användare</div>
   }
 
   render() {
-    const {
-      onQuery,
-      user,
-      isOnline,
-      authedUser,
-      block: relationship,
-      wallposts: posts
-    } = this.props
+    const {user, block, isOnline, showOptions, onQuery} = this.props
 
     return (
       <div id="UserProfile">
         <main>
           <div className="picture">
-            <ProfilePicture id={user.picture} />
+            <ProfilePicture id={user.get('picture')} />
             <div className="status">
               <div className={cx('indi', {isOnline})} />
               <span>{isOnline ? '<-- är online :)' : '<-- är offline :('}</span>
             </div>
           </div>
-          <div className="name">{user.name ? user.name : '@' + user.username}</div>
-          <div className="misq">{(user.name ? ('@' + user.username + ' ') : '') + this.getIndentity()} </div>
-          {user.title && <div className="title">{user.title}</div>}
-          <div className="misq">Medlem i <TimeSince date={user.date} short={true} /></div>
+          <div className="name">{user.get('name') ? user.get('name') : '@' + user.get('username')}</div>
+          <div className="misq">{(user.get('name') ? ('@' + user.get('username') + ' ') : '') + this.getIndentity()} </div>
+          {user.get('title') && <div className="title">{user.get('title')}</div>}
+          <div className="misq">Medlem i <TimeSince date={user.get('date')} short={true} /></div>
         </main>
-        {authedUser && authedUser._id !== user._id && <ProfileOptions
+        {showOptions && <ProfileOptions
           user={user}
-          relationship={relationship}
+          block={block}
           onQuery={onQuery}
         />}
-        {user.description && <MDMini className="description" text={user.description} />}
-        {relationship && this.renderRelationship()}
+        {user.get('description') && <MDMini className="description" text={user.get('description')} />}
+        {block && this.renderRelationship()}
         <Comments
           type="user"
-          target={user._id}
+          target={user.get('_id')}
           placeholder="Skriv ett inlägg i gästboken"
-          block={!!relationship}
+          block={!!block}
         />
       </div>
     )

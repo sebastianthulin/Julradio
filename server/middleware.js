@@ -33,12 +33,12 @@ exports.fetchUser = (req, res, next) => {
     next()
   }).catch(() => {
     req.session.uid = undefined
+    req.userId = undefined
     next()
   })
 }
 
 exports.signedIn = (req, res, next) => {
-  req.userId = req.session.uid
   if (req.userId) {
     next()
   } else {
@@ -47,7 +47,6 @@ exports.signedIn = (req, res, next) => {
 }
 
 exports.role = role => (req, res, next) => {
-  req.userId = req.session.uid
   exports.fetchUser(req, res, () => {
     if (req.user && req.user.roles[role]) {
       next()

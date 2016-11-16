@@ -1,7 +1,21 @@
 const React = require('react')
+const request = require('superagent')
+const {connect} = require('react-redux')
 const {Link} = require('react-router')
-const UserStore = require('../../../stores/UserStore')
 const ManageUser = require('./ManageUser')
+const {getUserByUsername} = require('../../../actions/users')
+
+const getAllUsers = cb => {
+  request.get('/api/user/all').then(({body: users}) => {
+    users.forEach(user => user.usernameLower = user.username.toLowerCase())
+    users.sort((a, b) => {
+      if (a.usernameLower < b.usernameLower) return -1
+      if (a.usernameLower > b.usernameLower) return 1
+      return 0
+    })
+    cb(users)
+  })
+}
 
 const User = ({username, roles, banned}) => (
   <tr>
@@ -13,11 +27,14 @@ const User = ({username, roles, banned}) => (
   </tr>
 )
 
+@connect(null, {
+  getUserByUsername
+})
 class ManageUsers extends React.Component {
   componentWillMount() {
     this.state = {limit: 20}
     this.setUser(this.props.params.username)
-    UserStore.getAll(users => {
+    getAllUsers(users => {
       this.userList = users
       this.setState({users})
     })
@@ -28,7 +45,7 @@ class ManageUsers extends React.Component {
   }
 
   setUser(username) {
-    UserStore.getByUsername(username, selectedUser => this.setState({selectedUser}))
+    this.props.getUserByUsername(username).then(selectedUser => this.setState({selectedUser}))
   }
 
   filter(ev) {

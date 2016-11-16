@@ -1,10 +1,18 @@
 const React = require('react')
+const request = require('superagent')
 const {Link} = require('react-router')
-const UserStore = require('../../../stores/UserStore')
+
+const updateUserSettings = (userId, opts, cb) => {
+  request.put(`/api/user/${userId}`, opts, cb)
+}
+
+const removeUserAvatar = (userId, cb) => {
+  request.delete(`/api/user/${userId}/avatar`, cb)
+}
 
 class ManageUser extends React.Component {
   save() {
-    UserStore.updateUserSettings(this.props.user._id, {
+    updateUserSettings(this.props.user._id, {
       username: this.refs.username.value,
       title: this.refs.title.value,
       admin: this.refs.admin.checked,
@@ -17,7 +25,7 @@ class ManageUser extends React.Component {
   }
 
   removeAvatar() {
-    UserStore.removeUserAvatar(this.props.user._id, () => {
+    removeUserAvatar(this.props.user._id, () => {
       alert('Borttagen.')
     })
   }
@@ -65,7 +73,7 @@ class ManageUser extends React.Component {
             <input type="checkbox" defaultChecked={user.banned} ref="banned" />
           </div>
         </div>
-        {user.picture && <img class="manageUserPic" src={'/picture/' + user.picture} width="200" />}
+        {user.picture && <img className="manageUserPic" src={'/picture/' + user.picture} width="200" />}
         {user.picture && <button className="removePic" onClick={this.removeAvatar.bind(this)}>Ta bort bild</button>}
         <button className="btn" onClick={this.save.bind(this)}>Spara ändringar</button>
         <Link to={`/@${user.username}`} style={{marginLeft: 10}}>Visa profil</Link>

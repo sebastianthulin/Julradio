@@ -1,6 +1,6 @@
 const request = require('superagent')
 const socket = require('./services/socket')
-const {receiveOnlineList, receiveOnlineListChange} = require('./actions')
+const {receiveOnlineList, receiveOnlineListChange} = require('./actions/users')
 const {receiveUserNotification} = require('./actions/notifications')
 const {receiveFeed, recieveFeedItem} = require('./actions/requests')
 const {recieveReservations, setOnAir} = require('./actions/reservations')

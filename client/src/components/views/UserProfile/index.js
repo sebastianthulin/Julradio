@@ -1,74 +1,66 @@
 const React = require('react')
 const {connect} = require('react-redux')
 const User = require('../../../services/User')
-const UserStore = require('../../../stores/UserStore')
 const handleNotification = require('../../../services/handleNotification')
 const UserProfile = require('./UserProfile')
 const NotFound = require('../NotFound')
+const {fetchUser} = require('../../../actions/users')
 const {pullUnseenCount} = require('../../../actions/notifications')
 
-@connect(state => ({
-  onlineList: state.onlineList
+@connect((state, props) => ({
+  profile: state.users.getIn(['byUsername', props.params.username]),
+  block: state.users.getIn(['blockByUsername', props.params.username]),
+  onlineList: state.users.get('onlineList')
 }), {
+  onFetchUser: fetchUser,
   onPullUnseenCount: pullUnseenCount
 })
 class UserProfileContainer extends React.Component {
+  shouldComponentUpdate(props, state) {
+    return props.profile !== this.props.profile ||
+      props.block !== this.props.block ||
+      props.onlineList !== this.props.onlineList ||
+      state.notFound !== this.state.notFound
+  }
+
   componentWillMount() {
+    this.state = {notFound: false}
     this.authedUser = User.get()
-    this.setUser(this.props.params.username)
+    this.fetch(this.props.params.username, 'profile block')
   }
 
   componentWillReceiveProps(props) {
-    this.setUser(props.params.username)
-  }
-
-  componentWillUnmount() {
-    this.wallPostsOff()
-  }
-
-  setUser(username) {
-    this.execute(username, 'profile block')
-    const user = (this.authedUser || {}).usernameLower
-    if (user === username.toLowerCase()) {
+    if (props.params.username !== this.props.params.username) {
+      this.fetch(props.params.username, 'profile block')
+    }
+    if (props.params.username.toLowerCase() === (this.authedUser || {}).usernameLower) {
       this.props.onPullUnseenCount('wallPost', null)
-      // handleNotification.on('wallPost', () => true)
-    } else {
-      this.wallPostsOff()
     }
   }
 
-  wallPostsOff() {
-    // handleNotification.on('wallPost', () => false)
-  }
-
-  runQuery(query) {
-    this.execute(this.props.params.username, query)
-  }
-
-  execute(username, query) {
-    UserStore.get(username, query, body => {
-      if (this.props.params.username === username) {
-        body.err = false
-        this.setState(body)
-      }
-    }, () => {
-      this.setState({err: true})
+  fetch(username, query) {
+    this.props.onFetchUser(username, query).then(() => {
+      this.setState({notFound: false})
+    }).catch(() => {
+      this.setState({notFound: true})
     })
   }
 
   render() {
-    const {onlineList} = this.props
-    const {profile, err} = this.state || {}
-    return err ? (
+    const {notFound} = this.state
+    const {profile, block, onlineList} = this.props
+    const profileId = profile && profile.get('_id')
+
+    return notFound ? (
       <NotFound referingTo="Användaren" />
     ) : profile ? (
       <UserProfile
-        key={profile._id}
+        key={profileId}
         user={profile}
-        isOnline={onlineList.findIndex(user => user.get('_id') === profile._id) > -1}
-        authedUser={this.authedUser}
-        onQuery={this.runQuery.bind(this)}
-        {...this.state}
+        block={block}
+        isOnline={onlineList.findIndex(user => user.get('_id') === profileId) > -1}
+        showOptions={this.authedUser && this.authedUser._id !== profileId}
+        onQuery={query => this.fetch(profile.get('username'), query)}
       />
     ) : null
   }

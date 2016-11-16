@@ -17,15 +17,17 @@ if (process.env.NODE_ENV !== 'production') {
 app.set('view engine', 'ejs')
 app.enable('trust proxy')
 
+app.use(express.static('../public'))
+app.use(session)
+app.use(body)
+
 app.use((req, res, next) => {
+  req.userId = req.session.uid
   res.setHeader('Expires', '-1')
   res.setHeader('Cache-Control', 'must-revalidate, private')
   next()
 })
 
-app.use(express.static('../public'))
-app.use(session)
-app.use(body)
 app.use('/api', api)
 app.get('/picture/:id', misq.showPicture)
 app.get('/activate/:userActivationId', misq.activateUser)

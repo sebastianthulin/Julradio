@@ -3,7 +3,6 @@ const request = require('superagent')
 const API = require('../services/API')
 const User = module.exports = new EventEmitter
 const ChatStore = require('../stores/ChatStore')
-const UserStore = require('../stores/UserStore')
 
 let doc = null
 
@@ -16,7 +15,6 @@ const setAndCB = cb => {
 
 User.set = user => {
   doc = user
-  UserStore.insert(user)
   User.emit('doc', user)
 }
 

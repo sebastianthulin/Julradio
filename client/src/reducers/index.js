@@ -1,6 +1,7 @@
 const {combineReducers} = require('redux')
 
 module.exports = combineReducers({
+  users: require('./users'),
   player: require('./player'),
   articles: require('./articles'),
   modal: require('./modal'),
@@ -8,7 +9,5 @@ module.exports = combineReducers({
   comments: require('./comments'),
   visibility: require('./visibility'),
   requests: require('./requests'),
-  reservations: require('./reservations'),
-  search: require('./search'),
-  onlineList: require('./onlineList')
+  reservations: require('./reservations')
 })
