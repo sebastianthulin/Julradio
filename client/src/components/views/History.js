@@ -1,21 +1,53 @@
 const React = require('react')
 const {connect} = require('react-redux')
+const cx = require('classnames')
+const {setHistoryView, fetchMostPlayed} = require('../../actions/player')
 
-const HistoryItem = ({song}) => (
+const HistoryItem = ({songTitle, playCount}) => (
   <div className="HistoryItem">
-    {song.get('title')}
+    {playCount !== undefined && playCount + ' - '}
+    {songTitle}
   </div>
 )
 
 @connect(state => ({
-  history: state.player.get('history')
-}))
+  historyView: state.player.get('historyView'),
+  history: state.player.get('history'),
+  mostPlayed: state.player.get('mostPlayed')
+}), {
+  onSetHistoryView: setHistoryView,
+  onFetchMostPlayed: fetchMostPlayed
+})
 class History extends React.Component {
+  componentWillMount() {
+    this.props.onFetchMostPlayed()
+  }
+
   render() {
+    const {mostPlayed, historyView, onSetHistoryView} = this.props
     const history = this.props.history.reverse()
+
     return (
       <div id="History">
-        {history.map(song => <HistoryItem key={song.get('_id')} song={song} />)}
+        <button className={cx({active: historyView === 'history'})} onClick={() => onSetHistoryView('history')}>
+          30 senaste
+        </button>
+        <button className={cx({active: historyView === 'mostPlayed'})} onClick={() => onSetHistoryView('mostPlayed')}>
+          50 mest spelade
+        </button>
+        {historyView === 'history' && history.map(song => (
+          <HistoryItem
+            key={song.get('_id')}
+            songTitle={song.get('title')}
+          />
+        ))}
+        {historyView === 'mostPlayed' && mostPlayed.map(song => (
+          <HistoryItem
+            key={song.get('title')}
+            songTitle={song.get('title')}
+            playCount={song.get('playCount')}
+          />
+        ))}
       </div>
     )
   }

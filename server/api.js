@@ -9,6 +9,7 @@ const notificationController = require('./controllers/notification')
 const reservationsController = require('./controllers/reservations')
 const crewController = require('./controllers/crew')
 const forgotController = require('./controllers/forgot')
+const songsController = require('./controllers/songs')
 const misq = require('./controllers/misq')
 const {fetchUser, signedIn, role} = require('./middleware')
 
@@ -21,6 +22,7 @@ const notification = Router()
 const reservations = Router()
 const crew = Router()
 const forgot = Router()
+const songs = Router()
 
 user
   .get('/logout', userController.logOut)
@@ -79,6 +81,9 @@ forgot
   .get('/:requestId', forgotController.show)
   .post('/:requestId', forgotController.finish)
 
+songs
+  .get('/mostplayed', songsController.showMostPlayed)
+
 api.use('/user', user)
 api.use('/articles', articles)
 api.use('/chat', chat)
@@ -87,5 +92,6 @@ api.use('/notification', notification)
 api.use('/reservations', reservations)
 api.use('/crew', crew)
 api.use('/forgot', forgot)
+api.use('/songs', songs)
 
 module.exports = api

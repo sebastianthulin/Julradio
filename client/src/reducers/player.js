@@ -5,7 +5,9 @@ const initialState = fromJS({
   connected: false,
   volume: null,
   nowPlaying: {},
-  history: []
+  historyView: 'history',
+  history: [],
+  mostPlayed: []
 })
 
 const player = (state = initialState, action) => {
@@ -16,6 +18,8 @@ const player = (state = initialState, action) => {
       return state.set('connected', action.connected)
     case 'SET_VOLUME':
       return state.set('volume', action.volume)
+    case 'SET_HISTORY_VIEW':
+      return state.set('historyView', action.view)
     case 'SET_HISTORY':
       return state.set('history', fromJS(action.history))
     case 'SET_NOW_PLAYING': {
@@ -29,6 +33,8 @@ const player = (state = initialState, action) => {
         return history.push(nowPlaying)
       })
     }
+    case 'FETCH_MOST_PLAYED':
+      return state.set('mostPlayed', fromJS(action.mostPlayed))
     default:
       return state
   }
