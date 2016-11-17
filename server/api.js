@@ -2,7 +2,6 @@
 
 const {Router} = require('express')
 const userController = require('./controllers/user')
-const commentController = require('./controllers/comment')
 const articlesController = require('./controllers/articles')
 const chatController = require('./controllers/chat')
 const requestController = require('./controllers/request')
@@ -15,7 +14,6 @@ const {fetchUser, signedIn, role} = require('./middleware')
 
 const api = Router()
 const user = Router()
-const comment = Router()
 const articles = Router()
 const chat = Router()
 const request = Router()
@@ -40,15 +38,6 @@ user
   .get('/all', role('admin'), userController.listAll)
   .delete('/:userId/avatar', role('admin'), userController.deleteUserProfilePicture)
   .put('/:userId', role('admin'), userController.updateUser)
-
-comment
-  .get('/:type', commentController.show)
-  .get('/replies/:id', commentController.showReplies)
-  .post('/article', signedIn, commentController.createOnArticle)
-  .post('/user', signedIn, commentController.createOnUser)
-  .post('/cosycorner', signedIn, commentController.createOnCosycorner)
-  .post('/reply', signedIn, commentController.reply)
-  .delete('/:id', signedIn, fetchUser, commentController.delete)
 
 articles
   .get('/', articlesController.frontPage)
@@ -91,7 +80,6 @@ forgot
   .post('/:requestId', forgotController.finish)
 
 api.use('/user', user)
-api.use('/comment', comment)
 api.use('/articles', articles)
 api.use('/chat', chat)
 api.use('/request', request)

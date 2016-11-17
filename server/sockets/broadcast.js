@@ -1,8 +1,6 @@
 'use strict'
 
 const hub = require('clusterhub')
-const {User} = require('../models')
-const {SAFE_USER_SELECT} = require('../constants')
 
 const socketHandler = socket => {
   hub.get('radioStream', metadata => socket.emit('metadata', metadata))
@@ -17,15 +15,6 @@ const socketHandler = socket => {
       socket.emit('feed', feed)
     })
   })
-
-  if (socket.userId) {
-    User.findById(socket.userId).select(User.SAFE_SELECT).lean().then(user => {
-      hub.emit('userConnect', user)
-      socket.on('disconnect', () => {
-        hub.emit('userDisconnect', user)
-      })
-    })
-  }
 }
 
 module.exports = socketHandler

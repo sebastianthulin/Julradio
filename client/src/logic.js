@@ -5,6 +5,7 @@ const {receiveOnlineList, receiveOnlineListChange} = require('./actions/users')
 const {receiveUserNotification} = require('./actions/notifications')
 const {receiveFeed, recieveFeedItem} = require('./actions/requests')
 const {recieveReservations, setOnAir} = require('./actions/reservations')
+const {receiveComment, receiveReply} = require('./actions/comments')
 const {setHistory, setNowPlaying, togglePlay, setVolume} = require('./actions/player')
 const localStorage = window.localStorage || {}
 
@@ -25,6 +26,15 @@ const logic = store => {
   socket.on('reservations', reservations => {
     store.dispatch(recieveReservations(reservations))
     reservationsTick()
+  })
+
+  // comments
+  socket.on('comment', commentData => {
+    store.dispatch(receiveComment(commentData))
+  })
+
+  socket.on('reply', replyData => {
+    store.dispatch(receiveReply(replyData))
   })
 
   socket.on('metadata', ({playing, history}) => {

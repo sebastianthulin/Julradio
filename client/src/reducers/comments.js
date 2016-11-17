@@ -10,7 +10,7 @@ const initialState = fromJS({
 
 const comments = (state = initialState, action) => {
   switch (action.type) {
-    case 'FETCH_COMMENTS_SUCCESS': {
+    case 'RECEIVE_COMMENTS': {
       const byId = state.get('byId').withMutations(ctx => {
         for (let comment of action.comments) {
           ctx.set(comment._id, fromJS(comment))
@@ -28,18 +28,23 @@ const comments = (state = initialState, action) => {
         })
       })
 
+      return state.merge({ids, byId, repliesByCommentId})
+    }
+    case 'FETCH_COMMENTS_SUCCESS':
       return state.merge({
-        ids,
-        byId,
-        repliesByCommentId,
         commentCount: action.commentCount,
         threadCount: action.threadCount
       })
-    }
     case 'FETCH_REPLIES_SUCCESS': {
       const replies = fromJS(action.replies).sort((a, b) => new Date(a.get('date')) - new Date(b.get('date')))
       return state.setIn(['repliesByCommentId', action.commentId], replies)
     }
+    case 'RECEIVE_REPLY': 
+      return state.updateIn(['repliesByCommentId', action.commentId], (replies = List()) => {
+        return replies.push(fromJS(action.reply))
+          .filter((reply, i, self) => self.findIndex(r => r.get('_id') === reply.get('_id')) === i)
+          .sort((a, b) => new Date(a.get('date')) - new Date(b.get('date')))
+      })
     case 'DELETE_COMMENT_SUCCESS':
       if (action.replyTo) {
         return state.updateIn(['repliesByCommentId', action.replyTo], replies => {
@@ -59,8 +64,10 @@ const comments = (state = initialState, action) => {
 
 const byTarget = (state = Map(), action) => {
   switch (action.type) {
+    case 'RECEIVE_COMMENTS':
     case 'FETCH_COMMENTS_SUCCESS':
     case 'FETCH_REPLIES_SUCCESS':
+    case 'RECEIVE_REPLY':
     case 'DELETE_COMMENT_SUCCESS':
       return state.update(action.target, c => comments(c, action))
     default:

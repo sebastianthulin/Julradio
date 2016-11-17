@@ -5,11 +5,13 @@
   left 0
   width 300px
   height 100%
-  background rgba(165, 27, 27, 0.25)
+  background rgba(165, 27, 27, 0.7)
   transform translateX(-300px)
   transition transform .4s
   //overflow-x hidden
   //overflow-y auto
+  +desktop()
+    background rgba(165, 27, 27, 0.25)
   @media (max-height: 700px)
     .inner
       padding-top 20px !important

@@ -51,7 +51,6 @@ class Comments extends React.Component {
     if (text) {
       onPostComment(type, target, text).then(() => {
         this.refs.input.value = ''
-        this.fetchComments(true)
       })
     }
   }

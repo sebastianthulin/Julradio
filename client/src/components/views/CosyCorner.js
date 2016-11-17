@@ -7,7 +7,8 @@ class CosyCorner extends React.Component {
       <div id="CosyCorner">
         <h1>Myshörnan</h1>
         <Comments
-          type="cosycorner"
+          type="cosyCorner"
+          target={true}
           placeholder="Skriv något i myshörnan"
           signInPlaceholder="Logga in för att ta del av myset"
         />

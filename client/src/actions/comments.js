@@ -1,27 +1,32 @@
-const request = require('superagent')
+const socket = require('../services/socket')
 const {errorNotify} = require('./notifications')
+
+const receiveComments = (target, comments, replies) => ({
+  type: 'RECEIVE_COMMENTS',
+  target,
+  comments,
+  replies
+})
 
 export const fetchComments = (type, target, fromTop) => (dispatch, getState) => {
   const ids = getState().comments.getIn([target, 'ids'])
   const skip = fromTop ? 0 : ids ? ids.size : 0
-  request.get('/api/comment/' + type, {target, skip}).then(res => {
-    const {comments, replies, totalComments, totalThreads} = res.body
+  socket.fetch('comments:fetch', {type, target, skip}).then(body => {
+    const {comments, replies, totalComments, totalThreads} = body
     dispatch({
       type: 'FETCH_COMMENTS_SUCCESS',
       target,
-      comments,
-      replies,
       commentCount: totalComments,
       threadCount: totalThreads
     })
+    dispatch(receiveComments(target, comments, replies))
   }).catch(err => {
     dispatch(errorNotify(err))
   })
 }
 
 export const fetchReplies = (target, commentId) => dispatch => {
-  request.get('/comment/replies/' + commentId).then(res => {
-    const replies = res.body
+  socket.fetch('comments:fetchReplies', commentId).then(replies => {
     dispatch({
       type: 'FETCH_REPLIES_SUCCESS',
       target,
@@ -33,20 +38,31 @@ export const fetchReplies = (target, commentId) => dispatch => {
   })
 }
 
+export const receiveComment = ({target, comment}) => {
+  return receiveComments(target, [comment], [])
+}
+
+export const receiveReply = ({target, reply}) => ({
+  type: 'RECEIVE_REPLY',
+  target,
+  commentId: reply.replyTo,
+  reply
+})
+
 export const postComment = (type, target, text) => dispatch => {
-  return request.post('/api/comment/' + type, {target, text})
+  return socket.fetch('comments:create', {text, type, target})
     .then(() => null)
     .catch(err => dispatch(errorNotify(err)))
 }
 
-export const postReply = (replyTo, text) => dispatch => {
-  return request.post('/api/comment/reply', {replyTo, text})
+export const postReply = (replyTo, text, target) => dispatch => {
+  return socket.fetch('comments:createReply', {replyTo, text, target})
     .then(() => null)
     .catch(err => dispatch(errorNotify(err)))
 }
 
 export const deleteComment = (target, commentId, replyTo) => dispatch => {
-  request.delete('/api/comment/' + commentId).then(() => {
+  socket.fetch('comments:deleteComment', commentId).then(() => {
     dispatch({
       type: 'DELETE_COMMENT_SUCCESS',
       target,
