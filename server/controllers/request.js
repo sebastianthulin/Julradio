@@ -2,7 +2,7 @@
 
 const hub = require('clusterhub')
 const {SongRequest} = require('../models')
-const performAction = require('../services/performAction')
+const {performAction} = require('../utils/userUtils')
 
 exports.create = (req, res, next) => {
   const request = new SongRequest({

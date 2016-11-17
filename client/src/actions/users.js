@@ -12,17 +12,18 @@ const handleUser = user => {
 
 const receiveBlock = (username, block) => ({
   type: 'RECEIVE_BLOCK',
-  username,
+  username: username.toLowerCase(),
   block
 })
 
 const receiveUser = user => ({
   type: 'RECEIVE_USER',
-  username: user.username,
+  username: user.username.toLowerCase(),
   user
 })
 
 export const fetchUser = (username, query = 'profile') => dispatch => {
+  username = username.toLowerCase()
   return request.get('/api/user/profile', {username, query}).then(res => {
     const {profile, block} = res.body
     profile && handleUser(profile)

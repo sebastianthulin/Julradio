@@ -1,16 +1,15 @@
 'use strict'
 
 const {User} = require('../models')
+const {SAFE_USER_SELECT} = require('../constants')
 
-const SAFE_SELECT = '-hash -email -activated'
 let users = []
 
 const fetchUsers = () => {
-  User.find().select(SAFE_SELECT).lean().then(docs => {
+  User.find().select(SAFE_USER_SELECT).lean().then(docs => {
     users = docs
   })
 }
-
 
 const userSearch = _query => {
   const query = String(_query).toLowerCase().trim()

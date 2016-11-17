@@ -3,7 +3,7 @@
 const {Observable} = require('rxjs')
 const hub = require('clusterhub')
 const sio = require('socket.io-emitter')
-const ReadStream = require('../services/ReadStream')
+const ReadStream = require('../utils/ReadStream')
 const {Song} = require('../models')
 const {shoutCastUrls, shoutCastOnline} = require('../../config')
 

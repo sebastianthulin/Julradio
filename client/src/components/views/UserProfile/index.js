@@ -11,8 +11,8 @@ const selectors = require('../../../selectors')
 @connect((state, props) => ({
   authedUser: selectors.user(state),
   isAdmin: selectors.isAdmin(state),
-  profile: state.users.getIn(['byUsername', props.params.username]),
-  block: state.users.getIn(['blockByUsername', props.params.username]),
+  profile: state.users.getIn(['byUsername', props.params.username.toLowerCase()]),
+  block: state.users.getIn(['blockByUsername', props.params.username.toLowerCase()]),
   onlineList: state.users.get('onlineList'),
 }), {
   onFetchUser: fetchUser,

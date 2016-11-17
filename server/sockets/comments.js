@@ -2,9 +2,7 @@
 
 const {CommentSection, Comment, Article} = require('../models')
 const {io} = require('../server')
-const Notify = require('../services/Notify')
-const Blockages = require('../services/Blockages')
-const performAction = require('../services/performAction')
+const {performAction, notify, blockages} = require('../utils/userUtils')
 const {SAFE_USER_SELECT} = require('../constants')
 
 const updateCommentSection = commentSection => {
@@ -83,11 +81,11 @@ const commentOnArticle = async (socket, text, articleId) => {
 }
 
 const commentOnUser = async (socket, text, targetUserId) => {
-  await Blockages.confirm(socket.userId, targetUserId)
+  await blockages.confirm(socket.userId, targetUserId)
   const query = {user: targetUserId}
   const comment = await createComment(socket, {text, query, owner: targetUserId})
   if (socket.userId !== targetUserId) {
-    Notify({userId: targetUserId, from: socket.userId, type: 'wallPost'})
+    notify({userId: targetUserId, from: socket.userId, type: 'wallPost'})
   }
   return comment
 }
@@ -105,7 +103,7 @@ const createReply = async (socket, text, replyTo) => {
   }
   await Promise.all([
     performAction(socket.ip, 'comment'),
-    Blockages.confirm(socket.userId, comment.owner)
+    blockages.confirm(socket.userId, comment.owner)
   ])
   const reply = {
     text,
@@ -153,7 +151,7 @@ const socketHandler = socket => {
     if (target !== subscription) {
       socket.leave(subscription)
       subscription = target
-      socket.join(target)
+      socket.join('comments:' + target)
     }
   }
 
@@ -161,7 +159,7 @@ const socketHandler = socket => {
     if (target === subscription) {
       subscription = undefined
     }
-    socket.leave(target)
+    socket.leave('comments:' + target)
   }
 
   const createByType = {
@@ -175,14 +173,14 @@ const socketHandler = socket => {
       const createComment = createByType[type]
       const comment = await createComment(socket, text, target)
       comment.user = socket.user
-      io.to(target).emit('comment', {target, comment})
+      io.to('comments:' + target).emit('comment', {target, comment})
       success()
     })
 
     socket.on('comments:createReply', async ({text, replyTo, target}, success) => {
       const reply = await createReply(socket, text, replyTo)
       reply.user = socket.user
-      io.to(target).emit('reply', {target, reply})
+      io.to('comments:' + target).emit('reply', {target, reply})
       success()
     })
 

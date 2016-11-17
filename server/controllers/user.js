@@ -4,11 +4,10 @@ const multer = require('multer')
 const gm = require('gm')
 const fs = require('fs')
 const {User, Activation, Block, Picture, RemovedPicture} = require('../models')
-const mail = require('../services/mail')
+const {performAction, blockages} = require('../utils/userUtils')
+const userSearch = require('../utils/userSearch')
+const mail = require('../utils/mail')
 const config = require('../../config')
-const performAction = require('../services/performAction')
-const Blockages = require('../services/Blockages')
-const userSearch = require('../services/userSearch')
 const {SENSITIVE_USER_SELECT, SAFE_USER_SELECT} = require('../constants')
 
 const upload = multer({
@@ -61,7 +60,7 @@ exports.showProfile = async (req, res, next) => {
     const data = await Promise.all(query.map(type => {
       switch (type) {
         case 'profile': return Promise.resolve(user)
-        case 'block': return Blockages.get(req.userId, user._id, true)
+        case 'block': return blockages.get(req.userId, user._id, true)
       }
     }))
 

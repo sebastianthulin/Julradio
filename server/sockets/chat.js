@@ -2,9 +2,7 @@
 
 const db = require('../models')
 const {io} = require('../server')
-const Notify = require('../services/Notify')
-const Blockages = require('../services/Blockages')
-const performAction = require('../services/performAction')
+const {performAction, notify, blockages} = require('../utils/userUtils')
 
 const createConversation = users => {
   let conv = new db.Conversation({users})
@@ -61,7 +59,7 @@ const sendMessage = (from, conversationId, text) => {
     data[1].users.forEach(userId => {
       io.to(userId).emit('chat:message', data[0])
       if (from != userId) {
-        Notify({
+        notify({
           userId,
           from,
           type: 'message',
@@ -77,7 +75,7 @@ const chatHandler = socket => {
     if (typeof opts !== 'object' || !opts.text) return
     Promise.all([
       performAction(socket.ip, 'chat'),
-      Blockages.confirm(socket.userId, opts.userId)
+      blockages.confirm(socket.userId, opts.userId)
     ]).then(() => {
       return opts.conversationId || getConversationId(socket.userId, opts.userId)
     }).then(conversationId => {

@@ -1,7 +1,7 @@
 'use strict'
 
 const {User, PasswordRequest} = require('../models')
-const mail = require('../services/mail')
+const mail = require('../utils/mail')
 const config = require('../../config')
 
 exports.request = (req, res, next) => {
