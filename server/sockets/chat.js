@@ -1,7 +1,8 @@
 'use strict'
 
-const db = require('../models')
 const {io} = require('../server')
+const db = require('../models')
+const {apiError} = require('../utils/apiError')
 const {performAction, notify, blockages} = require('../utils/userUtils')
 
 const createConversation = users => {
@@ -17,7 +18,7 @@ const createConversation = users => {
 const getConversationId = (from, targetUserId) => {
   return db.User.findById(targetUserId).exec().then(user => {
     if (!user || user._id.toString() === from) {
-      throw new Error('invalid user')
+      throw apiError('invalid user')
     }
     return db.Conversation.findOne({$and: [
       {users: from},
@@ -37,9 +38,9 @@ const getConversationId = (from, targetUserId) => {
 const sendMessage = (from, conversationId, text) => {
   return db.Conversation.findById(conversationId).exec().then(conversation => {
     if (!conversation) {
-      throw new Error('conversation not found')
+      throw apiError('conversation not found')
     } else if (conversation.users.indexOf(from) === -1) {
-      throw new Error('unauthorised')
+      throw apiError('unauthorised')
     }
 
     const message = new db.Message({

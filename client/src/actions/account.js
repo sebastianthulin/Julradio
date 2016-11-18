@@ -3,6 +3,7 @@ const {errorNotify} = require('./notifications')
 
 const handleErr = dispatch => err => {
   dispatch(errorNotify(err))
+  return err
 }
 
 export const receiveAccount = account => {
@@ -25,14 +26,18 @@ export const unblockUser = userId => dispatch => {
 
 export const updateAccountSettings = opts => dispatch => {
   return request.put('/api/user/settings', opts).then(
-    res => dispatch(receiveAccount(res.body)),
+    res => {
+      dispatch(receiveAccount(res.body))
+    },
     handleErr(dispatch)
   )
 }
 
 export const updateAccountSettings2 =  opts => dispatch => {
   return request.put('/api/user/settings2', opts).then(
-    res => dispatch(receiveAccount(res.body)),
+    res => {
+      dispatch(receiveAccount(res.body))
+    },
     handleErr(dispatch)
   )
 }
@@ -41,14 +46,18 @@ export const setAvatar = file => dispatch => {
   const formData = new FormData
   formData.append('avatar', file)
   return request.post('/api/user/profilepicture').send(formData).then(
-    res => dispatch(receiveAccount(res.body)),
+    res => {
+      dispatch(receiveAccount(res.body))
+    },
     handleErr(dispatch)
   )
 }
 
 export const removeAvatar = () => dispatch => {
   return request.delete('/api/user/profilepicture').then(
-    res => dispatch(receiveAccount(res.body)),
+    res => {
+      dispatch(receiveAccount(res.body))
+    },
     handleErr(dispatch)
   )
 }

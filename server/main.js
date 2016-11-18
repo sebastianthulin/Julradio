@@ -6,7 +6,7 @@ const {app, server, io, webpackServer} = require('./server')
 const {session, ioify, body, fetchUser} = require('./middleware')
 const api = require('./api')
 const misq = require('./controllers/misq')
-const errorHandler = require('./errorHandler')
+const {errorHandler} = require('./utils/apiError')
 const sockets = require('./sockets')
 const cfg = require('../config')
 

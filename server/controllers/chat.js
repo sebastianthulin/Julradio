@@ -1,13 +1,14 @@
 'use strict'
 
 const {Conversation, Message} = require('../models')
+const {SAFE_USER_SELECT} = require('../constants')
 
 exports.list = (req, res) => {
   Conversation.find({
     users: req.userId
   }).populate({
     path: 'users lastMessage',
-    select: '-hash -email'
+    select: SAFE_USER_SELECT
   }).exec().then(conversations => {
     res.send(conversations)
   })

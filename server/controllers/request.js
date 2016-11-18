@@ -2,6 +2,7 @@
 
 const hub = require('clusterhub')
 const {SongRequest} = require('../models')
+const {apiError} = require('../utils/apiError')
 const {performAction} = require('../utils/userUtils')
 
 exports.create = (req, res, next) => {
@@ -14,7 +15,7 @@ exports.create = (req, res, next) => {
 
   request.validate(err => {
     if (err) {
-      return next(new Error('MISSING_FIELD'))
+      return next(apiError('MISSING_FIELD'))
     }
     performAction(req.ip , 'requestsong').then(() => {
       return request.save()
@@ -37,7 +38,7 @@ exports.grant = (req, res, next) => {
       request.granted = Date.now()
       return request.save()
     }
-    throw new Error('SONG_REQUEST_INVALID')
+    throw apiError('SONG_REQUEST_INVALID')
   }).then(() => {
     hub.emit('songRequests:granted', id)
     res.sendStatus(200)

@@ -1,7 +1,8 @@
 'use strict'
 
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const {Schema} = mongoose
+const {apiError} = require('../utils/apiError')
 const crypto = require('crypto')
 const config = require('../../config')
 
@@ -67,9 +68,11 @@ const sha256 = str => typeof str === 'string'
   ? crypto.createHash('sha256').update(str).digest('hex')
   : null
 
-schema.methods.signUp = function(opts, callback) {
-  this.setUsername(opts.username)
-  this.setEmail(opts.email)
+schema.methods.signUp = async function(opts, callback) {
+  await Promise.all([
+    this.setUsername(opts.username),
+    this.setEmail(opts.email)
+  ])
   this.setPassword(opts.password)
   return this.save()
 }
@@ -85,51 +88,58 @@ schema.methods.auth = function(password) {
   }
 }
 
-schema.methods.setUsername = function(username) {
+schema.methods.setUsername = async function(username) {
   if (typeof username !== 'string') {
-    this.invalidate('username', 'STOP_HAXING_PLZ')
-  } else if (!/^\w+$/.test(username)) {
-    this.invalidate('username', 'INVALID_FORMAT')
-  } else if (mongoose.Types.ObjectId.isValid(this.username)) {
-    this.invalidate('username', 'INVALID_FORMAT')
-  } else if (username.length < 3) {
-    this.invalidate('username', 'USERNAME_TOO_SHORT')
-  } else if (username.length > 25) {
-    this.invalidate('username', 'USERNAME_TOO_LONG')
-  } else {
-    this.username = username
-    this.usernameLower = username.toLowerCase()
-    return true
+    throw apiError('STOP_HAXING_PLZ')
   }
-  return false
+  const usernameLower = username.toLowerCase()
+  if (!/^\w+$/.test(username)) {
+    throw apiError('USERNAME_INVALID_FORMAT')
+  }
+  if (mongoose.Types.ObjectId.isValid(this.username)) {
+    throw apiError('USERNAME_INVALID_FORMAT')
+  }
+  if (username.length < 3) {
+    throw apiError('USERNAME_TOO_SHORT')
+  }
+  if (username.length > 25) {
+    throw apiError('USERNAME_TOO_LONG')
+  }
+  if (await User.findOne({usernameLower})) {
+    throw apiError('USERNAME_TAKEN')
+  }
+  this.username = username
+  this.usernameLower = usernameLower
 }
 
-schema.methods.setEmail = function(email) {
+schema.methods.setEmail = async function(email) {
   if (typeof email !== 'string') {
-    this.invalidate('email', 'EMAIL_INVALID')
-  } else if (email.length > 254) {
-    this.invalidate('email', 'EMAIL_INVALID')
-  } else if (!/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i.test(email)) {
-    this.invalidate('email', 'EMAIL_INVALID')
-  } else {
-    this.email = email
-    return true
+    throw apiError('EMAIL_INVALID')
   }
-  return false
+  email = email.toLowerCase()
+  if (email.length > 254) {
+    throw apiError('EMAIL_INVALID')
+  }
+  if (!/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i.test(email)) {
+    throw apiError('EMAIL_INVALID')
+  }
+  if (await User.findOne({email})) {
+    throw apiError('EMAIL_TAKEN')
+  }
+  this.email = email
 }
 
 schema.methods.setPassword = function(password) {
   if (typeof password !== 'string') {
-    this.invalidate('password', 'STOP_HAXING_PLZ')
-  } else if (password.length === 0) {
-    this.invalidate('password', 'PASSWORD_EMPTY')
-  } else if (password.length < config.passwordMinLength) {
-    this.invalidate('password', 'PASSWORD_TOO_SHORT')
-  } else {
-    this.hash = sha256(password)
-    return true
+    throw apiError('STOP_HAXING_PLZ')
   }
-  return false
+  if (password.length === 0) {
+    throw apiError('PASSWORD_EMPTY')
+  }
+  if (password.length < config.passwordMinLength) {
+    throw apiError('PASSWORD_TOO_SHORT')
+  }
+  this.hash = sha256(password)
 }
 
-module.exports = mongoose.model('users', schema)
+const User = module.exports = mongoose.model('users', schema)

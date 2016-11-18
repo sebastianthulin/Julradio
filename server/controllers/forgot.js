@@ -1,6 +1,7 @@
 'use strict'
 
 const {User, PasswordRequest} = require('../models')
+const {apiError} = require('../utils/apiError')
 const mail = require('../utils/mail')
 const config = require('../../config')
 
@@ -10,9 +11,9 @@ exports.request = (req, res, next) => {
 
   User.findOne({email}).exec().then(doc => {
     if (!email || !doc) {
-      throw new Error('INVALID_EMAIL')
+      throw apiError('INVALID_EMAIL')
     } else if (doc.banned) {
-      throw new Error('USER_BANNED')
+      throw apiError('USER_BANNED')
     }
     user = doc
     return PasswordRequest.findOneAndRemove({user}).exec()
@@ -33,19 +34,19 @@ exports.request = (req, res, next) => {
       html
     }, (err, info) => {
       if (err) {
-        console.error(new Error('MAIL_NOT_SENT'))
+        console.error(err)
+        // console.error(new Error('MAIL_NOT_SENT'))
       }
     })
   }).catch(next)
 }
 
-const getPasswordRequest = id => {
-  return PasswordRequest.findById(id).exec().then(request => {
-    if (!request || Date.now() > request.validTo) {
-      throw new Error('INVALID_REQUEST_ID')
-    }
-    return request
-  })
+const getPasswordRequest = async id => {
+  const request = await PasswordRequest.findById(id)
+  if (!request || Date.now() > request.validTo) {
+    throw apiError('INVALID_REQUEST_ID')
+  }
+  return request
 }
 
 exports.show = (req, res) => {
@@ -54,17 +55,17 @@ exports.show = (req, res) => {
     .catch(next)
 }
 
-exports.finish = (req, res, next) => {
-  const b = req.body
-  getPasswordRequest(req.params.id).then(request => {
-    return User.findById(request.user).exec().then(user => {
-      user.setPassword(b.password)
-      user.lastVisit = Date.now()
-      return user.save()
-    }).then(user => {
-      req.session.uid = user._id
-      request.remove()
-      res.sendStatus(200)
-    })
-  }).catch(next)
+exports.finish = async (req, res, next) => {
+  try {
+    const request = await getPasswordRequest(req.params.id)
+    const user = await User.findById(request.user)
+    user.setPassword(req.body.password)
+    user.lastVisit = Date.now()
+    await user.save()
+    req.session.uid = user._id
+    request.remove()
+    res.sendStatus(200)
+  } catch (err) {
+    next(err)
+  }
 }

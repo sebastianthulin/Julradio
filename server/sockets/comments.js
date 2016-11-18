@@ -1,7 +1,8 @@
 'use strict'
 
-const {CommentSection, Comment, Article} = require('../models')
 const {io} = require('../server')
+const {CommentSection, Comment, Article} = require('../models')
+const {apiError} = require('../utils/apiError')
 const {performAction, notify, blockages} = require('../utils/userUtils')
 const {SAFE_USER_SELECT} = require('../constants')
 
@@ -17,7 +18,7 @@ const getSection = query => {
   })
 }
 
-const populate = {path: 'user', select: SAFE_USER_SELECT,}
+const populate = {path: 'user', select: SAFE_USER_SELECT}
 
 const emptyCommentSection = {
   comments: [],
@@ -72,7 +73,7 @@ const createComment = async ({ip, userId}, {text, query, owner}) => {
 const commentOnArticle = async (socket, text, articleId) => {
   const article = await Article.findById(articleId)
   if (!article) {
-    throw new Error('ARTICLE_NOT_FOUND')
+    throw apiError('ARTICLE_NOT_FOUND')
   }
   const query = {article: articleId}
   const comment = await createComment(socket, {text, query, owner: article.user})
@@ -99,7 +100,7 @@ const commentOnCosycorner = async (socket, text) => {
 const createReply = async (socket, text, replyTo) => {
   const comment = await Comment.findById(replyTo)
   if (!comment || comment.replyTo) {
-    throw new Error('NO_COMMENT')
+    throw apiError('NO_COMMENT')
   }
   await Promise.all([
     performAction(socket.ip, 'comment'),
@@ -127,10 +128,10 @@ const createReply = async (socket, text, replyTo) => {
 const deleteComment = async (socket, commentId) => {
   const comment = await Comment.findById(commentId)
   if (!comment) {
-    throw new Error('NO_COMMENT')
+    throw apiError('NO_COMMENT')
   }
   if (!(socket.isAdmin || socket.userId == comment.user || socket.userId == comment.owner)) {
-    throw new Error('UNAUTHORISED')
+    throw apiError('UNAUTHORISED')
   }
   const promises = [comment.remove()]
   if (!comment.replyTo) {

@@ -2,6 +2,7 @@
 
 const hub = require('clusterhub')
 const {Reservation} = require('../models')
+const {apiError} = require('../utils/apiError')
 
 const generateData = (b, userId) => {
   const year = new Date().getFullYear()
@@ -11,7 +12,7 @@ const generateData = (b, userId) => {
   const endDate = new Date(year, b.month, b.day, endTime[0], endTime[1])
 
   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-    throw new Error('INVALID_DATE')
+    throw apiError('INVALID_DATE')
   }
 
   if (startDate > endDate) {
@@ -57,7 +58,7 @@ exports.delete = (req, res, next) => {
       hub.emit('reservations:remove', req.params.id)
       res.sendStatus(200)
     } else {
-      throw new Error('UNAUTHORISED')
+      throw apiError('UNAUTHORISED', 401)
     }
   }).catch(next)
 }

@@ -42,6 +42,6 @@ exports.activateUser = (req, res, next) => {
 
 exports.showNowPlaying = (req, res) => {
   hub.get('playing', playing => {
-    res.send(playing.title || 'failed to connect')
+    res.send(playing && playing.title || 'failed to connect')
   })
 }

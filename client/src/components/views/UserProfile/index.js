@@ -43,10 +43,9 @@ class UserProfileContainer extends React.Component {
   }
 
   fetch(username, query) {
-    this.props.onFetchUser(username, query).then(() => {
-      this.setState({notFound: false})
-    }).catch(() => {
-      this.setState({notFound: true})
+    this.props.onFetchUser(username, query).then(err => {
+      const notFound = !!err
+      notFound !== this.state.notFound && this.setState({notFound})
     })
   }
 

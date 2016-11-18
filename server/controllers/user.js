@@ -3,7 +3,8 @@
 const multer = require('multer')
 const gm = require('gm')
 const fs = require('fs')
-const {User, Activation, Block, Picture, RemovedPicture} = require('../models')
+const {User, UserActivation, Block, Picture, RemovedPicture} = require('../models')
+const {apiError} = require('../utils/apiError')
 const {performAction, blockages} = require('../utils/userUtils')
 const userSearch = require('../utils/userSearch')
 const mail = require('../utils/mail')
@@ -54,7 +55,7 @@ exports.showProfile = async (req, res, next) => {
     const user = await getUserDoc({userId, username})
 
     if (!user) {
-      throw new Error('USER_NOT_FOUND')
+      throw apiError('USER_NOT_FOUND')
     }
 
     const data = await Promise.all(query.map(type => {
@@ -75,8 +76,9 @@ exports.showProfile = async (req, res, next) => {
 
 exports.signUp = async (req, res, next) => {
   try {
+    await performAction(req.ip, 'loginattempt')
     const user = await new User().signUp(req.body)
-    const activate = await new UserActivation({user: doc._id}).save()
+    const activate = await new UserActivation({user: user._id}).save()
     res.sendStatus(200)
     const activateURL = 'http://julradio.se/activate/' + activate._id
     const html = `
@@ -93,7 +95,8 @@ exports.signUp = async (req, res, next) => {
       html
     }, (err, info) => {
       if (err) {
-        console.error(new Error('MAIL_NOT_SENT'))
+        console.error(err)
+        // console.error(apiError('MAIL_NOT_SENT'))
       }
     })
   } catch (err) {
@@ -108,19 +111,19 @@ exports.logIn = async (req, res, next) => {
     const user = await User.findOne({usernameLower}).exec()
     if (user) {
       if (user.banned) {
-        throw new Error('USER_BANNED')
+        throw apiError('USER_BANNED')
       } else if (user.activated === false) {
-        throw new Error('USER_NOT_ACTIVATED')
+        throw apiError('USER_NOT_ACTIVATED')
       } else if (user.auth(req.body.password)) {
         user.lastVisit = Date.now()
         user.save()
         req.session.uid = user._id
         res.sendStatus(200)
       } else {
-        throw new Error('INCORRECT_PASSWORD')
+        throw apiError('INCORRECT_PASSWORD')
       }
     } else {
-      throw new Error('USER_NOT_FOUND')
+      throw apiError('USER_NOT_FOUND')
     }
   } catch (err) {
     next(err)
@@ -156,16 +159,16 @@ exports.updateSettings1 = async (req, res, next) => {
     const b = req.body
 
     if (['', 'MALE', 'FEMALE'].indexOf(b.gender) === -1) {
-      throw new Error('INVALID_GENDER')
+      throw apiError('INVALID_GENDER')
     }
     if (b.name.length > 50) {
-      throw new Error('NAME_TOO_LONG')
+      throw apiError('NAME_TOO_LONG')
     }
     if (b.location.length > 50) {
-      throw new Error('LOCATION_TOO_LONG')
+      throw apiError('LOCATION_TOO_LONG')
     }
     if (b.description.length > 500) {
-      throw new Error('DESCRIPTION_TOO_LONG')
+      throw apiError('DESCRIPTION_TOO_LONG')
     }
     
     const birth = b.year && b.month && b.day && new Date(b.year, b.month, b.day)
@@ -175,7 +178,7 @@ exports.updateSettings1 = async (req, res, next) => {
       const yNowMinusTen = new Date(new Date().getFullYear() - 10, 0, 0)
 
       if (!(birth > y1900 && birth < yNowMinusTen)) {
-        throw new Error('INVALID_BIRTH')
+        throw apiError('INVALID_BIRTH')
       }
     }
 
@@ -198,10 +201,10 @@ exports.updateSettings2 = async (req, res, next) => {
     const b = req.body
     const user = await User.findById(req.userId)
     if (!user.auth(b.auth)) {
-      throw new Error('INCORRECT_PASSWORD')
+      throw apiError('INCORRECT_PASSWORD')
     }
     if (b.email !== user.email) {
-      user.setEmail(b.email)
+      await user.setEmail(b.email)
     }
     if (b.password) {
       user.setPassword(b.password)
@@ -219,9 +222,9 @@ exports.createProfilePicture = (req, res, next) => {
   upload(req, res, err => {
     if (err) {
       console.error(err, '/profilepicture INVALID_IMAGE')
-      return next(new Error('INVALID_IMAGE'))
+      return next(apiError('INVALID_IMAGE'))
     } else if (!req.file) {
-      return next(new Error('INVALID_IMAGE'))
+      return next(apiError('INVALID_IMAGE'))
     }
 
     const picture = new Picture({
@@ -237,7 +240,7 @@ exports.createProfilePicture = (req, res, next) => {
           if (err) {
             console.error(err, '/profilepicture INVALID_IMAGE')
             fs.unlink(req.file.path)
-            return next(new Error('INVALID_IMAGE'))
+            return next(apiError('INVALID_IMAGE'))
           }
 
           let newWidth, newHeight
@@ -260,7 +263,7 @@ exports.createProfilePicture = (req, res, next) => {
               fs.unlink(req.file.path)
               if (err) {
                 console.error('@/profilepicture handler a', err)
-                return next(new Error('UNKNOWN_ERROR'))
+                return next(apiError('UNKNOWN_ERROR'))
               }
               picture.save().then(() => {
                 return User.findByIdAndUpdate(userId, {
@@ -272,7 +275,7 @@ exports.createProfilePicture = (req, res, next) => {
                 res.send(user)
               }, err => {
                 console.error('@/profilepicture handler b', err)
-                next(new Error('UNKNOWN_ERROR'))
+                next(apiError('UNKNOWN_ERROR'))
               })
             })
         })

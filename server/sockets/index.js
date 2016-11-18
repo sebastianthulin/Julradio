@@ -2,6 +2,7 @@
 
 const hub = require('clusterhub')
 const {User} = require('../models')
+const {apiError} = require('../utils/apiError')
 const broadcast = require('./broadcast')
 const chat = require('./chat')
 const comments = require('./comments')
@@ -17,8 +18,12 @@ const socketHandler = socket => {
           typeof respond === 'function' && respond({body})
         })
       } catch (err) {
-        console.error(err)
-        typeof respond === 'function' && respond({err})
+        if (err.isApiError) {
+          typeof respond === 'function' && respond({err})
+        } else {
+          console.error(err)
+          typeof respond === 'function' && respond({err: apiError('UNKNOWN_ERROR')})
+        }
       }
     })
   }

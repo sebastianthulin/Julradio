@@ -3,8 +3,9 @@
 const sessions = require('client-sessions')
 const bodyParser = require('body-parser')
 const {User} = require('./models')
-const config = require('../config')
+const {apiError} = require('./utils/apiError')
 const {SENSITIVE_USER_SELECT} = require('./constants')
+const config = require('../config')
 
 exports.ioify = middleware =>
   (socket, next) =>
@@ -42,7 +43,7 @@ exports.signedIn = (req, res, next) => {
   if (req.userId) {
     next()
   } else {
-    next(new Error('NOT_SIGNED_IN'))
+    next(apiError('NOT_SIGNED_IN', 401))
   }
 }
 
@@ -51,7 +52,7 @@ exports.role = role => (req, res, next) => {
     if (req.user && req.user.roles[role]) {
       next()
     } else {
-      next(new Error('UNAUTHORISED'))
+      next(apiError('UNAUTHORISED', 401))
     }
   })
 }

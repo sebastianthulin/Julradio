@@ -30,7 +30,7 @@ const setMostPlaying = history => {
 const setPlaying = history => {
   const playing = history[history.length - 1]
   hub.set('playing', playing)
-  io.emit('metadata', {playing})
+  io.emit('playing', playing)
 }
 
 const connect = (url, history) => {

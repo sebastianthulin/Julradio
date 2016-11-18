@@ -1,6 +1,11 @@
 const socket = require('../services/socket')
 const {errorNotify} = require('./notifications')
 
+const handleErr = dispatch => err => {
+  dispatch(errorNotify(err, true))
+  return err
+}
+
 const receiveComments = (target, comments, replies) => ({
   type: 'RECEIVE_COMMENTS',
   target,
@@ -20,9 +25,7 @@ export const fetchComments = (type, target, fromTop) => (dispatch, getState) => 
       threadCount: totalThreads
     })
     dispatch(receiveComments(target, comments, replies))
-  }).catch(err => {
-    dispatch(errorNotify(err))
-  })
+  }).catch(handleErr(dispatch))
 }
 
 export const fetchReplies = (target, commentId) => dispatch => {
@@ -33,9 +36,7 @@ export const fetchReplies = (target, commentId) => dispatch => {
       commentId,
       replies
     })
-  }).catch(err => {
-    dispatch(errorNotify(err))
-  })
+  }).catch(handleErr(dispatch))
 }
 
 export const receiveComment = ({target, comment}) => {
@@ -52,13 +53,13 @@ export const receiveReply = ({target, reply}) => ({
 export const postComment = (type, target, text) => dispatch => {
   return socket.fetch('comments:create', {text, type, target})
     .then(() => null)
-    .catch(err => dispatch(errorNotify(err)))
+    .catch(handleErr(dispatch))
 }
 
 export const postReply = (replyTo, text, target) => dispatch => {
   return socket.fetch('comments:createReply', {replyTo, text, target})
     .then(() => null)
-    .catch(err => dispatch(errorNotify(err)))
+    .catch(handleErr(dispatch))
 }
 
 export const deleteComment = (target, commentId, replyTo) => dispatch => {
@@ -69,7 +70,5 @@ export const deleteComment = (target, commentId, replyTo) => dispatch => {
       commentId,
       replyTo
     })
-  }).catch(err => {
-    dispatch(errorNotify(err))
-  })
+  }).catch(handleErr(dispatch))
 }

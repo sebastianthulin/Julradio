@@ -1,13 +1,13 @@
 const request = require('superagent')
 const Sound = require('../services/Sound')
 const handleNotification = require('../services/handleNotification')
-const errors = require('../errors')
+const errorMessages = require('../../../lib/errorMessages')
 
 const getMetadata = (notification, getState) => {
   const getNotificationMessage = () => {
     switch (notification.isError) {
       case true:
-        return errors[notification.value] || errors.UNKNOWN_ERROR
+        return errorMessages[notification.value] || errorMessages.UNKNOWN_ERROR
       default:
         switch (notification.name) {
           case 'message': return 'Nytt meddelande från ' + notification.from.username
@@ -52,10 +52,11 @@ export const clearNotification = id => ({
 })
 
 // takes an error object returned from a superagent request
-export const errorNotify = err => {
+export const errorNotify = (err, isSocket) => {
+  const value = isSocket ? err.name : err.response.body.name
   return createNotification({
     name: '/url',  // url.split('/')[1]
-    value: err.response.body.error[0],
+    value,
     isError: true
   })
 }

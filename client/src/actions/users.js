@@ -1,6 +1,11 @@
 const request = require('superagent')
 const {errorNotify} = require('./notifications')
 
+const handleErr = dispatch => err => {
+  dispatch(errorNotify(err))
+  return err
+}
+
 const handleUser = user => {
   if (user.birth) {
     user.birth = new Date(user.birth)
@@ -29,9 +34,7 @@ export const fetchUser = (username, query = 'profile') => dispatch => {
     profile && handleUser(profile)
     res.body.hasOwnProperty('profile') && dispatch(receiveUser(profile))
     res.body.hasOwnProperty('block') && dispatch(receiveBlock(username, block))
-  }).catch(err => {
-    dispatch(errorNotify(err))
-  })
+  }).catch(handleErr(dispatch))
 }
 
 export const receiveOnlineList = onlineList => ({
@@ -60,9 +63,7 @@ export const searchUsers = query => dispatch => {
         type: 'SEARCH_USERS_SUCCESS',
         users: res.body
       })
-    }).catch(err => {
-      dispatch(errorNotify(err))
-    })
+    }).catch(handleErr(dispatch))
   }, 200)
 }
 
@@ -75,22 +76,16 @@ export const fetchCrew = () => dispatch => {
       crew
     })
     return crew
-  }).catch(err => {
-    dispatch(errorNotify(err))
-  })
+  }).catch(handleErr(dispatch))
 }
 
 // admin actions, not touching state
 export const updateCrew = userIds => dispatch => {
-  return request.put('/api/crew', userIds).then(() => null).catch(err => {
-    dispatch(errorNotify(err))
-  })
+  return request.put('/api/crew', userIds).then(() => null).catch(handleErr(dispatch))
 }
 
 export const getUserByUsername = username => dispatch => {
   return request.get(`/api/user/byname/${username}`).then(res => {
     return res.body
-  }).catch(err => {
-    dispatch(errorNotify(err))
-  })
+  }).catch(handleErr(dispatch))
 }

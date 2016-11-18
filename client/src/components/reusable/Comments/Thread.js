@@ -11,10 +11,12 @@ class Thread extends React.Component {
     const text = this.refs.reply.value.trim()
     evt.preventDefault()
     if (text) {
-      this.props.onPostReply(comment.get('_id'), text, target).then(() => {
-        this.refs.reply.value = ''
-        this.setState({showReply: false})
-        this.fetchReplies()
+      this.props.onPostReply(comment.get('_id'), text, target).then(err => {
+        if (!err) {
+          this.refs.reply.value = ''
+          this.setState({showReply: false})
+          this.fetchReplies()
+        }
       })
     }
   }

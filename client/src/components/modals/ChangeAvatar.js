@@ -25,9 +25,11 @@ class ChangeAvatar extends React.Component {
     const {props, refs} = this
     const state = this.state || {}
 
-    const done = () => {
-      props.closeModal()
-      props.onCreateNotification({name: 'profilepicture'})
+    const done = err => {
+      if (!err) {
+        props.closeModal()
+        props.onCreateNotification({name: 'profilepicture'})
+      }
     }
 
     if (state.removed) {

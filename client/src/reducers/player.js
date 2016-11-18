@@ -23,14 +23,13 @@ const player = (state = initialState, action) => {
     case 'SET_RECENT':
       return state.set('recent', fromJS(action.recent))
     case 'SET_NOW_PLAYING': {
-      const nowPlaying = fromJS(action.playing)
-      return state.set('nowPlaying', nowPlaying).update('recent', recent => {
-        const doPush = recent.last() && recent.last().get('title') !== nowPlaying.get('title')
-        if (!doPush) {
-          return recent
+      const playing = fromJS(action.playing)
+      return state.set('nowPlaying', playing).update('recent', recent => {
+        const doPush = playing && recent.last() && playing.get('title') !== recent.last().get('title')
+        if (doPush) {
+          return recent.push(playing).slice(recent.size - 29)
         }
-        recent = recent.size === 30 ? recent.splice(0, 1) : recent
-        return recent.push(nowPlaying)
+        return recent
       })
     }
     case 'FETCH_MOST_PLAYED':

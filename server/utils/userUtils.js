@@ -1,6 +1,7 @@
 'use strict'
 
 const {IPTimeout, Notification, Block} = require('../models')
+const {apiError} = require('./apiError')
 const {io} = require('../server')
 const {SAFE_USER_SELECT} = require('../constants')
 
@@ -37,7 +38,7 @@ const performAction = async (ip, action) => {
     }
   })
   if (docs.length >= timeout.strikes) {
-    throw new Error('TIMEOUT')
+    throw apiError('TIMEOUT')
   }
   return new IPTimeout({
     ip,
@@ -80,7 +81,7 @@ const blockages = {
   },
   confirm: async (user1, user2) => {
     if (await blockages.get(user1, user2)) {
-      throw new Error('BLOCKAGE')
+      throw apiError('BLOCKAGE')
     }
   }
 }

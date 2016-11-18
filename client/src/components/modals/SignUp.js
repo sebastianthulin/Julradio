@@ -11,8 +11,8 @@ class SignUp extends React.Component {
       username: this.refs.username.value,
       email: this.refs.email.value,
       password: this.refs.password.value
-    }).then(() => {
-      this.props.openModal('SignUpSuccess')
+    }).then(err => {
+      !err && this.props.openModal('SignUpSuccess')
     })
     this.setState({disabled: true})
     setTimeout(() => this.setState({disabled: false}), 150)

@@ -49,8 +49,10 @@ class Comments extends React.Component {
     const text = this.refs.input.value.trim()
     evt.preventDefault()
     if (text) {
-      onPostComment(type, target, text).then(() => {
-        this.refs.input.value = ''
+      onPostComment(type, target, text).then(err => {
+        if (!err) {
+          this.refs.input.value = ''
+        }
       })
     }
   }

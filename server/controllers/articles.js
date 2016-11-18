@@ -1,10 +1,11 @@
 'use strict'
 
 const {Article} = require('../models')
+const {SAFE_USER_SELECT} = require('../constants')
 
 const populate = {
   path: 'user',
-  select: '-hash -email'
+  select: SAFE_USER_SELECT
 }
 
 const select = 'title user date pinned'

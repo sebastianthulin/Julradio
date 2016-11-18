@@ -66,9 +66,11 @@ class Settings extends React.Component {
       email: this.refs.email.value,
       password: this.refs.password.value,
       auth: this.refs.auth.value
-    }).then(() => {
-      this.setState({changes: null})
-      this.refs.password.value = ''
+    }).then(err => {
+      if (!err) {
+        this.setState({changes: null})
+        this.refs.password.value = ''
+      }
     })
   }
 
@@ -81,8 +83,10 @@ class Settings extends React.Component {
       year: parseInt(this.refs.year.value),
       month: parseInt(this.refs.month.value),
       day: parseInt(this.refs.day.value)
-    }).then(() => {
-      this.props.onCreateNotification({name: 'settings'})
+    }).then(err => {
+      if (!err) {
+        this.props.onCreateNotification({name: 'settings'})
+      }
     })
   }
 

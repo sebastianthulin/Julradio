@@ -57,8 +57,8 @@ class ManageCrew extends React.Component {
 
   save() {
     const userIds = this.state.crew.map(user => user._id)
-    this.props.onUpdateCrew(userIds).then(() => {
-      alert('Done.')
+    this.props.onUpdateCrew(userIds).then(err => {
+      !err && alert('Done.')
     })
   }
 
