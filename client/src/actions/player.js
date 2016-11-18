@@ -51,9 +51,9 @@ export const toggleMute = () => (dispatch, getState) => {
   dispatch(setVolume(volume > 0 ? 0 : 1))
 }
 
-export const setHistory = history => ({
-  type: 'SET_HISTORY',
-  history
+export const receiveRecent = recent => ({
+  type: 'SET_RECENT',
+  recent
 })
 
 export const setNowPlaying = playing => ({

@@ -19,7 +19,7 @@ exports.showPicture = (req, res) => {
   if (pictureRoutes[id]) {
     return res.redirect(pictureRoutes[id])
   }
-  Picture.findById(id).exec().then(doc => {
+  Picture.findById(id).lean().then(doc => {
     pictureRoutes[id] = '/i/' + doc._id + doc.extension
     res.redirect(pictureRoutes[id])
   }).catch(() => {
@@ -41,7 +41,7 @@ exports.activateUser = (req, res, next) => {
 }
 
 exports.showNowPlaying = (req, res) => {
-  hub.get('nowPlaying', nowPlaying => {
-    res.send(nowPlaying || 'failed to connect')
+  hub.get('playing', playing => {
+    res.send(playing.title || 'failed to connect')
   })
 }

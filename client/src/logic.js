@@ -6,7 +6,7 @@ const {receiveUserNotification} = require('./actions/notifications')
 const {receiveFeed, recieveFeedItem} = require('./actions/requests')
 const {recieveReservations, setOnAir} = require('./actions/reservations')
 const {receiveComment, receiveReply} = require('./actions/comments')
-const {setHistory, setNowPlaying, togglePlay, setVolume} = require('./actions/player')
+const {receiveRecent, setNowPlaying, togglePlay, setVolume} = require('./actions/player')
 const localStorage = window.localStorage || {}
 
 const logic = store => {
@@ -37,10 +37,8 @@ const logic = store => {
     store.dispatch(receiveReply(replyData))
   })
 
-  socket.on('metadata', ({playing, history}) => {
-    history && store.dispatch(setHistory(history))
-    playing && store.dispatch(setNowPlaying(playing))
-  })
+  socket.on('recent', recent => store.dispatch(receiveRecent(recent)))
+  socket.on('playing', playing => store.dispatch(setNowPlaying(playing)))
 
   store.dispatch(setVolume(localStorage.volume === undefined ? 1 : Number(localStorage.volume)))
   localStorage.playing == 1 && store.dispatch(togglePlay())
@@ -48,8 +46,7 @@ const logic = store => {
   const reservationsTick = () => {
     const now = Date.now() + window.__TIMEDIFFERENCE__
     const state = store.getState().reservations
-    let i = state.get('items').size
-    while (i--) {
+    for (let i = state.get('items').size; i--;) {
       const r = state.getIn(['items', i])
       if (now > r.get('startDate') && now < r.get('endDate')) {
         state.get('onAir') !== r && store.dispatch(setOnAir(r))

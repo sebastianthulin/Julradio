@@ -9,6 +9,30 @@ const {shoutCastUrls, shoutCastOnline} = require('../../config')
 
 const io = sio({host: '127.0.0.1', port: 6379})
 
+const setRecent = history => {
+  const recent = history.slice(history.length - 30)
+  hub.set('recent', recent)
+}
+
+const setMostPlaying = history => {
+  const playCountMap = {}
+  for (let song of history) {
+    playCountMap[song.title] = (playCountMap[song.title] || 0) + 1
+  }
+  const mostPlayed = Object.keys(playCountMap)
+    .sort((a, b) => playCountMap[b] - playCountMap[a])
+    .slice(0, 50)
+    .map(title => ({title, playCount: playCountMap[title]}))
+
+  hub.set('mostPlayed', mostPlayed)
+}
+
+const setPlaying = history => {
+  const playing = history[history.length - 1]
+  hub.set('playing', playing)
+  io.emit('metadata', {playing})
+}
+
 const connect = (url, history) => {
   const stream = new ReadStream(url)
 
@@ -19,34 +43,36 @@ const connect = (url, history) => {
     setTimeout(() => connect(url, history), 10000)
   })
 
-  const getPreviousTitle = () => (history[history.length - 1] || {}).title
+  const getPreviousTitle = history => (history[history.length - 1] || {}).title
 
   const playing$ = Observable.fromEvent(stream, 'metadata')
     .map(data => data.StreamTitle)
-    .startWith(getPreviousTitle())
     .filter(title => title)
     .distinctUntilChanged()
     .map(title => {
       const [artist, song] = title.split(' - ')
       return new Song({title, artist, song})
     })
-  
-  playing$.subscribe(playing => {
-    if (playing.title !== getPreviousTitle()) {
-      history.length === 30 && history.splice(0, 1)
-      history.push(playing)
-      playing.save()
-    }
 
-    hub.set('nowPlaying', playing.title)
-    hub.set('radioStream', {playing, history})
-    io.emit('metadata', {playing})
-  })
+  const history$ = playing$
+    .scan((history, playing) => {
+      if (playing.title !== getPreviousTitle(history)) {
+        playing.save()
+        return [...history, playing]
+      }
+      return history
+    }, history)
+    .publishReplay(1)
+    .refCount()
+
+  history$.subscribe(setRecent)
+  history$.subscribe(setMostPlaying)
+  history$.subscribe(setPlaying)
 }
 
-Song.find().sort('-_id').limit(30).exec((err, docs) => {
-  const history = docs.reverse()
-  hub.set('radioStream', {history})
+Song.find().sort('_id').lean().then(history => {
+  setRecent(history)
+  setMostPlaying(history)
 
   if (shoutCastOnline && shoutCastUrls && shoutCastUrls[0]) {
     const url = shoutCastUrls[Math.random() * shoutCastUrls.length | 0]

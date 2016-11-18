@@ -3,7 +3,8 @@
 const hub = require('clusterhub')
 
 const socketHandler = socket => {
-  hub.get('radioStream', metadata => socket.emit('metadata', metadata))
+  hub.get('playing', playing => socket.emit('playing', playing))
+  hub.get('recent', recent => socket.emit('recent', recent))
   hub.get('reservations', rreservations => socket.emit('reservations', rreservations))
   hub.get('onlineList', list => list && socket.emit('onlineList', list))
 

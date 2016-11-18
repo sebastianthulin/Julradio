@@ -58,14 +58,14 @@ class Snowfall extends React.Component {
   componentDidMount() {
     this.canvas = this.refs.canvas
     this.parent = this.canvas.parentNode
-    this.canvas.width = this.getDimensions().width
-    this.canvas.height = this.getDimensions().height
+    this.resize()
     this.onSnowfallChange = createSnowfall(this.canvas, this.props)
     window.addEventListener('resize', this.resize.bind(this))
   }
 
   componentWillReceiveProps(props) {
     if (this.props.active !== props.active) {
+      this.resize()
       this.onSnowfallChange(!props.active)
     }
   }

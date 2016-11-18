@@ -5,8 +5,8 @@ const initialState = fromJS({
   connected: false,
   volume: null,
   nowPlaying: {},
-  historyView: 'history',
-  history: [],
+  historyView: 'recent',
+  recent: [],
   mostPlayed: []
 })
 
@@ -20,17 +20,17 @@ const player = (state = initialState, action) => {
       return state.set('volume', action.volume)
     case 'SET_HISTORY_VIEW':
       return state.set('historyView', action.view)
-    case 'SET_HISTORY':
-      return state.set('history', fromJS(action.history))
+    case 'SET_RECENT':
+      return state.set('recent', fromJS(action.recent))
     case 'SET_NOW_PLAYING': {
       const nowPlaying = fromJS(action.playing)
-      return state.set('nowPlaying', nowPlaying).update('history', history => {
-        const doPush = history.last() && history.last().get('title') !== nowPlaying.get('title')
+      return state.set('nowPlaying', nowPlaying).update('recent', recent => {
+        const doPush = recent.last() && recent.last().get('title') !== nowPlaying.get('title')
         if (!doPush) {
-          return history
+          return recent
         }
-        history = history.size === 30 ? history.splice(0, 1) : history
-        return history.push(nowPlaying)
+        recent = recent.size === 30 ? recent.splice(0, 1) : recent
+        return recent.push(nowPlaying)
       })
     }
     case 'FETCH_MOST_PLAYED':

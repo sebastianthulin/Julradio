@@ -12,7 +12,7 @@ const HistoryItem = ({songTitle, playCount}) => (
 
 @connect(state => ({
   historyView: state.player.get('historyView'),
-  history: state.player.get('history'),
+  recent: state.player.get('recent'),
   mostPlayed: state.player.get('mostPlayed')
 }), {
   onSetHistoryView: setHistoryView,
@@ -25,17 +25,17 @@ class History extends React.Component {
 
   render() {
     const {mostPlayed, historyView, onSetHistoryView} = this.props
-    const history = this.props.history.reverse()
+    const recent = this.props.recent.reverse()
 
     return (
       <div id="History">
-        <button className={cx({active: historyView === 'history'})} onClick={() => onSetHistoryView('history')}>
+        <button className={cx({active: historyView === 'recent'})} onClick={() => onSetHistoryView('recent')}>
           30 senaste
         </button>
         <button className={cx({active: historyView === 'mostPlayed'})} onClick={() => onSetHistoryView('mostPlayed')}>
           50 mest spelade
         </button>
-        {historyView === 'history' && history.map(song => (
+        {historyView === 'recent' && recent.map(song => (
           <HistoryItem
             key={song.get('_id')}
             songTitle={song.get('title')}
