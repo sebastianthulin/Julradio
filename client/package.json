@@ -17,5 +17,16 @@
     "reselect": "^2.5.4",
     "socket.io-client": "^1.4.8",
     "superagent": "^2.2.0"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "react",
+      "stage-0"
+    ],
+    "plugins": [
+      "transform-decorators-legacy",
+      "react-hot-loader/babel"
+    ]
   }
 }

@@ -9,31 +9,21 @@
     "client:devserver": "cd client && webpack-dev-server --inline --hot --host 0.0.0.0  --colors --no-info"
   },
   "devDependencies": {
-    "babel-cli": "^6.14.0",
-    "babel-core": "^6.14.0",
-    "babel-loader": "^6.2.5",
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-preset-es2015": "^6.14.0",
-    "babel-preset-react": "^6.11.1",
-    "babel-preset-stage-0": "^6.5.0",
-    "concurrently": "^2.2.0",
-    "css-loader": "^0.24.0",
-    "nodemon": "^1.10.2",
-    "react-hot-loader": "^1.3.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "concurrently": "^3.1.0",
+    "css-loader": "^0.26.0",
+    "nodemon": "^1.11.0",
+    "react-hot-loader": "^3.0.0-beta.6",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
-    "webpack": "^1.13.2",
-    "webpack-dev-server": "^1.15.0"
-  },
-  "babel": {
-    "presets": [
-      "es2015",
-      "react",
-      "stage-0"
-    ],
-    "plugins": [
-      "transform-decorators-legacy"
-    ]
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2"
   }
 }

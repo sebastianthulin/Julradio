@@ -47,7 +47,7 @@ module.exports = {
     loaders: [{
       test: /\.js$/,
       exclude: /node_modules/,
-      loaders: ['react-hot', 'babel']
+      loader: 'babel'
     }, {
       test: /\.styl$/,
       loader: 'style!css!stylus'

@@ -19,5 +19,10 @@
     "socket.io": "^1.5.1",
     "socket.io-emitter": "^1.0.0",
     "socket.io-redis": "^1.1.1"
+  },
+  "babel": {
+    "presets": [
+      "stage-0"
+    ]
   }
 }
