@@ -1,5 +1,5 @@
 const React = require('react')
-const {browserHistory} = require('react-router')
+const handleLink = require('../../services/handleLink')
 
 const entityMap = {
   '&': '&amp;',
@@ -35,21 +35,11 @@ class MDMini extends React.Component {
     return props.text !== this.props.text
   }
 
-  handleClick(evt) {
-    if (evt.target.tagName === 'A' && evt.metaKey === false) {
-      evt.preventDefault()
-      browserHistory.push(evt.target.pathname)
-    }
-  }
-
   render() {
     const {text, username, ...rest} = this.props
     const __html = parseContent(text, username)
-    return <div
-      onClick={this.handleClick.bind(this)}
-      dangerouslySetInnerHTML={{__html}}
-      {...rest}
-    />
+
+    return <div onClick={handleLink} dangerouslySetInnerHTML={{__html}} {...rest} />
   }
 }
 

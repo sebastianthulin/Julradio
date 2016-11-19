@@ -47,6 +47,7 @@ export const createRequest = body => dispatch => {
     dispatch(createNotification({name: 'requestsong'}))
   }).catch(err => {
     dispatch(errorNotify(err))
+    return err
   })
 }
 

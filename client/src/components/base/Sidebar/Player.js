@@ -19,7 +19,7 @@ class Player extends React.Component {
 
   render() {
     const {props} = this
-    const {onAir} = props
+    const {onAir, nowPlaying} = props
     const {mediaMenu} = this.state || {}
     return (
       <div id="Player">
@@ -48,9 +48,11 @@ class Player extends React.Component {
                 />
               </div>
             </div>
-            <Link to="/history" className="songTitle">
-              {props.nowPlaying.get('title')}
-            </Link>
+            {nowPlaying && (
+              <Link to="/history" className="songTitle">
+                {nowPlaying.get('title')}
+              </Link>
+            )}
           </div>
         </div>
       </div>

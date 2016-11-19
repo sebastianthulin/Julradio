@@ -27,8 +27,7 @@ const setMostPlaying = history => {
   hub.set('mostPlayed', mostPlayed)
 }
 
-const setPlaying = history => {
-  const playing = history[history.length - 1]
+const setPlaying = playing => {
   hub.set('playing', playing)
   io.emit('playing', playing)
 }
@@ -40,10 +39,11 @@ const connect = (url, history) => {
   stream.on('error', err => console.error(err))
   stream.on('close', () => {
     console.log('SHOUTcast server disconnected')
-    setTimeout(() => connect(url, history), 10000)
+    setPlaying(null)
+    setTimeout(start, 10000)
   })
 
-  const getPreviousTitle = history => (history[history.length - 1] || {}).title
+  const getPrevious = history => history[history.length - 1]
 
   const playing$ = Observable.fromEvent(stream, 'metadata')
     .map(data => data.StreamTitle)
@@ -56,7 +56,7 @@ const connect = (url, history) => {
 
   const history$ = playing$
     .scan((history, playing) => {
-      if (playing.title !== getPreviousTitle(history)) {
+      if (playing.title !== (getPrevious(history) || {}).title) {
         playing.save()
         return [...history, playing]
       }
@@ -67,15 +67,19 @@ const connect = (url, history) => {
 
   history$.subscribe(setRecent)
   history$.subscribe(setMostPlaying)
-  history$.subscribe(setPlaying)
+  history$.subscribe(history => setPlaying(getPrevious(history)))
 }
 
-Song.find().sort('_id').lean().then(history => {
-  setRecent(history)
-  setMostPlaying(history)
+const start = () => {
+  Song.find().sort('_id').lean().then(history => {
+    setRecent(history)
+    setMostPlaying(history)
 
-  if (shoutCastOnline && shoutCastUrls && shoutCastUrls[0]) {
-    const url = shoutCastUrls[Math.random() * shoutCastUrls.length | 0]
-    connect(url, history)
-  }
-})
+    if (shoutCastOnline && shoutCastUrls && shoutCastUrls[0]) {
+      const url = shoutCastUrls[Math.random() * shoutCastUrls.length | 0]
+      connect(url, history)
+    }
+  })
+}
+
+start()

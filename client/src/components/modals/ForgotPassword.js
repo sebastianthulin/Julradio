@@ -11,11 +11,12 @@ const {createNotification} = require('../../actions/notifications')
 class ForgotPassword extends React.Component {
   handleForgot(evt) {
     evt.preventDefault()
-    this.props.onForgotPassword(this.refs.email.value).then(() => {
-      this.props.closeModal()
-      this.props.onCreateNotification({name: 'resetinstructions'})
-    }).catch(() => {
+    this.props.onForgotPassword(this.refs.email.value).then(err => {
       this.setState({disabled: false})
+      if (!err) {
+        this.props.closeModal()
+        this.props.onCreateNotification({name: 'resetinstructions'})
+      }
     })
     this.setState({disabled: true})
   }

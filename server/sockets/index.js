@@ -8,8 +8,16 @@ const chat = require('./chat')
 const comments = require('./comments')
 const {SAFE_USER_SELECT} = require('../constants')
 
+const getXForwardedFor = socket => {
+  const ips = socket.request.headers['x-forwarded-for']
+  return ips && ips.split(', ')[0]
+}
+
 const socketHandler = socket => {
   const listen = socket.on.bind(socket)
+
+  socket.userId = socket.request.session.uid
+  socket.ip = getXForwardedFor(socket) || socket.request.connection.remoteAddress
 
   socket.on = (event, cb) => {
     listen(event, async (data, respond) => {
@@ -27,9 +35,6 @@ const socketHandler = socket => {
       }
     })
   }
-
-  socket.userId = socket.request.session.uid
-  socket.ip = socket.request.connection.remoteAddress || socket.request['x-forwarded-for']
 
   broadcast(socket)
   comments(socket)

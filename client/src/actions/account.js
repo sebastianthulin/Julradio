@@ -63,7 +63,7 @@ export const removeAvatar = () => dispatch => {
 }
 
 export const forgotPassword = email => dispatch => {
-  return request.post('/api/forgot', {email})
+  return request.post('/api/forgot', {email}).then(() => null).catch(handleErr(dispatch))
 }
 
 export const newPassword = (id, password) => dispatch => {

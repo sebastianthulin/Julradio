@@ -47,9 +47,11 @@ class RequestSong extends React.Component {
       return alert('För lång text. Högst 250 tecken.')
     }
 
-    this.props.onCreateRequest(fields, () => {
-      this.resetFields()
-      this.props.closeModal()
+    this.props.onCreateRequest(fields).then(err => {
+      if (!err) {
+        this.resetFields()
+        this.props.closeModal()
+      }
     })
   }
 

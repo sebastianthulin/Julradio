@@ -40,21 +40,27 @@ const comments = (state = initialState, action) => {
       return state.setIn(['repliesByCommentId', action.commentId], replies)
     }
     case 'RECEIVE_REPLY': 
-      return state.updateIn(['repliesByCommentId', action.commentId], (replies = List()) => {
-        return replies.push(fromJS(action.reply))
-          .filter((reply, i, self) => self.findIndex(r => r.get('_id') === reply.get('_id')) === i)
-          .sort((a, b) => new Date(a.get('date')) - new Date(b.get('date')))
-      })
+      return state
+        .updateIn(['byId', action.commentId, 'numReplies'], numReplies => {
+          return (numReplies || 0 ) + 1
+        })
+        .updateIn(['repliesByCommentId', action.commentId], (replies = List()) => {
+          return replies.push(fromJS(action.reply))
+            .filter((reply, i, self) => self.findIndex(r => r.get('_id') === reply.get('_id')) === i)
+            .sort((a, b) => new Date(a.get('date')) - new Date(b.get('date')))
+        })
     case 'DELETE_COMMENT_SUCCESS':
       if (action.replyTo) {
-        return state.updateIn(['repliesByCommentId', action.replyTo], replies => {
-          const i = replies.findIndex(r => r.get('_id') === action.commentId)
-          return i === -1 ? replies : replies.splice(i, 1)
-        })
+        return state
+          .updateIn(['byId', action.replyTo, 'numReplies'], numReplies => {
+            return numReplies - 1
+          })
+          .updateIn(['repliesByCommentId', action.replyTo], replies => {
+            return replies.filter(r => r.get('_id') !== action.commentId)
+          })
       } else {
         return state.update('ids', ids => {
-          const i = ids.indexOf(action.commentId)
-          return i === -1 ? ids : ids.splice(i, 1)
+          return ids.filter(id => id !== action.commentId)
         })
       }
     default:
