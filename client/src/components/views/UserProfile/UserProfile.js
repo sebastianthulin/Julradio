@@ -1,6 +1,5 @@
 const React = require('react')
 const {Link} = require('react-router')
-const cx = require('classnames')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const TimeSince = require('../../reusable/TimeSince')
 const Comments = require('../../reusable/Comments')
@@ -41,10 +40,12 @@ class UserProfile extends React.Component {
         <main>
           <div className="picture">
             <ProfilePicture id={user.get('picture')} />
-            <div className="status">
-              <div className={cx('indi', {isOnline})} />
-              <span>{isOnline ? '<-- är online :)' : '<-- är offline :('}</span>
-            </div>
+            {isOnline && (
+              <div className="status">
+                <div className="indicator" />
+                <span>{'<-- är online :)'}</span>
+              </div>
+            )}
           </div>
           <div className="name">{user.get('name') ? user.get('name') : '@' + user.get('username')}</div>
           <div className="misq">{(user.get('name') ? ('@' + user.get('username') + ' ') : '') + this.getIndentity()} </div>

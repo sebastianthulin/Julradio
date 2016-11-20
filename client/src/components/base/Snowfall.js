@@ -57,7 +57,6 @@ const createSnowfall = (canvas, opts) => {
 class Snowfall extends React.Component {
   componentDidMount() {
     this.canvas = this.refs.canvas
-    this.parent = this.canvas.parentNode
     this.resize()
     this.onSnowfallChange = createSnowfall(this.canvas, this.props)
     window.addEventListener('resize', this.resize.bind(this))
@@ -70,13 +69,10 @@ class Snowfall extends React.Component {
     }
   }
 
-  getDimensions() {
-    return {width: this.parent.clientWidth, height: this.parent.clientHeight}
-  }
-
   resize() {
-    this.canvas.width = this.getDimensions().width
-    this.canvas.height = this.getDimensions().height
+    const {canvas} = this
+    canvas.width = canvas.parentNode.clientWidth
+    canvas.height = canvas.parentNode.clientHeight
   }
 
   render() {

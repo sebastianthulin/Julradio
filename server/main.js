@@ -2,7 +2,7 @@
 
 const express = require('express')
 const proxy = require('proxy-middleware')
-const {app, server, io, webpackServer} = require('./server')
+const {app, server, io} = require('./server')
 const {session, ioify, body, fetchUser} = require('./middleware')
 const api = require('./api')
 const misq = require('./controllers/misq')
