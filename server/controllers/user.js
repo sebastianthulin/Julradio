@@ -218,7 +218,6 @@ exports.updateSettings2 = async (req, res, next) => {
 }
 
 exports.createProfilePicture = (req, res, next) => {
-  const userId = req.userId
   upload(req, res, err => {
     if (err) {
       console.error(err, '/profilepicture INVALID_IMAGE')
@@ -229,44 +228,38 @@ exports.createProfilePicture = (req, res, next) => {
 
     const picture = new Picture({
       extension: '.jpg',
-      user: userId
+      user: req.userId
     })
 
     gm(req.file.path)
       .autoOrient()
       .noProfile()   // remove exif
       .write(req.file.path, err => {
-        gm(req.file.path).size((err, value) => {
+        gm(req.file.path).size(function(err, value) {
           if (err) {
             console.error(err, '/profilepicture INVALID_IMAGE')
             fs.unlink(req.file.path)
             return next(apiError('INVALID_IMAGE'))
           }
 
-          let newWidth, newHeight
           const width = value.width
           const height = value.height
           const aspect = width / height
           const newSize = Math.min(Math.max(width, height), 500)
-
-          newWidth = newHeight = newSize
-          if (width > height) {
-            newWidth = Math.round(newWidth * aspect)
-          } else {
-            newHeight = Math.round(newHeight / aspect)
-          }
+          const newWidth = width > height ? Math.round(newSize * aspect) : newSize
+          const newHeight = !(width > height) ? Math.round(newSize / aspect) : newSize
 
           this.resize(newWidth, newHeight, '!')
             .crop(newSize, newSize, (newWidth - newSize) / 2, (newHeight - newSize) / 2)
             .setFormat('jpg')
-            .write('public/i/' + picture._id + '.jpg', err => {
+            .write('../public/i/' + picture._id + '.jpg', err => {
               fs.unlink(req.file.path)
               if (err) {
                 console.error('@/profilepicture handler a', err)
                 return next(apiError('UNKNOWN_ERROR'))
               }
               picture.save().then(() => {
-                return User.findByIdAndUpdate(userId, {
+                return User.findByIdAndUpdate(req.userId, {
                   picture: picture._id
                 }, {
                   new: true

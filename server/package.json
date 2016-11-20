@@ -15,8 +15,8 @@
     "nodemailer": "^2.6.4",
     "proxy-middleware": "^0.15.0",
     "redis": "^2.6.3",
-    "rxjs": "^5.0.0-rc.3",
-    "socket.io": "^1.5.1",
+    "rxjs": "^5.0.0-rc.4",
+    "socket.io": "^1.6.0",
     "socket.io-emitter": "^1.0.0",
     "socket.io-redis": "^1.1.1"
   },

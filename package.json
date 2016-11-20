@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "concurrently --kill-others 'npm run server:dev' 'npm run client:devserver'",
     "server:dev": "cd server && nodemon --exec babel-node index.js",
-    "server:deploy": "cd server && NODE_ENV=production pm2 start index.js --name julradio --interpreter babel-node",
+    "server:deploy": "cd server && NODE_ENV=production pm2 start index.js --name jr --interpreter babel-node",
     "client:build": "cd client && NODE_ENV=production webpack",
     "client:devserver": "cd client && webpack-dev-server --inline --hot --host 0.0.0.0  --colors --no-info"
   },
