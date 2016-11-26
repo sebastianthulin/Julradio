@@ -4,6 +4,7 @@ const ProfilePicture = require('../reusable/ProfilePicture')
 const {updateAccountSettings, updateAccountSettings2} = require('../../actions/account')
 const {openModal} = require('../../actions/modal')
 const {createNotification} = require('../../actions/notifications')
+const {createArray} = require('../../utils')
 
 const months = [
   'Januari',
@@ -20,7 +21,7 @@ const months = [
   'December'
 ]
 
-const days = Array.from(Array(31), (_, i) => i + 1)
+const days = createArray(31, i => i + 1)
 
 @connect(state => ({
   user: state.account

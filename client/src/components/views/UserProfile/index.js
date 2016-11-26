@@ -1,6 +1,6 @@
 const React = require('react')
 const {connect} = require('react-redux')
-const handleNotification = require('../../../services/handleNotification')
+// const handleNotification = require('../../../utils/handleNotification')
 const UserProfile = require('./UserProfile')
 const NotFound = require('../NotFound')
 const {fetchUser} = require('../../../actions/users')

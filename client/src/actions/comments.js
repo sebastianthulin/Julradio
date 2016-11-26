@@ -1,4 +1,4 @@
-const socket = require('../services/socket')
+const socket = require('../utils/socket')
 const {errorNotify} = require('./notifications')
 
 const handleErr = dispatch => err => {

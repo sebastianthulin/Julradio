@@ -1,5 +1,5 @@
 const request = require('superagent')
-const radio = require('../services/radio')
+const radio = require('../utils/radio')
 const {errorNotify} = require('./notifications')
 
 const localStorage = window.localStorage || {}

@@ -9,9 +9,9 @@ exports.request = async (req, res, next) => {
   try {
     const email = String(req.body.email).toLowerCase()
     const user = await User.findOne({email})
-    if (!email || !doc) {
+    if (!email || !user) {
       throw apiError('INVALID_EMAIL')
-    } else if (doc.banned) {
+    } else if (user.banned) {
       throw apiError('USER_BANNED')
     }
     await PasswordRequest.findOneAndRemove({user})

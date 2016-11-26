@@ -1,7 +1,7 @@
 const {EventEmitter} = require('events')
 const request = require('superagent')
-const socket = require('../services/socket')
-const handleNotification = require('../services/handleNotification')
+const socket = require('../utils/socket')
+const handleNotification = require('../utils/handleNotification')
 const ChatStore = new EventEmitter
 const threadsById = {}
 const threadsByUserId = {}

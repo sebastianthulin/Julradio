@@ -2,7 +2,7 @@ const React = require('react')
 const {Link} = require('react-router')
 const TimeSince = require('./TimeSince')
 const ProfilePicture = require('./ProfilePicture')
-const handleLink = require('../../services/handleLink')
+const {handleLink} = require('../../utils')
 
 const Article = ({article}) => {
   const user = article.get('user')

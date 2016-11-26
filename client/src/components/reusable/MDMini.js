@@ -1,5 +1,5 @@
 const React = require('react')
-const handleLink = require('../../services/handleLink')
+const {handleLink} = require('../../utils')
 
 const entityMap = {
   '&': '&amp;',

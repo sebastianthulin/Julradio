@@ -1,6 +1,6 @@
 const request = require('superagent')
-const Sound = require('../services/Sound')
-const handleNotification = require('../services/handleNotification')
+const sound = require('../utils/sound')
+const handleNotification = require('../utils/handleNotification')
 const errorMessages = require('../../../lib/errorMessages')
 
 const getMetadata = (notification, getState) => {
@@ -67,7 +67,7 @@ export const createNotification = notification => (dispatch, getState) => {
   const metadata = getMetadata(notification, getState)
 
   if (metadata.soundName) {
-    Sound.play('bells')
+    sound.play('bells')
   }
 
   if (window.Android && notification.from) {

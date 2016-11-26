@@ -1,4 +1,5 @@
 const React = require('react')
+const {createArray} = require('../../utils')
 
 const createSnowfall = (canvas, opts) => {
   const ctx = canvas.getContext('2d')
@@ -28,7 +29,7 @@ const createSnowfall = (canvas, opts) => {
     flake.stepSize = random(1, 10) / 100
   }
 
-  const flakes = Array.from(Array(opts.count), createFlake)
+  const flakes = createArray(opts.count, createFlake)
 
   const tick = () => {
     requestAnimationFrame(tick)
