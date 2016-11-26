@@ -8,7 +8,6 @@ const SVG = require('../../svg')
 const ProfilePicture = require('../../reusable/ProfilePicture')
 const {openModal} = require('../../../actions/modal')
 const {togglePlay, setVolume, toggleMute} = require('../../../actions/player')
-const {logOut} = require('../../../actions/account')
 const selectors = require('../../../selectors')
 
 const divider = <div className="divider" />
@@ -27,8 +26,7 @@ const divider = <div className="divider" />
   openModal,
   onTogglePlay: togglePlay,
   onSetVolume: setVolume,
-  onToggleMute: toggleMute,
-  onLogOut: logOut
+  onToggleMute: toggleMute
 })
 class Sidebar extends React.Component {
   renderUser() {
@@ -96,7 +94,6 @@ class Sidebar extends React.Component {
             {props.isPrivileged && <Link to="/admin/articles">Admin</Link>}
             {user && <Link to="/settings">Inställningar</Link>}
             <Link to="/crew">Medarbetare</Link>
-            {user && <a onClick={props.onLogOut}>Logga ut</a>}
           </div>
           {!playerLess && (
             <Player

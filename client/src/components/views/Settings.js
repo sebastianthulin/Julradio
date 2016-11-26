@@ -1,7 +1,7 @@
 const React = require('react')
 const {connect} = require('react-redux')
 const ProfilePicture = require('../reusable/ProfilePicture')
-const {updateAccountSettings, updateAccountSettings2} = require('../../actions/account')
+const {updateAccountSettings, updateAccountSettings2, logOut} = require('../../actions/account')
 const {openModal} = require('../../actions/modal')
 const {createNotification} = require('../../actions/notifications')
 const {createArray} = require('../../utils')
@@ -29,7 +29,8 @@ const days = createArray(31, i => i + 1)
   onUpdateAccountSettings: updateAccountSettings, 
   onUpdateAccountSettings2: updateAccountSettings2,
   onOpenModal: openModal,
-  onCreateNotification: createNotification
+  onCreateNotification: createNotification,
+  onLogOut: logOut
 })
 class Settings extends React.Component {
   componentWillMount() {
@@ -109,7 +110,7 @@ class Settings extends React.Component {
 
   render() {
     const {changes} = this.state
-    const {user, onOpenModal} = this.props
+    const {user, onOpenModal, onLogOut} = this.props
     return (
       <div id="Settings">
         <h1>Profilinställningar</h1>
@@ -202,6 +203,7 @@ class Settings extends React.Component {
             onClick={this.save.bind(this)}
           />
         </div>
+        <a onClick={onLogOut}>Logga ut</a>
       </div>
     )
   }
