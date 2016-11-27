@@ -12,9 +12,12 @@
   //overflow-y auto
   +desktop()
     background rgba(165, 27, 27, 0.25)
+    transform none
+    transition none
     
   @media (max-height: 700px)
     width 80%
+    max-width 300px
     background #a51b1b
     
     #Player
@@ -88,12 +91,6 @@
       display none
       
 
-//END OF MOBILE
-
-  +desktop()
-    transform none
-    transition none
-    
   &.playerLess
     padding-bottom 60px
 
