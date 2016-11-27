@@ -16,6 +16,7 @@ class CosyCorner extends React.Component {
         </div>
         <div id="OnlineList">
           <h1>Online</h1>
+          <div className="search"></div>
           <div className="person">
             <div className="picture"></div>
             <div className="username">Reddan</div>

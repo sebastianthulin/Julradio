@@ -12,6 +12,7 @@
   //overflow-y auto
   +desktop()
     background rgba(165, 27, 27, 0.25)
+    
   @media (max-height: 700px)
     width 80%
     background #a51b1b
@@ -21,21 +22,73 @@
       position absolute !important
     
     .loginArea
-      padding 0px 0px !important
+      padding 10px 0px !important
       background rgba(0,0,0,0) !important
       .option
         height 40px !important
         
+    hr
+      display none !important
+        
+    .userAction
+      display table !important
+      text-align center !important
+      font-size 14px !important
+      width 100%
+      padding 8px !important
+      margin-top 2px !important
+      color #a51b1b !important
+      background #fff !important
+      font-weight 400 !important
+      background rgba(0,0,0,0.03) !important
+      color #fff !important
+      
+      span
+        color #fff !important
+        font-weight 400 !important
+      
+      svg
+        display none !important
+        
+    .shortcuts
+      a
+        display table !important
+        text-align center !important
+        font-size 14px !important
+        width 100%
+        padding 8px !important
+        margin-top 2px !important
+        color #a51b1b !important
+        background #fff !important
+        font-weight 400 !important
+        background rgba(0,0,0,0.03) !important
+        color #fff !important
+        
     .divider
       display none !important
+      
     .inner
-      padding-top 20px !important
-    .ProfilePicture, hr
-      display none
+      padding-top 0px !important
+      display block !important
+      text-align center
+      
+      
+    .user
+      padding 10px !important
+      display block !important
+      margin 0px 0px !important
+      background rgba(0,0,0,0.03) !important
+      .ProfilePicture, hr
+        display none !important
+        
     .logo a
       font-size 32px !important
+      
     .unseenCircle
       display none
+      
+
+//END OF MOBILE
 
   +desktop()
     transform none
