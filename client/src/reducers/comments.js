@@ -11,6 +11,7 @@ const initialState = fromJS({
 const comments = (state = initialState, action) => {
   switch (action.type) {
     case 'RECEIVE_COMMENTS': {
+      // TODO: receive and update commentCount here as well
       const byId = state.get('byId').withMutations(ctx => {
         for (let comment of action.comments) {
           ctx.set(comment._id, fromJS(comment))

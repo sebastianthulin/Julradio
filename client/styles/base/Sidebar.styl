@@ -123,21 +123,23 @@
       margin 0px auto
       color #FFF
 
+  .unseenCircle
+    position absolute
+    right 0px
+    top 0px
+    displayFlex()
+    align-items center
+    width 30px
+    height 30px
+    border-radius 50%
+    background #E1322D
+    span
+      margin 0 auto
+      text-decoration none !important
+
   .user
     position relative
     text-align center
-    .unseenCircle
-      position absolute
-      right 0px
-      top 0px
-      displayFlex()
-      align-items center
-      width 30px
-      height 30px
-      border-radius 50%
-      background #E1322D
-      span
-        margin 0 auto
     .ProfilePicture
       width 140px
       height 140px
@@ -173,14 +175,6 @@
     &:hover span
       color #FFF
       text-decoration underline
-    .notification
-      color red
-      position absolute
-      left 50%
-      top 25%
-      transform translate(-50%, -50%)
-      font-size 13px
-      font-weight bold
     svg
       display block
       width 32px

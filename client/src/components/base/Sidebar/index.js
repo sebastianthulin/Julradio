@@ -20,8 +20,8 @@ const divider = <div className="divider" />
   connected: state.player.get('connected'),
   nowPlaying: state.player.get('nowPlaying'),
   onAir: state.reservations.get('onAir'),
-  unseenMessages: state.notifications.getIn(['unseenCount', 'message']).size,
-  unseenWallPosts: state.notifications.getIn(['unseenCount', 'wallPost']).size
+  unseenMessages: selectors.unseenCount(state, 'message').size,
+  unseenWallPosts: selectors.unseenCount(state, 'wallPost').size
 }), {
   openModal,
   onTogglePlay: togglePlay,
@@ -31,6 +31,7 @@ const divider = <div className="divider" />
 class Sidebar extends React.Component {
   renderUser() {
     const {user, openModal, unseenWallPosts} = this.props
+
     return user ? (
       <Link to={`/@${user.username}`} className="user">
         {unseenWallPosts > 0 && (
@@ -80,7 +81,11 @@ class Sidebar extends React.Component {
           {divider}
           {user && <Link to="/messages" className="userAction">
             <SVG.Messenger />
-            {props.unseenMessages > 0 && <div className="notification">{props.unseenMessages}</div>}
+            {props.unseenMessages > 0 && (
+              <div className="unseenCircle">
+                <span>{props.unseenMessages}</span>
+              </div>
+            )}
             <span>Meddelanden</span>
           </Link>}
           <Link to="/cosycorner" className="userAction">

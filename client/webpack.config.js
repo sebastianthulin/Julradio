@@ -41,7 +41,7 @@ module.exports = {
   ] : [
     ...plugins,
     new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin({mangle: false, sourcemap: false})
+    new webpack.optimize.UglifyJsPlugin({compressor: {warnings: false}})
   ],
   module: {
     loaders: [{
