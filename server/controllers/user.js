@@ -69,8 +69,7 @@ exports.showProfile = async (req, res, next) => {
     query.forEach((type, i) => result[type] = data[i])
     res.send(result)
   } catch (err) {
-    console.error(err)
-    res.sendStatus(500)
+    next(err)
   }
 }
 
