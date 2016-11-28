@@ -8,6 +8,7 @@ module.exports = combineReducers({
   modal: require('./modal'),
   notifications: require('./notifications'),
   comments: require('./comments'),
+  chat: require('./chat'),
   visibility: require('./visibility'),
   requests: require('./requests'),
   reservations: require('./reservations')

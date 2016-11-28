@@ -9,7 +9,7 @@ const ArticleArchive = require('./components/views/ArticleArchive')
 const ResetPassword = require('./components/views/ResetPassword')
 const UserProfile = require('./components/views/UserProfile')
 const Settings = require('./components/views/Settings')
-const Messages = require('./components/views/Messages')
+const Chat = require('./components/views/Chat')
 const CosyCorner = require('./components/views/CosyCorner')
 const FindUsers = require('./components/views/FindUsers')
 const Crew = require('./components/views/Crew')
@@ -44,7 +44,7 @@ const getRoutes = ({getState}) => {
       <Route path="/forgot/:id" component={ResetPassword} />
       <Route path="/crew" component={Crew} />
       <Route path="/history" component={History} />
-      <Route path="/messages(/:user)" component={Messages} onEnter={requireAuth} />
+      <Route path="/messages(/:user)" component={Chat} onEnter={requireAuth} />
       <Route path="/cosycorner" component={CosyCorner} />
       <Route path="/findusers" component={FindUsers} />
       <Route path="/@:username" component={UserProfile} />
