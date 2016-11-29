@@ -1,113 +1,85 @@
 #CosyCorner
-  width 70%
-  float left
-  h1
-    padding-bottom 10px
-    font-family Lobster
-    text-align center
-    border-bottom 1px solid rgba(255, 255, 255, 0.17)
-    
-  @media (max-height: 700px)
-    position absolute
-    top 60px
-    left 10px
-    right 10px
-    width auto
-    
-    
-#OnlineList
-  position absolute
-  top 0
-  right 0px
-  height 100vh
-  width 30%
-  float right
-  padding 15px
-  background rgba(0,0,0,0.05)
-  
-  .search
-    display: inline-block;
-    width: 34px;
-    height: 34px;
-    background: #a72625;
-    border-radius: 50%;
-    margin: 10px 0px 10px 10px;
-    position: relative;
-    &:after
-      content 'Sök användare'
-      position: absolute;
-      width: 100px;
-      margin-left: 46px;
-      margin-top: 6px;
-      color: #fff;
-    
-    img
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      width: 17px;
-  
-  h1
-    font-family Lobster
-    font-size 30px
-    border-bottom 1px solid rgba(255,255,255,0.17)
-    text-align center
-    padding 10px 0px
-    margin-top 39px
-  
-  .person
-    margin 10px
-    display table
+  displayFlex()
+  flex-direction column-reverse
+  margin -20px
+  +tablet()
+    flex-direction row
+    margin -40px
+
+  .cosyCornerInner
     width 100%
-    line-height 34px
-    
-    .picture
-      width 34px
-      height 34px
-      border-radius 50%
-      background white
-      float left
-      margin-right 10px
-      
-    .username
-      float left
-      color #ff6161
-      
+    padding 20px
+    +tablet()
+      width 70%
+      padding 40px 15px 40px 40px
+    h1
+      padding-bottom 10px
+      font-family Lobster
+      text-align center
+      border-bottom 1px solid rgba(255, 255, 255, 0.17)
 
-
-  @media (max-height 700px)
-    position absolute
-    top 0px
-    height 54px
-    padding 0px
+  .onlineList
+    padding 5px
     background #790c0c
-    left 0px
-    right 0px
-    width auto
     overflow-x scroll
     white-space nowrap
-    
     h1
-      display none 
-      
+      display none
+      font-family Lobster
+      font-size 30px
+      border-bottom 1px solid rgba(255,255,255,0.17)
+      text-align center
+      padding 10px 0px
+      margin-top 39px
+    .list
+      displayFlex()
     .search
-      &:after
-        display none
-    
-    .person
-      margin 10px 0px 10px 10px
-      display table
-      line-height 34px
-      display inline-block
-      width auto
-      
-      .picture
+      margin 5px
+      .inner
+        displayFlex()
+        justify-content center
+        align-items center
+        width 34px
+        height 34px
+        background #a72625
+        border-radius 50%
+
+    .User
+      margin 5px
+      .ProfilePicture
         width 34px
         height 34px
         border-radius 50%
-        background white
-        float left
-        margin 0px
         
-      .username
-        display none
+    .search .searchText, .User .username
+      display none
+
+
+    +tablet()
+      width 30%
+      padding 15px
+      background rgba(0,0,0,0.05)
+      overflow-x hidden
+      h1
+        display block
+      .list
+        flex-direction column
+      .search
+        displayFlex()
+        align-items center
+        margin 5px 0 20px
+        .inner
+          margin-right 10px
+      .User
+        displayFlex()
+        align-items center
+        margin 5px 0
+        .ProfilePicture
+          margin-right 10px
+        .username
+          color #ff6161
+
+      .search:hover .searchText, .User:hover .username
+        border-bottom 1px solid
+      .search .searchText, .User .username
+        display inline

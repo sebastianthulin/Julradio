@@ -1,11 +1,24 @@
 const React = require('react')
+const {connect} = require('react-redux')
+const {Link} = require('react-router')
 const Comments = require('../reusable/Comments')
+const ProfilePicture = require('../reusable/ProfilePicture')
 
+const User = ({user}) => (
+  <Link to={'/@' + user.get('username')} className="User">
+    <ProfilePicture id={user.get('picture')} />
+    <span className="username">{user.get('username')}</span>
+  </Link>
+)
+
+@connect(state => ({
+  onlineList: state.users.get('onlineList')
+}))
 class CosyCorner extends React.Component {
   render() {
     return (
-      <div>
-        <div id="CosyCorner">
+      <div id="CosyCorner">
+        <div className="cosyCornerInner">
           <h1>Myshörnan</h1>
           <Comments
             type="cosyCorner"
@@ -14,16 +27,18 @@ class CosyCorner extends React.Component {
             signInPlaceholder="Logga in för att ta del av myset"
           />
         </div>
-        <div id="OnlineList">
+        <div className="onlineList">
           <h1>Online</h1>
-          <div className="search"><img src="/images/search.svg" /></div>
-          <div className="person">
-            <div className="picture"></div>
-            <div className="username">Reddan</div>
-          </div>
-          <div className="person">
-            <div className="picture"></div>
-            <div className="username">Glutch</div>
+          <div className="list">
+            <Link to="/search" className="search">
+              <div className="inner">
+                <img src="/images/search.svg" />
+              </div>
+              <span className="searchText">Sök användare</span>
+            </Link>
+            {this.props.onlineList.map(user =>
+              <User key={user.get('_id')} user={user} />
+            )}
           </div>
         </div>
       </div>

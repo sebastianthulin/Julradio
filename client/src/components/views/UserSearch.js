@@ -12,7 +12,6 @@ const User = ({user}) => (
 )
 
 @connect(state => ({
-  onlineList: state.users.get('onlineList'),
   searchQuery: state.users.getIn(['search', 'query']),
   searchResult: state.users.getIn(['search', 'users'])
 }), {
@@ -20,8 +19,8 @@ const User = ({user}) => (
 })
 class UserSearch extends React.Component {
   render() {
-    const {onlineList, searchQuery, searchResult, onSearchUsers} = this.props
-    const mapUsers = user => <User key={user.get('_id')} user={user} />
+    const {searchQuery, searchResult, onSearchUsers} = this.props
+
     return (
       <div id="UserSearch">
         <input
@@ -29,8 +28,9 @@ class UserSearch extends React.Component {
           placeholder="Sök bland online medlemmar"
           onChange={evt => onSearchUsers(evt.target.value)}
         />
-        {onlineList.map(mapUsers)}
-        {searchResult && searchResult.map(mapUsers)}
+        {searchResult && searchResult.map(user =>
+          <User key={user.get('_id')} user={user} />
+        )}
       </div>
     )
   }
