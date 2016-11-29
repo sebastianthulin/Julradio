@@ -5,10 +5,10 @@ const ProfilePicture = require('../reusable/ProfilePicture')
 const {searchUsers} = require('../../actions/users')
 
 const User = ({user}) => (
-  <div className="User">
+  <Link to={'/@' + user.get('username')} className="User">
     <ProfilePicture id={user.get('picture')} />
-    <Link to={'/@' + user.get('username')}>{user.get('username')}</Link>
-  </div>
+    <span>{user.get('username')}</span>
+  </Link>
 )
 
 @connect(state => ({
@@ -18,12 +18,12 @@ const User = ({user}) => (
 }), {
   onSearchUsers: searchUsers
 })
-class FindUsers extends React.Component {
+class UserSearch extends React.Component {
   render() {
     const {onlineList, searchQuery, searchResult, onSearchUsers} = this.props
     const mapUsers = user => <User key={user.get('_id')} user={user} />
     return (
-      <div id="FindUsers">
+      <div id="UserSearch">
         <input
           value={searchQuery}
           placeholder="Sök bland online medlemmar"
@@ -36,4 +36,4 @@ class FindUsers extends React.Component {
   }
 }
 
-module.exports = FindUsers
+module.exports = UserSearch

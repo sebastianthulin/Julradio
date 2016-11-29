@@ -11,7 +11,7 @@ const UserProfile = require('./components/views/UserProfile')
 const Settings = require('./components/views/Settings')
 const Chat = require('./components/views/Chat')
 const CosyCorner = require('./components/views/CosyCorner')
-const FindUsers = require('./components/views/FindUsers')
+const UserSearch = require('./components/views/UserSearch')
 const Crew = require('./components/views/Crew')
 const History = require('./components/views/History')
 const Admin = require('./components/views/Admin')
@@ -46,7 +46,7 @@ const getRoutes = ({getState}) => {
       <Route path="/history" component={History} />
       <Route path="/messages(/:user)" component={Chat} onEnter={requireAuth} />
       <Route path="/cosycorner" component={CosyCorner} />
-      <Route path="/findusers" component={FindUsers} />
+      <Route path="/search" component={UserSearch} />
       <Route path="/@:username" component={UserProfile} />
       <Route path="/settings" component={Settings} onEnter={requireAuth} />
       <Route path="/admin" component={Admin} onEnter={requireAdminAuth}>

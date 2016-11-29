@@ -19,7 +19,7 @@ const userSearch = _query => {
   return users
     .filter(user => user.usernameLower.indexOf(query) > -1)
     .sort((a, b) => b.lastVisit - a.lastVisit)
-    .slice(0, 20)
+    .slice(0, 50)
 }
 
 fetchUsers()
