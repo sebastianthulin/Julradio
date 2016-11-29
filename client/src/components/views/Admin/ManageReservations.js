@@ -40,10 +40,11 @@ class ManageReservations extends React.Component {
     this.items = items
     const dates = []
     const reservationsByDate = {}
+    const now = new Date(Date.now() + window.__TIMEDIFFERENCE__)
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
     for (let i = 0; i < items.size; i++) {
       const res = items.get(i)
-      const today = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
-      if (res.get('startDate').getDate() >= today) {
+      if (res.get('startDate').getTime() >= today) {
         const date = dateFormat(res.get('startDate'), 'dddd, mmmm d')
         if (dates[dates.length - 1] !== date) {
           dates.push(date)

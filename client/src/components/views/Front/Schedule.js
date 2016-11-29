@@ -4,6 +4,12 @@ const {Link} = require('react-router')
 const cx = require('classnames')
 const dateFormat = require('dateformat')
 
+const isThisIt = (today, daysFromToday, candiDate) => {
+  today = new Date(today)
+  today.setDate(today.getDate() + daysFromToday)
+  return candiDate.getDate() === today.getDate()
+}
+
 const Reservation = ({reservation}) => (
   <div className="Reservation">
     <div className="user">
@@ -27,38 +33,30 @@ class Schedule extends React.Component {
   render() {
     const {reservations} = this.props
     const {expanded} = this.state || {}
-    const fn = r => <Reservation key={r.get('_id')} reservation={r} />
-    const date = new Date(Date.now() + window.__TIMEDIFFERENCE__).getDate()
-    const f = reservations.filter.bind(reservations)
-    const today = f(r => r.get('startDate').getDate() === date).map(fn)
-    const tomorrow = f(r => r.get('startDate').getDate() === date + 1).map(fn)
-    const dayAfterTomorrow = f(r => r.get('startDate').getDate() === date + 2).map(fn)
 
-    let upcomingDaysCount = 0
-    today.size > 0 && upcomingDaysCount++
-    tomorrow.size > 0 && upcomingDaysCount++
-    dayAfterTomorrow.size > 0 && upcomingDaysCount++
+    const now = new Date(Date.now() + window.__TIMEDIFFERENCE__)
+
+    const createDay = (name, daysFromToday) => {
+      const res = reservations.filter(r => isThisIt(now, daysFromToday, r.get('startDate')))
+      return res.size && (
+        <section key={name}>
+          <header>{name}</header>
+          {res.map(r => <Reservation key={r.get('_id')} reservation={r} />)}
+        </section>
+      )
+    }
+
+    const dom = [
+      createDay('Idag', 0),
+      createDay('Imorgon', 1),
+      createDay('Övermorgon', 2)
+    ].filter(d => d)
+
+    const upcomingDaysCount = dom.length
 
     return upcomingDaysCount === 0 ? null : (
       <div id="Schedule" className={cx({expanded})}>
-        {today.size > 0 && (
-          <section>
-            <header>Idag</header>
-            {today}
-          </section>
-        )}
-        {tomorrow.size > 0 && (
-          <section>
-            <header>Imorgon</header>
-            {tomorrow}
-          </section>
-        )}
-        {dayAfterTomorrow.size > 0 && (
-          <section>
-            <header>Övermorgon</header>
-            {dayAfterTomorrow}
-          </section>
-        )}
+        {dom}
         {!expanded && upcomingDaysCount > 1 && (
           <footer>
             <span onClick={() => this.setState({expanded: true})}>Visa mer...</span>

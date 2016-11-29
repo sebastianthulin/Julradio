@@ -17,7 +17,7 @@ const update = items => {
   }).populate({
     path: 'user',
     select: '-hash -email'
-  }).exec().then(docs => {
+  }).lean().then(docs => {
     const reservations = docs.sort((a, b) => a.startDate - b.startDate)
     hub.set('reservations', reservations)
     io.emit('reservations', reservations)

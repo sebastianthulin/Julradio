@@ -92,7 +92,6 @@ class Sidebar extends React.Component {
             <SVG.Fire />
             <span>Myshörnan</span>
           </Link>
-          {false && <Link to="/findusers" className="userAction"><span>Hitta användare</span></Link>}
           {divider}
           <div className="shortcuts">
             <a href={'https://webchat.quakenet.org/?channels=julradio' + (user ? '&nick=' + user.username : '')} target="_new">IRC</a>
