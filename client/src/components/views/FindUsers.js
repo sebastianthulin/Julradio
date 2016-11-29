@@ -24,13 +24,12 @@ class FindUsers extends React.Component {
     const mapUsers = user => <User key={user.get('_id')} user={user} />
     return (
       <div id="FindUsers">
-        Online:
-        {onlineList.map(mapUsers)}
         <input
           value={searchQuery}
-          placeholder="Sök..."
+          placeholder="Sök bland online medlemmar"
           onChange={evt => onSearchUsers(evt.target.value)}
         />
+        {onlineList.map(mapUsers)}
         {searchResult && searchResult.map(mapUsers)}
       </div>
     )
