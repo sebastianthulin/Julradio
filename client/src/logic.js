@@ -45,14 +45,16 @@ const logic = ({dispatch, getState}) => {
   socket.on('recent', recent => dispatch(receiveRecent(recent)))
   socket.on('playing', playing => dispatch(setNowPlaying(playing)))
 
+  radio.onConnection(connected => dispatch(receiveConnected(connected)))
+
   dispatch(setVolume(localStorage.volume === undefined ? 1 : Number(localStorage.volume)))
 
-  socket.on('audioSource', source => {
-    dispatch(receiveAudioSource(source))
-    dispatch(setPlaying(source && localStorage.playing == 1))
-  })
-
-  radio.onConnection(connected => dispatch(receiveConnected(connected)))
+  if (!window.Android) {
+    socket.on('audioSource', source => {
+      dispatch(receiveAudioSource(source))
+      dispatch(setPlaying(source && localStorage.playing == 1))
+    })
+  }
 
 
   const reservationsTick = () => {
