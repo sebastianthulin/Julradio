@@ -13,9 +13,9 @@ const comments = (state = initialState, action) => {
     case 'RECEIVE_COMMENTS': {
       // TODO: receive and update commentCount here as well
       const byId = state.get('byId').withMutations(ctx => {
-        for (let comment of action.comments) {
+        action.comments.forEach(comment => {
           ctx.set(comment._id, fromJS(comment))
-        }
+        })
       })
 
       const ids = state.get('ids').concat(action.comments.map(c => c._id))

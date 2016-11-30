@@ -4,9 +4,9 @@ const insertMessages = (state, messages) => {
   const newIds = messages.map(m => m._id)
 
   const messageById = state.get('messageById').withMutations(ctx => {
-    for (let message of messages) {
+    messages.forEach(message => {
       ctx.set(message._id, fromJS(message))
-    }
+    })
   })
 
   const messageIds = state.get('messageIds').concat(newIds)
@@ -67,9 +67,9 @@ const chat = (state = initialState, action) => {
       return state.withMutations(ctx => {
         const conversationIds = fromJS(action.items.map(item => item.conversation._id))
         ctx.set('conversationIds', conversationIds)
-        for (let item of action.items) {
+        action.items.forEach(item => {
           insertConversation(ctx, item, false)
-        }
+        })
       })
     case 'RECEIVE_CONVERSATION':
       return state.withMutations(ctx => {
