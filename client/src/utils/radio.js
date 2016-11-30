@@ -2,8 +2,10 @@ const radio = {}
 const listeners = []
 const urls = process.env.shoutCastUrls
 const audio = new Audio
-const url = urls[Math.random() * urls.length | 0] + '/;'
-audio.src = url
+
+radio.setSource = source => {
+  audio.src = source
+}
 
 radio.play = () => {
   return new Promise((_, reject) => {
@@ -20,17 +22,18 @@ radio.setVolume = vol => {
   audio.volume = vol
 }
 
-radio.onceConnection = cb => {
+radio.onConnection = cb => {
   listeners.push(cb)
 }
 
 const handleConnection = evt => {
   const connected = evt.type === 'playing'
   listeners.forEach(cb => cb(connected))
-  listeners.length = 0
 }
 
 audio.addEventListener('playing', handleConnection)
 audio.addEventListener('pause', handleConnection)
+audio.addEventListener('ended', handleConnection)
+audio.addEventListener('suspend', handleConnection)
 
 module.exports = radio

@@ -4,35 +4,38 @@ const {errorNotify} = require('./notifications')
 
 const localStorage = window.localStorage || {}
 
-const setPlaying = playing => (dispatch, getState) => {
+export const receiveAudioSource = source => {
+  radio.setSource(source)
+  return {
+    type: 'RECEIVE_PLAYABLE',
+    playable: !!source
+  }
+}
+
+export const receiveConnected = connected => ({
+  type: 'RECEIVE_CONNECTION',
+  connected
+})
+
+export const setPlaying = playing => dispatch => {
   try {
     localStorage.playing = Number(playing)
   } catch (_) {}
-  dispatch({
-    type: 'SET_PLAYING',
-    playing
-  })
+  dispatch({type: 'SET_PLAYING', playing})
   if (playing) {
-    radio.play().catch(() => {
-      dispatch({
-        type: 'SET_PLAYING',
-        playing: false
-      })
-    })
+    radio.play().catch(() => dispatch(setPlaying(false)))
   } else {
     radio.pause()
   }
-  radio.onceConnection(connected => {
-    dispatch({
-      type: 'SET_CONNECTED',
-      connected
-    })
-  })
 }
 
 export const togglePlay = () => (dispatch, getState) => {
-  const playing = getState().player.get('playing')
-  dispatch(setPlaying(!playing))
+  const state = getState().player
+  const playing = state.get('playing')
+  const playable = state.get('playable')
+  if (playable) {
+    dispatch(setPlaying(!playing))
+  }
 }
 
 export const setVolume = volume => {

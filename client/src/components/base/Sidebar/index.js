@@ -17,6 +17,7 @@ const divider = <div className="divider" />
   isPrivileged: selectors.isPrivileged(state),
   volume: state.player.get('volume'),
   playing: state.player.get('playing'),
+  playable: state.player.get('playable'),
   connected: state.player.get('connected'),
   nowPlaying: state.player.get('nowPlaying'),
   onAir: state.reservations.get('onAir'),
@@ -103,6 +104,7 @@ class Sidebar extends React.Component {
             <Player
               volume={props.volume}
               playing={props.playing}
+              playable={props.playable}
               nowPlaying={props.nowPlaying}
               onAir={props.onAir}
               onTogglePlay={props.onTogglePlay}

@@ -19,7 +19,6 @@ const plugins = [
   new webpack.optimize.OccurenceOrderPlugin(),
   new webpack.DefinePlugin({
     'process.env': {
-      shoutCastUrls: JSON.stringify(cfg.shoutCastUrls),
       socketTransports: JSON.stringify(cfg.socketTransports),
       NODE_ENV: JSON.stringify(process.env.NODE_ENV)
     }

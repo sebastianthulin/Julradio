@@ -1,5 +1,6 @@
 const React = require('react')
 const {Link} = require('react-router')
+const cx = require('classnames')
 const Hampburger = require('./Hampburger')
 const SVG = require('../../svg')
 const ProfilePicture = require('../../reusable/ProfilePicture')
@@ -19,7 +20,7 @@ class Player extends React.Component {
 
   render() {
     const {props} = this
-    const {onAir, nowPlaying} = props
+    const {playable, onAir, nowPlaying} = props
     const {mediaMenu} = this.state || {}
     return (
       <div id="Player">
@@ -27,7 +28,7 @@ class Player extends React.Component {
         <div className="main">
           <div className="shit">
             {onAir && <ProfilePicture id={onAir.getIn(['user', 'picture'])} />}
-            <div className="playPause" onClick={props.onTogglePlay} >
+            <div className={cx('playPause', {playable})} onClick={props.onTogglePlay} >
               <SVG.PlayPause pause={props.playing} />
             </div>
           </div>

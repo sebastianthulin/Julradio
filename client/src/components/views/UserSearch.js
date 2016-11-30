@@ -25,7 +25,7 @@ class UserSearch extends React.Component {
       <div id="UserSearch">
         <input
           value={searchQuery}
-          placeholder="Sök bland online medlemmar"
+          placeholder="Sök medlemmar"
           onChange={evt => onSearchUsers(evt.target.value)}
         />
         {searchResult && searchResult.map(user =>

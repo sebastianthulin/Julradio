@@ -1,8 +1,12 @@
 'use strict'
 
 const hub = require('clusterhub')
+const {shoutCastOnline, shoutCastUrls} = require('../../config')
 
 const socketHandler = socket => {
+  const audioSource = (shoutCastOnline && shoutCastUrls[Math.random() * shoutCastUrls.length | 0] + '/;') || null
+  socket.emit('audioSource', audioSource)
+
   hub.get('playing', playing => socket.emit('playing', playing))
   hub.get('recent', recent => socket.emit('recent', recent))
   hub.get('reservations', rreservations => socket.emit('reservations', rreservations))

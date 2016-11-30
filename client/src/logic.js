@@ -1,5 +1,6 @@
 const request = require('superagent')
 const socket = require('./utils/socket')
+const radio = require('./utils/radio')
 const handleNotification = require('./utils/handleNotification')
 const selectors = require('./selectors')
 const {receiveAccount} = require('./actions/account')
@@ -9,7 +10,7 @@ const {receiveFeed, recieveFeedItem} = require('./actions/requests')
 const {recieveReservations, setOnAir} = require('./actions/reservations')
 const {receiveComment, receiveReply} = require('./actions/comments')
 const {receiveConversation, receiveMessage} = require('./actions/chat')
-const {receiveRecent, setNowPlaying, togglePlay, setVolume} = require('./actions/player')
+const {receiveAudioSource, receiveConnected, setPlaying, receiveRecent, setNowPlaying, setVolume} = require('./actions/player')
 const localStorage = window.localStorage || {}
 
 const logic = ({dispatch, getState}) => {
@@ -40,11 +41,19 @@ const logic = ({dispatch, getState}) => {
     dispatch(receiveReply(replyData))
   })
 
+  // radio
   socket.on('recent', recent => dispatch(receiveRecent(recent)))
   socket.on('playing', playing => dispatch(setNowPlaying(playing)))
 
   dispatch(setVolume(localStorage.volume === undefined ? 1 : Number(localStorage.volume)))
-  localStorage.playing == 1 && dispatch(togglePlay())
+
+  socket.on('audioSource', source => {
+    dispatch(receiveAudioSource(source))
+    dispatch(setPlaying(source && localStorage.playing == 1))
+  })
+
+  radio.onConnection(connected => dispatch(receiveConnected(connected)))
+
 
   const reservationsTick = () => {
     const now = Date.now() + window.__TIMEDIFFERENCE__

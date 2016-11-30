@@ -2,6 +2,7 @@ const {fromJS} = require('immutable')
 
 const initialState = fromJS({
   playing: false,
+  playable: false,
   connected: false,
   volume: null,
   nowPlaying: {},
@@ -14,7 +15,9 @@ const player = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_PLAYING':
       return state.set('playing', action.playing)
-    case 'SET_CONNECTED':
+    case 'RECEIVE_PLAYABLE':
+      return state.set('playable', action.playable)
+    case 'RECEIVE_CONNECTION':
       return state.set('connected', action.connected)
     case 'SET_VOLUME':
       return state.set('volume', action.volume)
