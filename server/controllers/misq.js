@@ -16,12 +16,18 @@ exports.renderPage = (req, res) => {
 
 exports.showPicture = (req, res) => {
   const id = req.params.id
-  if (pictureRoutes[id]) {
-    return res.redirect(pictureRoutes[id])
+
+  const exec = filePath => {
+    res.sendFile(filePath, {root: __dirname + '/../../public'})
   }
+
+  if (pictureRoutes[id]) {
+    return exec(pictureRoutes[id])
+  }
+
   Picture.findById(id).lean().then(doc => {
     pictureRoutes[id] = '/i/' + doc._id + doc.extension
-    res.redirect(pictureRoutes[id])
+    exec(pictureRoutes[id])
   }).catch(() => {
     res.sendStatus(404)
   })
