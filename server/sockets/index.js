@@ -43,7 +43,7 @@ const socketHandler = socket => {
     socket.join(socket.userId)
     chat(socket)
 
-    User.findById(socket.userId).select(SAFE_USER_SELECT).lean().then(user => {
+    User.findById(socket.userId).select('username picture').lean().then(user => {
       // the time it takes to fetch user document
       // might fuck up socket disconnection and comment creation.
       socket.user = user
