@@ -43,11 +43,12 @@ const socketHandler = socket => {
     socket.join(socket.userId)
     chat(socket)
 
-    User.findById(socket.userId).select('username picture').lean().then(user => {
+    User.findById(socket.userId).select('username picture roles').lean().then(user => {
       // the time it takes to fetch user document
       // might fuck up socket disconnection and comment creation.
       socket.user = user
       socket.isAdmin = !!(user.roles && user.roles.admin)
+      delete user.roles
       hub.emit('userConnect', user)
       socket.on('disconnect', () => {
         hub.emit('userDisconnect', user)
