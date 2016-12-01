@@ -27,7 +27,7 @@ class LogIn extends React.Component {
           <form onSubmit={this.handleSubmit.bind(this)}>
             <label>Användarnamn</label>
             <input type="text" ref="username" className="clean" />
-            <label>Password</label>
+            <label>Lösenord</label>
             <input type="password" ref="password" className="clean" />
             <div
               className="misq"
